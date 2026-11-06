@@ -1,7 +1,7 @@
 {
   "name": "anyvis",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
@@ -9,7 +9,12 @@
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
     "test:offline": "node scripts/check-scheduling.mjs && node scripts/test-block-program.mjs && node scripts/check-extensions.mjs",
-    "check:syntax": "node scripts/check-syntax.cjs"
+    "check:syntax": "node scripts/check-syntax.cjs",
+    "studio": "node scripts/start-studio.mjs",
+    "start": "node scripts/start-studio.mjs --production",
+    "desktop": "node scripts/start-studio.mjs --production --desktop",
+    "test:server": "node --test server/server.test.mjs",
+    "test:render": "node --test server/render.integration.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -34,6 +39,6 @@
     "vitest": "^3.2.4"
   },
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.18.0"
   }
 }

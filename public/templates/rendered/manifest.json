@@ -1,0 +1,195 @@
+{
+  "generatedAt": "2026-11-07",
+  "description": "Built-in reference previews rendered from the matching native-block projects. Editing a project invalidates this preview; it is not a live simulation.",
+  "templates": [
+    {
+      "id": "first-animation",
+      "kind": "prerendered-native-manim",
+      "engine": "Manim Community 0.20.1",
+      "renderer": "cairo",
+      "format": "VP9 WebM",
+      "resolution": [
+        640,
+        360
+      ],
+      "fps": 30.0,
+      "frames": 462,
+      "durationSeconds": 15.4,
+      "posterTimeSeconds": 15.366666666666667,
+      "sourceSha256": "8a86685d98ca0b1c820538c5484b8dc4ad7cb5ef3d9307c0f90a5d3c2609fabb",
+      "projectSha256": "9eba551b2e162f3f3d4f3fd88e113ae62d09fd0b0adf33b59df8b2c532cfa13f",
+      "video": {
+        "path": "first-animation.webm",
+        "bytes": 163643,
+        "sha256": "8abb6dea3e3e30b96565d45f2e46479b47ee205d4f0bbe9104409e5f357cd81f"
+      },
+      "poster": {
+        "path": "first-animation.png",
+        "bytes": 29851,
+        "sha256": "2c0c3a9a825b7ad6f21681204bc8f55f565bd63fb91c89c4c2b4f1bc31440b01"
+      }
+    },
+    {
+      "id": "unit-circle",
+      "kind": "prerendered-native-manim",
+      "engine": "Manim Community 0.20.1",
+      "renderer": "cairo",
+      "format": "VP9 WebM",
+      "resolution": [
+        640,
+        360
+      ],
+      "fps": 30.0,
+      "frames": 471,
+      "durationSeconds": 15.7,
+      "posterTimeSeconds": 15.666666666666666,
+      "sourceSha256": "956b44e6d106dd8d3b12d61b51f484b0d079dc799643ff3ee16aba6aac435733",
+      "projectSha256": "1fa8e45bb5c8e36db92dfc43a39b0f580c27a8c6932cd3932fd025b43f5d97de",
+      "video": {
+        "path": "unit-circle.webm",
+        "bytes": 183417,
+        "sha256": "3adbb25785cd02c1b98f95183f2c5ab5f2451bc0291da0d9e8b86458bbcd1729"
+      },
+      "poster": {
+        "path": "unit-circle.png",
+        "bytes": 41919,
+        "sha256": "f1bf5f071579989e804c81a0185be28add5f81c4f929e70d5e4a902414cd7731"
+      }
+    },
+    {
+      "id": "tangent",
+      "kind": "prerendered-native-manim",
+      "engine": "Manim Community 0.20.1",
+      "renderer": "cairo",
+      "format": "VP9 WebM",
+      "resolution": [
+        640,
+        360
+      ],
+      "fps": 30.0,
+      "frames": 444,
+      "durationSeconds": 14.8,
+      "posterTimeSeconds": 14.766666666666667,
+      "sourceSha256": "2ddd30446c70ab9aa7f734a3fe0c13ad618f97d625685dda76d203f544327f25",
+      "projectSha256": "49b00134d06772d70bea0f76cf06439507456251c0e86b5d5b2c95deb72d16b6",
+      "video": {
+        "path": "tangent.webm",
+        "bytes": 194094,
+        "sha256": "9959626aafe0ac0ec1134efda6e9f5340eca4ca761d57bfbd2844c710baefd18"
+      },
+      "poster": {
+        "path": "tangent.png",
+        "bytes": 37579,
+        "sha256": "560cdd82da7ab43342581baefa6e6f37f56b7d577bf374f8dd3dc5d4030ac4ba"
+      }
+    },
+    {
+      "id": "formula",
+      "kind": "prerendered-native-manim",
+      "engine": "Manim Community 0.20.1",
+      "renderer": "cairo",
+      "format": "VP9 WebM",
+      "resolution": [
+        640,
+        360
+      ],
+      "fps": 30.0,
+      "frames": 468,
+      "durationSeconds": 15.6,
+      "posterTimeSeconds": 15.566666666666666,
+      "sourceSha256": "4c4778050bce3a81a34b8af66e0a9e2d2522aa10664e6e5fda3d4ed50ae3e018",
+      "projectSha256": "6024ec1d0c21638a24b6d995a98576c17e3939f91c60a3a9249ab8b841bfe4f4",
+      "video": {
+        "path": "formula.webm",
+        "bytes": 197449,
+        "sha256": "93c708845d34e7c4c5242466b459b8b406f6c58e3d5e0b9f45ef5b7fbebbdbab"
+      },
+      "poster": {
+        "path": "formula.png",
+        "bytes": 26542,
+        "sha256": "0222d09f03a224d25a157c7cd43818500b273651ad958b32c3af03825c538aae"
+      }
+    },
+    {
+      "id": "linear-map",
+      "kind": "prerendered-native-manim",
+      "engine": "Manim Community 0.20.1",
+      "renderer": "cairo",
+      "format": "VP9 WebM",
+      "resolution": [
+        640,
+        360
+      ],
+      "fps": 30.0,
+      "frames": 486,
+      "durationSeconds": 16.2,
+      "posterTimeSeconds": 9.8,
+      "sourceSha256": "58406485a6e3eb9fd264814c116c533360c8568251bc9572e8ae9275c3dbccb4",
+      "projectSha256": "57564a96c030b0acf4a5caedc1c657f21b98efea5578c9eeadc699954e6b43a0",
+      "video": {
+        "path": "linear-map.webm",
+        "bytes": 226197,
+        "sha256": "a0b5fafa861b64e48897cd87b5b0a9de9f1470e64a6078cb3f701341cffd4678"
+      },
+      "poster": {
+        "path": "linear-map.png",
+        "bytes": 45216,
+        "sha256": "558b3d314807c40dcf83a14948afc07c0eeeae7b644ae5166e91670a9eac8533"
+      }
+    },
+    {
+      "id": "bfs",
+      "kind": "prerendered-native-manim",
+      "engine": "Manim Community 0.20.1",
+      "renderer": "cairo",
+      "format": "VP9 WebM",
+      "resolution": [
+        640,
+        360
+      ],
+      "fps": 30.0,
+      "frames": 423,
+      "durationSeconds": 14.1,
+      "posterTimeSeconds": 14.066666666666666,
+      "sourceSha256": "20ecc961df1ad51ca281f8d0ab6cabd8b55f048c33053b23b7729fdad5b6e55c",
+      "projectSha256": "cab41daa884879d0a4d493314c2530b9a943e085c8f7d51a6b7a87fcd08a1f0e",
+      "video": {
+        "path": "bfs.webm",
+        "bytes": 218424,
+        "sha256": "9ea57fa9001266a5762049019de67539230d47057eeeed01d4fc11dec566efdd"
+      },
+      "poster": {
+        "path": "bfs.png",
+        "bytes": 43967,
+        "sha256": "a398f704e2e421ba8cbdccc4d9a2c3b36a191d2fcc0d3ab7b55a8e617d16210c"
+      }
+    },
+    {
+      "id": "surface",
+      "kind": "prerendered-native-manim",
+      "engine": "Manim Community 0.20.1",
+      "renderer": "cairo",
+      "format": "VP9 WebM",
+      "resolution": [
+        640,
+        360
+      ],
+      "fps": 30.0,
+      "frames": 420,
+      "durationSeconds": 14.0,
+      "posterTimeSeconds": 13.966666666666667,
+      "sourceSha256": "2db3a718c5bfd3e2e53da05fb96fb56bf8e23a2acb1fce41274224868a9ecccf",
+      "projectSha256": "a072f7c41f1eb8915a57fa087c19fc4fa55c331f623cf36a717c17caad02af46",
+      "video": {
+        "path": "surface.webm",
+        "bytes": 518155,
+        "sha256": "b1d5803a010d077444c168aca261bd95fa87df032d65bd15a08f4dc9f354eb7f"
+      },
+      "poster": {
+        "path": "surface.png",
+        "bytes": 63269,
+        "sha256": "3643da54345eada7641c64f4cfa2097cf321642bee54f3cf95ee06d97f8d2a04"
+      }
+    }
+  ]
+}
