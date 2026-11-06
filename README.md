@@ -4,6 +4,8 @@
 
 AnyVis v0.2 提供积木创作、原生动画预览、视频与 Python 导出，以及可编辑的 AI 作品导入。当前可运行交付采用本机浏览器界面 + 本地 Manim 服务；正式产品仍以托管运行环境的桌面版为目标。[完整设计方案](docs/AnyVis-Design-v0.2.md)
 
+![AnyVis Studio](docs/screenshots/studio-v0.2.jpg)
+
 ## 启动
 
 需要 **Node.js 22.18+**、npm，以及安装 Manim 的 Python 环境。本次原生渲染验证使用 **Manim CE 0.20.1 / Cairo / Python 3.12**；并未声称完成 0.22.1 或干净机器安装验收。

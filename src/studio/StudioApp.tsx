@@ -9,7 +9,7 @@ import { createEmptyProject, validateProject } from './core/project';
 import { StudioBlocks, type StudioBlocksHandle } from './blocks/StudioBlocks';
 import { templateCatalog, getTemplate } from './templates';
 import { api, startRender, type EngineHealth, type RenderJob } from './api';
-import { downloadText, fileName, readCurrent, readProjects, saveProject } from './storage';
+import { downloadText, fileName, readCurrent, readProjects, saveLatestProject, saveProject } from './storage';
 import { builtinPreview, type VideoPreview } from './previews';
 import './studio.css';
 
@@ -60,6 +60,7 @@ export default function StudioApp() {
   const stage = useRef<HTMLDivElement>(null);
   const requestCounter = useRef(0);
   const pendingFinal = useRef(false);
+  const pendingManualRender = useRef<'preview' | 'final' | null>(null);
   const aiAbort = useRef<AbortController | null>(null);
   const healthTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const currentRevision = revisionOf(project);
@@ -125,6 +126,10 @@ export default function StudioApp() {
 
   const render = useCallback(async (renderQuality: 'preview' | 'final' = 'preview') => {
     if (pendingFinal.current && ['queued', 'running'].includes(jobRef.current?.status || '')) return;
+    try {
+      const latest = editor.current?.snapshot() || project;
+      if (revisionOf(latest) !== currentRevision) { pendingManualRender.current = renderQuality; setProject(latest); return; }
+    } catch (error) { setRenderError((error as Error).message); return; }
     if (errors.length) { setRenderError('先修正下方标出的积木，再生成预览。'); return; }
     if (compiled.requiresTrust && !trusted) { setRenderError('作品包含 Python 扩展。请在“Python”页检查内容，并允许本次作品运行代码后再预览。'); setEditorTab('code'); return; }
     if (!health?.available) { setRenderError('渲染引擎尚未就绪。请使用 AnyVis 启动器，或在下方重新检查环境。'); return; }
@@ -146,6 +151,13 @@ export default function StudioApp() {
     }
   }, [project, currentRevision, health?.available, errors.length, compiled.requiresTrust, trusted, acceptJob]);
   const renderRef = useRef(render); renderRef.current = render;
+  useEffect(() => {
+    const requested = pendingManualRender.current;
+    if (!requested) return;
+    pendingManualRender.current = null;
+    const timer = setTimeout(() => void renderRef.current(requested), 0);
+    return () => clearTimeout(timer);
+  }, [currentRevision]);
 
   useEffect(() => {
     if (!autoPreview || !health?.available || errors.length || compiled.requiresTrust || !project.actions.length) return;
@@ -177,7 +189,7 @@ export default function StudioApp() {
     if (target?.id) { try { await api(`/api/jobs/${target.id}`, { method: 'DELETE' }); } catch (error) { notify(`停止请求未送达：${(error as Error).message}`); } }
   }, [notify]);
   const replaceProject = useCallback((next: Project) => {
-    try { saveProject(projectRef.current); }
+    try { saveProject(editor.current?.snapshot() || projectRef.current); }
     catch { setSaveError('当前作品保存失败，请先导出项目文件，再切换作品。'); notify('暂未切换：请先导出当前作品，避免丢失修改。'); return false; }
     const previous = jobRef.current;
     requestCounter.current++; pendingFinal.current = false;
@@ -188,9 +200,22 @@ export default function StudioApp() {
     return true;
   }, [notify]);
   const exportProject = useCallback(() => {
-    downloadText(`${fileName(projectRef.current.name)}.anyvis.json`, JSON.stringify(projectRef.current, null, 2));
-    notify('项目已导出，可在任何 AnyVis 中继续编辑。');
+    try {
+      const latest = editor.current?.snapshot() || projectRef.current;
+      downloadText(`${fileName(latest.name)}.anyvis.json`, JSON.stringify(latest, null, 2));
+      notify('项目已导出，可在任何 AnyVis 中继续编辑。');
+    } catch (error) { notify(`保存失败：${(error as Error).message}`); }
   }, [notify]);
+  useEffect(() => {
+    const flush = () => {
+      try { saveLatestProject(() => editor.current?.snapshot(), projectRef.current); }
+      catch { setSaveError('浏览器保存未完成，请导出项目文件备份。'); }
+    };
+    const visibility = () => { if (document.visibilityState === 'hidden') flush(); };
+    window.addEventListener('pagehide', flush);
+    document.addEventListener('visibilitychange', visibility);
+    return () => { flush(); window.removeEventListener('pagehide', flush); document.removeEventListener('visibilitychange', visibility); };
+  }, []);
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') { event.preventDefault(); exportProject(); }
@@ -222,15 +247,21 @@ export default function StudioApp() {
     } catch (error) { setAiError((error as Error).message); }
   };
   const copyPrompt = async () => {
+    setAiError('');
+    let text: string;
     try {
       const { buildPrompt } = await import('./ai/project-assistant');
-      const text = buildPrompt(project, aiPrompt || '改进这个动画，保留可编辑的原生积木。');
-      await navigator.clipboard.writeText(text); notify('已复制项目与积木说明，可交给你使用的 AI。');
-    } catch { notify('无法访问剪贴板，请使用“导出 AI 提示词”。'); }
+      text = buildPrompt(project, aiPrompt || '改进这个动画，保留可编辑的原生积木。');
+    } catch (error) { setAiError((error as Error).message); return; }
+    try { await navigator.clipboard.writeText(text); notify('已复制项目与积木说明，可交给你使用的 AI。'); }
+    catch { setAiError('无法访问剪贴板，请使用“导出提示词”。'); }
   };
   const downloadPrompt = async () => {
-    const { buildPrompt } = await import('./ai/project-assistant');
-    downloadText('AnyVis-AI-prompt.txt', buildPrompt(project, aiPrompt || '改进这个动画。'), 'text/plain');
+    setAiError('');
+    try {
+      const { buildPrompt } = await import('./ai/project-assistant');
+      downloadText('AnyVis-AI-prompt.txt', buildPrompt(project, aiPrompt || '改进这个动画。'), 'text/plain');
+    } catch (error) { setAiError((error as Error).message); }
   };
   const generateAI = async () => {
     if (!aiPrompt.trim() || !aiModel.trim()) { setAiError('填写制作要求与模型名称后即可生成。'); return; }
@@ -252,8 +283,8 @@ export default function StudioApp() {
       <span className="header-divider"/>
       <div className="project-title"><input aria-label="作品名称" value={project.name} maxLength={80} onBlur={() => { if (!project.name.trim()) setProject(p => ({ ...p, name: '未命名动画' })); }} onChange={e => setProject(p => ({ ...p, name: e.target.value }))}/><span className={saveError ? 'save-status error' : 'save-status'}>{saveError ? '需要备份' : saved ? <><Check size={12}/> 已自动保存</> : '保存中…'}</span></div>
       <div className="header-spacer"/>
-      <button className="header-button" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
-      <button className="header-button" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
+      <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
+      <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
       <button className="ai-button" onClick={() => { setModal('ai'); setAiError(''); }}><Sparkles size={16}/> AI 助手</button>
       <button className="export-button" onClick={() => { setModal('export'); }}><ArrowDownToLine size={16}/> 导出</button>
@@ -270,7 +301,7 @@ export default function StudioApp() {
         <div className="workspace-content" style={{ display: editorTab === 'blocks' ? 'flex' : 'none' }}>
           <StudioBlocks ref={editor} project={project} onChange={setProject} onSelect={setSelected} selectedBlockId={selected || undefined} highlightedBlockId={job?.blockId} onWorkspaceError={message => setRenderError(message || '')}/>
         </div>
-        {editorTab === 'code' && <div className="python-view"><div className="code-intro"><div><strong>由积木生成的 Manim 源码</strong><p>可以导出独立运行；在积木中修改会同步更新这里。</p></div><button className="small-button" disabled={!!errors.length} onClick={() => { try { downloadText(`${fileName(project.name)}.py`, exportStandalonePython(project), 'text/x-python'); } catch (error) { notify((error as Error).message); } }}><Download size={14}/> 导出 .py</button></div><CodeMirror value={compiled.code} editable={false} height="100%" basicSetup={{ lineNumbers: true, foldGutter: true }} theme="light"/>{compiled.requiresTrust && <label className="trust-code"><input type="checkbox" checked={trusted} onChange={e => setTrusted(e.target.checked)}/> 我已检查此作品的 Python 扩展，允许它在本机运行。</label>}</div>}
+        {editorTab === 'code' && <div className="python-view"><div className="code-intro"><div><strong>由积木生成的 Manim 源码</strong><p>可以导出独立运行；在积木中修改会同步更新这里。</p></div><button className="small-button" disabled={!!errors.length} onClick={() => { try { downloadText(`${fileName(project.name)}.py`, exportStandalonePython(editor.current?.snapshot() || project), 'text/x-python'); } catch (error) { notify((error as Error).message); } }}><Download size={14}/> 导出 .py</button></div><CodeMirror value={compiled.code} editable={false} height="100%" basicSetup={{ lineNumbers: true, foldGutter: true }} theme="light"/>{compiled.requiresTrust && <label className="trust-code"><input type="checkbox" checked={trusted} onChange={e => setTrusted(e.target.checked)}/> 我已检查此作品的 Python 扩展，允许它在本机运行。</label>}</div>}
         <div className="workspace-footer"><span>{flattened.length} 个积木<span className="footer-separator">·</span>{project.scene.dimension === '3d' ? '三维场景' : '二维场景'}</span><span>{compiled.duration === null ? '动态时长' : `约 ${compiled.duration.toFixed(1)} 秒`}<span className="footer-separator">·</span>Manim 原生动画</span></div>
       </section>
 
@@ -307,7 +338,7 @@ export default function StudioApp() {
       {modal === 'projects' && <><p className="modal-description">作品自动保存在当前浏览器。导出项目文件，可以备份或换一台电脑继续创作。</p><div className="project-library-actions"><button className="small-button" onClick={() => input.current?.click()}><Upload size={15}/> 打开项目文件</button><button className="small-button primary" onClick={() => replaceProject(createEmptyProject())}><Plus size={15}/> 新建作品</button></div><div className="saved-project-list">{readProjects().map(({ project: item, savedAt }) => <button key={item.id} onClick={() => replaceProject(item)}><span className="project-file-icon"><Clapperboard size={21}/></span><span><strong>{item.name}</strong><small>{allActions(item.actions).length} 个积木 · {new Date(savedAt).toLocaleString('zh-CN')}</small></span><ArrowRight size={16}/></button>)}</div></>}
       {modal === 'settings' && <div className="settings-grid"><label>场景类型<select value={project.scene.dimension} onChange={e => setProject(p => ({ ...p, scene: { ...p.scene, dimension: e.target.value as '2d' | '3d' } }))}><option value="2d">二维 · 几何、函数与公式</option><option value="3d">三维 · 空间与相机</option></select></label><label>画面比例<select value={`${project.scene.width}x${project.scene.height}`} onChange={e => { const [width, height] = e.target.value.split('x').map(Number); setProject(p => ({ ...p, scene: { ...p.scene, width, height } })); }}><option value="1920x1080">16:9 · 1920 × 1080</option><option value="1080x1080">1:1 · 1080 × 1080</option><option value="1080x1920">9:16 · 1080 × 1920</option><option value="1280x720">16:9 · 1280 × 720</option></select></label><label>动画帧率<select value={project.scene.fps} onChange={e => setProject(p => ({ ...p, scene: { ...p.scene, fps: Number(e.target.value) } }))}><option value={24}>24 fps</option><option value={30}>30 fps</option><option value={60}>60 fps</option></select></label><label>背景颜色<div className="color-input"><input type="color" value={project.scene.background} onChange={e => setProject(p => ({ ...p, scene: { ...p.scene, background: e.target.value } }))}/><code>{project.scene.background}</code></div></label><p className="settings-note">预览会降低分辨率以更快得到结果；预览与成片使用相同的 Manim 动画和求值帧率。</p><button className="primary-button settings-done" onClick={() => setModal(null)}>完成</button></div>}
       {modal === 'help' && <><p className="modal-description">不用写 Python，也可以制作真正的数学动画。</p><div className="guide-steps"><div><span>01</span><h3>添加图形</h3><p>从左侧积木库选择圆、文字或坐标系，接到起始块下方。点击字段即可改数值、名字和颜色。</p></div><div><span>02</span><h3>安排变化</h3><p>接上移动、旋转、变形等动作，选择要改变的对象。用“同时”和“重复”把多个动作组合起来。</p></div><div><span>03</span><h3>观看与导出</h3><p>自动预览会在修改后重新渲染。播放确认效果，再导出视频；保存项目后仍可继续修改。</p></div></div><div className="guide-shortcuts"><span><kbd>⌘ / Ctrl</kbd> + <kbd>S</kbd> 保存项目</span><span><kbd>⌘ / Ctrl</kbd> + <kbd>Enter</kbd> 更新预览</span></div><button className="primary-button" onClick={() => setModal('templates')}>选一个示例开始 <ArrowRight size={15}/></button></>}
-      {modal === 'export' && <><p className="modal-description">视频用于分享，项目保留可编辑的积木，Python 源码可以直接交给 Manim。</p><div className="export-options"><button onClick={exportProject}><Save size={22}/><span><strong>保存积木项目</strong><small>.anyvis.json · 可继续编辑与备份</small></span><Download size={16}/></button><button disabled={!!errors.length} onClick={() => { try { downloadText(`${fileName(project.name)}.py`, exportStandalonePython(project), 'text/x-python'); } catch (error) { notify((error as Error).message); } }}><Code2 size={22}/><span><strong>导出 Manim 源码</strong><small>.py · 真实 Python，不依赖 AnyVis 播放器</small></span><Download size={16}/></button></div><div className="video-export"><h3><Clapperboard size={19}/> 导出视频</h3><label>画质<select value={quality} onChange={e => setQuality(e.target.value as 'preview' | 'final')}><option value="preview">快速预览 · 较小分辨率</option><option value="final">成片 · {project.scene.width} × {project.scene.height} / {project.scene.fps} fps</option></select></label>{video && currentVideo && video.quality === quality ? <a className="primary-button" href={video.url} download={`${fileName(project.name)}.${video.format}`} ><Download size={16}/> 下载视频</a> : <button className="primary-button" disabled={running || !!errors.length} onClick={() => { void render(quality); }}>{running ? <Loader2 className="spin" size={16}/> : <Clapperboard size={16}/>} {running ? '正在生成视频…' : '生成视频'}</button>}{running && <p className="muted-small">{job?.message || '正在渲染'} · 完成后可在这里下载。</p>}{renderError && <p className="inline-error">{renderError}</p>}</div></>}
+      {modal === 'export' && <><p className="modal-description">视频用于分享，项目保留可编辑的积木，Python 源码可以直接交给 Manim。</p><div className="export-options"><button onClick={exportProject}><Save size={22}/><span><strong>保存积木项目</strong><small>.anyvis.json · 可继续编辑与备份</small></span><Download size={16}/></button><button disabled={!!errors.length} onClick={() => { try { downloadText(`${fileName(project.name)}.py`, exportStandalonePython(editor.current?.snapshot() || project), 'text/x-python'); } catch (error) { notify((error as Error).message); } }}><Code2 size={22}/><span><strong>导出 Manim 源码</strong><small>.py · 真实 Python，不依赖 AnyVis 播放器</small></span><Download size={16}/></button></div><div className="video-export"><h3><Clapperboard size={19}/> 导出视频</h3><label>画质<select value={quality} onChange={e => setQuality(e.target.value as 'preview' | 'final')}><option value="preview">快速预览 · 较小分辨率</option><option value="final">成片 · {project.scene.width} × {project.scene.height} / {project.scene.fps} fps</option></select></label>{video && currentVideo && video.quality === quality ? <a className="primary-button" href={video.url} download={`${fileName(project.name)}.${video.format}`} ><Download size={16}/> 下载视频</a> : <button className="primary-button" disabled={running || !!errors.length} onClick={() => { void render(quality); }}>{running ? <Loader2 className="spin" size={16}/> : <Clapperboard size={16}/>} {running ? '正在生成视频…' : '生成视频'}</button>}{running && <p className="muted-small">{job?.message || '正在渲染'} · 完成后可在这里下载。</p>}{renderError && <p className="inline-error">{renderError}</p>}</div></>}
       {modal === 'ai' && <><p className="modal-description">描述你想表达的内容，得到可以继续搭建、修改的积木作品。</p><div className="ai-tabs"><button className={aiTab === 'generate' ? 'active' : ''} onClick={() => setAiTab('generate')}>连接模型生成</button><button className={aiTab === 'import' ? 'active' : ''} onClick={() => setAiTab('import')}>使用已有 AI</button></div><label className="ai-request">想制作或修改什么？<textarea placeholder="例如：画出正弦曲线，用一个运动点展示角度增加时高度的变化，最后写出公式。" value={aiPrompt} onChange={e => setAiPrompt(e.target.value)} rows={3}/></label>{aiTab === 'generate' ? <><div className="ai-connection"><label>API 地址<input value={aiEndpoint} onChange={e => setAiEndpoint(e.target.value)} placeholder="https://…/v1"/></label><label>模型名称<input value={aiModel} onChange={e => setAiModel(e.target.value)} placeholder="填写服务商提供的模型 ID"/></label><label className="ai-key">API 密钥<input type="password" autoComplete="off" value={aiKey} onChange={e => setAiKey(e.target.value)} placeholder="仅在当前会话内使用；本地服务可留空"/></label></div><p className="modal-footnote">使用你自己的兼容 API 服务，调用可能产生费用。密钥不会写入作品或浏览器存储。只有点击生成时才发送当前作品。</p><div className="ai-action-row"><button className="primary-button" disabled={aiLoading} onClick={() => void generateAI()}>{aiLoading ? <Loader2 size={16} className="spin"/> : <WandSparkles size={16}/>} {aiLoading ? '正在生成积木…' : '生成可编辑作品'}</button>{aiLoading && <button className="small-button" onClick={() => { aiAbort.current?.abort(); setAiLoading(false); }}>取消</button>}</div></> : <><p className="ai-import-description">把带有项目格式与积木说明的提示词交给你使用的 AI，再将它返回的 JSON 粘贴到这里。</p><div className="ai-action-row"><button className="small-button" onClick={() => void copyPrompt()}><Copy size={14}/> 复制提示词</button><button className="small-button" onClick={() => void downloadPrompt()}><Download size={14}/> 导出提示词</button></div><textarea className="ai-json" value={aiJson} onChange={e => setAiJson(e.target.value)} placeholder="粘贴 AI 返回的项目 JSON…" rows={5}/><button className="primary-button" disabled={!aiJson.trim()} onClick={() => void importAI()}>检查并载入 <ArrowRight size={15}/></button></>}{aiError && <div className="inline-error" role="alert">{aiError}</div>}{aiCandidate && <div className="ai-result"><Check size={20}/><div><strong>{aiCandidate.name}</strong><p>{aiSummary}</p><small>{allActions(aiCandidate.actions).length} 个可编辑积木 · {aiCandidate.scene.dimension.toUpperCase()}</small></div><button className="primary-button" onClick={() => { const next = { ...aiCandidate, id: crypto.randomUUID(), workspace: undefined }; if (replaceProject(next)) { setAiCandidate(null); notify('AI 作品已打开，原作品仍保留在“我的作品”。'); } }}>打开作品</button></div>}</>}
     </section></div>}
   </div>;

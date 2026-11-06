@@ -12,13 +12,24 @@ export function readProjects(): SavedProject[] {
   } catch { return []; }
 }
 export function readCurrent(): Project | undefined {
-  try { return validateProject(JSON.parse(localStorage.getItem(CURRENT) || 'null')); } catch { return undefined; }
+  try {
+    const current = validateProject(JSON.parse(localStorage.getItem(CURRENT) || 'null'));
+    // A previous quota failure may have saved the newer version only to the library.
+    return readProjects().find(item => item.project.id === current.id)?.project || current;
+  } catch { return undefined; }
 }
 export function saveProject(project: Project) {
-  const items = readProjects().filter(item => item.project.id !== project.id);
+  const valid = validateProject({ ...project, name: project.name.trim() ? project.name : '未命名动画' });
+  const items = readProjects().filter(item => item.project.id !== valid.id);
   // Save the durable project list first: a quota error must not overwrite the only current draft.
-  localStorage.setItem(LIBRARY, JSON.stringify([{ project, savedAt: Date.now() }, ...items]));
-  localStorage.setItem(CURRENT, JSON.stringify(project));
+  localStorage.setItem(LIBRARY, JSON.stringify([{ project: valid, savedAt: Date.now() }, ...items]));
+  localStorage.setItem(CURRENT, JSON.stringify(valid));
+}
+/** Fall back only when reading the editor fails, never after a partial storage write. */
+export function saveLatestProject(snapshot: () => Project | undefined, fallback: Project) {
+  let latest = fallback;
+  try { latest = snapshot() || fallback; } catch { /* Keep the last valid editor state. */ }
+  saveProject(latest);
 }
 export function downloadText(name: string, text: string, type = 'application/json') {
   const url = URL.createObjectURL(new Blob([text], { type }));

@@ -11,6 +11,7 @@ import {
 import './studio-blocks.css';
 
 export interface StudioBlocksHandle {
+  snapshot(): Project;
   undo(): void;
   redo(): void;
   zoomIn(): void;
@@ -108,6 +109,12 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
   };
 
   useImperativeHandle(ref, () => ({
+    snapshot: () => {
+      const ws = workspace.current;
+      if (!ws) return latest.current.project;
+      const actions = workspaceToActions(ws);
+      return { ...latest.current.project, actions, workspace: saveWorkspace(ws, actions) };
+    },
     undo: () => workspace.current?.undo(false),
     redo: () => workspace.current?.undo(true),
     zoomIn: () => zoom(1), zoomOut: () => zoom(-1), fit,

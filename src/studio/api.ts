@@ -34,5 +34,5 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   return result as T;
 }
 export function startRender(project: Project, quality: 'preview' | 'final', revision: string, trustCode: boolean) {
-  return api<RenderJob>('/api/render', { method: 'POST', body: JSON.stringify({ project, quality, revision, trustCode }) });
+  return api<RenderJob>('/api/render', { method: 'POST', body: JSON.stringify({ project: { ...project, workspace: undefined }, quality, revision, trustCode }) });
 }
