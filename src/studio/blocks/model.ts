@@ -6,10 +6,11 @@ import { planObjectRename } from './rename';
 import { ColourField } from './colour-field';
 import { MultilineCodeField } from './multiline-code-field';
 import { createMatrixField } from './matrix-field';
+import { ObjectListField } from './object-list-field';
 
 export const START_TYPE = 'anyvis2_start';
 const PREFIX = 'anyvis2_';
-interface ReferenceObject { name: string; kind: string; blockId: string }
+interface ReferenceObject { name: string; kind: string; blockId: string; connected: boolean }
 const referenceObjects = new WeakMap<Blockly.Workspace, Map<string, ReferenceObject>>();
 const renameFeedback = new WeakMap<Blockly.Workspace, (error: string | null) => void>();
 let registered = false;
@@ -45,7 +46,7 @@ export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[
       const definition = getBlockDefinition(block.type.slice(PREFIX.length));
       const name = block.getFieldValue('name');
       if (definition?.createsObject && typeof name === 'string' && name) {
-        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: block.id });
+        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: block.id, connected: block.getRootBlock().type === START_TYPE });
       }
     }
   } else {
@@ -54,7 +55,7 @@ export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[
       const definition = getBlockDefinition(action.type);
       const name = action.fields.name;
       if (definition?.createsObject && typeof name === 'string' && name) {
-        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: action.id });
+        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: action.id, connected: true });
       }
     });
   }
@@ -86,7 +87,7 @@ const kindLabels: Record<string, string> = {
   mobject: '图形', text: '文字', formula: '公式', number: '数值对象', axes: '二维坐标系',
   number_line: '数轴', curve: '曲线', matrix: '矩阵', graph: '图结构', tracker: '参数', axes3d: '三维坐标系',
 };
-function referenceMap(field: Blockly.FieldDropdown): Map<string, ReferenceObject> {
+function referenceMap(field: Blockly.Field): Map<string, ReferenceObject> {
   const workspace = field.getSourceBlock()?.workspace;
   const main = workspace?.isFlyout ? (workspace as Blockly.WorkspaceSvg).targetWorkspace : workspace;
   return main ? referenceObjects.get(main) || new Map() : new Map();
@@ -94,8 +95,8 @@ function referenceMap(field: Blockly.FieldDropdown): Map<string, ReferenceObject
 function expectedKind(field: FieldDefinition): string {
   return field.objectKinds?.length === 1 ? kindLabels[field.objectKinds[0]] || '对象' : '图形对象';
 }
-function compatibleReference(input: Blockly.FieldDropdown, definition: FieldDefinition, value: ReferenceObject): boolean {
-  return (!definition.objectKinds || definition.objectKinds.includes(value.kind)) && value.blockId !== input.getSourceBlock()?.id;
+function compatibleReference(input: Blockly.Field, definition: FieldDefinition, value: ReferenceObject): boolean {
+  return value.connected && (!definition.objectKinds || definition.objectKinds.includes(value.kind)) && value.blockId !== input.getSourceBlock()?.id;
 }
 function referenceLabel(input: Blockly.FieldDropdown, definition: FieldDefinition, value: string): string {
   if (!value) {
@@ -105,6 +106,7 @@ function referenceLabel(input: Blockly.FieldDropdown, definition: FieldDefinitio
   }
   const object = referenceMap(input).get(value);
   if (!object) return `⚠ 已缺失：${value}`;
+  if (!object.connected) return `⚠ 未连接：${value}`;
   if (object.blockId === input.getSourceBlock()?.id) return `⚠ 不能引用自身：${value}`;
   return compatibleReference(input, definition, object) ? value : `⚠ 类型不符：${value}`;
 }
@@ -161,6 +163,11 @@ export function applyWorkspaceRename(workspace: Blockly.Workspace, event: Blockl
 }
 
 function makeField(field: FieldDefinition, definition: BlockDefinition): Blockly.Field {
+  if (field.reference === 'object-list') {
+    const input: ObjectListField = new ObjectListField(String(field.default), () => [...referenceMap(input).values()]
+      .filter(object => compatibleReference(input, field, object)).map(object => object.name));
+    return input;
+  }
   if (field.editor === 'matrix') return createMatrixField(String(field.default), definition.type === 'apply_matrix' ? 2 : undefined);
   if (field.type === 'number') {
     // Blockly precision rounds values on load; an HTML input step is not a

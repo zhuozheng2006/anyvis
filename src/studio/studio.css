@@ -20,3 +20,4 @@ button.studio-brand{background:transparent;border:0;padding:0;text-align:left}
 .stage-shell{width:calc(100% - 24px);height:clamp(200px,30vh,360px);aspect-ratio:auto}.story-panel{min-height:220px}
 @media(min-width:1600px){.stage-shell{width:calc(100% - 30px)}}
 @media(max-width:880px){.stage-shell{height:auto;aspect-ratio:16/9}.story-panel{min-height:265px}}
+.stage-shell:fullscreen{max-height:none;min-height:0}

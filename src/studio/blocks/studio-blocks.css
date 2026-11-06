@@ -1,4 +1,7 @@
 .av-block-editor { position: relative; display: flex; flex-direction: column; flex: 1; min-width: 0; min-height: 0; height: 100%; overflow: hidden; background: #f8f9fc; color: #3c445b; }
+/* Blockly's 300px menu cap is too short for our form editors. Keep their
+   actions inside the popup and constrain the whole form to the viewport. */
+.blocklyDropDownContent:has(> .av-object-list-editor, > .av-matrix-editor, > .av-multiline-editor, > .av-colour-editor) { max-height: calc(100dvh - 48px); overflow-y: auto; }
 .av-block-toolbar { flex: 0 0 49px; display: flex; align-items: center; gap: 12px; padding: 8px 13px; background: #fff; border-bottom: 1px solid #e7e9f1; z-index: 1; box-sizing: border-box; }
 .av-block-search { display: flex; align-items: center; gap: 8px; color: #9299ae; flex: 1; min-width: 0; padding: 6px 9px; border-radius: 7px; background: #f5f6fa; border: 1px solid transparent; }
 .av-block-search:focus-within { border-color: #a59cf6; background: #fff; box-shadow: 0 0 0 2px #7365e810; }

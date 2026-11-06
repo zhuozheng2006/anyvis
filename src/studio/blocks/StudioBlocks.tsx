@@ -109,6 +109,22 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     workspace.current?.zoomToFit();
     if (workspace.current) setScale(Math.round(workspace.current.scale * 100));
   };
+  const reveal = (id: string) => {
+    const ws = workspace.current;
+    let block = ws?.getBlockById(id);
+    let expanded = false;
+    // Navigating the outline must reveal children of folded containers,
+    // without adding presentation changes to the user's edit undo history.
+    const recordUndo = Blockly.Events.getRecordUndo();
+    Blockly.Events.setRecordUndo(false);
+    try {
+      while (block) { if (block.isCollapsed()) { block.setCollapsed(false); expanded = true; } block = block.getSurroundParent(); }
+    } finally { Blockly.Events.setRecordUndo(recordUndo); }
+    // Restored collapsed workspaces can contain children that have never had
+    // their SVG paths measured. Render the revealed tree before centering it.
+    if (expanded) ws?.render();
+    ws?.centerOnBlock(id, true);
+  };
 
   useImperativeHandle(ref, () => ({
     snapshot: () => {
@@ -120,7 +136,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     undo: () => workspace.current?.undo(false),
     redo: () => workspace.current?.undo(true),
     zoomIn: () => zoom(1), zoomOut: () => zoom(-1), fit,
-    highlight: (id) => { workspace.current?.highlightBlock(id); if (id) workspace.current?.centerOnBlock(id, true); },
+    highlight: (id) => { if (id) reveal(id); workspace.current?.highlightBlock(id); },
     focusSearch: () => search.current?.focus(),
     updateFields: (id, fields) => {
       const block = workspace.current?.getBlockById(id);
@@ -130,6 +146,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       finally { Blockly.Events.setGroup(false); }
     },
     showDetails: (id) => {
+      reveal(id);
       const block = workspace.current?.getBlockById(id);
       if (block?.getField('__details')) block.setFieldValue('expanded', '__details');
       workspace.current?.centerOnBlock(id, true);

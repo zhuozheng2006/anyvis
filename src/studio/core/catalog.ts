@@ -101,7 +101,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   block('camera', '三维镜头', '三维', [n('phi', '俯仰角（度）', 65, 0, 180), n('theta', '方位角（度）', -45, -3600, 3600), n('zoom', '缩放', 0.9, 0.1, 5), n('duration', '用时（0 为立即）', 0, 0, 60)], '调整 ThreeDScene 的镜头。角度单位是度。', { requires3d: true }),
   block('ambient_rotation', '镜头自动环绕', '三维', [n('rate', '弧度 / 秒（0 停止）', 0.2, -5, 5)], '开始或停止相机持续环绕；后续动画和等待期间继续旋转。', { requires3d: true }),
   block('fixed_in_frame', '固定到屏幕', '三维', [o('target', '对象', '标题')], '将文字等对象固定在屏幕上，避免随三维镜头旋转。', { requires3d: true }),
-  block('group', '组合对象', '样式布局', [t('name', '组合名', '组合'), { ...t('members', '成员', '圆,标题'), reference: 'object-list', objectKinds: [...VISUAL_OBJECT_KINDS], description: '输入已有图形名称，用逗号分隔。组合共享这些对象，不会复制它们。' }], '创建共享成员的 VGroup；不复制对象，也不改变已有出场时间。', { createsObject: true, objectKind: 'mobject' }),
+  block('group', '组合对象', '样式布局', [t('name', '组合名', '组合'), { ...t('members', '成员', ''), reference: 'object-list', objectKinds: [...VISUAL_OBJECT_KINDS], description: '勾选已经创建的图形。组合共享这些对象，不会复制它们。' }], '创建共享成员的 VGroup；不复制对象，也不改变已有出场时间。', { createsObject: true, objectKind: 'mobject' }),
   block('copy', '复制对象', '样式布局', [t('name', '新名称', '副本'), o(), ...position(), ...appear('fade')], '复制对象产生独立副本，后续变换互不影响。', { createsObject: true, objectKind: 'mobject' }),
   block('set_position', '立即定位', '样式布局', [o(), ...position()], '将对象立即放到舞台坐标；使用“移动到”产生动画。'),
   block('set_style', '设置样式', '样式布局', [o(), c(), n('fill', '填充透明度', 0.15, 0, 1), n('stroke', '线宽', 3, 0, 30)], '立即修改颜色、填充和描边。'),

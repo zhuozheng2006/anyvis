@@ -57,6 +57,19 @@ describe('typed object selection', () => {
     expect(workspaceToActions(ws)[1].fields.axes).toBe('');
   });
 
+  it('does not offer disconnected declarations and explains an existing disconnected reference', () => {
+    const circle = createAction('circle', { name: '圆形' });
+    const move = createAction('move', { target: '圆形' });
+    const ws = workspace([circle, move]);
+    ws.getBlockById(circle.id)!.unplug(true);
+    setReferenceNames(ws, workspaceToActions(ws));
+    const field = dropdown(ws, move);
+    expect(offered(field)).not.toContain('圆形');
+    expect(field.getValue()).toBe('圆形');
+    expect(field.getText()).toBe('⚠ 未连接：圆形');
+    expect(workspaceToActions(ws)).toEqual([move]);
+  });
+
   it('preserves unresolved and mistyped imported references without offering them elsewhere', () => {
     const circle = createAction('circle', { name: '圆形' });
     const tracker = createAction('tracker', { name: 'a' });
