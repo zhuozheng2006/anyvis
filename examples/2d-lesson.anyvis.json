@@ -1,0 +1,298 @@
+{
+  "version": 1,
+  "id": "demo_2d_mw5bd5l5",
+  "name": "单位圆与正弦波",
+  "dimension": "2d",
+  "duration": 12,
+  "parameters": [
+    {
+      "id": "radius",
+      "name": "半径",
+      "value": 1.4,
+      "min": 0.3,
+      "max": 2.2,
+      "step": 0.01,
+      "color": "#b5f36c"
+    },
+    {
+      "id": "speed",
+      "name": "角速度",
+      "value": 0.8,
+      "min": 0.1,
+      "max": 2,
+      "step": 0.01,
+      "color": "#9e8dff"
+    },
+    {
+      "id": "phase",
+      "name": "相位",
+      "value": 0,
+      "min": -3.141592653589793,
+      "max": 3.141592653589793,
+      "step": 0.01,
+      "color": "#ffbe77"
+    }
+  ],
+  "objects": [
+    {
+      "id": "circle",
+      "name": "参考圆",
+      "kind": "circle",
+      "color": "#b5f36c",
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "scale": 1.4,
+      "rotation": 0
+    },
+    {
+      "id": "vector",
+      "name": "旋转向量",
+      "kind": "vector",
+      "color": "#b5f36c",
+      "visible": true,
+      "x": 1.4,
+      "y": 0,
+      "z": 0,
+      "scale": 1,
+      "rotation": 0
+    },
+    {
+      "id": "point",
+      "name": "运动点",
+      "kind": "point",
+      "color": "#ffbe77",
+      "visible": true,
+      "x": 1.4,
+      "y": 0,
+      "z": 0,
+      "scale": 0.13,
+      "rotation": 0
+    },
+    {
+      "id": "wave",
+      "name": "正弦曲线",
+      "kind": "curve",
+      "color": "#9e8dff",
+      "visible": true,
+      "x": 3,
+      "y": 0,
+      "z": 0,
+      "scale": 1,
+      "rotation": 0,
+      "expression": "radius * sin(speed * x + phase)"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "clock",
+      "kind": "time",
+      "label": "场景时间",
+      "position": {
+        "x": 30,
+        "y": 35
+      }
+    },
+    {
+      "id": "speed_node",
+      "kind": "parameter",
+      "label": "角速度",
+      "parameterId": "speed",
+      "position": {
+        "x": 30,
+        "y": 175
+      }
+    },
+    {
+      "id": "radius_node",
+      "kind": "parameter",
+      "label": "半径",
+      "parameterId": "radius",
+      "position": {
+        "x": 260,
+        "y": 360
+      }
+    },
+    {
+      "id": "angle",
+      "kind": "formula",
+      "label": "转过的角度",
+      "expression": "a * b + phase",
+      "position": {
+        "x": 280,
+        "y": 50
+      }
+    },
+    {
+      "id": "cosine",
+      "kind": "formula",
+      "label": "水平位置",
+      "expression": "b * cos(a)",
+      "position": {
+        "x": 540,
+        "y": 20
+      }
+    },
+    {
+      "id": "sine",
+      "kind": "formula",
+      "label": "竖直位置",
+      "expression": "b * sin(a)",
+      "position": {
+        "x": 540,
+        "y": 220
+      }
+    },
+    {
+      "id": "point_x",
+      "kind": "binding",
+      "label": "运动点 · X",
+      "objectId": "point",
+      "property": "x",
+      "position": {
+        "x": 800,
+        "y": 20
+      }
+    },
+    {
+      "id": "point_y",
+      "kind": "binding",
+      "label": "运动点 · Y",
+      "objectId": "point",
+      "property": "y",
+      "position": {
+        "x": 800,
+        "y": 200
+      }
+    },
+    {
+      "id": "circle_scale",
+      "kind": "binding",
+      "label": "参考圆 · 半径",
+      "objectId": "circle",
+      "property": "scale",
+      "position": {
+        "x": 540,
+        "y": 430
+      }
+    },
+    {
+      "id": "vector_x",
+      "kind": "binding",
+      "label": "向量 · X",
+      "objectId": "vector",
+      "property": "x",
+      "position": {
+        "x": 1050,
+        "y": 20
+      }
+    },
+    {
+      "id": "vector_y",
+      "kind": "binding",
+      "label": "向量 · Y",
+      "objectId": "vector",
+      "property": "y",
+      "position": {
+        "x": 1050,
+        "y": 200
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_clock_angle_a",
+      "source": "clock",
+      "target": "angle",
+      "input": "a"
+    },
+    {
+      "id": "e_speed_node_angle_b",
+      "source": "speed_node",
+      "target": "angle",
+      "input": "b"
+    },
+    {
+      "id": "e_angle_cosine_a",
+      "source": "angle",
+      "target": "cosine",
+      "input": "a"
+    },
+    {
+      "id": "e_angle_sine_a",
+      "source": "angle",
+      "target": "sine",
+      "input": "a"
+    },
+    {
+      "id": "e_radius_node_cosine_b",
+      "source": "radius_node",
+      "target": "cosine",
+      "input": "b"
+    },
+    {
+      "id": "e_radius_node_sine_b",
+      "source": "radius_node",
+      "target": "sine",
+      "input": "b"
+    },
+    {
+      "id": "e_cosine_point_x_a",
+      "source": "cosine",
+      "target": "point_x",
+      "input": "a"
+    },
+    {
+      "id": "e_sine_point_y_a",
+      "source": "sine",
+      "target": "point_y",
+      "input": "a"
+    },
+    {
+      "id": "e_radius_node_circle_scale_a",
+      "source": "radius_node",
+      "target": "circle_scale",
+      "input": "a"
+    },
+    {
+      "id": "e_cosine_vector_x_a",
+      "source": "cosine",
+      "target": "vector_x",
+      "input": "a"
+    },
+    {
+      "id": "e_sine_vector_y_a",
+      "source": "sine",
+      "target": "vector_y",
+      "input": "a"
+    }
+  ],
+  "clips": [
+    {
+      "id": "radius_clip",
+      "parameterId": "radius",
+      "start": 0,
+      "duration": 12,
+      "from": 1,
+      "to": 1.8,
+      "easing": "smooth"
+    }
+  ],
+  "cues": [
+    {
+      "id": "explore_radius",
+      "time": 4,
+      "title": "改变半径，会发生什么？",
+      "description": "拖动右侧「半径」滑块，观察运动点与波形的变化。试着找出哪些量保持不变。准备好后继续播放。"
+    },
+    {
+      "id": "explore_speed",
+      "time": 8,
+      "title": "探索角速度与相位",
+      "description": "调整「角速度」和「相位」，比较波形间距与当前位置。参数调整会覆盖动画轨道；点击参数旁的重置按钮可交还给时间轴。"
+    }
+  ],
+  "code": "// 每帧执行：t 为时间，params 为参数表，objects 为当前场景对象。\n// 例如：return objects.map(o => o.kind === 'cube' ? { ...o, rotation: t } : o);\nreturn objects;",
+  "codeEnabled": false
+}

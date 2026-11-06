@@ -1,0 +1,301 @@
+{
+  "version": 1,
+  "id": "demo_3d_mw5bd5l5",
+  "name": "空间轨道与旋转",
+  "dimension": "3d",
+  "duration": 12,
+  "parameters": [
+    {
+      "id": "radius",
+      "name": "半径",
+      "value": 1.4,
+      "min": 0.3,
+      "max": 2.2,
+      "step": 0.01,
+      "color": "#b5f36c"
+    },
+    {
+      "id": "speed",
+      "name": "角速度",
+      "value": 0.8,
+      "min": 0.1,
+      "max": 2,
+      "step": 0.01,
+      "color": "#9e8dff"
+    },
+    {
+      "id": "phase",
+      "name": "相位",
+      "value": 0,
+      "min": -3.141592653589793,
+      "max": 3.141592653589793,
+      "step": 0.01,
+      "color": "#ffbe77"
+    }
+  ],
+  "objects": [
+    {
+      "id": "cube",
+      "name": "旋转立方体",
+      "kind": "cube",
+      "color": "#9e8dff",
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "scale": 0.8,
+      "rotation": 0
+    },
+    {
+      "id": "circle",
+      "name": "轨道圆",
+      "kind": "circle",
+      "color": "#b5f36c",
+      "visible": true,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "scale": 1.4,
+      "rotation": 0
+    },
+    {
+      "id": "point",
+      "name": "轨道球",
+      "kind": "sphere",
+      "color": "#ffbe77",
+      "visible": true,
+      "x": 1.4,
+      "y": 0,
+      "z": 0,
+      "scale": 0.2,
+      "rotation": 0
+    }
+  ],
+  "nodes": [
+    {
+      "id": "clock",
+      "kind": "time",
+      "label": "场景时间",
+      "position": {
+        "x": 30,
+        "y": 35
+      }
+    },
+    {
+      "id": "speed_node",
+      "kind": "parameter",
+      "label": "角速度",
+      "parameterId": "speed",
+      "position": {
+        "x": 30,
+        "y": 175
+      }
+    },
+    {
+      "id": "radius_node",
+      "kind": "parameter",
+      "label": "半径",
+      "parameterId": "radius",
+      "position": {
+        "x": 260,
+        "y": 360
+      }
+    },
+    {
+      "id": "angle",
+      "kind": "formula",
+      "label": "转过的角度",
+      "expression": "a * b + phase",
+      "position": {
+        "x": 280,
+        "y": 50
+      }
+    },
+    {
+      "id": "cosine",
+      "kind": "formula",
+      "label": "水平位置",
+      "expression": "b * cos(a)",
+      "position": {
+        "x": 540,
+        "y": 20
+      }
+    },
+    {
+      "id": "sine",
+      "kind": "formula",
+      "label": "竖直位置",
+      "expression": "b * sin(a)",
+      "position": {
+        "x": 540,
+        "y": 220
+      }
+    },
+    {
+      "id": "point_x",
+      "kind": "binding",
+      "label": "运动点 · X",
+      "objectId": "point",
+      "property": "x",
+      "position": {
+        "x": 800,
+        "y": 20
+      }
+    },
+    {
+      "id": "point_y",
+      "kind": "binding",
+      "label": "运动点 · Y",
+      "objectId": "point",
+      "property": "y",
+      "position": {
+        "x": 800,
+        "y": 200
+      }
+    },
+    {
+      "id": "cube_rotation",
+      "kind": "binding",
+      "label": "立方体 · 旋转",
+      "objectId": "cube",
+      "property": "rotation",
+      "position": {
+        "x": 1050,
+        "y": 20
+      }
+    },
+    {
+      "id": "circle_scale",
+      "kind": "binding",
+      "label": "轨道圆 · 半径",
+      "objectId": "circle",
+      "property": "scale",
+      "position": {
+        "x": 540,
+        "y": 430
+      }
+    },
+    {
+      "id": "height",
+      "kind": "formula",
+      "label": "空间起伏",
+      "expression": "0.5 * sin(2 * a)",
+      "position": {
+        "x": 800,
+        "y": 430
+      }
+    },
+    {
+      "id": "point_z",
+      "kind": "binding",
+      "label": "轨道球 · Z",
+      "objectId": "point",
+      "property": "z",
+      "position": {
+        "x": 1050,
+        "y": 430
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_clock_angle_a",
+      "source": "clock",
+      "target": "angle",
+      "input": "a"
+    },
+    {
+      "id": "e_speed_node_angle_b",
+      "source": "speed_node",
+      "target": "angle",
+      "input": "b"
+    },
+    {
+      "id": "e_angle_cosine_a",
+      "source": "angle",
+      "target": "cosine",
+      "input": "a"
+    },
+    {
+      "id": "e_angle_sine_a",
+      "source": "angle",
+      "target": "sine",
+      "input": "a"
+    },
+    {
+      "id": "e_radius_node_cosine_b",
+      "source": "radius_node",
+      "target": "cosine",
+      "input": "b"
+    },
+    {
+      "id": "e_radius_node_sine_b",
+      "source": "radius_node",
+      "target": "sine",
+      "input": "b"
+    },
+    {
+      "id": "e_cosine_point_x_a",
+      "source": "cosine",
+      "target": "point_x",
+      "input": "a"
+    },
+    {
+      "id": "e_sine_point_y_a",
+      "source": "sine",
+      "target": "point_y",
+      "input": "a"
+    },
+    {
+      "id": "e_angle_cube_rotation_a",
+      "source": "angle",
+      "target": "cube_rotation",
+      "input": "a"
+    },
+    {
+      "id": "e_radius_node_circle_scale_a",
+      "source": "radius_node",
+      "target": "circle_scale",
+      "input": "a"
+    },
+    {
+      "id": "e_angle_height_a",
+      "source": "angle",
+      "target": "height",
+      "input": "a"
+    },
+    {
+      "id": "e_height_point_z_a",
+      "source": "height",
+      "target": "point_z",
+      "input": "a"
+    }
+  ],
+  "clips": [
+    {
+      "id": "radius_clip",
+      "parameterId": "radius",
+      "start": 0,
+      "duration": 12,
+      "from": 1,
+      "to": 1.8,
+      "easing": "smooth"
+    }
+  ],
+  "cues": [
+    {
+      "id": "explore_radius",
+      "time": 4,
+      "title": "改变半径，会发生什么？",
+      "description": "拖动半径参数，观察轨道球的位置。可拖动画面旋转视角，滚轮缩放，检查三维空间中的运动。"
+    },
+    {
+      "id": "explore_speed",
+      "time": 8,
+      "title": "探索角速度与相位",
+      "description": "改变角速度或相位，实时比较轨道球与立方体的姿态。完成探索后继续播放。"
+    }
+  ],
+  "code": "// 每帧执行：t 为时间，params 为参数表，objects 为当前场景对象。\n// 例如：return objects.map(o => o.kind === 'cube' ? { ...o, rotation: t } : o);\nreturn objects;",
+  "codeEnabled": false
+}
