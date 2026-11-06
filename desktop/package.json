@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.2.2",
   "description": "Build tools for the AnyVis desktop shell; not the packaged application",
+  "scripts": {
+    "install:runtime": "node node_modules/electron/install.js"
+  },
   "devDependencies": {
     "electron": "45.2.3",
     "electron-builder": "26.18.1"

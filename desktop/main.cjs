@@ -89,11 +89,11 @@ async function finishSmoke(error) {
     const response = await net.fetch(`http://127.0.0.1:${engine.service.port}/api/session`, { signal: AbortSignal.timeout(5000) });
     if (!response.ok || typeof (await response.json()).token !== 'string') throw new Error('Session API failed.');
     let rootReady = false;
-    for (let index = 0; index < 60 && !rootReady; index++) {
-      rootReady = await editorWindow.webContents.executeJavaScript("Boolean(document.querySelector('#root')?.children.length)");
+    for (let index = 0; index < 160 && !rootReady; index++) {
+      rootReady = await editorWindow.webContents.executeJavaScript("Boolean(document.querySelector('.studio-app .studio-header') && document.querySelector('.studio-app .blocklySvg'))");
       if (!rootReady) await new Promise(resolve => setTimeout(resolve, 50));
     }
-    if (!rootReady) throw new Error('Renderer root did not mount.');
+    if (!rootReady) throw new Error('Studio editor or Blockly workspace did not mount.');
     const browserCheck = await editorWindow.webContents.executeJavaScript(`(async () => {
       const session = await fetch('/api/session').then(r => r.json());
       const result = await fetch('/api/render', {method:'POST',headers:{'Content-Type':'application/json','X-AnyVis-Token':session.token},body:'{'});

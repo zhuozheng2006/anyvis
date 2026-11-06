@@ -27,6 +27,7 @@ node scripts/start-studio.mjs --production
 ```sh
 npm ci
 npm run desktop:install
+npm run install:runtime --prefix desktop
 npm run desktop
 ```
 

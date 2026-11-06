@@ -22,8 +22,11 @@
 ```sh
 npm ci
 npm install --prefix desktop --no-audit --no-fund
+npm run install:runtime --prefix desktop
 npm run desktop:prepare
 ```
+
+Electron 45 将可执行文件下载移到了首次运行时。`install:runtime` 显式调用已固定版本的官方 `install-electron` 入口，确保 CI 在启动和设置 Linux sandbox helper 之前已取得程序文件。它遵循该包的校验和与缓存流程；不用额外镜像，也不跳过校验。参见 [Electron 安装文档](https://www.electronjs.org/docs/latest/tutorial/installation#binary-download-step)。
 
 准备脚本生成 `desktop-build/app/`，其中只包含 `main.cjs`、`host.mjs`、`preload.cjs`、设置页、打包后的 `server.mjs`、应用 `package.json` 和 `dist/`。服务器 JavaScript 依赖已合并到 bundle，无需在安装目录运行 npm。
 
@@ -62,7 +65,9 @@ Electron 路径：
 
 Linux 使用 Xvfb，并为当前 CI 临时环境中的 Chromium sandbox helper 设置官方二进制需要的属主和权限；不会通过 `--no-sandbox` 关闭渲染器沙箱。
 
-检查会启动实际本地服务、验证会话与静态页面，并等待渲染器加载及页面根节点出现；成功退出 0，失败退出 1。检查有 30 秒超时。未安装 Manim 时允许壳启动检查通过，但报告中的 `health.available` 必须为 `false`；这不能证明 Manim 渲染成功。检查运行的是准备后的应用和构建工具提供的 Electron，不能代替最终 ASAR 或安装包的安装测试。macOS 的启动检查只覆盖 runner 本身的架构，不同时证明另一架构可运行。
+检查会启动实际本地服务，等待 Studio 标题栏及 Blockly 工作区出现，再通过固定协议验证会话、携带 token 的 POST、视频 Range 请求和浏览器视频解码。随后重启内部引擎，确认固定地址下的本地存储仍可读取。成功退出 0，失败退出 1，整体有 30 秒超时。
+
+未安装 Manim 时允许壳启动检查通过；环境尚未检测完成时报告 `health.available: false, checking: true`，并不代表确认缺少环境。这项检查不能证明 Manim 渲染成功。CI 还会运行桌面生命周期和隔离 bundle 的 Node 回归测试。启动检查使用准备后的应用和构建工具提供的 Electron，不能代替最终 ASAR 或安装包的安装测试。macOS 的启动检查只覆盖 runner 本身的架构，不同时证明另一架构可运行。
 
 成功的安装包作为 `AnyVis-<平台>-<提交 SHA>` 工作流附件保存 14 天；检查报告和本次真实解析的桌面工具锁文件单独保存为 `AnyVis-<平台>-checks-<提交 SHA>`。下载后核对提交 SHA。若构建失败，检查附件可能只含锁文件，应查看失败日志，不能据此判断启动通过。
 

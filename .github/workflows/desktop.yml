@@ -71,8 +71,12 @@ jobs:
         run: npm ci
       - name: Install pinned desktop build tools
         run: npm install --prefix desktop --no-audit --no-fund
+      - name: Download pinned Electron runtime
+        run: npm run install:runtime --prefix desktop
       - name: Run application tests
         run: npm test
+      - name: Check desktop lifecycle and isolated engine bundle
+        run: npm run test:desktop
       - name: Prepare bundled desktop application
         run: npm run desktop:prepare
 
