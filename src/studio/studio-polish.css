@@ -1,0 +1,30 @@
+/* Compact chrome, legible secondary text, and a clear primary preview action. */
+.studio-header { height: 64px; }
+.panel-heading { height: 44px; }
+.workspace-intro { height: 30px; color: #58677a; background: #f8fafc; font-size: 11px; }
+.workspace-intro>button { font-size: 11px; color: #286f63; }
+.av-block-toolbar { flex-basis: 42px; padding: 6px 12px; }
+.header-button { color: #4b5c6c; }
+.header-button:hover { background: #edf5f2; }
+.ai-button,.export-button { padding: 9px 14px; }
+.save-status,.workspace-footer,.av-block-footer,.engine-status,.muted-small { color: #637287; }
+.panel-title { font-size: 13px; color: #35465a; }
+.step-item { border-bottom: 1px solid #edf1f5; border-radius: 7px; }
+.step-item.selected { background: #edf7f3; box-shadow: inset 3px 0 #258778; }
+.step-number { font-size: 11px; font-weight: 700; }
+.step-copy strong { color: #26394b; font-size: 12px; font-weight: 600; }
+.step-copy small,.step-meta { color: #68788b; font-size: 11px; }
+.player-time { color: #515f70; font-size: 11px; font-variant-numeric: tabular-nums; }
+.play-control { width: 30px; height: 30px; border-radius: 7px; align-items: center; justify-content: center; }
+.play-control:hover { background: #edf3f1; color: #146d60; }
+.player-controls>input[type=range] { height: 20px; cursor: pointer; }
+.preview-actions { min-height: 44px; }
+.preview-button { background: #edf7f3; border: 1px solid #9fcbbd; color: #11685e; font-size: 12px; font-weight: 600; padding: 7px 12px; }
+.preview-button:hover { background: #dcefe7; }
+.preview-button.needs-update { background: var(--teal); border-color: var(--teal); color: white; }
+.auto-preview,.render-quality { font-size: 11px; color: #5d6d7e; }
+.block-tip p { color: #5d6d7e; line-height: 1.65; }
+.stage-watermark { font-size: 9px; }
+.studio-modal { box-shadow: 0 24px 80px #182d4430; }
+@media (max-width:880px) { .studio-header { height: 62px; } }
+@media (prefers-reduced-motion:reduce) { button { transition: none; } }

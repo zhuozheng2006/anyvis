@@ -10,7 +10,7 @@ import { ObjectListField } from './object-list-field';
 
 export const START_TYPE = 'anyvis2_start';
 const PREFIX = 'anyvis2_';
-interface ReferenceObject { name: string; kind: string; blockId: string; connected: boolean }
+interface ReferenceObject { name: string; kind: string; blockId: string; connected: boolean; enabled: boolean }
 const referenceObjects = new WeakMap<Blockly.Workspace, Map<string, ReferenceObject>>();
 const renameFeedback = new WeakMap<Blockly.Workspace, (error: string | null) => void>();
 let registered = false;
@@ -40,13 +40,17 @@ export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[
   const objects = new Map<string, ReferenceObject>();
   const blocks = workspace.getAllBlocks(false);
   if (blocks.length) {
+    const enabled = new Set<string>();
+    // Read execution semantics so children of a disabled container are also
+    // excluded, even if the child itself has not been individually disabled.
+    try { walkActions(workspaceToActions(workspace), action => enabled.add(action.id)); } catch { /* Loading a partial workspace. */ }
     // Once loaded, the actual workspace wins over a lagging React snapshot,
     // including immediately after deleting or renaming a constructor.
     for (const block of blocks) {
       const definition = getBlockDefinition(block.type.slice(PREFIX.length));
       const name = block.getFieldValue('name');
       if (definition?.createsObject && typeof name === 'string' && name) {
-        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: block.id, connected: block.getRootBlock().type === START_TYPE });
+        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: block.id, connected: block.getRootBlock().type === START_TYPE, enabled: enabled.has(block.id) });
       }
     }
   } else {
@@ -55,7 +59,7 @@ export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[
       const definition = getBlockDefinition(action.type);
       const name = action.fields.name;
       if (definition?.createsObject && typeof name === 'string' && name) {
-        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: action.id, connected: true });
+        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: action.id, connected: true, enabled: true });
       }
     });
   }
@@ -96,7 +100,7 @@ function expectedKind(field: FieldDefinition): string {
   return field.objectKinds?.length === 1 ? kindLabels[field.objectKinds[0]] || '对象' : '图形对象';
 }
 function compatibleReference(input: Blockly.Field, definition: FieldDefinition, value: ReferenceObject): boolean {
-  return value.connected && (!definition.objectKinds || definition.objectKinds.includes(value.kind)) && value.blockId !== input.getSourceBlock()?.id;
+  return value.connected && value.enabled && (!definition.objectKinds || definition.objectKinds.includes(value.kind)) && value.blockId !== input.getSourceBlock()?.id;
 }
 function referenceLabel(input: Blockly.FieldDropdown, definition: FieldDefinition, value: string): string {
   if (!value) {
@@ -107,6 +111,7 @@ function referenceLabel(input: Blockly.FieldDropdown, definition: FieldDefinitio
   const object = referenceMap(input).get(value);
   if (!object) return `⚠ 已缺失：${value}`;
   if (!object.connected) return `⚠ 未连接：${value}`;
+  if (!object.enabled) return `⚠ 已禁用：${value}`;
   if (object.blockId === input.getSourceBlock()?.id) return `⚠ 不能引用自身：${value}`;
   return compatibleReference(input, definition, object) ? value : `⚠ 类型不符：${value}`;
 }

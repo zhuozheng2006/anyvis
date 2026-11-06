@@ -14,6 +14,7 @@ import { builtinPreview, type VideoPreview } from './previews';
 import { outlineRows, stepTiming } from './outline';
 import { COMMON_COLOURS } from './blocks/colour-field';
 import './studio.css';
+import './studio-polish.css';
 
 type Modal = 'templates' | 'projects' | 'settings' | 'help' | 'ai' | 'export' | null;
 const definitions = new Map(BLOCK_CATALOG.map(block => [block.type, block]));
@@ -341,7 +342,7 @@ export default function StudioApp() {
             {video && currentVideo && <div className="stage-watermark">{video.builtin ? '示例预览 · Manim 预渲染' : video.quality === 'final' ? '高清成片' : '真实 Manim 预览'}</div>}
           </div>
           <div className="player-controls"><button className="play-control" onClick={play} disabled={!video} title={playing ? '暂停播放' : currentVideo ? '播放已生成的动画' : '播放上一次生成的动画；修改后请更新预览'} aria-label={playing ? '暂停播放' : '播放动画'}>{playing ? <Pause size={16} fill="currentColor"/> : <Play size={16} fill="currentColor"/>}</button><span className="player-time">{fmt(time)}</span><input aria-label="播放进度" type="range" min={0} max={videoDuration || 1} step={0.01} value={time} disabled={!video} onChange={e => seek(Number(e.target.value))}/><span className="player-time">{fmt(videoDuration)}</span><button className="icon-button" aria-label="从头播放" disabled={!video} onClick={() => { seek(0); void player.current?.play(); }}><RefreshCw size={14}/></button></div>
-          <div className="preview-actions"><label className="auto-preview"><input type="checkbox" checked={autoPreview} onChange={e => setAutoPreview(e.target.checked)}/><span>自动预览</span></label><span className="render-quality">{project.scene.fps} fps</span><button className="preview-button" disabled={running || !project.actions.length} onClick={() => void render('preview')}>{running ? <Loader2 size={14} className="spin"/> : <RefreshCw size={14}/>} {running ? '生成中' : '更新预览'}</button></div>
+          <div className="preview-actions"><label className="auto-preview"><input type="checkbox" checked={autoPreview} onChange={e => setAutoPreview(e.target.checked)}/><span>自动预览</span></label><span className="render-quality">{project.scene.fps} fps</span><button className={`preview-button ${!currentVideo ? 'needs-update' : ''}`} disabled={running || !project.actions.length} onClick={() => void render('preview')}>{running ? <Loader2 size={14} className="spin"/> : <RefreshCw size={14}/>} {running ? '生成中' : '更新预览'}</button></div>
           {running && <div className="render-progress"><i style={{ width: `${Math.min(98, Math.max(3, (job?.progress || 0) * ((job?.progress || 0) <= 1 ? 100 : 1)))}%` }}/></div>}
         </section>
 

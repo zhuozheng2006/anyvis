@@ -57,6 +57,20 @@ describe('typed object selection', () => {
     expect(workspaceToActions(ws)[1].fields.axes).toBe('');
   });
 
+  it('excludes objects inside disabled containers without discarding their saved references', () => {
+    const circle = createAction('circle', { name: '禁用圆' });
+    const container = { ...createAction('sequence'), children: [circle] };
+    const move = createAction('move', { target: '禁用圆' });
+    const ws = workspace([container, move]);
+    ws.getBlockById(container.id)!.setDisabledReason(true, 'test');
+    setReferenceNames(ws, workspaceToActions(ws));
+    expect(offered(dropdown(ws, move))).not.toContain('禁用圆');
+    expect(dropdown(ws, move).getText()).toBe('⚠ 已禁用：禁用圆');
+    ws.getBlockById(container.id)!.setDisabledReason(false, 'test');
+    setReferenceNames(ws, workspaceToActions(ws));
+    expect(offered(dropdown(ws, move))).toContain('禁用圆');
+  });
+
   it('does not offer disconnected declarations and explains an existing disconnected reference', () => {
     const circle = createAction('circle', { name: '圆形' });
     const move = createAction('move', { target: '圆形' });
