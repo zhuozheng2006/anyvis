@@ -43,6 +43,7 @@ npm run build
 - [完整设计方案](docs/AnyVis-Design-v0.2.md)
 - [Manim 0.20.1 API 清单](docs/research/manim-ce-0.20.1-inventory.json)
 - [可复现的 API 扫描脚本](docs/research/inventory_manim.py)
+- [P0 真实 Manim 渲染实验](experiments/native-manim/README.md)：中文、形变、并行动画与公式；记录编码器限制
 
 正式引擎目标为 Manim CE 0.22.1；本机 0.20.1 仅用于前期调研和 P0 验证。各阶段按可验证成果及时提交，记录改变及验证状态，不等全部完工才上传。
 
