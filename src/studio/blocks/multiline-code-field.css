@@ -1,0 +1,12 @@
+.av-multiline-editor { width: min(520px, calc(100vw - 48px)); padding: 14px; box-sizing: border-box; color: #36425a; font: 12px/1.5 Inter, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+.av-multiline-heading { font-size: 13px; font-weight: 600; }
+.av-multiline-description { margin: 4px 0 11px; color: #8992a7; font-size: 11px; }
+.av-multiline-textarea { display: block; width: 100%; height: clamp(180px, 30vh, 320px); min-height: 140px; padding: 12px; box-sizing: border-box; resize: vertical; border: 1px solid #dfe3ed; border-radius: 8px; outline: none; background: #f8f9fc; color: #33415c; tab-size: 4; font: 13px/1.65 ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace; white-space: pre; }
+.av-multiline-textarea:focus { border-color: #a698ef; box-shadow: 0 0 0 2px #8d7ae815; }
+.av-multiline-status { margin-top: 8px; font-size: 10px; color: #939caf; }
+.av-multiline-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.av-multiline-editor button { appearance: none; cursor: pointer; padding: 7px 12px; border: 0; border-radius: 6px; font: inherit; }
+.av-multiline-editor button:focus-visible { outline: 2px solid #8c7ae8; outline-offset: 3px; }
+.av-multiline-cancel { background: #f3f4f8; color: #788397; }
+.av-multiline-apply { background: #7462dd; color: #fff; font-weight: 500 !important; }
+.av-multiline-apply:hover { background: #6553ce; }

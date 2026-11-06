@@ -1,0 +1,25 @@
+.av-matrix-editor { width: 368px; max-width: calc(100vw - 48px); box-sizing: border-box; max-height: min(70vh, 520px); overflow: auto; padding: 14px; font: 12px/1.5 Inter, 'PingFang SC', 'Microsoft YaHei', sans-serif; color: #3d4861; }
+.av-matrix-title { display: block; font-size: 14px; font-weight: 600; color: #303b54; }
+.av-matrix-intro { margin: 5px 0 13px; color: #7c8599; font-size: 11px; }
+.av-matrix-dimensions { display: flex; gap: 16px; margin-bottom: 12px; }
+.av-matrix-dimensions label { display: flex; gap: 7px; align-items: center; color: #7c8599; }
+.av-matrix-dimensions select { border: 1px solid #dfe4ef; border-radius: 5px; background: #f9faff; padding: 4px 8px; color: #46516c; font: inherit; }
+.av-matrix-bracket { position: relative; padding: 7px 12px; border-left: 2px solid #7f89a2; border-right: 2px solid #7f89a2; border-radius: 3px; }
+.av-matrix-bracket::before, .av-matrix-bracket::after { content: ''; position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(to right, #7f89a2 8px, transparent 8px, transparent calc(100% - 8px), #7f89a2 calc(100% - 8px)); }
+.av-matrix-bracket::before { top: 0; } .av-matrix-bracket::after { bottom: 0; }
+.av-matrix-grid { display: grid; gap: 7px; }
+.av-matrix-grid input { min-width: 0; width: 100%; box-sizing: border-box; text-align: center; padding: 8px 5px; border: 1px solid #e1e5ef; border-radius: 5px; background: #f8f9fe; color: #3e4762; font: 12px/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.av-matrix-grid input:focus { background: #fff; border-color: #9f8fe6; }
+.av-matrix-editor input:focus-visible, .av-matrix-editor select:focus-visible, .av-matrix-editor textarea:focus-visible, .av-matrix-editor button:focus-visible { outline: 2px solid #aa9bea; outline-offset: 2px; }
+.av-matrix-keyboard { margin: 9px 0 0; font-size: 10px; color: #939bae; }
+.av-matrix-message { min-height: 30px; margin-top: 10px; color: #9098aa; font-size: 11px; line-height: 1.5; }
+.av-matrix-message.is-error { color: #b05b46; }
+.av-matrix-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 7px; }
+.av-matrix-editor button { appearance: none; border: 0; border-radius: 6px; padding: 7px 11px; cursor: pointer; font: inherit; }
+.av-matrix-cancel, .av-matrix-repair-actions button { background: #f3f5fa; color: #748097; }
+.av-matrix-apply { background: #7563df; color: #fff; font-weight: 500; }
+.av-matrix-apply:hover { background: #6653cf; }
+.av-matrix-raw-label { display: flex; flex-direction: column; gap: 6px; color: #7c8599; font-size: 11px; }
+.av-matrix-raw-label textarea { width: 100%; box-sizing: border-box; resize: vertical; min-height: 90px; max-height: 260px; padding: 8px; border: 1px solid #dfe4ee; border-radius: 6px; background: #f8f9fe; color: #4b546f; font: 11px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.av-matrix-repair-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 9px; }
+.av-matrix-repair-actions button { font-size: 10px; padding: 6px 8px; }

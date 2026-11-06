@@ -27,6 +27,16 @@ export interface FieldDefinition {
   step?: number;
   description?: string;
   reference?: 'object' | 'object-list' | 'expression';
+  /** Unit or short qualifier shown after the input, never stored in project values. */
+  suffix?: string;
+  /** Exact catalogue objectKind allow-list for reference pickers; not an inheritance test. */
+  objectKinds?: string[];
+  /** Whether an object picker may explicitly select the empty string. */
+  optional?: boolean;
+  /** Human-readable meaning of the optional empty choice. */
+  emptyLabel?: string;
+  /** Optional richer editor; underlying serialized field type stays unchanged. */
+  editor?: 'matrix';
 }
 export interface BlockDefinition {
   type: string;

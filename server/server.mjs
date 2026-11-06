@@ -299,7 +299,7 @@ export async function createAnyVisServer(options = {}) {
           const body = await readJson(req);
           const { generateProject } = await import('../desktop/ai-proxy.mjs');
           const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 90_000);
+          const timer = setTimeout(() => controller.abort(), 120_000);
           res.once('close', () => { if (!res.writableEnded) controller.abort(); });
           try { return json(res, 200, await generateProject(body, { signal: controller.signal })); }
           finally { clearTimeout(timer); }

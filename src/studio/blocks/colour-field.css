@@ -1,0 +1,27 @@
+.av-colour-editor { width: 250px; padding: 12px; box-sizing: border-box; color: #34415a; font: 12px/1.5 Inter, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+.av-colour-heading { margin: 0 0 8px; color: #566078; font-size: 11px; font-weight: 600; letter-spacing: .02em; }
+.av-colour-palette { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.av-colour-editor button { appearance: none; cursor: pointer; font: inherit; box-sizing: border-box; }
+.av-colour-editor .av-colour-chip { display: block; width: 30px; height: 30px; padding: 0; border: 1px solid #24304724; border-radius: 7px; position: relative; transition: transform .12s ease; }
+.av-colour-chip:hover { transform: scale(1.1); }
+.av-colour-chip[aria-pressed='true']::after { content: ''; position: absolute; inset: -4px; border: 2px solid #7866e9; border-radius: 10px; pointer-events: none; }
+.av-colour-editor button:focus-visible, .av-colour-editor input:focus-visible { outline: 2px solid #8c7ae8; outline-offset: 3px; }
+.av-colour-custom-heading { margin-top: 17px; }
+.av-colour-custom { display: flex; align-items: stretch; gap: 10px; }
+.av-colour-native-label { display: flex; align-items: center; gap: 7px; flex-shrink: 0; color: #7d8598; font-size: 10px; }
+.av-colour-native-label input[type='color'] { appearance: none; -webkit-appearance: none; width: 36px; height: 36px; padding: 3px; border: 1px solid #d7ddeb; border-radius: 7px; background: #fff; cursor: pointer; }
+.av-colour-native-label input[type='color']::-webkit-color-swatch-wrapper { padding: 0; }
+.av-colour-native-label input[type='color']::-webkit-color-swatch { border: 0; border-radius: 3px; }
+.av-colour-native-label input[type='color']::-moz-color-swatch { border: 0; border-radius: 3px; }
+.av-colour-hex-label { flex: 1; display: flex; align-items: center; gap: 5px; padding: 0 8px; border: 1px solid #dfe3ed; border-radius: 7px; background: #f9fafc; }
+.av-colour-hex-label span { font-size: 9px; font-weight: 600; color: #a1a7b5; }
+.av-colour-hex-label input { min-width: 0; width: 100%; padding: 7px 0; border: 0; background: transparent; color: #3d4660; font: 11px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; outline: none; }
+.av-colour-hex-label:focus-within { border-color: #aa9cf1; box-shadow: 0 0 0 2px #8c7ae810; }
+.av-colour-hex-label input[aria-invalid='true'] { color: #b95742; }
+.av-colour-message { min-height: 28px; padding-top: 9px; color: #9198a9; font-size: 10px; line-height: 1.5; }
+.av-colour-message.is-error { color: #b95742; }
+.av-colour-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 5px; }
+.av-colour-editor .av-colour-cancel { padding: 6px 10px; background: #f4f5f9; color: #7c8498; border: 0; border-radius: 6px; }
+.av-colour-editor .av-colour-apply { padding: 6px 12px; background: #7563df; color: #fff; border: 0; border-radius: 6px; font-weight: 500; }
+.av-colour-editor .av-colour-apply:hover { background: #6653cf; }
+.av-colour-editor .av-colour-apply:disabled { opacity: .4; cursor: default; }

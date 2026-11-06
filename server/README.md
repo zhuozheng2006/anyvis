@@ -25,7 +25,7 @@ This is a local desktop/development service, not a multi-user sandbox. Ordinary 
 | `GET /api/media/:id/video.webm` | Native WebM fallback; supports byte ranges |
 | `GET /api/media/:id/poster.png` | Representative frame from the actual video |
 | `GET /api/media/:id/preview.png` | Most recent actual frame during rendering; URL changes per published frame |
-| `POST /api/ai` | Delegated to the AI adapter, with 90-second timeout |
+| `POST /api/ai` | Delegated to the AI adapter, with 120-second timeout |
 
 POST and DELETE require `X-AnyVis-Token`; JSON POST requests require `Content-Type: application/json`. Host and Origin must name loopback hosts on the service or configured UI port. No CORS access is enabled; cross-site Fetch requests are rejected. Media GETs are same-origin so a normal HTML video element can play and seek. Appending `?download=1` requests a downloaded file.
 

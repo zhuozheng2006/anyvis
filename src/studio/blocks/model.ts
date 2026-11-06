@@ -3,10 +3,14 @@ import * as Chinese from 'blockly/msg/zh-hans';
 import { BLOCK_CATALOG, getBlockDefinition } from '../core/catalog';
 import type { Action, BlockDefinition, FieldDefinition, FieldValue, Project } from '../core/types';
 import { planObjectRename } from './rename';
+import { ColourField } from './colour-field';
+import { MultilineCodeField } from './multiline-code-field';
+import { createMatrixField } from './matrix-field';
 
 export const START_TYPE = 'anyvis2_start';
 const PREFIX = 'anyvis2_';
-const referenceNames = new WeakMap<Blockly.Workspace, string[]>();
+interface ReferenceObject { name: string; kind: string; blockId: string }
+const referenceObjects = new WeakMap<Blockly.Workspace, Map<string, ReferenceObject>>();
 const renameFeedback = new WeakMap<Blockly.Workspace, (error: string | null) => void>();
 let registered = false;
 
@@ -30,29 +34,38 @@ function walkActions(actions: Action[], visit: (action: Action) => void) {
   }
 }
 
-/** Include dangling references so loading a project never silently replaces them. */
+/** Track declarations, not references: an unresolved name must not become a valid choice. */
 export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[]): void {
-  const names = new Set<string>();
-  walkActions(actions, (action) => {
-    const definition = getBlockDefinition(action.type);
-    if (definition?.createsObject && typeof action.fields.name === 'string') names.add(action.fields.name);
-    definition?.fields.filter((field) => field.type === 'object').forEach((field) => {
-      const value = action.fields[field.name];
-      if (typeof value === 'string' && value) names.add(value);
-    });
-  });
-  for (const block of workspace.getAllBlocks(false)) {
-    const definition = getBlockDefinition(block.type.slice(PREFIX.length));
-    if (definition?.createsObject) {
-      const value = block.getFieldValue('name');
-      if (typeof value === 'string' && value) names.add(value);
+  const objects = new Map<string, ReferenceObject>();
+  const blocks = workspace.getAllBlocks(false);
+  if (blocks.length) {
+    // Once loaded, the actual workspace wins over a lagging React snapshot,
+    // including immediately after deleting or renaming a constructor.
+    for (const block of blocks) {
+      const definition = getBlockDefinition(block.type.slice(PREFIX.length));
+      const name = block.getFieldValue('name');
+      if (definition?.createsObject && typeof name === 'string' && name) {
+        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: block.id });
+      }
     }
+  } else {
+    // Imported fields need their options before Blockly creates any blocks.
+    walkActions(actions, (action) => {
+      const definition = getBlockDefinition(action.type);
+      const name = action.fields.name;
+      if (definition?.createsObject && typeof name === 'string' && name) {
+        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: action.id });
+      }
+    });
   }
-  referenceNames.set(workspace, [...names].filter(Boolean));
+  referenceObjects.set(workspace, objects);
+  for (const block of blocks) for (const input of block.inputList) for (const field of input.fieldRow) {
+    if (field instanceof ObjectReferenceField) field.refreshLabel();
+  }
 }
 
 export function releaseReferenceNames(workspace: Blockly.Workspace): void {
-  referenceNames.delete(workspace);
+  referenceObjects.delete(workspace);
   renameFeedback.delete(workspace);
 }
 
@@ -69,14 +82,61 @@ function workspaceActionsSnapshot(workspace: Blockly.Workspace): Action[] {
   });
 }
 
+const kindLabels: Record<string, string> = {
+  mobject: '图形', text: '文字', formula: '公式', number: '数值对象', axes: '二维坐标系',
+  number_line: '数轴', curve: '曲线', matrix: '矩阵', graph: '图结构', tracker: '参数', axes3d: '三维坐标系',
+};
+function referenceMap(field: Blockly.FieldDropdown): Map<string, ReferenceObject> {
+  const workspace = field.getSourceBlock()?.workspace;
+  const main = workspace?.isFlyout ? (workspace as Blockly.WorkspaceSvg).targetWorkspace : workspace;
+  return main ? referenceObjects.get(main) || new Map() : new Map();
+}
+function expectedKind(field: FieldDefinition): string {
+  return field.objectKinds?.length === 1 ? kindLabels[field.objectKinds[0]] || '对象' : '图形对象';
+}
+function compatibleReference(input: Blockly.FieldDropdown, definition: FieldDefinition, value: ReferenceObject): boolean {
+  return (!definition.objectKinds || definition.objectKinds.includes(value.kind)) && value.blockId !== input.getSourceBlock()?.id;
+}
+function referenceLabel(input: Blockly.FieldDropdown, definition: FieldDefinition, value: string): string {
+  if (!value) {
+    if (definition.optional) return definition.emptyLabel || '不使用对象';
+    const available = [...referenceMap(input).values()].some(object => compatibleReference(input, definition, object));
+    return `${available ? '选择' : '先创建'}${expectedKind(definition)}`;
+  }
+  const object = referenceMap(input).get(value);
+  if (!object) return `⚠ 已缺失：${value}`;
+  if (object.blockId === input.getSourceBlock()?.id) return `⚠ 不能引用自身：${value}`;
+  return compatibleReference(input, definition, object) ? value : `⚠ 类型不符：${value}`;
+}
+function referenceOptions(input: Blockly.FieldDropdown, definition: FieldDefinition): [string, string][] {
+  const options: [string, string][] = [[referenceLabel(input, definition, ''), '']];
+  for (const object of referenceMap(input).values()) {
+    if (compatibleReference(input, definition, object)) options.push([object.name, object.name]);
+  }
+  const current = input.getValue();
+  if (current && !options.some(option => option[1] === current)) options.push([referenceLabel(input, definition, current), current]);
+  return options;
+}
 class ObjectReferenceField extends Blockly.FieldDropdown {
+  private readonly definition?: FieldDefinition;
+  constructor(definition: FieldDefinition) {
+    super(function (this: Blockly.FieldDropdown) { return referenceOptions(this, definition); });
+    this.definition = definition;
+  }
   protected override doClassValidation_(value?: string): string | null {
     if (typeof value !== 'string') return null;
     // Undo, import and semantic renames can refer to a name that was not in the
     // last open menu. Preserve it and let the compiler report missing objects.
     const options = this.getOptions(false);
-    if (!options.some((option) => Array.isArray(option) && option[1] === value)) options.push([value || '未选择', value]);
+    if (!options.some((option) => Array.isArray(option) && option[1] === value)) {
+      options.push([this.definition ? referenceLabel(this, this.definition, value) : value || '未选择', value]);
+    }
     return value;
+  }
+  refreshLabel(): void {
+    const previous = this.getText();
+    this.setValue(this.getValue(), false);
+    if (this.getText() !== previous) this.forceRerender();
   }
 }
 
@@ -100,7 +160,8 @@ export function applyWorkspaceRename(workspace: Blockly.Workspace, event: Blockl
   } finally { Blockly.Events.setGroup(previousGroup); }
 }
 
-function makeField(field: FieldDefinition): Blockly.Field {
+function makeField(field: FieldDefinition, definition: BlockDefinition): Blockly.Field {
+  if (field.editor === 'matrix') return createMatrixField(String(field.default), definition.type === 'apply_matrix' ? 2 : undefined);
   if (field.type === 'number') {
     // Blockly precision rounds values on load; an HTML input step is not a
     // rounding contract. Preserve fractional defaults and imported parameters.
@@ -112,18 +173,12 @@ function makeField(field: FieldDefinition): Blockly.Field {
     return dropdown;
   }
   if (field.type === 'object') {
-    return new ObjectReferenceField(function (this: Blockly.FieldDropdown) {
-      const workspace = this.getSourceBlock()?.workspace;
-      const main = workspace?.isFlyout ? (workspace as Blockly.WorkspaceSvg).targetWorkspace : workspace;
-      const choices = new Set(referenceNames.get(main ?? workspace!) ?? []);
-      const current = this.getValue();
-      if (current) choices.add(current);
-      if (!choices.size) choices.add(String(field.default || '对象'));
-      return [...choices].map((name): [string, string] => [name, name]);
-    });
+    return new ObjectReferenceField(field);
   }
+  if (field.type === 'color') return new ColourField(String(field.default));
+  if (field.type === 'multiline') return new MultilineCodeField(String(field.default));
   const input = new Blockly.FieldTextInput(String(field.default));
-  if (field.type === 'expression' || field.type === 'multiline') input.setSpellcheck(false);
+  if (field.type === 'expression') input.setSpellcheck(false);
   return input;
 }
 
@@ -195,12 +250,14 @@ export function registerStudioBlocks(): void {
           const wide = field.type === 'expression' || field.type === 'multiline'
             || (field.type === 'text' && String(field.default).length > 14);
           if (!row || fieldsInRow >= 2 || wide) { row = this.appendDummyInput(`FIELD_${field.name}`); fieldsInRow = 0; }
-          row.appendField(field.label).appendField(makeField(field), field.name);
+          row.appendField(field.label).appendField(makeField(field, definition), field.name);
+          if (field.suffix) row.appendField(field.suffix, `__unit_${field.name}`);
           fieldsInRow++;
           if (wide) row = undefined;
         }
         for (const field of definition.fields.filter((item) => !common.has(item.name))) {
-          this.appendDummyInput(`FIELD_${field.name}`).appendField(field.label).appendField(makeField(field), field.name);
+          const input = this.appendDummyInput(`FIELD_${field.name}`).appendField(field.label).appendField(makeField(field, definition), field.name);
+          if (field.suffix) input.appendField(field.suffix, `__unit_${field.name}`);
         }
         if (definition.createsObject) {
           this.getField('name')?.setValidator((value) => {
@@ -274,13 +331,13 @@ export function actionsToWorkspace(actions: Action[]): object {
 
 export function loadProjectWorkspace(project: Project, workspace: Blockly.Workspace): void {
   registerStudioBlocks();
-  setReferenceNames(workspace, project.actions);
   const saved = project.workspace as Partial<StudioWorkspaceState> | undefined;
   const usable = saved?.version === 1 && saved.actionSignature === actionSignature(project.actions) && saved.blockly;
   const state = usable ? saved.blockly! : actionsToWorkspace(project.actions);
   Blockly.Events.disable();
   try {
     workspace.clear();
+    setReferenceNames(workspace, project.actions);
     try {
       Blockly.serialization.workspaces.load(state, workspace);
       const loadedActions = workspaceToActions(workspace);

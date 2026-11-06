@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import * as Blockly from 'blockly/core';
 import { ChevronDown, Maximize, Minus, Plus, Search, Undo2, Redo2, X } from 'lucide-react';
 import { createAction, getBlockDefinition } from '../core/catalog';
-import type { Project } from '../core/types';
+import type { FieldValue, Project } from '../core/types';
 import {
   actionSignature, actionsToWorkspace, applyWorkspaceRename, createToolbox, detachedBlockCount,
   loadProjectWorkspace, registerStudioBlocks, releaseReferenceNames, saveWorkspace,
@@ -18,7 +18,9 @@ export interface StudioBlocksHandle {
   zoomOut(): void;
   fit(): void;
   highlight(id: string | null): void;
-  addBlock(type: string): void;
+  addBlock(type: string, fields?: Record<string, FieldValue>): void;
+  updateFields(id: string, fields: Record<string, FieldValue>): void;
+  showDetails(id: string): void;
   focusSearch(): void;
 }
 
@@ -120,12 +122,24 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     zoomIn: () => zoom(1), zoomOut: () => zoom(-1), fit,
     highlight: (id) => { workspace.current?.highlightBlock(id); if (id) workspace.current?.centerOnBlock(id, true); },
     focusSearch: () => search.current?.focus(),
-    addBlock: (type) => {
+    updateFields: (id, fields) => {
+      const block = workspace.current?.getBlockById(id);
+      if (!block || readOnly) return;
+      Blockly.Events.setGroup(true);
+      try { for (const [name, value] of Object.entries(fields)) if (block.getField(name)) block.setFieldValue(String(value), name); }
+      finally { Blockly.Events.setGroup(false); }
+    },
+    showDetails: (id) => {
+      const block = workspace.current?.getBlockById(id);
+      if (block?.getField('__details')) block.setFieldValue('expanded', '__details');
+      workspace.current?.centerOnBlock(id, true);
+    },
+    addBlock: (type, fields) => {
       const ws = workspace.current;
       if (!ws || readOnly) return;
       const definition = getBlockDefinition(type);
       if (!definition) return;
-      const action = createAction(type);
+      const action = createAction(type, fields);
       const wrapped = actionsToWorkspace([action]) as { blocks: { blocks: Blockly.serialization.blocks.State[] } };
       const state = wrapped.blocks.blocks[0].next?.block;
       if (!state) return;
@@ -160,6 +174,13 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     setRenameErrorHandler(ws, publishError);
     const updateStats = () => {
       const detached = detachedBlockCount(ws);
+      const start = ws.getTopBlocks(false).find(block => block.type === START_TYPE);
+      const connected = new Set(start?.getDescendants(false).map(block => block.id) || []);
+      for (const block of ws.getAllBlocks(false)) {
+        const outside = !connected.has(block.id) && block.type !== START_TYPE;
+        block.getSvgRoot()?.classList.toggle('av-block-detached', outside);
+        block.setWarningText(outside ? '这块积木还没有接上。请接到「当动画开始」下方，否则不会进入动画。' : null, 'anyvis-connection');
+      }
       setStats({ connected: Math.max(0, ws.getAllBlocks(false).length - detached - 1), detached });
       setScale(Math.round(ws.scale * 100));
     };

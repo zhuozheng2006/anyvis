@@ -49,3 +49,6 @@
   .av-block-editor .blocklyToolboxDiv { min-width: 86px; }
   .av-block-editor .blocklyTreeRow { padding-right: 6px !important; }
 }
+
+/* A loose draft remains editable and saved, but never looks like an active step. */
+.av-block-canvas .av-block-detached > .blocklyPath { fill-opacity: .5; stroke-dasharray: 4 3; }
