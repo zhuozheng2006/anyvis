@@ -76,16 +76,24 @@ function workerEnvironment(python) {
   return { ...process.env, PYTHONUNBUFFERED: '1', PYTHONDONTWRITEBYTECODE: '1', PATH: [...additions, process.env.PATH || ''].join(path.delimiter) };
 }
 
-function probePython(python) {
+function probePython(python, { workerPath = WORKER, runtimeRoot = ROOT, signal } = {}) {
   return new Promise(resolve => {
-    let output = ''; let settled = false;
-    const child = spawn(python, [WORKER, '--health'], { cwd: ROOT, env: workerEnvironment(python), windowsHide: true });
-    const finish = data => { if (!settled) { settled = true; clearTimeout(timer); resolve(data); } };
-    const timer = setTimeout(() => { child.kill('SIGKILL'); finish(null); }, 15_000);
+    if (signal?.aborted) { resolve(null); return; }
+    let output = ''; let settled = false; let terminated = false;
+    const child = spawn(python, [workerPath, '--health'], { cwd: runtimeRoot, env: workerEnvironment(python), windowsHide: true });
+    const stop = () => { terminated = true; child.kill('SIGKILL'); };
+    const finish = data => {
+      if (settled) return;
+      settled = true; clearTimeout(timer); signal?.removeEventListener('abort', stop); resolve(data);
+    };
+    const timer = setTimeout(stop, 15_000);
+    signal?.addEventListener('abort', stop, { once: true });
+    if (signal?.aborted) stop();
     child.stdout.on('data', data => { output = (output + data.toString()).slice(-100_000); });
     child.stderr.on('data', () => {});
     child.on('error', () => finish(null));
     child.on('close', () => {
+      if (terminated) { finish(null); return; }
       const line = output.split(/\r?\n/).findLast(value => value.startsWith(EVENT_PREFIX));
       try { finish(line ? { ...JSON.parse(line.slice(EVENT_PREFIX.length)), python } : null); }
       catch { finish(null); }
@@ -93,24 +101,28 @@ function probePython(python) {
   });
 }
 
-export async function discoverPython() {
+export async function discoverPython(options = {}) {
+  const runtimeRoot = options.runtimeRoot || ROOT;
+  const explicitPython = options.pythonPath || process.env.ANYVIS_PYTHON;
   const executable = process.platform === 'win32' ? 'python.exe' : 'bin/python';
-  const candidates = [process.env.ANYVIS_PYTHON, path.join(ROOT, '.runtime', executable),
+  const candidates = explicitPython ? [explicitPython] : [...(options.runtimeRoot ? [path.join(runtimeRoot, executable)] : []), path.join(runtimeRoot, '.runtime', executable),
     ...['miniconda3', 'anaconda3', 'miniforge3', 'mambaforge'].map(folder => path.join(homedir(), folder, 'envs', 'manim', executable)),
     'python3', 'python'].filter(Boolean);
   let last;
   for (const candidate of new Set(candidates)) {
+    if (options.signal?.aborted) break;
     if (path.isAbsolute(candidate) && !existsSync(candidate)) continue;
-    const result = await probePython(candidate);
+    const result = await probePython(candidate, { ...options, runtimeRoot });
     if (result?.available) return result;
     if (result) last = result;
-    if (process.env.ANYVIS_PYTHON === candidate) break;
   }
-  return { available: false, error: last?.error || '没有找到可用的 Manim 环境。可设置 ANYVIS_PYTHON 为已安装 Manim 的 Python 路径。', capabilities: {} };
+  return { available: false, error: options.signal?.aborted ? '服务已关闭，环境检查已停止。' : last?.error || (explicitPython ? '指定的 Python 环境不可用。请检查该路径及其 Manim 依赖；不会自动切换到其他环境。' : '没有找到可用的 Manim 环境。可设置 ANYVIS_PYTHON 为已安装 Manim 的 Python 路径。'), capabilities: {} };
 }
 
 export async function createAnyVisServer(options = {}) {
   const cacheRoot = options.cacheRoot || path.join(ROOT, '.anyvis-cache');
+  const workerPath = options.workerPath || WORKER;
+  const staticRoot = path.resolve(options.staticRoot || path.join(ROOT, 'dist'));
   await mkdir(cacheRoot, { recursive: true });
   const token = randomBytes(32).toString('hex');
   const requestedPort = options.port ?? Number(process.env.ANYVIS_PORT || 4317);
@@ -119,7 +131,8 @@ export async function createAnyVisServer(options = {}) {
   const jobs = new Map(); const pending = [];
   let running = null; let stopped = false;
   let health = { available: false, checking: true, message: '正在检查 Manim 运行环境…', capabilities: {} };
-  const healthPromise = (options.health ? Promise.resolve(options.health) : discoverPython()).then(result => { health = { ...result, checking: false }; return health; });
+  const healthController = new AbortController();
+  const healthPromise = (options.health ? Promise.resolve(options.health) : discoverPython({ pythonPath: options.pythonPath, runtimeRoot: options.runtimeRoot, workerPath, signal: healthController.signal })).then(result => { health = { ...result, checking: false }; return health; });
 
   function validOrigin(req) {
     const allowedPorts = new Set([actualPort, requestedPort, uiPort].map(String));
@@ -201,7 +214,7 @@ export async function createAnyVisServer(options = {}) {
     }
     if (!job) return;
     running = job; job.status = 'running'; job.message = '正在启动 Manim…'; job.progress = 0.01;
-    const child = spawn(health.python, [WORKER, job.directory], { cwd: job.directory, env: workerEnvironment(health.python), detached: process.platform !== 'win32', windowsHide: true });
+    const child = spawn(health.python, [workerPath, job.directory], { cwd: job.directory, env: workerEnvironment(health.python), detached: process.platform !== 'win32', windowsHide: true });
     job.child = child;
     let buffer = ''; let logs = ''; let finalized = false;
     const timeoutMs = job.quality === 'final' ? 600_000 : 120_000;
@@ -321,7 +334,7 @@ export async function createAnyVisServer(options = {}) {
         return json(res, 404, { error: '接口不存在。' });
       }
       if (!['GET', 'HEAD'].includes(req.method)) return json(res, 405, { error: '不支持的请求方式。' });
-      const dist = path.join(ROOT, 'dist');
+      const dist = staticRoot;
       let decoded;
       try { decoded = decodeURIComponent(pathname); } catch { return json(res, 400, { error: '无效地址。' }); }
       const candidate = path.resolve(dist, '.' + decoded);
@@ -337,11 +350,18 @@ export async function createAnyVisServer(options = {}) {
   server.requestTimeout = 130_000;
   server.headersTimeout = 10_000;
   if (options.listen !== false) {
-    await new Promise((resolve, reject) => { server.once('error', reject); server.listen(requestedPort, '127.0.0.1', resolve); });
-    actualPort = server.address().port;
+    try {
+      await new Promise((resolve, reject) => { server.once('error', reject); server.listen(requestedPort, '127.0.0.1', resolve); });
+      actualPort = server.address().port;
+    } catch (error) {
+      stopped = true; healthController.abort(); await healthPromise;
+      if (server.listening) await new Promise(resolve => server.close(resolve));
+      throw error;
+    }
   }
   async function close() {
     stopped = true;
+    healthController.abort();
     const live = [...jobs.values()].map(job => job.child).filter(child => child && child.exitCode === null);
     for (const job of jobs.values()) cancel(job, '服务正在关闭');
     await Promise.all(live.map(child => new Promise(resolve => {
@@ -349,6 +369,7 @@ export async function createAnyVisServer(options = {}) {
       const timer = setTimeout(resolve, 1800);
       child.once('close', () => { clearTimeout(timer); resolve(); });
     })));
+    await healthPromise;
     if (server.listening) await new Promise(resolve => server.close(resolve));
   }
   return { server, port: actualPort, close, healthPromise, cacheRoot };

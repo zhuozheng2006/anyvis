@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "scope": "Selected native blocks on Manim CE / Cairo. Not full parameter or renderer coverage.",
+  "reproducibleCommand": "node scripts/verify-native-blocks.mjs --python <MANIM_PYTHON> --evidence docs/research/native-blocks-batch-1-evidence.json",
+  "suites": [
+    {
+      "suite": "geometry",
+      "blockTypes": [
+        "annulus",
+        "sector",
+        "annular_sector",
+        "star",
+        "dashed_line",
+        "brace",
+        "surrounding_rectangle",
+        "underline"
+      ],
+      "apiRefs": [
+        "Annulus",
+        "Sector",
+        "AnnularSector",
+        "Star",
+        "DashedLine",
+        "Brace",
+        "SurroundingRectangle",
+        "Underline"
+      ],
+      "status": "rendered-and-decoded",
+      "sourceSha256": "59eeb9397aeae16273a83a17d0ce2099019bfd6ab099e297b1bbbdf680499304",
+      "harnessSha256": "8e9cc1ee1f4bca093b99e47d280e017da7978df82804c74a953d21e83a0ae6cc",
+      "assertionsPassed": 4,
+      "visualReview": "not-assumed-by-script",
+      "media": {
+        "engine": "0.20.1",
+        "renderer": "cairo",
+        "format": "webm",
+        "codec": "vp9",
+        "width": 640,
+        "height": 360,
+        "fps": "15000/1001",
+        "decodedFrames": 103,
+        "durationSeconds": 6.8735333333333335,
+        "keyframes": [
+          0,
+          25,
+          51,
+          77,
+          102
+        ]
+      }
+    },
+    {
+      "suite": "animation",
+      "blockTypes": [
+        "focus_on",
+        "wave",
+        "passing_flash",
+        "transform_from_copy",
+        "shrink",
+        "grow_from_edge",
+        "grow_from_point",
+        "spin_in",
+        "reveal_group",
+        "type_text",
+        "set_layer"
+      ],
+      "apiRefs": [
+        "FocusOn",
+        "ApplyWave",
+        "ShowPassingFlash",
+        "TransformFromCopy",
+        "ShrinkToCenter",
+        "GrowFromEdge",
+        "GrowFromPoint",
+        "SpinInFromNothing",
+        "ShowIncreasingSubsets",
+        "AddTextLetterByLetter",
+        "Mobject.set_z_index"
+      ],
+      "status": "rendered-and-decoded",
+      "sourceSha256": "34fb75afba6d27fe7c7e6146a02e4f5132e0d7d9f613ad6b8bb44891b25961f7",
+      "harnessSha256": "3497ad7ff3cc7cdbbda5bbd95d80c863cf9d104156385c416863a748919e98b4",
+      "assertionsPassed": 10,
+      "visualReview": "not-assumed-by-script",
+      "media": {
+        "engine": "0.20.1",
+        "renderer": "cairo",
+        "format": "webm",
+        "codec": "vp9",
+        "width": 640,
+        "height": 360,
+        "fps": "15",
+        "decodedFrames": 130,
+        "durationSeconds": 8.666666666666666,
+        "keyframes": [
+          0,
+          32,
+          65,
+          97,
+          129
+        ]
+      }
+    }
+  ],
+  "coverageEvidence": [
+    {
+      "id": "native-blocks-batch-1-geometry",
+      "engine_version": "0.20.1",
+      "renderer": "cairo",
+      "mode": "native_video",
+      "block_types": [
+        "annulus",
+        "sector",
+        "annular_sector",
+        "star",
+        "dashed_line",
+        "brace",
+        "surrounding_rectangle",
+        "underline"
+      ],
+      "api_refs": [
+        "Annulus",
+        "Sector",
+        "AnnularSector",
+        "Star",
+        "DashedLine",
+        "Brace",
+        "SurroundingRectangle",
+        "Underline"
+      ],
+      "checks": [
+        "4 native scene assertions passed",
+        "103 frames fully decoded with PyAV",
+        "640x360 requested at 15 fps; WebM reported rate within 0.03 fps",
+        "Source and assertion-harness SHA256 recorded in this bundle"
+      ],
+      "limitations": [
+        "Selected parameters only, not all options of these APIs",
+        "Cairo only; no OpenGL validation",
+        "Automated success does not imply manual visual approval"
+      ],
+      "source": "scripts/verify-native-blocks.mjs"
+    },
+    {
+      "id": "native-blocks-batch-1-animation",
+      "engine_version": "0.20.1",
+      "renderer": "cairo",
+      "mode": "native_video",
+      "block_types": [
+        "focus_on",
+        "wave",
+        "passing_flash",
+        "transform_from_copy",
+        "shrink",
+        "grow_from_edge",
+        "grow_from_point",
+        "spin_in",
+        "reveal_group",
+        "type_text",
+        "set_layer"
+      ],
+      "api_refs": [
+        "FocusOn",
+        "ApplyWave",
+        "ShowPassingFlash",
+        "TransformFromCopy",
+        "ShrinkToCenter",
+        "GrowFromEdge",
+        "GrowFromPoint",
+        "SpinInFromNothing",
+        "ShowIncreasingSubsets",
+        "AddTextLetterByLetter",
+        "Mobject.set_z_index"
+      ],
+      "checks": [
+        "10 native scene assertions passed",
+        "130 frames fully decoded with PyAV",
+        "640x360 requested at 15 fps; WebM reported rate within 0.03 fps",
+        "Source and assertion-harness SHA256 recorded in this bundle"
+      ],
+      "limitations": [
+        "Selected parameters only, not all options of these APIs",
+        "Cairo only; no OpenGL validation",
+        "Automated success does not imply manual visual approval"
+      ],
+      "source": "scripts/verify-native-blocks.mjs"
+    }
+  ]
+}

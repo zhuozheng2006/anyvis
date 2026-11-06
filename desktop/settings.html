@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AnyVis · 运行环境</title><link rel="stylesheet" href="settings.css"></head>
+<body><main><div class="mark">A<span>v</span></div><p class="eyebrow">ANYVIS STUDIO</p><h1>让动画准备就绪</h1>
+<p class="intro">AnyVis 会自行启动本地引擎。编辑器可直接使用；真实渲染需要安装了 Manim 的 Python。</p>
+<section class="status" aria-live="polite"><strong id="state">正在启动本地引擎…</strong><p id="detail">首次检测运行环境可能需要一点时间。</p></section>
+<label for="python">Manim Python 路径</label><div class="path-row"><input id="python" type="text" autocomplete="off" spellcheck="false" placeholder="留空以自动检测已有环境"><button id="browse" type="button">选择文件…</button></div>
+<p class="hint">选择已安装 Manim 的环境中的 python / python.exe 文件。不会修改你的 Conda 环境。留空后保存，可恢复自动检测。</p>
+<p id="error" role="alert"></p><div class="actions"><button id="save" class="primary" type="button">保存并重新连接</button><button id="retry" type="button">重试启动</button><button id="editor" type="button">返回编辑器</button></div>
+<p class="footnote">重新连接会停止当前渲染。项目会保留在本机；建议先保存正在编辑的作品。</p>
+</main><script src="settings.js"></script></body></html>

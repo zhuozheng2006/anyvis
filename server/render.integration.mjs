@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { copyFile, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { Readable, Writable } from 'node:stream';
@@ -28,7 +28,9 @@ test('project → server compiler → native Manim → playable media, diagnosti
   const health = await discoverPython();
   if (!health.available) { t.skip(health.error); return; }
   const cacheRoot = await mkdtemp(path.join(tmpdir(), 'anyvis-native-integration-'));
-  const app = await createAnyVisServer({ port: 4317, listen: false, cacheRoot, health });
+  const workerPath = path.join(cacheRoot, 'bundled-worker.py');
+  await copyFile(new URL('./worker.py', import.meta.url), workerPath);
+  const app = await createAnyVisServer({ port: 4317, listen: false, cacheRoot, health, workerPath });
   const { token } = (await request(app, '/api/session')).json();
   const headers = { 'content-type': 'application/json', 'x-anyvis-token': token };
   const post = body => request(app, '/api/render', { method: 'POST', headers, body });

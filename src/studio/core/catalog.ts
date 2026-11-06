@@ -1,4 +1,5 @@
 import type { Action, BlockDefinition, FieldDefinition, FieldValue } from './types.ts';
+import { NATIVE_API_MAP } from './native-api-map.ts';
 
 /** These are concrete catalogue kinds, not Python inheritance categories. */
 const VISUAL_OBJECT_KINDS = ['mobject', 'text', 'formula', 'number', 'axes', 'number_line', 'curve', 'matrix', 'graph', 'axes3d'];
@@ -47,13 +48,13 @@ const o = (name = 'target', label = '对象', value = '圆', objectKinds = VISUA
 const optionalAxes = (): FieldDefinition => ({ ...o('axes', '使用坐标', '', ['axes']), optional: true, emptyLabel: '画面坐标（不使用坐标系）', description: '选择坐标系时按它的数学坐标定位；选择画面坐标时直接使用舞台坐标。' });
 const c = (name = 'color', label = '颜色', value = '#60A5FA'): FieldDefinition => ({ name, label, type: 'color', default: value });
 const s = (name: string, label: string, value: string, options: [string, string][]): FieldDefinition => ({ name, label, type: 'select', default: value, options });
-const position = () => [n('x', '横坐标', 0, -100, 100), n('y', '纵坐标', 0, -100, 100), n('z', '深度', 0, -100, 100)];
+const position = () => [n('x', '横坐标', 0, -100, 100), n('y', '纵坐标', 0, -100, 100), n('z', 'z 坐标', 0, -100, 100)];
 const duration = () => n('duration', '用时', 1, 0.05, 120, 0.1);
 const rate = () => s('easing', '节奏', 'smooth', [['平滑', 'smooth'], ['匀速', 'linear'], ['慢入', 'ease_in_sine'], ['慢出', 'ease_out_sine'], ['来回', 'there_and_back']]);
 const timing = () => [duration(), rate()];
 const appear = (kind = 'create') => [{ ...s('appear', '显示方式', kind, [['绘制动画', 'create'], ['淡入动画', 'fade'], ['书写动画', 'write'], ['直接显示（无动画）', 'none'], ['暂不显示', 'hidden']]), description: '绘制、淡入和书写会播放出场动画；直接显示不耗时；暂不显示只创建对象，可用作变形目标。' }, { ...duration(), description: '仅在选择绘制、淡入或书写动画时使用此时长。' }];
 const COLORS: Record<string, string> = { '图形': '#3B82F6', '文字公式': '#8B5CF6', '坐标函数': '#0D9488', '数据结构': '#4F46E5', '三维': '#6366F1', '动画': '#DB2777', '样式布局': '#D97706', '参数关系': '#059669', '编排': '#B45309', '高级': '#64748B' };
-const block = (type: string, label: string, category: string, fields: FieldDefinition[], tooltip: string, extra: Partial<BlockDefinition> = {}): BlockDefinition => ({ type, label, category, fields, tooltip, colour: COLORS[category], ...extra });
+const block = (type: string, label: string, category: string, fields: FieldDefinition[], tooltip: string, extra: Partial<BlockDefinition> = {}): BlockDefinition => ({ type, label, category, fields, tooltip, colour: COLORS[category], nativeApis: [...(NATIVE_API_MAP[type] ?? [])], ...extra });
 const shape = (type: string, label: string, specific: FieldDefinition[], tooltip: string) => block(type, label, '图形', [t('name', '命名', label), ...specific, c(), n('fill', '填充', type === 'dot' ? 1 : 0.15, 0, 1), ...position(), ...appear()], tooltip, { createsObject: true, objectKind: 'mobject' });
 const animated = (type: string, label: string, specific: FieldDefinition[], tooltip: string) => block(type, label, '动画', [o('target', type === 'matching_tex' ? '原公式' : '对象', type === 'matching_tex' ? '公式' : '圆', type === 'matching_tex' ? ['formula'] : VISUAL_OBJECT_KINDS), ...specific, ...timing()], tooltip);
 
@@ -69,6 +70,14 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   block('line', '线段', '图形', [t('name', '命名', '线段'), n('x1', '起点 x', -2), n('y1', '起点 y', 0), n('x2', '终点 x', 2), n('y2', '终点 y', 0), c(), ...appear()], '在两个舞台坐标之间创建线段。', { createsObject: true, objectKind: 'mobject' }),
   block('arrow', '箭头', '图形', [t('name', '命名', '箭头'), n('x1', '起点 x', 0), n('y1', '起点 y', 0), n('x2', '终点 x', 2), n('y2', '终点 y', 1), c(), ...appear()], '创建两点之间的箭头。', { createsObject: true, objectKind: 'mobject' }),
   shape('arc', '圆弧', [n('radius', '半径', 1, 0.01, 50), n('start', '起始角（度）', 0, -3600, 3600), n('angle', '角度（度）', 90, -3600, 3600)], '按半径、起始角与角度创建弧线。'),
+  shape('annulus', '圆环', [n('innerRadius', '内半径', 0.8, 0.01, 50), n('outerRadius', '外半径', 1.5, 0.01, 50)], '创建完整圆环，内半径必须小于外半径。'),
+  shape('sector', '扇形', [n('radius', '半径', 1.5, 0.01, 50), n('start', '起始角（度）', 0, -3600, 3600), n('angle', '角度（度）', 90, -360, 360)], '根据半径与圆心角创建扇形；角度使用度。'),
+  shape('annular_sector', '环形扇区', [n('innerRadius', '内半径', 0.8, 0.01, 50), n('outerRadius', '外半径', 1.5, 0.01, 50), n('start', '起始角（度）', 0, -3600, 3600), n('angle', '角度（度）', 90, -360, 360)], '创建圆环的一部分，适合展示角度、比例和圆周分段。'),
+  shape('star', '星形', [n('points', '角数', 5, 3, 20, 1), n('outerRadius', '外半径', 1.5, 0.01, 50), n('innerRadius', '内半径', 0.65, 0.01, 50)], '创建交替内外顶点的星形，内半径必须小于外半径。'),
+  block('dashed_line', '虚线', '图形', [t('name', '命名', '虚线'), n('x1', '起点 x', -2), n('y1', '起点 y', 0), n('x2', '终点 x', 2), n('y2', '终点 y', 0), n('dashLength', '虚线段长度', 0.12, 0.01, 5), n('dashRatio', '实线占比', 0.55, 0.05, 1), c(), ...appear()], '在两个舞台坐标之间绘制虚线。实线占比越小，间隔越明显。', { createsObject: true, objectKind: 'mobject' }),
+  block('brace', '大括号标注', '图形', [t('name', '命名', '括号'), o('target', '标注对象', '圆'), s('direction', '方向', 'DOWN', [['下方', 'DOWN'], ['上方', 'UP'], ['左侧', 'LEFT'], ['右侧', 'RIGHT']]), n('buff', '间距', 0.2, 0, 10), c('color', '颜色', '#FBBF24'), ...appear()], '沿对象边界创建大括号。可再用文字与相对位置积木加入说明。', { createsObject: true, objectKind: 'mobject' }),
+  block('surrounding_rectangle', '边框标注', '图形', [t('name', '命名', '边框'), o('target', '包围对象', '圆'), n('buff', '边距', 0.2, 0, 10), n('corner', '圆角半径', 0.1, 0, 10), c('color', '颜色', '#FBBF24'), ...appear()], '按对象当前边界创建标注框；后续不会自动跟随对象变化。', { createsObject: true, objectKind: 'mobject' }),
+  block('underline', '下划线标注', '图形', [t('name', '命名', '下划线'), o('target', '标注对象', '标题'), n('buff', '间距', 0.15, 0, 10), c('color', '颜色', '#FBBF24'), ...appear()], '在已有文字、公式或图形下方添加一条线。', { createsObject: true, objectKind: 'mobject' }),
   block('text', '文字', '文字公式', [t('name', '命名', '标题'), t('text', '内容', '让数学动起来'), n('fontSize', '字号', 42, 8, 180, 1), c('color', '颜色', '#F1F5F9'), ...position(), ...appear('write')], '使用可用的中文字体，以真实 Manim Write 书写。', { createsObject: true, objectKind: 'text' }),
   block('formula', '数学公式', '文字公式', [t('name', '命名', '公式'), t('tex', 'LaTeX', 'e^{i\\pi}+1=0'), n('fontSize', '字号', 48, 8, 180, 1), c('color', '颜色', '#F1F5F9'), ...position(), ...appear('write')], '输入 LaTeX 数学公式；使用 MathTex，需公式工具链。', { createsObject: true, objectKind: 'formula' }),
   block('decimal', '数字', '文字公式', [t('name', '命名', '数值'), n('value', '数值', 3.14), n('places', '小数位', 2, 0, 8, 1), n('fontSize', '字号', 40, 8, 180, 1), c('color', '颜色', '#FBBF24'), ...position(), ...appear('write')], '创建具有固定小数位的数字。', { createsObject: true, objectKind: 'number' }),
@@ -105,6 +114,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   block('copy', '复制对象', '样式布局', [t('name', '新名称', '副本'), o(), ...position(), ...appear('fade')], '复制对象产生独立副本，后续变换互不影响。', { createsObject: true, objectKind: 'mobject' }),
   block('set_position', '立即定位', '样式布局', [o(), ...position()], '将对象立即放到舞台坐标；使用“移动到”产生动画。'),
   block('set_style', '设置样式', '样式布局', [o(), c(), n('fill', '填充透明度', 0.15, 0, 1), n('stroke', '线宽', 3, 0, 30)], '立即修改颜色、填充和描边。'),
+  block('set_layer', '设置叠放层级', '样式布局', [o(), n('layer', '叠放层级', 0, -1000, 1000, 1)], '值越大越靠前，用于二维叠放顺序；它不改变三维 z 坐标。', {}),
   block('next_to', '放在对象旁', '样式布局', [o(), o('other', '参照对象', '标题'), s('direction', '方向', 'DOWN', [['下方', 'DOWN'], ['上方', 'UP'], ['左侧', 'LEFT'], ['右侧', 'RIGHT']]), n('buff', '间距', 0.3, 0, 10)], '使用 Manim next_to 自动计算相对位置。'),
   block('arrange', '排列组合', '样式布局', [o('target', '组合', '组合'), s('direction', '方向', 'RIGHT', [['横向', 'RIGHT'], ['纵向', 'DOWN']]), n('buff', '间距', 0.4, 0, 10)], '在组合内部排列成员。'),
   block('add', '直接显示', '样式布局', [o()], '立即显示已创建的对象，不播放动画也不占用时长。需要入场效果时，使用绘制、淡入或书写积木。'),
@@ -129,6 +139,16 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   animated('circumscribe', '圈出重点', [], '在对象周围画一个临时边框。'),
   animated('flash', '闪光强调', [], '在对象中心产生一圈闪光。'),
   animated('wiggle', '轻轻摇晃', [], '播放 Wiggle 强调对象。'),
+  animated('focus_on', '聚焦强调', [n('opacity', '背景不透明度', 0.3, 0, 1), c('color', '暗幕颜色', '#64748B')], '用收拢的光圈引导注意力，不改变目标对象。'),
+  animated('wave', '波浪起伏', [n('amplitude', '振幅', 0.2, 0.01, 5), n('ripples', '波纹次数', 1, 1, 10, 1), s('direction', '起伏方向', 'UP', [['纵向', 'UP'], ['横向', 'RIGHT']])], '沿图形传播波浪形变，结束后恢复原状。'),
+  animated('grow_from_point', '从指定位置长出', position(), '从指定舞台位置生长到对象本来的位置与大小。'),
+  animated('grow_from_edge', '从边缘长出', [s('direction', '起始边缘', 'LEFT', [['左边', 'LEFT'], ['右边', 'RIGHT'], ['上边', 'UP'], ['下边', 'DOWN']])], '从对象自身的指定边缘开始生长。'),
+  animated('spin_in', '旋转入场', [n('angle', '旋转角（度）', 180, -3600, 3600)], '对象在旋转的同时从中心出现。'),
+  animated('shrink', '缩小到中心', [], '按 Manim 原生行为把对象缩为零大小；如需保留原形，请先复制对象。需要可再次显示的退场效果时可使用“淡出”。'),
+  animated('passing_flash', '流动高亮', [c('color', '高亮颜色', '#FBBF24'), n('timeWidth', '高亮长度比例', 0.25, 0.01, 2)], '让一段高亮沿对象轮廓通过。动画使用临时副本，原对象保持不变。'),
+  animated('transform_from_copy', '从副本变形', [o('destination', '新对象', '正方形')], '保留源对象，让它的副本变成目标。目标建议先设为“暂不显示”。'),
+  block('reveal_group', '逐个显示组合成员', '动画', [o('target', '组合', '组合', ['mobject']), ...timing()], '逐个显示组合的成员，适合按顺序展示一组图形；请引用“组合对象”积木。'),
+  block('type_text', '逐字显示文字', '动画', [o('target', '文字', '标题', ['text']), ...timing()], '按字符逐个显示已有文字。建议先把文字设为“暂不显示”。'),
   animated('path_move', '沿路径运动', [o('path', '路径', '曲线')], '让对象沿已有曲线移动。'),
   animated('apply_matrix', '线性变换', [{ ...t('matrix', '变换矩阵', '[[1,1],[0,1]]'), editor: 'matrix', description: '填写 2×2 数值矩阵，对图形应用对应的二维线性变换。' }], '对对象应用二维线性变换，可用于网格、向量或图形。'),
   block('wait', '等待', '编排', [n('duration', '秒', 1, 0, 120)], '保持画面并继续运行动态关系；不等待观众输入。'),

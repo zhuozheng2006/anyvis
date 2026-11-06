@@ -1,7 +1,7 @@
 {
   "name": "anyvis",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
@@ -12,9 +12,13 @@
     "check:syntax": "node scripts/check-syntax.cjs",
     "studio": "node scripts/start-studio.mjs",
     "start": "node scripts/start-studio.mjs --production",
-    "desktop": "node scripts/start-studio.mjs --production --desktop",
+    "desktop": "npm run desktop:prepare && node scripts/launch-desktop.mjs",
     "test:server": "node --test server/server.test.mjs",
-    "test:render": "node --test server/render.integration.mjs"
+    "test:render": "node --test server/render.integration.mjs",
+    "desktop:install": "npm install --prefix desktop",
+    "desktop:prepare": "npm run build && node scripts/prepare-desktop.mjs",
+    "desktop:pack": "npm run desktop:prepare && node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never",
+    "test:desktop": "node --test desktop/host.spec-node.mjs desktop/packaging.spec-node.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -36,7 +40,8 @@
     "@vitejs/plugin-react": "^5.0.4",
     "typescript": "~5.9.3",
     "vite": "^7.1.12",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "esbuild": "0.28.2"
   },
   "engines": {
     "node": ">=22.18.0"

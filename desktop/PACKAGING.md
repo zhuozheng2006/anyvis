@@ -1,0 +1,77 @@
+# 桌面安装包构建与验收
+
+这套配置把编辑器、Electron 宿主和本地服务打包为 AnyVis 桌面应用。桌面进程负责启动和关闭自己的服务，不需要用户另外打开终端。Manim 的 Python 环境仍是外部依赖，可在桌面菜单中选择 Python 解释器路径并持久保存；当前安装包不包含 Python、Manim、LaTeX 或额外中文字体。
+
+**当前状态：配置与源码检查不等于安装验收。** 本次本机 npm registry 无法解析，未下载 Electron 或 electron-builder，也未在本机生成、安装并验证最终安装包。GitHub Actions 中的实际构建和启动结果应以对应提交的工作流日志及附件为准。首次正式发行前，还需要按本文最后的清单在目标系统上安装和渲染验证。
+
+## 固定工具版本
+
+`desktop/package.json` 只保存构建工具的 `devDependencies`，不会成为应用内的依赖目录：
+
+| 工具 | 固定版本 | 官方来源 |
+| --- | --- | --- |
+| Electron | 45.2.3 | [Electron 发布记录](https://releases.electronjs.org/release/v45.2.3) |
+| electron-builder | 26.18.1 | [electron-builder 发布记录](https://github.com/electron-userland/electron-builder/releases/tag/electron-builder%4026.18.1) |
+
+以上版本于 2026-11-06 核对。构建用 Node.js 24，项目要求至少 22.18。根目录应用依赖使用现有 `package-lock.json` 和 `npm ci`。本机尚未安装桌面工具，因此没有手工编造 `desktop/package-lock.json`；CI 首次用 `npm install --prefix desktop` 解析工具依赖，并将实际生成的锁文件上传到检查附件。顶层工具版本已固定，但在锁文件纳入版本管理前，间接依赖仍可能变化。网络恢复后应审核并提交真实生成的锁文件，再把桌面工具安装改为 `npm ci --prefix desktop`。
+
+## 本机构建
+
+从仓库根目录运行，在 macOS、Windows、Linux 上分别构建对应平台安装包：
+
+```sh
+npm ci
+npm install --prefix desktop --no-audit --no-fund
+npm run desktop:prepare
+```
+
+准备脚本生成 `desktop-build/app/`，其中只包含 `main.cjs`、`host.mjs`、`preload.cjs`、设置页、打包后的 `server.mjs`、应用 `package.json` 和 `dist/`。服务器 JavaScript 依赖已合并到 bundle，无需在安装目录运行 npm。
+
+```sh
+# macOS：分别生成 Apple Silicon 和 Intel 安装包
+node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never --mac --arm64 --x64
+
+# Windows：x64
+node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never --win --x64
+
+# Linux：x64
+node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never --linux --x64
+```
+
+产物写入 `release/`：macOS 为 DMG 和 ZIP，Windows 为 NSIS EXE，Linux 为 AppImage 和 DEB。文件名包含应用版本、平台和架构。应用代码放入 ASAR；`server/worker.py` 单独进入资源目录的 `runtime/worker.py`，供已配置的外部 Python 执行。构建规则只读取准备目录及这一个 worker，不打包工程源文件、缓存或本机 Python 环境。
+
+Windows 使用可选择安装位置的向导。macOS 使用本地 ad-hoc 签名并关闭 hardened runtime，以兼容 Apple Silicon 启动；它不提供 Developer ID 身份验证，也没有公证。Windows 没有发行者签名。系统可能显示来源验证提示，这些产物暂不应描述为完成正式签名的公开发行版。
+
+## 启动检查与 CI
+
+`.github/workflows/desktop.yml` 可手动运行，也会在相关源码的主分支提交或 PR 时执行三平台任务。每个任务安装依赖、运行应用测试、准备应用、启动实际 Electron 窗口检查，再构建安装包；工作流只有仓库读取权限，配置 `publish: null` 并显式传入 `--publish never`，不会创建 GitHub Release 或发布安装包。
+
+检查调用形式：
+
+```sh
+<平台对应的 Electron 可执行文件> desktop-build/app --smoke-test --smoke-result=<绝对路径>/smoke-result.json
+```
+
+Electron 路径：
+
+| 平台 | 可执行文件 |
+| --- | --- |
+| macOS | `desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron` |
+| Windows | `desktop/node_modules/electron/dist/electron.exe` |
+| Linux | `desktop/node_modules/electron/dist/electron` |
+
+Linux 使用 Xvfb，并为当前 CI 临时环境中的 Chromium sandbox helper 设置官方二进制需要的属主和权限；不会通过 `--no-sandbox` 关闭渲染器沙箱。
+
+检查会启动实际本地服务、验证会话与静态页面，并等待渲染器加载及页面根节点出现；成功退出 0，失败退出 1。检查有 30 秒超时。未安装 Manim 时允许壳启动检查通过，但报告中的 `health.available` 必须为 `false`；这不能证明 Manim 渲染成功。检查运行的是准备后的应用和构建工具提供的 Electron，不能代替最终 ASAR 或安装包的安装测试。macOS 的启动检查只覆盖 runner 本身的架构，不同时证明另一架构可运行。
+
+成功的安装包作为 `AnyVis-<平台>-<提交 SHA>` 工作流附件保存 14 天；检查报告和本次真实解析的桌面工具锁文件单独保存为 `AnyVis-<平台>-checks-<提交 SHA>`。下载后核对提交 SHA。若构建失败，检查附件可能只含锁文件，应查看失败日志，不能据此判断启动通过。
+
+## 正式发行前的安装验收
+
+1. 在目标平台实际安装并首次启动，确认不需要另开终端，关闭后没有残留服务进程；同时确认第二次启动能恢复作品。
+2. 选择有效 Python 路径并重启，确认设置保存；测试缺少或无效 Python 时的明确错误与修复入口。
+3. 用本机 Manim 实际渲染二维、公式和三维模板；确认中文字体、LaTeX 和导出文件行为符合文档，而不是仅播放内置预渲染视频。
+4. 检查最终安装后的 ASAR 和 worker 路径、用户数据位置、Windows 安装向导、Linux AppImage 与 DEB 启动；macOS 分别验证 ARM64 和 x64。
+5. 确定代码及分发依赖的许可证、图标和发行说明，再配置开发者签名、公证及发布渠道。当前配置不提供自动更新。
+
+配置依据：[electron-builder 26.18.1 schema](https://github.com/electron-userland/electron-builder/blob/electron-builder%4026.18.1/packages/app-builder-lib/scheme.json)。

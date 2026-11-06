@@ -2,7 +2,6 @@
 /** Start AnyVis without changing the user's Python or Conda environment. */
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -14,6 +13,13 @@ if (args.has('--help')) {
 }
 const production = args.has('--production');
 const desktop = args.has('--desktop');
+if (desktop) {
+  // The Electron main process owns its engine; never start a duplicate service.
+  const child = spawn(process.execPath, [join(root, 'scripts/launch-desktop.mjs')], { cwd: root, stdio: 'inherit' });
+  for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => child.kill(signal));
+  const code = await new Promise(resolve => { child.once('error', error => { console.error(error.message); resolve(1); }); child.once('exit', value => resolve(value ?? 1)); });
+  process.exit(code);
+}
 const enginePort = Number(process.env.ANYVIS_PORT || 4317);
 const uiPort = Number(process.env.ANYVIS_UI_PORT || 5174);
 for (const port of [enginePort, uiPort]) {
@@ -24,15 +30,6 @@ const minor = Number(process.versions.node.split('.')[1]);
 if (major < 22 || (major === 22 && minor < 18)) {
   console.error('AnyVis 需要 Node.js 22.18 或更高版本，以直接运行项目编译器。');
   process.exit(1);
-}
-const require = createRequire(import.meta.url);
-let electron;
-if (desktop) {
-  try { electron = require('electron'); }
-  catch {
-    console.error('尚未安装 Electron。请先运行 npm install --save-dev electron，再运行桌面命令。\n也可以直接使用 npm run studio，在浏览器中运行完整编辑器。');
-    process.exit(1);
-  }
 }
 if (production && !existsSync(join(root, 'dist/index.html'))) {
   console.error('没有找到生产构建。请先运行 npm run build，然后重新启动。');
@@ -93,8 +90,7 @@ try {
     await waitReady(url, uiCheck, '编辑器');
   }
   console.log(`\nAnyVis 已就绪：${url}\n按 Ctrl+C 关闭本次启动的服务。`);
-  if (desktop) start('AnyVis 桌面窗口', electron, ['desktop/main.cjs'], { ANYVIS_DESKTOP_URL: url });
-  else if (!args.has('--no-open')) {
+  if (!args.has('--no-open')) {
     const [executable, argv] = process.platform === 'darwin' ? ['open', [url]]
       : process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]] : ['xdg-open', [url]];
     const opener = spawn(executable, argv, { stdio: 'ignore' });

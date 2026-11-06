@@ -113,9 +113,26 @@ export function compileProject(input: Project | unknown): CompileResult {
       case 'ellipse': construction = `Ellipse(width=${num(a, 'width')}, height=${num(a, 'height')})`; reposition = true; break;
       case 'dot': construction = `Dot(radius=${num(a, 'radius')})`; reposition = true; break;
       case 'arc': construction = `Arc(radius=${num(a, 'radius')}, start_angle=${num(a, 'start')}*DEGREES, angle=${num(a, 'angle')}*DEGREES)`; reposition = true; break;
-      case 'line': case 'arrow': {
+      case 'annulus': case 'annular_sector': case 'star': {
+        if (num(a, 'innerRadius') >= num(a, 'outerRadius')) throw new Error('内半径必须小于外半径。');
+        if (a.type === 'annulus') construction = `Annulus(inner_radius=${num(a, 'innerRadius')}, outer_radius=${num(a, 'outerRadius')}, stroke_width=2)`;
+        else if (a.type === 'annular_sector') construction = `AnnularSector(inner_radius=${num(a, 'innerRadius')}, outer_radius=${num(a, 'outerRadius')}, start_angle=${num(a, 'start')}*DEGREES, angle=${num(a, 'angle')}*DEGREES, stroke_width=2)`;
+        else construction = `Star(n=${num(a, 'points')}, outer_radius=${num(a, 'outerRadius')}, inner_radius=${num(a, 'innerRadius')})`;
+        if (a.type === 'annular_sector' && num(a, 'angle') === 0) throw new Error('环形扇区的角度不能为 0。');
+        reposition = true; break;
+      }
+      case 'sector':
+        if (num(a, 'angle') === 0) throw new Error('扇形的角度不能为 0。');
+        construction = `Sector(radius=${num(a, 'radius')}, start_angle=${num(a, 'start')}*DEGREES, angle=${num(a, 'angle')}*DEGREES, stroke_width=2)`; reposition = true; break;
+      case 'brace': construction = `Brace(${ref(a)}, direction=${str(a, 'direction')}, buff=${num(a, 'buff')})`; break;
+      case 'surrounding_rectangle': construction = `SurroundingRectangle(${ref(a)}, buff=${num(a, 'buff')}, corner_radius=${num(a, 'corner')})`; break;
+      case 'underline': construction = `Underline(${ref(a)}, buff=${num(a, 'buff')})`; break;
+      case 'line': case 'arrow': case 'dashed_line': {
         if (num(a, 'x1') === num(a, 'x2') && num(a, 'y1') === num(a, 'y2')) throw new Error('线段的两个端点不能重合。');
-        construction = `${a.type === 'line' ? 'Line' : 'Arrow'}([${num(a, 'x1')}, ${num(a, 'y1')}, 0], [${num(a, 'x2')}, ${num(a, 'y2')}, 0]${a.type === 'arrow' ? ', buff=0' : ''})`; break;
+        if (a.type === 'dashed_line' && Math.hypot(num(a, 'x2') - num(a, 'x1'), num(a, 'y2') - num(a, 'y1')) / num(a, 'dashLength') > 500) throw new Error('虚线段数过多，请增大虚线段长度。');
+        const constructor = a.type === 'line' ? 'Line' : a.type === 'arrow' ? 'Arrow' : 'DashedLine';
+        const options = a.type === 'arrow' ? ', buff=0' : a.type === 'dashed_line' ? `, dash_length=${num(a, 'dashLength')}, dashed_ratio=${num(a, 'dashRatio')}` : '';
+        construction = `${constructor}([${num(a, 'x1')}, ${num(a, 'y1')}, 0], [${num(a, 'x2')}, ${num(a, 'y2')}, 0]${options})`; break;
       }
       case 'text': construction = `Text(${py(str(a, 'text'))}, font=_font, font_size=${num(a, 'fontSize')})`; reposition = true; break;
       case 'formula':
@@ -207,7 +224,7 @@ export function compileProject(input: Project | unknown): CompileResult {
     }
     stmt(`${target} = ${construction}`, a);
     objects.set(name, { kind: definition.objectKind ?? 'mobject', visible: str(a, 'appear') !== 'hidden', ...(a.type === 'group' ? {members: str(a, 'members').split(',').map(v => v.trim())} : {}), ...(a.type === 'graph' ? {vertices: str(a, 'vertices').split(',').map(v => v.trim())} : {}) });
-    if (definition.category === '图形' && a.type !== 'line' && a.type !== 'arrow') stmt(`${target}.set_color(${tint(a)}).set_fill(${tint(a)}, opacity=${num(a, 'fill')})`, a);
+    if (definition.category === '图形' && a.fields.fill !== undefined) stmt(`${target}.set_color(${tint(a)}).set_fill(${tint(a)}, opacity=${num(a, 'fill')})`, a);
     else if (a.fields.color !== undefined && !['tracker', 'graph', 'surface', 'sphere', 'cube', 'cylinder', 'dynamic_dot', 'dynamic_plot', 'dynamic_line', 'dynamic_number', 'trace', 'area', 'riemann', 'plane', 'tangent'].includes(a.type)) stmt(`${target}.set_color(${tint(a)})`, a);
     if (reposition) stmt(`${target}.move_to(${point(a)})`, a);
     if (a.type === 'trace') { stmt(`self.add(${target})`, a); return null; }
@@ -219,18 +236,29 @@ export function compileProject(input: Project | unknown): CompileResult {
     if (definition.createsObject) return creation(a);
     const name = str(a, 'target');
     let expression = '';
-    const direct: Record<string, string> = { create: 'Create', write: 'Write', fade_in: 'FadeIn', fade_out: 'FadeOut', uncreate: 'Uncreate', grow: 'GrowFromCenter', draw_border: 'DrawBorderThenFill', indicate: 'Indicate', circumscribe: 'Circumscribe', flash: 'Flash', wiggle: 'Wiggle' };
+    const direct: Record<string, string> = { create: 'Create', write: 'Write', fade_in: 'FadeIn', fade_out: 'FadeOut', uncreate: 'Uncreate', grow: 'GrowFromCenter', draw_border: 'DrawBorderThenFill', indicate: 'Indicate', circumscribe: 'Circumscribe', flash: 'Flash', wiggle: 'Wiggle', shrink: 'ShrinkToCenter' };
     if (direct[a.type]) expression = `${direct[a.type]}(${ref(a)}, ${timing(a)})`;
     else switch (a.type) {
-      case 'transform': case 'replacement_transform': case 'matching_tex': {
+      case 'transform': case 'replacement_transform': case 'matching_tex': case 'transform_from_copy': {
         const from = ref(a); const to = ref(a, 'destination');
         if (name === str(a, 'destination')) throw new Error('变形的源对象和目标不能是同一个对象。');
-        const constructor = a.type === 'transform' ? 'Transform' : a.type === 'replacement_transform' ? 'ReplacementTransform' : 'TransformMatchingTex';
+        const constructor = a.type === 'transform' ? 'Transform' : a.type === 'replacement_transform' ? 'ReplacementTransform' : a.type === 'transform_from_copy' ? 'TransformFromCopy' : 'TransformMatchingTex';
         if (a.type === 'matching_tex') { ref(a, 'target', ['formula']); ref(a, 'destination', ['formula']); }
         expression = `${constructor}(${from}, ${to}, ${timing(a)})`;
-        if (a.type !== 'transform') objects.get(name)!.retired = true;
+        if (a.type === 'replacement_transform' || a.type === 'matching_tex') objects.get(name)!.retired = true;
         break;
       }
+      case 'focus_on': expression = `FocusOn(${ref(a)}, opacity=${num(a, 'opacity')}, color=${tint(a)}, ${timing(a)})`; break;
+      case 'wave': expression = `ApplyWave(${ref(a)}, amplitude=${num(a, 'amplitude')}, ripples=${num(a, 'ripples')}, direction=${str(a, 'direction')}, ${timing(a)})`; break;
+      case 'grow_from_point': expression = `GrowFromPoint(${ref(a)}, point=${point(a)}, ${timing(a)})`; break;
+      case 'grow_from_edge': expression = `GrowFromEdge(${ref(a)}, edge=${str(a, 'direction')}, ${timing(a)})`; break;
+      case 'spin_in': expression = `SpinInFromNothing(${ref(a)}, angle=${num(a, 'angle')}*DEGREES, ${timing(a)})`; break;
+      case 'passing_flash': expression = `ShowPassingFlash(${ref(a)}.copy().set_color(${tint(a)}), time_width=${num(a, 'timeWidth')}, ${timing(a)})`; break;
+      case 'reveal_group':
+        ref(a);
+        if (!objects.get(name)?.members) throw new Error('逐个显示需要引用“组合对象”积木创建的组合。');
+        expression = `ShowIncreasingSubsets(${ref(a)}, ${timing(a)})`; break;
+      case 'type_text': expression = `AddTextLetterByLetter(${ref(a, 'target', ['text'])}, ${timing(a)})`; break;
       case 'move': expression = `${ref(a)}.animate(${timing(a)}).move_to(${point(a)})`; break;
       case 'shift': expression = `${ref(a)}.animate(${timing(a)}).shift([${num(a, 'dx')}, ${num(a, 'dy')}, ${num(a, 'dz')}])`; break;
       case 'rotate': expression = `Rotate(${ref(a)}, angle=${num(a, 'angle')}*DEGREES, axis=${str(a, 'axis')}, ${timing(a)})`; break;
@@ -251,12 +279,13 @@ export function compileProject(input: Project | unknown): CompileResult {
       case 'wait': return { expression: `Wait(run_time=${num(a, 'duration')})`, duration: num(a, 'duration'), targets: [] };
       default: return null;
     }
-    return { expression, duration: num(a, 'duration'), targets: [name, ...(['replacement_transform', 'matching_tex'].includes(a.type) ? [str(a, 'destination')] : [])] };
+    return { expression, duration: num(a, 'duration'), targets: [name, ...(['replacement_transform', 'matching_tex', 'transform_from_copy'].includes(a.type) ? [str(a, 'destination')] : [])] };
   };
   const command = (a: Action): number | null => {
     switch (a.type) {
       case 'set_position': stmt(`${ref(a)}.move_to(${point(a)})`, a); break;
       case 'set_style': stmt(`${ref(a)}.set_color(${tint(a)}).set_fill(opacity=${num(a, 'fill')}).set_stroke(width=${num(a, 'stroke')})`, a); break;
+      case 'set_layer': stmt(`${ref(a)}.set_z_index(${num(a, 'layer')})`, a); break;
       case 'next_to': stmt(`${ref(a)}.next_to(${ref(a, 'other')}, ${str(a, 'direction')}, buff=${num(a, 'buff')})`, a); break;
       case 'arrange': stmt(`${ref(a)}.arrange(${str(a, 'direction')}, buff=${num(a, 'buff')})`, a); break;
       case 'add':

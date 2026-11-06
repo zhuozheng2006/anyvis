@@ -51,6 +51,8 @@ export interface BlockDefinition {
   requires3d?: boolean;
   requiresTrust?: boolean;
   keywords?: string[];
+  /** Public API entry points used by this block, not complete parameter/behavior coverage. */
+  nativeApis?: string[];
 }
 export interface Diagnostic { blockId?: string; message: string; severity: 'error' | 'warning' }
 export interface CompileResult {

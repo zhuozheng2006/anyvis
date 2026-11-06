@@ -1,4 +1,4 @@
-# AnyVis 启动与可选桌面宿主
+# AnyVis 启动与桌面宿主
 
 开发版本需要已经安装 Node.js 22.18+ 和 Manim Python 环境。启动器不会修改已有 Conda 环境。
 
@@ -20,14 +20,23 @@ node scripts/start-studio.mjs --production
 
 ## Electron
 
-`desktop/main.cjs` 是可选 Electron 宿主。它只打开本地服务，关闭 Node integration、启用 context isolation 和 sandbox；不会给网页提供任意文件或进程 IPC。安装 Electron 后：
+`desktop/main.cjs` 现在自行启动和关闭本地引擎，无需先运行终端服务。主进程使用随机空闲端口，编辑器始终加载 `anyvis://studio/`，因此端口变化不会改变项目存储地址。渲染缓存位于 Electron 的用户数据目录；退出时取消工作进程并关闭服务。
+
+首次准备桌面开发环境：
 
 ```sh
-npm install --save-dev electron
-node scripts/start-studio.mjs --production --desktop
+npm ci
+npm run desktop:install
+npm run desktop
 ```
 
-本次环境无法解析 npm registry，Electron 未安装，**桌面宿主尚未实际运行验证**。当前交付入口是浏览器加本地真实 Manim 服务。启动器语法检查与命令帮助已通过，但本次工具环境在监听新本地端口时返回 EPERM，因此没有在该受限环境中完成启动器的 HTTP 联调。应在允许本地监听的终端运行上述启动命令验收。此目录不代表已经完成独立安装包、Python/字体/LaTeX 打包、签名、公证或跨平台发行。
+`desktop:install` 安装独立的 Electron / electron-builder 工具，不改变浏览器版的依赖锁。`desktop:prepare` 先构建页面，再把 Node 引擎和 TypeScript 编译器打包成不依赖外部源码或 npm 包的 ESM 文件。已准备后可用 `node scripts/launch-desktop.mjs` 直接启动。旧的 `start-studio.mjs --desktop` 会转交给该独立宿主，不再启动另一份服务器。
+
+在“文件 → 运行环境”中可选择已安装 Manim 的 Python，可保存后重新连接或留空恢复自动检测。设置持久化为用户数据目录下的 `desktop-settings.json`；不修改 Conda 环境。引擎启动失败会显示中文诊断和重试按钮。应用安装包包含页面、Node 引擎和 Python worker；**Python / Manim、LaTeX 和字体仍使用外部环境**。
+
+浏览器和桌面是不同的项目存储空间。已有浏览器作品需导出项目 JSON，再在桌面导入。桌面编辑器不启用 Node integration，保留 context isolation、sandbox 和 CSP，禁用外部页面导航。只有设置窗口有经过来源校验的窄 IPC；剪贴板仅对可信界面允许文字写入，禁止读取权限。
+
+安装包命令、三平台 CI 和发行边界见 [PACKAGING.md](./PACKAGING.md)。本次本地正常安装尝试返回 `ENOTFOUND registry.npmjs.org`，Electron 未安装，**未在本机运行 Electron 窗口或生成安装包**，也未声称签名、公证和跨平台安装验收已完成。已提供 CI 实际启动烟雾测试；只有对应 Actions 成功才算该平台通过。浏览器版仍可通过本地真实 Manim 服务运行。
 
 ## AI 接口
 
@@ -44,7 +53,9 @@ OpenAI 请求字段依据官方 [Chat Completions API 文档](https://developers
 
 ## 本次验证
 
+- `npm run desktop:prepare` 通过：TypeScript、Vite 页面和自包含服务端 ESM 包全部构建成功。
+- `npm run test:desktop`：9 项通过。覆盖设置持久化/损坏恢复、关闭中的启动竞态、失败重试、固定协议来源、token/Range 转发，以及删除源码目录后从独立打包文件启动服务。
 - 启动器、Electron 宿主及 AI 代理 JavaScript 语法检查通过；`--help` 正常。
 - AI helper 及核心依赖图的 TypeScript strict / unused 检查通过。
 - `vitest run src/studio/ai/project-assistant.test.ts desktop/ai-proxy.test.mjs`：9 项通过。覆盖 JSON 导入、代码拒绝、对象引用校验、项目身份、请求次数、失败与截断响应。
-- 模型接口使用 mock 测试，没有借用用户密钥发出付费请求。Electron 缺少依赖，HTTP 启动受到本次环境 EPERM 限制，均不记为已通过的界面验收。
+- 模型接口使用 mock 测试，没有借用用户密钥发出付费请求。Electron 缺少依赖，HTTP 启动受到本次环境 EPERM 限制，均不记为已通过的本机界面验收。

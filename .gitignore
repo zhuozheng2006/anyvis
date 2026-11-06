@@ -18,3 +18,10 @@ media/
 
 playwright-report/
 test-results/
+
+desktop-build/
+release/
+desktop/package-lock.json
+
+# Publish the deterministic gzip inventory; keep expanded JSON local.
+/docs/research/manim-ce-0.20.1-coverage.json

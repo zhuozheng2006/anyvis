@@ -1,0 +1,127 @@
+name: Desktop packages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/desktop.yml'
+      - 'desktop/**'
+      - 'scripts/**'
+      - 'server/**'
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'index.html'
+      - 'vite.config.*'
+      - 'tsconfig*.json'
+  pull_request:
+    paths:
+      - '.github/workflows/desktop.yml'
+      - 'desktop/**'
+      - 'scripts/**'
+      - 'server/**'
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'index.html'
+      - 'vite.config.*'
+      - 'tsconfig*.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    name: ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            platform: macOS
+            builder-args: --mac --arm64 --x64
+          - os: windows-latest
+            platform: Windows
+            builder-args: --win --x64
+          - os: ubuntu-24.04
+            platform: Linux
+            builder-args: --linux --x64
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install application dependencies
+        run: npm ci
+      - name: Install pinned desktop build tools
+        run: npm install --prefix desktop --no-audit --no-fund
+      - name: Run application tests
+        run: npm test
+      - name: Prepare bundled desktop application
+        run: npm run desktop:prepare
+
+      - name: Check shell, local service and renderer on macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: >-
+          desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron
+          desktop-build/app --smoke-test
+          "--smoke-result=$GITHUB_WORKSPACE/desktop-build/smoke-result.json"
+      - name: Check shell, local service and renderer on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $arguments = @('desktop-build/app', '--smoke-test', "`"--smoke-result=$env:GITHUB_WORKSPACE/desktop-build/smoke-result.json`"")
+          $process = Start-Process -FilePath desktop/node_modules/electron/dist/electron.exe -ArgumentList $arguments -Wait -PassThru
+          exit $process.ExitCode
+      - name: Check shell, local service and renderer on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          # Enable Chromium's setuid sandbox helper on this disposable CI runner.
+          # Keep the renderer sandbox enabled; do not use --no-sandbox.
+          sudo chown root:root desktop/node_modules/electron/dist/chrome-sandbox
+          sudo chmod 4755 desktop/node_modules/electron/dist/chrome-sandbox
+          xvfb-run -a desktop/node_modules/electron/dist/electron desktop-build/app --smoke-test "--smoke-result=$GITHUB_WORKSPACE/desktop-build/smoke-result.json"
+
+      - name: Build installers without publishing
+        run: node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never ${{ matrix.builder-args }}
+      - name: Upload installers
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: AnyVis-${{ matrix.platform }}-${{ github.sha }}
+          path: |
+            release/*.dmg
+            release/*.zip
+            release/*.exe
+            release/*.AppImage
+            release/*.deb
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - name: Upload smoke report and resolved tool dependencies
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: AnyVis-${{ matrix.platform }}-checks-${{ github.sha }}
+          path: |
+            desktop-build/smoke-result.json
+            desktop/package-lock.json
+          if-no-files-found: warn
+          retention-days: 14
