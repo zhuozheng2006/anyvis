@@ -5,6 +5,7 @@ import { compileExpression, RESERVED_SYMBOLS } from './expression.ts';
 import { validateProject } from './project.ts';
 import type { Action, CompileResult, Diagnostic, Project } from './types.ts';
 import { assetPath } from './assets.ts';
+import { PIANO_RUNTIME } from './piano.ts';
 
 const py = (value: string): string => JSON.stringify(value).replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
 const TEX_COMMANDS = new Set(('frac dfrac tfrac sqrt sin cos tan arcsin arccos arctan sinh cosh tanh log ln exp lim limsup liminf max min sup inf det gcd mod bmod pmod arg deg ker dim hom Pr sum prod coprod int iint iiint oint bigcup bigcap cup cap union intersection left right middle big Big bigg Bigg bigl bigr Bigl Bigr biggl biggr Biggl Biggr text textrm textbf textit mathrm mathbf mathit mathsf mathtt mathcal mathbb mathfrak boldsymbol operatorname overline underline overbrace underbrace overset underset hat widehat tilde widetilde bar vec dot ddot ddots vdots cdots ldots dots alpha beta gamma delta epsilon varepsilon zeta eta theta vartheta iota kappa lambda mu nu xi pi varpi rho varrho sigma varsigma tau upsilon phi varphi chi psi omega Gamma Delta Theta Lambda Xi Pi Sigma Upsilon Phi Psi Omega infty partial nabla ell hbar imath jmath Re Im wp aleph forall exists nexists neg land lor lnot implies iff because therefore in notin ni subset supset subseteq supseteq nsubseteq nsupseteq emptyset varnothing setminus to mapsto rightarrow leftarrow leftrightarrow Rightarrow Leftarrow Leftrightarrow longrightarrow longleftarrow longleftrightarrow Longrightarrow Longleftarrow Longleftrightarrow uparrow downarrow updownarrow hookrightarrow hookleftarrow leadsto cdot times div pm mp ast star circ bullet odot otimes oplus ominus oslash wedge vee perp parallel angle measuredangle triangle le leq ge geq ne neq equiv approx sim simeq cong propto ll gg prec succ preceq succeq asymp mid colon quad qquad enspace thinspace medspace thickspace space hspace vspace phantom hphantom vphantom smash color textcolor begin end displaystyle textstyle scriptstyle scriptscriptstyle limits nolimits substack binom dbinom tbinom choose brace brack bmatrix pmatrix matrix cases aligned gather split cancel boxed fbox lbrace rbrace langle rangle lfloor rfloor lceil rceil vert Vert lvert rvert lVert rVert backslash complement degree percent').split(' '));
@@ -484,7 +485,11 @@ export function compileProject(input: Project | unknown): CompileResult {
   }
   if (usesAudio) emit('        _anyvis_finish_audio(self, _av_audio_tracks)');
   if (duration === 0 && !uncertainDuration) emit('        self.wait(0.1)');
+  if (project.scene.backgroundMusic === 'piano') {
+    emit(`        self.renderer.file_writer.add_audio_segment(_anyvis_piano_segment(float(self.time)).apply_gain(${project.scene.musicGainDb ?? -18}), time=0)`);
+  }
   for (const line of apiCompiler?.imports() ?? []) emit(line);
+  if (project.scene.backgroundMusic === 'piano') emit(PIANO_RUNTIME);
   if (usesAudio) emit(`
 def _anyvis_decode_audio(path, offset, length):
     # Decode through Manim's PyAV dependency; no external ffmpeg executable.

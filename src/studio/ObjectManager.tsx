@@ -13,6 +13,7 @@ export interface ObjectManagerProps {
   onChange(project: Project): void;
   onAdd(type: string): void;
   onError(message: string): void;
+  onMusicSettings?(): void;
 }
 
 const ANIMATION_FIELDS = new Set(['appear', 'duration', 'mode', 'run_time', 'rate_func', 'lag_ratio']);
@@ -167,7 +168,8 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
   onSelect,
   onChange,
   onAdd,
-  onError
+  onError,
+  onMusicSettings
 }) => {
   const objects = useMemo(
     () => flattenActions(project.actions).filter(managedObject),
@@ -357,6 +359,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
       <div className="om-cards-tray">
         <div className="om-cards-tray-header">
           <span>对象角色 ({objects.length})</span>
+          {onMusicSettings && <button type="button" className="om-shelf-open-btn" aria-label="对象管理器默认配乐设置" onClick={onMusicSettings}>♫ {project.scene.backgroundMusic === 'piano' ? '钢琴配乐' : '无配乐'}</button>}
           <button
             type="button"
             className="om-shelf-open-btn"

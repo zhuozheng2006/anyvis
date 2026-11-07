@@ -10,7 +10,11 @@
 
 ## v0.4.0 接续检查点
 
-六份原生证据共 662 个不同 API，新增 utilities、mutations 与 config fixture。运行 `npm run test:api-native` 前设置六个 `ANYVIS_API_*REPORT` 路径，再将六份报告都传给 verify-api-registry.py；完整命令见 API 覆盖文档。当前 authoringProtocol=3，333 项 Vitest、媒体真实集成及桌面资源准备通过。
+新增默认配乐：scene.backgroundMusic 为 piano/none，musicGainDb 默认 -18；缺失字段的旧项目保持无配乐。storage.withDefaultMusic 仅用于新建/从模板创建，记住默认偏好。piano.ts 的 Python 合成器随源码导出，用真实 self.time 覆盖作品，零外部音源依赖；test:music 包含 600 秒合成和钢琴/无声真实视频验收。编译器证据指纹已纳入 piano.ts，六份证据重新生成，仍为 662 项、无失败。
+
+后续应用提交 `79ccbb4db1e79376062c22b5f0380170f767a110` 包含配音播放头分割、键盘定位与鼠标选择修复、动态配音提示和 63 项配置 API 测试；本地 333 项应用测试、12 项原生测试入口、11 项桌面回归、4 项证据校验及真实分割混音通过。远端原生 CI 42412397386、桌面 CI 42412397388 的最终结果见验证记录。
+
+六份原生证据共 662 个不同 API，新增 utilities、mutations 与 config fixture。运行 `npm run test:api-native` 前设置六个 `ANYVIS_API_*REPORT` 路径，再将六份报告都传给 verify-api-registry.py；完整命令见 API 覆盖文档。当前 authoringProtocol=4，340 项 Vitest、媒体真实集成及桌面资源准备通过。
 
 UI 已用 React Timeline Editor 1.0.0；动画顺序联动、音频独立时间位置与入点。已实现配音分割；框选、动画剃刀、关键帧曲线和任意动画重叠尚未实现。库交互不能直接代替 Manim 调度，继续以 Project.actions 为唯一事实来源。素材真实文件位于本地服务缓存，工程通过 ZIP 携带它们；测试输入和生成输出不提交。
 

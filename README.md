@@ -2,7 +2,7 @@
 
 **用 Scratch 风格积木制作真实 Manim 动画。**
 
-AnyVis v0.4.0 提供 Scratch 风格积木、基于开源 React Timeline Editor 的时间轴、只读代码视图，以及独立对象和素材管理器。支持上传图片与配音、音轨裁剪、分割和混音、素材工程打包与真实 Manim 视频导出。浏览器 + 本地服务及 Electron 桌面版共享创作模型；Python/Manim 仍需外部安装。[编辑器设计方案](docs/editor-timeline-design.md)
+AnyVis v0.4.0 提供 Scratch 风格积木、基于开源 React Timeline Editor 的时间轴、只读代码视图，以及独立对象和素材管理器。支持上传图片与配音、音轨裁剪、分割和混音、自动舒缓钢琴配乐（可选无配乐）、素材工程打包与真实 Manim 视频导出。浏览器 + 本地服务及 Electron 桌面版共享创作模型；Python/Manim 仍需外部安装。[编辑器设计方案](docs/editor-timeline-design.md)
 
 ![AnyVis Studio 时间轴与配音](docs/screenshots/studio-timeline-v0.4.jpg)
 

@@ -22,7 +22,8 @@
     "test:api-native": "node --test src/studio/core/api.native.spec-node.mjs src/studio/core/api-families.native.spec-node.mjs src/studio/core/api-queries.native.spec-node.mjs src/studio/core/api-utilities.native.spec-node.mjs src/studio/core/api-mutations.native.spec-node.mjs src/studio/core/api-config.native.spec-node.mjs",
     "api:generate": "python scripts/generate-api-registry.py",
     "api:verify": "python scripts/verify-api-registry.py",
-    "test:media": "node --test --test-force-exit server/media.integration.mjs"
+    "test:media": "node --test --test-force-exit server/media.integration.mjs",
+    "test:music": "node --test --test-force-exit server/music.integration.mjs src/studio/core/piano.native.spec-node.mjs"
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.2.4",

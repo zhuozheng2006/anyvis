@@ -15,6 +15,7 @@ interface Props {
   project: Project; selectedId: string | null; time: number; playing?: boolean; canPlay?: boolean;
   onChange(project: Project): void; onSelect(id: string): void; onShowBlocks(id: string): void;
   onSeek(time: number): void; onError(message: string): void; onPlay?(): void;
+  onMusicSettings?(): void;
 }
 const palette = ['#6ca6ed', '#b295e8', '#72bfa5', '#e4ad63', '#e089aa'];
 const effects = { animation: { id: 'animation', name: '动画' }, audio: { id: 'audio', name: '配音' }, event: { id: 'event', name: '事件' } };
@@ -22,7 +23,7 @@ export const timecode = (value: number, fps = 30) => {
   const frames = Math.max(0, Math.round(value * fps));
   return `${Math.floor(frames / fps / 60).toString().padStart(2, '0')}:${(Math.floor(frames / fps) % 60).toString().padStart(2, '0')}:${(frames % fps).toString().padStart(2, '0')}`;
 };
-export function Timeline({ project, selectedId, time, playing = false, canPlay = false, onChange, onSelect, onShowBlocks, onSeek, onError, onPlay }: Props) {
+export function Timeline({ project, selectedId, time, playing = false, canPlay = false, onChange, onSelect, onShowBlocks, onSeek, onError, onPlay, onMusicSettings }: Props) {
   const [scale, setScale] = useState(80), [snapping, setSnapping] = useState(true);
   const [adding, setAdding] = useState(false), [query, setQuery] = useState('');
   const [revision, setRevision] = useState(0), [hint, setHint] = useState('');
@@ -36,8 +37,9 @@ export function Timeline({ project, selectedId, time, playing = false, canPlay =
   const unknown = [...visual.filter(c => c.start === null || c.duration === null).map(c => ({ ...c, id: c.action.id })), ...audio.filter(c => c.start === null).map(c => ({ ...c, track: String(c.action.fields.name) }))];
   const tracks = [...new Set(visual.filter(c => c.start !== null && c.duration !== null).map(c => c.track))];
   const knownEnd = Math.max(0, ...clips.map(c => (c.start || 0) + (c.duration || 0)), ...audio.map(c => (c.start || 0) + c.duration));
+  const musicEnabled = project.scene.backgroundMusic === 'piano', musicId = 'anyvis:default-piano';
   const tick = scale < 24 ? 5 : scale < 48 ? 2 : 1;
-  const labels = [...tracks.map((name, i) => ({ id: `visual:${i}`, name, colour: palette[i % palette.length], audio: false })), ...audio.map(c => ({ id: c.id, name: String(c.action.fields.name), colour: '#6ec5a6', audio: true }))];
+  const labels = [...tracks.map((name, i) => ({ id: `visual:${i}`, name, colour: palette[i % palette.length], audio: false })), ...audio.map(c => ({ id: c.id, name: String(c.action.fields.name), colour: '#6ec5a6', audio: true })), ...(musicEnabled ? [{ id: musicId, name: '默认钢琴配乐', colour: '#d4b481', audio: true }] : [])];
   const rows: TimelineRow[] = useMemo(() => [
     ...tracks.map((track, i) => ({ id: `visual:${i}`, actions: visual.filter(c => c.track === track && c.start !== null && c.duration !== null).map(c => ({
       id: c.action.id, start: c.start!, end: c.start! + Math.max(1 / project.scene.fps, c.duration!),
@@ -45,6 +47,7 @@ export function Timeline({ project, selectedId, time, playing = false, canPlay =
       movable: true, flexible: c.duration! > 0 && typeof c.action.fields.duration === 'number' && !getBlockDefinition(c.action.type)?.container, minStart: 0, maxEnd: 600,
     })) })),
     ...audio.map(c => ({ id: c.id, actions: c.start === null ? [] : [{ id: c.id, start: c.start, end: c.start + Math.max(1 / project.scene.fps, c.duration), effectId: 'audio', selected: selectedId === c.action.id, movable: c.editable && c.duration > 0, flexible: c.editable && c.duration > 0, minStart: 0, maxEnd: c.stop ?? 600 }] })),
+    ...(musicEnabled ? [{ id: musicId, actions: [{ id: musicId, start: 0, end: Math.max(.1, knownEnd), effectId: 'audio', movable: false, flexible: false }] }] : []),
   ], [project, selectedId, revision]); // Fresh projection also rolls back rejected gestures; library mutates its own copy.
   useEffect(() => { editor.current?.setTime(time); }, [time, revision, scale]);
   const resolveId = (id: string) => audio.find(c => c.id === id)?.action.id || id;
@@ -88,18 +91,19 @@ export function Timeline({ project, selectedId, time, playing = false, canPlay =
       <button aria-label={playing ? '暂停时间轴预览' : '播放时间轴预览'} disabled={!canPlay} title={canPlay ? '空格：播放 / 暂停' : '先生成预览'} onClick={onPlay}>{playing ? <Pause size={15}/> : <Play size={15}/>}</button>
       <span className="tl-timecode">{timecode(time, project.scene.fps)}</span><small className="tl-fps">{project.scene.fps} FPS</small><div className="tl-spacer"/>
       <button aria-label="磁性吸附" aria-pressed={snapping} title="吸附片段边缘与帧网格（S）" onClick={() => setSnapping(v => !v)}><Magnet size={15}/></button>
+      <button aria-label="设置默认配乐" title={musicEnabled ? '自动钢琴配乐' : '当前无默认配乐'} onClick={onMusicSettings}><Music2 size={14}/> 配乐</button>
       <button onClick={() => add('wait')}><Clock3 size={14}/> 等待</button><button className="tl-add" onClick={() => setAdding(!adding)}><Plus size={14}/> 动画</button>
       <span className="tl-divider"/><button aria-label="缩小时间轴" onClick={() => setScale(s => Math.max(8, s / 1.4))}><Minus size={14}/></button><input className="tl-scale" aria-label="时间轴缩放" type="range" min="8" max="240" value={scale} onChange={e => setScale(Number(e.target.value))}/><button aria-label="放大时间轴" onClick={() => setScale(s => Math.min(240, s * 1.4))}><Plus size={14}/></button><button aria-label="适合全部片段" onClick={fit}><Maximize2 size={14}/></button>
     </div>
     {adding && <div className="tl-library"><input aria-label="搜索动画动作" placeholder="搜索移动、变形、循环…" value={query} onChange={e => setQuery(e.target.value)}/><button onClick={() => setAdding(false)}>关闭</button><div>{options.map(d => <button key={d.type} onClick={() => add(d.type)}><i style={{ background: d.colour }}/>{d.label}</button>)}</div></div>}
     <div className="tl-body" ref={surface} tabIndex={0} aria-label="时间轴编辑区" onWheel={e => { if (e.ctrlKey || e.metaKey) setScale(s => Math.max(8, Math.min(240, s * (e.deltaY < 0 ? 1.15 : 1 / 1.15)))); }}>
-      <aside className="tl-labels"><div className="tl-track-heading">轨道<span>{labels.length}</span></div><div className="tl-label-scroll" ref={trackLabels} onWheel={e => { if (trackLabels.current) editor.current?.setScrollTop(trackLabels.current.scrollTop + e.deltaY); }}>{labels.map(label => <div className="tl-track-label" key={label.id}><i style={{ background: label.colour }}/><span title={label.name}>{label.audio && <Music2 size={12}/>} {label.name}</span><small>{label.audio ? '配音 · 独立音轨' : '动画 · 顺序联动'}</small></div>)}</div></aside>
+      <aside className="tl-labels"><div className="tl-track-heading">轨道<span>{labels.length}</span></div><div className="tl-label-scroll" ref={trackLabels} onWheel={e => { if (trackLabels.current) editor.current?.setScrollTop(trackLabels.current.scrollTop + e.deltaY); }}>{labels.map(label => <div className="tl-track-label" key={label.id}><i style={{ background: label.colour }}/><span title={label.name}>{label.audio && <Music2 size={12}/>} {label.name}</span><small>{label.id === musicId ? '配乐 · 自动铺满' : label.audio ? '配音 · 独立音轨' : '动画 · 顺序联动'}</small></div>)}</div></aside>
       <TimelineEditor ref={editor} editorData={rows} effects={effects} style={{ flex: 1, width: 0, height: '100%' }} scale={tick} scaleWidth={scale * tick} scaleSplitCount={tick * project.scene.fps} startLeft={16} rowHeight={58} minScaleCount={Math.ceil(Math.max(10, knownEnd + 3) / tick)} maxScaleCount={Math.ceil(600 / tick)} gridSnap={snapping} dragLine={snapping} autoScroll autoReRender={false}
         onChange={() => false}
         onScroll={({ scrollTop }) => { if (trackLabels.current) trackLabels.current.scrollTop = scrollTop; }}
         onCursorDrag={seek} onClickTimeArea={value => { seek(value); return true; }} onClickRow={(_, { time: value }) => seek(value)}
-        onClickAction={(_, { action }) => onSelect(resolveId(action.id))}
-        onDoubleClickAction={(_, { action }) => onShowBlocks(resolveId(action.id))}
+        onClickAction={(_, { action }) => action.id === musicId ? onMusicSettings?.() : onSelect(resolveId(action.id))}
+        onDoubleClickAction={(_, { action }) => action.id === musicId ? onMusicSettings?.() : onShowBlocks(resolveId(action.id))}
         onActionMoveStart={() => setHint('拖动中…')}
         onActionMoving={({ action, start, end }) => { setHint(`${timecode(start, project.scene.fps)} → ${timecode(end, project.scene.fps)}`); return action.effectId === 'audio' || start <= 600; }}
         onActionMoveEnd={({ action, start, end }) => commit(action.id, start, end, 'move')}
@@ -114,6 +118,7 @@ export function Timeline({ project, selectedId, time, playing = false, canPlay =
         onActionResizeEnd={({ action, start, end, dir }) => commit(action.id, start, end, dir)}
         getScaleRender={value => <span>{timecode(value, project.scene.fps).slice(0, -3)}</span>}
         getActionRender={(item, row) => {
+          if (item.id === musicId) return <div className="tl-item music" role="button" tabIndex={0} aria-label="默认配乐 · 舒缓钢琴" title="自动生成并铺满实际作品时长；点击设置音量或选择无配乐" onClick={onMusicSettings} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); onMusicSettings?.(); } }} style={{ '--clip-colour': '#d4b481' } as React.CSSProperties}><span><Music2 size={12}/> 舒缓钢琴 · 自动铺满</span><small>{project.scene.musicGainDb ?? -18} dB · 首尾淡入淡出</small></div>;
           const clip = audio.find(c => c.id === item.id), source = clip?.action || clips.find(c => c.action.id === item.id)?.action;
           if (!source) return null;
           const label = labels.find(l => l.id === row.id);

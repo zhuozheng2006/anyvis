@@ -45,3 +45,5 @@
 .workspace-intro{flex-shrink:0}.workspace-content{min-height:0;min-width:0}
 @media(min-width:1600px){.studio-main{grid-template-columns:minmax(630px,1.75fr) minmax(440px,1fr)}}
 @media(max-width:880px){.studio-main{display:flex}.stage-column{overflow:visible}.object-manager-panel{height:500px;flex:none}.blocks-panel{height:640px}.editor-tabs>button{min-width:65px}}
+
+.settings-music{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px;border:1px solid #dce7e4;background:#f5faf8;border-radius:10px}.settings-music p{grid-column:1/-1;margin:0;color:#6e827c;font-size:12px;line-height:1.6}.settings-music input[type=range]{width:100%;accent-color:#407c70}.settings-music label span{font-weight:400;color:#6e827c}@media(max-width:600px){.settings-music{grid-template-columns:1fr}}

@@ -5,6 +5,22 @@ import { compileProject } from './compiler';
 import type { MediaAsset } from './types';
 const image: MediaAsset = { id: 'a'.repeat(64), name: '图.png', kind: 'image', extension: 'png', bytes: 20, width: 64, height: 64 };
 const voice: MediaAsset = { id: 'b'.repeat(64), name: '配音.wav', kind: 'audio', extension: 'wav', bytes: 1000, duration: 5 };
+it('validates soundtrack settings while keeping legacy projects silent', () => {
+  const p = createEmptyProject();
+  expect(validateProject(p).scene.backgroundMusic).toBeUndefined();
+  expect(compileProject(p).code).not.toContain('_anyvis_piano_segment');
+  for (const scene of [{ ...p.scene, backgroundMusic: 'unknown' }, { ...p.scene, musicGainDb: NaN }, { ...p.scene, musicGainDb: 1 }])
+    expect(() => validateProject({ ...p, scene })).toThrow();
+});
+it('exports self-contained piano after voiceover timing without extending the video', () => {
+  const p = createEmptyProject(); p.scene.backgroundMusic = 'piano'; p.scene.musicGainDb = -24;
+  p.assets = [voice]; p.actions = [createAction('audio_play', { asset: voice.id }), createAction('wait', { duration: 1 })];
+  const result = compileProject(p);
+  expect(result.diagnostics).toEqual([]); expect(result.requiresTrust).toBe(false); expect(result.duration).toBe(5);
+  expect(result.code).toContain('_anyvis_piano_segment(float(self.time)).apply_gain(-24)');
+  expect(result.code.indexOf('_anyvis_finish_audio(self, _av_audio_tracks)')).toBeLessThan(result.code.indexOf('_anyvis_piano_segment(float(self.time))'));
+  expect(compileProject({ ...p, scene: { ...p.scene, backgroundMusic: 'none' } }).code).not.toContain('_anyvis_piano_segment');
+});
 it('preserves validated assets and rejects traversal, duplicates and invalid media metadata', () => {
   const p = { ...createEmptyProject(), assets: [image, voice] };
   expect(validateProject(p).assets).toEqual([image, voice]);

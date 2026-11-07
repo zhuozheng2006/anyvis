@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAction } from './core/catalog';
 import { createEmptyProject } from './core/project';
-import { readCurrent, readProjects, saveLatestProject, saveProject } from './storage';
+import { readCurrent, readProjects, saveLatestProject, saveProject, readDefaultMusic, saveDefaultMusic, withDefaultMusic } from './storage';
 
 const CURRENT = 'anyvis.studio.v2.current';
 const LIBRARY = 'anyvis.studio.v2.projects';
@@ -28,6 +28,22 @@ beforeEach(() => { storage = new MemoryStorage(); vi.stubGlobal('localStorage', 
 afterEach(() => vi.unstubAllGlobals());
 
 describe('recoverable project persistence', () => {
+  it('defaults new works to piano and remembers an explicit silent preference', () => {
+    const old = example();
+    expect(readDefaultMusic()).toBe('piano');
+    expect(withDefaultMusic(old).scene).toMatchObject({ backgroundMusic: 'piano', musicGainDb: -18 });
+    expect(old.scene.backgroundMusic).toBeUndefined();
+    saveDefaultMusic('none');
+    expect(withDefaultMusic(example()).scene.backgroundMusic).toBe('none');
+    saveProject(old);
+    expect(readCurrent()?.scene.backgroundMusic).toBeUndefined();
+  });
+  it('preserves a saved soundtrack independently of the new-project preference', () => {
+    const p = withDefaultMusic(example());
+    p.scene.musicGainDb = -24;
+    saveProject(p); saveDefaultMusic('none');
+    expect(readCurrent()?.scene).toMatchObject({ backgroundMusic: 'piano', musicGainDb: -24 });
+  });
   it('keeps a temporarily blank title readable after closing without mutating the caller', () => {
     const project = Object.freeze({ ...example(), name: ' \t ' });
     saveProject(project);

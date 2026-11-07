@@ -17,6 +17,8 @@ export function validateProject(value: unknown): Project {
   const scene = p.scene as Record<string, unknown>;
   if (!['2d', '3d'].includes(String(scene.dimension))) fail('场景类型必须为二维或三维。');
   if (scene.renderer !== undefined && !['cairo','opengl'].includes(String(scene.renderer))) fail('渲染器必须为 Cairo 或 OpenGL。');
+  if (scene.backgroundMusic !== undefined && !['none', 'piano'].includes(String(scene.backgroundMusic))) fail('默认配乐必须为舒缓钢琴或无配乐。');
+  if (scene.musicGainDb !== undefined && (!finite(scene.musicGainDb) || scene.musicGainDb < -60 || scene.musicGainDb > 0)) fail('配乐音量需要 -60 到 0 dB。');
   if (typeof scene.background !== 'string' || !/^#[\da-fA-F]{6}$/.test(scene.background)) fail('背景颜色需要六位十六进制颜色。');
   for (const [key, min, max] of [['width', 256, 3840], ['height', 144, 2160], ['fps', 1, 60]] as const) {
     if (!finite(scene[key]) || !Number.isInteger(scene[key]) || scene[key] < min || scene[key] > max) fail(`场景 ${key} 必须是 ${min}–${max} 之间的整数。`);
@@ -68,5 +70,5 @@ export function validateProject(value: unknown): Project {
     });
   };
   const actions = visit(p.actions, 0);
-  return { schemaVersion: 2, id: p.id as string, name: p.name as string, scene: { dimension: scene.dimension as '2d' | '3d', ...(scene.renderer ? {renderer:scene.renderer as 'cairo'|'opengl'} : {}), background: scene.background as string, width: scene.width as number, height: scene.height as number, fps: scene.fps as number }, actions, ...(p.assets !== undefined ? { assets: validateAssets(p.assets) } : {}), ...(p.workspace !== undefined ? { workspace: p.workspace } : {}) };
+  return { schemaVersion: 2, id: p.id as string, name: p.name as string, scene: { dimension: scene.dimension as '2d' | '3d', ...(scene.renderer ? {renderer:scene.renderer as 'cairo'|'opengl'} : {}), ...(scene.backgroundMusic !== undefined ? {backgroundMusic:scene.backgroundMusic as 'piano'|'none'} : {}), ...(scene.musicGainDb !== undefined ? {musicGainDb:scene.musicGainDb as number} : {}), background: scene.background as string, width: scene.width as number, height: scene.height as number, fps: scene.fps as number }, actions, ...(p.assets !== undefined ? { assets: validateAssets(p.assets) } : {}), ...(p.workspace !== undefined ? { workspace: p.workspace } : {}) };
 }

@@ -61,6 +61,7 @@ jobs:
           export ANYVIS_PYTHON="$(command -v python)"
           npm run test:render
           npm run test:media
+          npm run test:music
       - name: Upload native evidence
         if: always()
         uses: actions/upload-artifact@v7.0.2

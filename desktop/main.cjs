@@ -122,10 +122,19 @@ async function finishSmoke(error) {
       await until(() => document.querySelectorAll('.om-card').length > objectCount);
       [...document.querySelectorAll('[role="tab"]')].find(tab => tab.textContent.includes('时间轴')).click();
       await until(() => document.querySelector('.tl-editor .timeline-editor'));
+      document.querySelector('[aria-label="设置默认配乐"]').click();
+      const music = await until(() => document.querySelector('[aria-label="默认配乐"]'));
+      if (music.value !== 'piano') throw new Error('New projects must default to piano.');
+      music.value = 'none'; music.dispatchEvent(new Event('change', {bubbles:true}));
+      await until(() => !document.querySelector('[aria-label="配乐音量"]'));
+      music.value = 'piano'; music.dispatchEvent(new Event('change', {bubbles:true}));
+      await until(() => document.querySelector('[aria-label="配乐音量"]'));
+      document.querySelector('[aria-label="关闭对话框"]').click();
+      await until(() => !document.querySelector('.studio-modal'));
       [...document.querySelectorAll('[role="tab"]')].find(tab => tab.textContent.includes('代码')).click();
       const code = await until(() => document.querySelector('.generated-code .cm-content'));
       if (code.getAttribute('contenteditable') !== 'false') throw new Error('Generated code must be read-only.');
-      return {search:true, addBlock:true, objectManager:true, timeline:true, readOnlyCode:true};
+      return {search:true, addBlock:true, objectManager:true, timeline:true, defaultMusic:true, readOnlyCode:true};
     })()`);
     const browserCheck = await editorWindow.webContents.executeJavaScript(`(async () => {
       const session = await fetch('/api/session').then(r => r.json());

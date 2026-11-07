@@ -1,8 +1,18 @@
-import type { Project } from './core/types';
+import type { BackgroundMusic, Project } from './core/types';
 import { validateProject } from './core/project';
 
 const CURRENT = 'anyvis.studio.v2.current';
 const LIBRARY = 'anyvis.studio.v2.projects';
+const DEFAULT_MUSIC = 'anyvis.studio.defaultMusic';
+export function readDefaultMusic(): BackgroundMusic {
+  try { return localStorage.getItem(DEFAULT_MUSIC) === 'none' ? 'none' : 'piano'; }
+  catch { return 'piano'; }
+}
+export function saveDefaultMusic(music: BackgroundMusic) { localStorage.setItem(DEFAULT_MUSIC, music); }
+/** Apply preferences only when creating a new work, never when opening a saved/imported work. */
+export function withDefaultMusic(project: Project): Project {
+  return { ...project, scene: { ...project.scene, backgroundMusic: readDefaultMusic(), musicGainDb: -18 } };
+}
 export interface SavedProject { project: Project; savedAt: number }
 export function readProjects(): SavedProject[] {
   try {
