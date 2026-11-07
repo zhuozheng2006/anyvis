@@ -49,11 +49,29 @@ def probe_asset(filename, kind):
                         raise ValueError("SVG 只能引用文件内的矢量元素。")
                     if re.search(r"url\s*\(", value, re.I) and not re.fullmatch(r"url\(\s*#[\w.-]+\s*\)", value):
                         raise ValueError("SVG 不允许外部资源。")
-            viewbox = root.attrib.get("viewBox", "0 0 512 512").replace(",", " ").split()
-            width, height = float(viewbox[2]), float(viewbox[3])
+            import math
+            if "viewBox" in root.attrib:
+                viewbox = root.attrib["viewBox"].replace(",", " ").split()
+                if len(viewbox) != 4:
+                    raise ValueError("SVG viewBox 需包含四个有限数值。")
+                values = [float(v) for v in viewbox]
+                if not all(math.isfinite(v) for v in values):
+                    raise ValueError("SVG viewBox 需包含四个有限数值。")
+                width, height = values[2:]
+            else:
+                def dimension(key):
+                    value = root.attrib.get(key, "512").strip()
+                    match = re.fullmatch(r"([+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)\s*(px|pt|pc|mm|cm|in)?", value)
+                    if not match:
+                        raise ValueError("SVG 需要有效的画布尺寸或 viewBox；百分比尺寸请添加 viewBox。")
+                    units = {None: 1, "px": 1, "pt": 96 / 72, "pc": 16, "mm": 96 / 25.4, "cm": 96 / 2.54, "in": 96}
+                    return float(match[1]) * units[match[2]]
+                width, height = dimension("width"), dimension("height")
             if not 0 < width <= 8192 or not 0 < height <= 8192:
                 raise ValueError("SVG 画布尺寸需在 8192×8192 以内。")
-            emit("asset", kind="image", extension="svg", width=round(width), height=round(height))
+            # SVG user units can be smaller than a pixel. Preserve the original
+            # vector file, but metadata dimensions must remain positive integers.
+            emit("asset", kind="image", extension="svg", width=max(1, round(width)), height=max(1, round(height)))
         else:
             from PIL import Image
             with Image.open(filename) as image:

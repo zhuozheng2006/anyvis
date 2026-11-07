@@ -27,22 +27,27 @@ test('uploaded transparent images and trimmed voiceovers survive restart and ren
   let app;
   try {
     await execute(health.python, ['-c', `from PIL import Image,ImageDraw
-import wave, numpy as np, av
+import wave, numpy as np
 image=Image.new('RGBA',(64,64),(0,0,0,0)); ImageDraw.Draw(image).ellipse((4,4,60,60),fill=(255,0,0,255)); image.save('sprite.png')
 rate=44100; t=np.arange(rate*4)/rate; y=.2*np.sin(2*np.pi*np.where(t<1,330,660)*t)
 with wave.open('voice.wav','wb') as f:
  f.setnchannels(1);f.setsampwidth(2);f.setframerate(rate);f.writeframes((y*32767).astype('<i2').tobytes())
-with av.open('voice.wav') as source, av.open('voice.ogg','w') as target:
- stream=target.add_stream('libvorbis',rate=44100)
- for frame in source.decode(audio=0):
-  for packet in stream.encode(frame): target.mux(packet)
- for packet in stream.encode(): target.mux(packet)
 `], { cwd: directory });
+    // Upload/decode must not require the user's PyAV build to have an encoder.
+    await writeFile(path.join(directory, 'voice.ogg'), await readFile(new URL('./fixtures/voice-tones.ogg', import.meta.url)));
     const options = { listen: false, port: 4317, cacheRoot: path.join(directory, 'cache'), health };
     app = await createAnyVisServer(options);
     let headers = { 'x-anyvis-token': (await request(app, '/api/session')).json().token };
     const bad = await request(app, '/api/assets?name=unsafe.svg', { method: 'POST', headers, body: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>') });
     assert.equal(bad.status, 400); assert.match(bad.json().error, /SVG/);
+    const svgUpload = (name, svg) => request(app, `/api/assets?name=${name}.svg`, { method: 'POST', headers, body: Buffer.from(svg) });
+    const tiny = await svgUpload('tiny', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 .25 2"><rect width=".25" height="2" fill="#0000ff"/></svg>');
+    assert.equal(tiny.status, 201); assert.equal(tiny.json().width, 1); assert.equal(tiny.json().height, 2);
+    const physical = await svgUpload('physical', '<svg xmlns="http://www.w3.org/2000/svg" width="1in" height="36pt"><rect width="96" height="48"/></svg>');
+    assert.equal(physical.status, 201); assert.equal(physical.json().width, 96); assert.equal(physical.json().height, 48);
+    for (const box of ['0 0 2', 'NaN 0 2 2', '0 0 -2 2']) {
+      assert.equal((await svgUpload('invalid', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${box}"/>`)).status, 400);
+    }
     const denied = await request(app, '/api/assets?name=voice.wav', { method: 'POST', body: await readFile(path.join(directory, 'voice.wav')) });
     assert.equal(denied.status, 403);
     const upload = async name => {
@@ -55,8 +60,9 @@ with av.open('voice.wav') as source, av.open('voice.ogg','w') as target:
     headers = { 'x-anyvis-token': (await request(app, '/api/session')).json().token, 'content-type': 'application/json' };
     assert.equal((await request(app, `/api/assets/${image.id}`)).json().id, image.id);
     assert.equal((await request(app, `/api/assets/${voice.id}/file`, { headers: { range: 'bytes=0-31' } })).bytes.length, 32);
-    const project = createEmptyProject(); project.scene = { ...project.scene, width: 640, height: 360, fps: 24 }; project.assets = [image, voice];
+    const project = createEmptyProject(); project.scene = { ...project.scene, width: 640, height: 360, fps: 24 }; project.assets = [image, voice, tiny.json()];
     project.actions = [createAction('image_asset', { name: '主角', asset: image.id, height: 2, x: -2, appear: 'none' }), createAction('audio_play', { name: '讲解', asset: voice.id, delay: .5, offset: 1, length: 2, gain: -6 }), createAction('shift', { target: '主角', dx: 4, duration: 1 }), createAction('audio_stop', { target: '讲解' }), createAction('wait', { duration: 1 })];
+    project.actions.unshift(createAction('image_asset', { name: '矢量', asset: tiny.json().id, height: 1, x: 3, y: 2, appear: 'none' }));
     const submitted = await request(app, '/api/render', { method: 'POST', headers, body: { project, quality: 'preview', revision: 'media-fixture' } });
     assert.equal(submitted.status, 202, submitted.bytes.toString());
     let job;
@@ -72,11 +78,13 @@ with av.open('voice.wav') as source, av.open('voice.ogg','w') as target:
 filename=sys.argv[1]
 with av.open(filename) as c:
  assert len(c.streams.audio)==1
- centers=[]
+ centers=[]; blue=[]
  for frame in c.decode(video=0):
   pixels=frame.to_ndarray(format='rgb24'); mask=(pixels[:,:,0]>180)&(pixels[:,:,1]<80)&(pixels[:,:,2]<80)
+  blue.append(int(((pixels[:,:,2]>180)&(pixels[:,:,0]<80)&(pixels[:,:,1]<80)).sum()))
   if mask.any(): centers.append(float(np.where(mask)[1].mean()))
  assert len(centers)>=47 and centers[-1]-centers[0]>140, centers
+ assert min(blue)>10, blue
 with av.open(filename) as c:
  stream=c.streams.audio[0]; rate=stream.rate; samples=np.zeros(rate*3); cursor=None
  for frame in c.decode(stream):
