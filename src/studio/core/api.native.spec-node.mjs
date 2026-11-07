@@ -1,3 +1,4 @@
+import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
@@ -42,6 +43,12 @@ test('native API behavior: arguments, objects, methods, callbacks, properties, c
     api('ManimColor.to_hex','hex',{}, {receiver:'green'});
     check('assert objects["hex"].upper()=="#33CC66"');
     api('Square','square',{side_length:1,color:ref('green')},{mode:'store'});
+    value('colored',{$call:{api:'Mobject.set_color',receiver:ref('square'),args:['#FF0000']}});
+    used.add(getApiEntry('Mobject.set_color').id);
+    check('assert objects["colored"] is objects["square"]\nassert objects["square"].get_fill_color().to_hex().upper()=="#FF0000"\nassert objects["square"].get_stroke_color().to_hex().upper()=="#FF0000"');
+    value('scaled',{$call:{api:'Mobject.scale',receiver:ref('square'),args:[2],kwargs:{scale_stroke:true}}});
+    used.add(getApiEntry('Mobject.scale').id);
+    check('assert abs(objects["scaled"].width-2)<1e-6\nassert abs(objects["scaled"].get_stroke_width()-8)<1e-6');
     api('Transform','transform',{mobject:ref('circle'),target_mobject:ref('square')},{duration:0.2});
     check('np.testing.assert_allclose(objects["circle"].get_center(),[0,0,0],atol=1e-6)');
     api('Axes','axes',{x_range:[-3,3,1],y_range:[-2,2,1],x_length:6,y_length:3,tips:false});
@@ -98,7 +105,7 @@ print("ANYVIS_API_OK")`);
     if(process.env.ANYVIS_API_REPORT){
       const registry=await readFile(new URL('./api-registry.json',import.meta.url));
       const report=path.resolve(process.env.ANYVIS_API_REPORT);await mkdir(path.dirname(report),{recursive:true});
-      await writeFile(report,JSON.stringify({registrySha256:createHash('sha256').update(registry).digest('hex'),apiIds:[...used].sort(),engineVersion:health.version,renderer:'cairo',checks:'Runtime assertions for geometry, return values, property writes, callbacks/updaters, grouping, animation composition, context restoration and nonblank frame pixels. This fixture does not export a movie.',passed:true},null,2)+'\n');
+      await writeFile(report,JSON.stringify({fixture:'src/studio/core/api.native.spec-node.mjs',sourceFiles:await apiEvidenceSources('src/studio/core/api.native.spec-node.mjs'),registrySha256:createHash('sha256').update(registry).digest('hex'),apiIds:[...used].sort(),engineVersion:health.version,renderer:'cairo',checks:'Runtime assertions for geometry, return values, property writes, callbacks/updaters, grouping, animation composition, context restoration and nonblank frame pixels. This fixture does not export a movie.',passed:true},null,2)+'\n');
     }
   }finally{await rm(directory,{recursive:true,force:true});}
 });

@@ -19,6 +19,17 @@ function project(actions: Project['actions']): Project {
 afterEach(() => { for (const ws of workspaces.splice(0)) ws.dispose(); });
 
 describe('Studio Blockly model', () => {
+  it('never hides a parameter on blocks that have no expand control', () => {
+    for (const definition of BLOCK_CATALOG.filter(d => d.fields.length <= 4)) {
+      const action = createAction(definition.type), ws = workspace([action]);
+      const block = ws.getBlockById(action.id)!;
+      for (const field of definition.fields) {
+        const input = block.inputList.find(i => i.fieldRow.some(f => f.name === field.name));
+        expect(input?.isVisible(), `${definition.type}.${field.name}`).toBe(true);
+      }
+      workspaces.splice(workspaces.indexOf(ws), 1); ws.dispose();
+    }
+  });
   it('preserves every catalog field and selected default through a Blockly round trip', () => {
     // A stale dropdown default or hidden numeric field must not silently alter a scene.
     // Projects have a 500-block limit. Test every entry in bounded workspaces,

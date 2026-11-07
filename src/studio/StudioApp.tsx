@@ -4,6 +4,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { BLOCK_CATALOG } from './core/catalog';
 import { compileProject } from './core/compiler';
+import { engineCompatibilityError } from './core/protocol';
 import { exportStandalonePython } from './core/export';
 import { createEmptyProject, validateProject } from './core/project';
 import { StudioBlocks, type StudioBlocksHandle } from './blocks/StudioBlocks';
@@ -158,7 +159,8 @@ export default function StudioApp() {
     if (errors.length) { setRenderError('先修正下方标出的积木，再生成预览。'); return; }
     if (compiled.requiresTrust && !trusted) { setRenderError('作品包含 Python 扩展或需要本机权限的 API 调用。请在“Python”页检查内容，并允许本次作品运行代码后再预览。'); setEditorTab('code'); return; }
     if (!health?.available) { setRenderError('渲染引擎尚未就绪。请使用 AnyVis 启动器，或在下方重新检查环境。'); return; }
-    if (allActions(project.actions).some(a => a.type.startsWith('api_')) && !health.authoringProtocol) { setRenderError('本地服务仍是旧版本，尚不认识 API 积木。请在启动终端按 Ctrl+C，再运行 npm run studio；桌面版请退出后重新打开新版程序。'); return; }
+    const compatibilityError = engineCompatibilityError(health);
+    if (compatibilityError) { setRenderError(compatibilityError); return; }
     pendingFinal.current = renderQuality === 'final';
     const request = ++requestCounter.current;
     const revision = currentRevision;

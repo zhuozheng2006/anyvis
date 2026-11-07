@@ -2,6 +2,16 @@
 
 更新：2026-11-07（北京时间）。仓库：[zhuozheng2006/anyvis](https://github.com/zhuozheng2006/anyvis)，分支 `main`。
 
+## v0.3.1 接续检查点
+
+本轮扩展原生测试到 419 个不同 API：`api.native.spec-node.mjs`、`api-families.native.spec-node.mjs`、`api-queries.native.spec-node.mjs`。对应三份报告位于 `artifacts/api/`，合并审计为 `docs/research/api-registry-verification.json`；报告绑定注册表、编译器和 fixture 哈希，改动运行时后必须重新执行，不能复用旧报告。六组家族共 544 次调用断言；200 项只读差分中 199 项通过，NumberLine.get_labels 的默认原生实例报错被明确列为 gap。
+
+新增 `$float`、`$method` 参数；嵌套调用改为接收对象动态方法分派，修复 RGB 类型与子类 override 问题。UI 少字段积木所有参数现在可见。authoringProtocol 升为 2，旧 Node 后端需重启。递归参数树和弹窗改进由主代理实现并经 Gemini 3.8 Flash High 协作审查；模型第一次提交的草稿回退/observer 清理/视口定位仍存在问题，已回修，并由主代理补充结构化值默认进入可视树、畸形回调参数名无损保存回归；287 项 Vitest、生产构建与桌面资源准备通过。Chrome 768×819 视口中正文滚动、操作栏可见；最终验证结果见 verification.md。
+
+新增 `examples/api/typed-values.anyvis.json`（17 块、13.17 秒）与生成/渲染脚本。输出视频 316 帧已全部解码并查看关键帧，未加入仓库媒体附件；可按 examples/api/README.md 复现。新增 Native Manim API regression CI；最终桌面构建结果见验证记录。
+
+仍未完成：1,874 个入口逐项行为证据、533 个 OpenGL 专属入口真实渲染、Manim 0.22.1 适配及目标机器安装验收。**已有 2,293 项入口全接入，不代表这些工作已完成。** 本机 OpenGL 默认上下文 cannot choose pixel format，EGL 无法导入；不能将其计为通过。
+
 ## 本轮接续
 
 中断时 v0.3.0 的 47 个新增或修改文件仅保存在本地，GitHub 主分支仍为 `c3f43b0`。已比对 Git blob 哈希，保留远端全部现有文件，并提交 API 扩展、参数曲线示例和桌面验证改进：`b01b38e3f1d7a0a1b07fe0c6d4fc3e2e27cfe3c9`。

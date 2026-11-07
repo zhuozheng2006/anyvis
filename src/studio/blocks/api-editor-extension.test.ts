@@ -36,4 +36,27 @@ describe('structured API editors', () => {
         apply(root);
         expect(save).toHaveBeenCalledWith('3.5');
     });
+    it('supports switching from simple value to nested callback while keeping actions accessible and triggering reposition', () => {
+        const save = vi.fn();
+        const reposition = vi.fn();
+        const root = createApiValueEditor(field, '0', ['circle'], save, vi.fn(), reposition);
+        choose(root, 'tree');
+        expect(reposition).toHaveBeenCalled();
+
+        // Check that controls container is present for independent scroll
+        const controls = root.querySelector('.av-api-value-controls');
+        expect(controls).not.toBeNull();
+        expect(root.querySelector('.av-api-actions')).not.toBeNull();
+
+        // Switch to callback node inside tree
+        const typeSelect = root.querySelector<HTMLSelectElement>('select[aria-label="值 / 类型"]')!;
+        typeSelect.value = 'lambda';
+        typeSelect.dispatchEvent(new Event('change'));
+
+        expect(reposition).toHaveBeenCalledTimes(2);
+        apply(root);
+        expect(save).toHaveBeenCalled();
+        const parsed = JSON.parse(save.mock.calls[0][0]);
+        expect(parsed).toHaveProperty('$lambda');
+    });
 });

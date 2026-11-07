@@ -1,0 +1,61 @@
+name: Native Manim API regression
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['src/studio/core/**', 'server/**', 'scripts/**', 'package*.json', '.github/workflows/native-api.yml']
+  pull_request:
+    paths: ['src/studio/core/**', 'server/**', 'scripts/**', 'package*.json', '.github/workflows/native-api.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-api-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cairo:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated Cairo runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2-dev libpango1.0-dev pkg-config ffmpeg fonts-noto-cjk texlive-latex-extra dvisvgm
+          python -m pip install 'manim==0.20.1'
+          npm ci
+      - name: Validate native evidence handling
+        run: python scripts/test_verify_api_registry.py
+      - name: Run actual Manim behavior and differential tests
+        env:
+          ANYVIS_API_REPORT: artifacts/api/native-evidence.json
+          ANYVIS_API_FAMILIES_REPORT: artifacts/api/native-families-evidence.json
+          ANYVIS_API_QUERIES_REPORT: artifacts/api/native-queries-evidence.json
+        run: |
+          export ANYVIS_PYTHON="$(command -v python)"
+          npm run test:api-native
+          python scripts/verify-api-registry.py --native-report artifacts/api/native-evidence.json --native-report artifacts/api/native-families-evidence.json --native-report artifacts/api/native-queries-evidence.json --output artifacts/api/native-coverage.json
+      - name: Run actual worker media integration
+        run: |
+          export ANYVIS_PYTHON="$(command -v python)"
+          npm run test:render
+      - name: Upload native evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: AnyVis-native-cairo-${{ github.sha }}
+          path: artifacts/api/*.json
+          if-no-files-found: error
+          retention-days: 14

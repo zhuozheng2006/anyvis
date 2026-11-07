@@ -4,7 +4,7 @@ export interface ApiValueContext {
   references: ReadonlySet<string>;
   symbols?: Record<string, string>; // 已由编译器生成的数学变量映射
   constants: Record<string, { code: string; requiresTrust?: boolean }>;
-  callables: Record<string, { code: string; requiresTrust?: boolean; instance?: boolean; ownerCode?: string }>;
+  callables: Record<string, { code: string; requiresTrust?: boolean; instance?: boolean; ownerCode?: string; methodName?: string }>;
   properties?: Record<string,{name:string;ownerCode:string;requiresTrust?:boolean}>;
   resolveCallable?: (name:string)=>ApiValueContext['callables'][string]|undefined;
   resolveProperty?: (name:string)=>NonNullable<ApiValueContext['properties']>[string]|undefined;
@@ -31,11 +31,13 @@ const VALID_TAGS = new Set([
   '$tuple',
   '$dict',
   '$complex',
+  '$float',
   '$lambda',
   '$local',
   '$index',
   '$slice',
   '$call',
+  '$method',
   '$op', '$if', '$not', '$property',
 ]);
 
@@ -134,6 +136,18 @@ function compileTagged(
   symbols: Record<string, string>,
 ): string {
   switch (tag) {
+    case '$method': {
+      if (!isPlainObject(payload) || Object.keys(payload).length !== 2 || typeof payload.api !== 'string' || !('receiver' in payload)) throw new Error('$method 需要清单中的对象方法 api 和 receiver。');
+      const entry = Object.prototype.hasOwnProperty.call(context.callables, payload.api) ? context.callables[payload.api] : context.resolveCallable?.(payload.api);
+      if (!entry?.instance || !entry.ownerCode || !entry.methodName || !/^[A-Za-z][A-Za-z_0-9]*$/.test(entry.methodName)) throw new Error('$method 只能绑定清单中的对象方法。');
+      state.requiresTrust ||= !!entry.requiresTrust;
+      return `_av_receiver(${compileNode(payload.receiver, context, state, depth + 1, locals, symbols)}, ${entry.ownerCode}).${entry.methodName}`;
+    }
+    case '$float': {
+      if (typeof payload !== 'number' || !Number.isFinite(payload)) throw new Error('$float 必须是有限数字。');
+      const literal = String(Object.is(payload, -0) ? 0 : payload);
+      return /[.eE]/.test(literal) ? literal : `${literal}.0`;
+    }
     case '$op': {
       if(!Array.isArray(payload)||payload.length!==3||typeof payload[0]!=='string'||!['+','-','*','/','**','%','@','<','<=','>','>=','==','!=','and','or'].includes(payload[0])) throw new Error('$op 需要 [允许的运算符, 左值, 右值]。');
       const left=compileNode(payload[1],context,state,depth+1,locals,symbols);
@@ -169,7 +183,8 @@ function compileTagged(
         state.requiresTrust ||= !!entry.requiresTrust;
         if(entry.instance) {
           if(!('receiver' in payload)||!entry.ownerCode)throw new Error('$call 对象方法缺少 receiver。');
-          return `_av_method(${inner(payload.receiver)}, ${entry.ownerCode}, ${entry.code}, ${positional}, ${named})`;
+          if (!entry.methodName || !/^[A-Za-z][A-Za-z_0-9]*$/.test(entry.methodName)) throw new Error('$call 方法缺少清单名称。');
+          return `_av_method(${inner(payload.receiver)}, ${entry.ownerCode}, ${py(entry.methodName)}, ${positional}, ${named})`;
         }
         if('receiver' in payload) throw new Error('此 API 不接受 receiver。');
         return `${entry.code}(*${positional}, **${named})`;

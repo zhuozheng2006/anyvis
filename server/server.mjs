@@ -6,6 +6,7 @@ import { mkdir, writeFile, stat, rm } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { AUTHORING_PROTOCOL } from '../src/studio/core/protocol.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const WORKER = path.join(ROOT, 'server', 'worker.py');
@@ -307,7 +308,7 @@ export async function createAnyVisServer(options = {}) {
         if (!['GET', 'HEAD', 'POST', 'DELETE'].includes(req.method)) return json(res, 405, { error: '不支持的请求方式。' });
         if (['POST', 'DELETE'].includes(req.method) && !authorized(req)) return json(res, 403, { error: '会话已过期，请刷新页面。' });
         if (pathname === '/api/session' && req.method === 'GET') return json(res, 200, { token });
-        if (pathname === '/api/health' && req.method === 'GET') return json(res, 200, { ...health, authoringProtocol: 1 });
+        if (pathname === '/api/health' && req.method === 'GET') return json(res, 200, { ...health, authoringProtocol: AUTHORING_PROTOCOL });
         if (pathname === '/api/render' && req.method === 'POST') return json(res, 202, publicJob(await submit(await readJson(req))));
         if (pathname === '/api/ai' && req.method === 'POST') {
           const body = await readJson(req);

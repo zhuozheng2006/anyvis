@@ -35,7 +35,7 @@ export function createApiCompiler() {
         for (const key of [entry.id, entry.path])
             Object.defineProperty(properties, key, { configurable: true, enumerable: true, get: () => ({ name: entry.name, ownerCode: code(entry.module, entry.path.split('.').slice(0, -1).join('.')), requiresTrust: entry.requiresTrust }) });
     }
-    const add = (key: string, entry: ApiEntry) => Object.defineProperty(callables, key, { configurable: true, enumerable: true, get: () => ({ code: code(entry.module, entry.path), requiresTrust: entry.requiresTrust, instance: entry.kind === 'method', ownerCode: entry.kind === 'method' ? code(entry.module, entry.path.split('.').slice(0, -1).join('.')) : undefined }) });
+    const add = (key: string, entry: ApiEntry) => Object.defineProperty(callables, key, { configurable: true, enumerable: true, get: () => ({ code: code(entry.module, entry.path), requiresTrust: entry.requiresTrust, instance: entry.kind === 'method', methodName: entry.name, ownerCode: entry.kind === 'method' ? code(entry.module, entry.path.split('.').slice(0, -1).join('.')) : undefined }) });
     const counts = new Map<string, number>();
     const candidates = API_ENTRIES.filter(e => ['class', 'function', 'staticmethod', 'classmethod', 'method'].includes(e.kind));
     for (const entry of candidates)
@@ -145,9 +145,9 @@ def _av_receiver(value, owner):
 def _av_check_class(value, owner):
     if not isinstance(value, type) or not issubclass(value, owner):
         raise TypeError(f"调用类需要是 {owner.__name__} 的子类")
-def _av_method(receiver, owner, function, args, kwargs):
+def _av_method(receiver, owner, name, args, kwargs):
     _av_check_receiver(receiver, owner)
-    return function(receiver, *args, **kwargs)
+    return getattr(receiver, name)(*args, **kwargs)
 def _av_invoke(function, values, extra_args, extra_kwargs):
     duplicate = values.keys() & extra_kwargs.keys()
     if duplicate:

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { FieldDefinition } from '../core/types';
-import { createApiValueEditor } from './api-value-field';
+import { createApiValueEditor, clampDropdownToViewport } from './api-value-field';
 
 function button(editor: HTMLElement, label: string): HTMLButtonElement {
   const result = [...editor.querySelectorAll('button')].find((item) => item.textContent === label);
@@ -407,6 +407,142 @@ describe('createApiValueEditor', () => {
       button(editor, '应用参数').click();
       expect(apply).not.toHaveBeenCalled();
       expect(getError(editor).textContent).toContain('超过 20,000 字符');
+    });
+
+    it('维持独立滚动的编辑区以及固定的底部操作按钮', () => {
+      const editor = createApiValueEditor(createField(), '10', [], vi.fn(), vi.fn());
+      document.body.append(editor);
+
+      expect(editor.className).toContain('av-api-value-editor');
+      const controls = editor.querySelector('.av-api-value-controls');
+      expect(controls).not.toBeNull();
+
+      const actions = editor.querySelector('.av-api-actions');
+      expect(actions).not.toBeNull();
+      expect(actions?.contains(button(editor, '应用参数'))).toBe(true);
+      expect(actions?.contains(button(editor, '取消'))).toBe(true);
+    });
+
+    it('在模式切换或树节点变更时调用 reposition 回调以便自适应视口', () => {
+      const reposition = vi.fn();
+      const editor = createApiValueEditor(createField(), '10', [], vi.fn(), vi.fn(), reposition);
+      document.body.append(editor);
+
+      switchMode(editor, 'tree');
+      expect(reposition).toHaveBeenCalled();
+
+      reposition.mockClear();
+      switchMode(editor, 'text');
+      expect(reposition).toHaveBeenCalled();
+    });
+
+    it('按 Escape 键触发关闭并释放编辑器', () => {
+      const close = vi.fn();
+      const editor = createApiValueEditor(createField(), '10', [], vi.fn(), close);
+      document.body.append(editor);
+
+      editor.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      expect(close).toHaveBeenCalledTimes(1);
+    });
+
+    it('顶层 infer 确保畸形 {$ref: 123} 或 {$constant: 999} 不被强转而作为 json 保留', () => {
+      const refEditor = createApiValueEditor(createField(), '{"$ref": 123}', [], vi.fn(), vi.fn());
+      expect(getModeSelect(refEditor).value).toBe('json');
+
+      const constEditor = createApiValueEditor(createField(), '{"$constant": true}', [], vi.fn(), vi.fn());
+      expect(getModeSelect(constEditor).value).toBe('json');
+
+      const numEditor = createApiValueEditor(createField(), '{"$number": 42}', [], vi.fn(), vi.fn());
+      expect(getModeSelect(numEditor).value).toBe('json');
+    });
+
+    it('顶层 infer 严格先校验 shape，含有 extra 属性的多 key 对象与 lambda 不走快捷模式，保留数据完整性', () => {
+      // 1. {$ref: "x", extra: 1} 绝不能被判定为 ref 快捷模式，否则丢失 extra
+      const refWithExtra = createApiValueEditor(createField(), '{"$ref": "circle1", "extra": 1}', ['circle1'], vi.fn(), vi.fn());
+      expect(getModeSelect(refWithExtra).value).toBe('tree');
+
+      // 2. {$constant: "RIGHT", extra: true} 绝不能进 constant 快捷模式
+      const constWithExtra = createApiValueEditor(createField(), '{"$constant": "RIGHT", "extra": true}', [], vi.fn(), vi.fn());
+      expect(getModeSelect(constWithExtra).value).toBe('tree');
+
+      // 3. lambda 内部含有额外字段，绝不进 function 快捷模式
+      const lambdaInnerExtra = createApiValueEditor(createField(), '{"$lambda": {"params": ["t"], "body": {"$expr": "sin(t)"}, "extra": 99}}', [], vi.fn(), vi.fn());
+      expect(getModeSelect(lambdaInnerExtra).value).toBe('tree');
+
+      // 4. lambda 外层含有额外字段，绝不进 function 快捷模式
+      const lambdaOuterExtra = createApiValueEditor(createField(), '{"$lambda": {"params": ["t"], "body": {"$expr": "sin(t)"}}, "extra": 99}', [], vi.fn(), vi.fn());
+      expect(getModeSelect(lambdaOuterExtra).value).toBe('tree');
+    });
+
+    it('基于真实视口坐标进行 clamp 修正，防止在 768×819 等窄长视口下超出屏幕', () => {
+      // 模拟视口 768 × 819
+      window.innerHeight = 819;
+      window.innerWidth = 768;
+
+      const dropdownDiv = document.createElement('div');
+      dropdownDiv.className = 'blocklyDropDownDiv';
+      dropdownDiv.style.position = 'absolute';
+      dropdownDiv.style.top = '414px';
+      dropdownDiv.style.left = '100px';
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'blocklyDropDownContent';
+      contentDiv.style.maxHeight = '300px';
+      dropdownDiv.append(contentDiv);
+      document.body.append(dropdownDiv);
+
+      const editor = createApiValueEditor(createField(), '[1, 2, 3]', [], vi.fn(), vi.fn());
+      contentDiv.append(editor);
+
+      // 模拟真实 Chrome 中 height 560 的测量结果，且 footer 位于 bottom
+      Object.defineProperty(dropdownDiv, 'offsetParent', { value: document.body, configurable: true });
+      dropdownDiv.getBoundingClientRect = () => ({
+        top: parseFloat(dropdownDiv.style.top) || 414,
+        bottom: (parseFloat(dropdownDiv.style.top) || 414) + 560,
+        height: 560,
+        left: 100,
+        right: 550,
+        width: 450,
+        x: 100,
+        y: parseFloat(dropdownDiv.style.top) || 414,
+        toJSON: () => {},
+      });
+
+      editor.getBoundingClientRect = () => ({
+        top: parseFloat(dropdownDiv.style.top) || 414,
+        bottom: (parseFloat(dropdownDiv.style.top) || 414) + 560,
+        height: 560,
+        left: 100,
+        right: 550,
+        width: 450,
+        x: 100,
+        y: parseFloat(dropdownDiv.style.top) || 414,
+        toJSON: () => {},
+      });
+
+      // 执行 clamp
+      clampDropdownToViewport(editor);
+
+      // 验证 contentDiv 的 300px 限制被覆盖为 none
+      expect(contentDiv.style.maxHeight).toBe('none');
+
+      // 验证 top 被安全向上 clamp，使实际 bottom <= 819 - 12 (807)
+      const clampedTop = parseFloat(dropdownDiv.style.top);
+      expect(clampedTop).toBeLessThanOrEqual(819 - 12 - 560);
+      expect(clampedTop + 560).toBeLessThanOrEqual(819 - 12);
+      expect(clampedTop).toBeGreaterThanOrEqual(12);
+    });
+
+    it('暴露幂等 dispose 方法，多次调用安全且正常释放所有资源', () => {
+      const editor = createApiValueEditor(createField(), '10', [], vi.fn(), vi.fn());
+      expect(typeof editor.dispose).toBe('function');
+
+      // 幂等调用多次
+      expect(() => {
+        editor.dispose();
+        editor.dispose();
+        editor.dispose();
+      }).not.toThrow();
     });
   });
 });

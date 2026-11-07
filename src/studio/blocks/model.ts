@@ -234,8 +234,11 @@ function makeField(field: FieldDefinition, definition: BlockDefinition): Blockly
 }
 
 function conciseFields(definition: BlockDefinition): Set<string> {
+  // Blocks without a details toggle must never hide a field (notably the
+  // value/context fields of the small API helper blocks).
+  if (definition.fields.length <= 4) return new Set(definition.fields.map(f => f.name));
   if (definition.apiId) {
-    const keys=definition.fields.filter(f=>['name','receiver','mode'].includes(f.name)||f.apiParameter?.required||f.apiParameter?.kind==='var_positional').map(f=>f.name);
+    const keys=definition.fields.filter(f=>['name','receiver','mode','setValue'].includes(f.name)||f.apiParameter?.required||f.apiParameter?.kind==='var_positional').map(f=>f.name);
     for (const f of definition.fields) if(keys.length<5 && !keys.includes(f.name) && f.apiParameter && !['var_keyword','var_positional'].includes(f.apiParameter.kind)) keys.push(f.name);
     return new Set(keys);
   }

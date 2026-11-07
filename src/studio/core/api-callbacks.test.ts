@@ -3,6 +3,20 @@ import { createApiCompiler } from './api-compiler';
 import { compileApiValue } from './api-values';
 const compile = (v: unknown) => createApiCompiler().value(JSON.stringify(v), new Set(['c']), {});
 describe('structured callback operations', () => {
+    it('binds registered instance methods for ApplyMethod without calling them early', () => {
+        const result = compile({ $method: { api: 'Circle.shift', receiver: { $ref: 'c' } } });
+        expect(result.code).toMatch(/_av_receiver\(objects\["c"\], .*\)\.shift$/);
+        expect(result.references).toEqual(['c']);
+        for (const value of [{ api: 'Circle', receiver: { $ref: 'c' } }, { api: 'Mobject.shift' }, { api: '__getattribute__', receiver: { $ref: 'c' } }])
+            expect(() => compile({ $method: value })).toThrow();
+    });
+    it('preserves explicit Python float types including integral and scientific values', () => {
+        for (const [value, code] of [[1, '1.0'], [0, '0.0'], [-2, '-2.0'], [0.5, '0.5'], [1e21, '1e+21'], [1e-7, '1e-7']] as const)
+            expect(compile({ $float: value }).code).toBe(code);
+        for (const value of ['1', null, true, {}, []]) expect(() => compile({ $float: value })).toThrow('有限数字');
+        const ctx = { references: new Set<string>(), constants: {}, callables: {} };
+        for (const value of [Infinity, NaN]) expect(() => compileApiValue({ $float: value }, ctx)).toThrow();
+    });
     it('supports object methods, properties, comparisons and conditional return values', () => {
         const width = { $property: { api: 'Mobject.width', receiver: { $local: 'm' } } };
         const result = compile({ $lambda: { params: ['m'], body: { $if: [{ $op: ['>', width, 2] }, 'large', 'small'] } } });

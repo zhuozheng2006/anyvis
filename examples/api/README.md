@@ -18,3 +18,14 @@ node scripts/render-projects.mjs --manifest examples/api/render-manifest.json --
 ```
 
 使用 Manim CE 0.20.1、Cairo，以及现有中文字体和公式工具。重新启动旧的 AnyVis 后端服务后再导入新版 API 积木工程。
+
+## 浮点颜色、绑定方法与回调
+
+[可编辑工程](typed-values.anyvis.json) 用 17 个积木验证 `ManimColor.from_rgb`、`ApplyMethod`、`UpdateFromAlphaFunc` 与子类方法分派。显式浮点 `[1.0, 0.0, 0.0]` 生成亮红色，回调移动圆，绑定方法缩放圆并保留 `scale_stroke` 参数。无 Python 扩展。
+
+本地真实视频为 1280×720 / 24 fps / 316 帧 / 13.17 秒，全部帧解码且时间戳单调；285 帧检出红色像素。
+
+```sh
+node scripts/make-api-regression-demo.mjs
+node scripts/render-projects.mjs --manifest examples/api/typed-values-manifest.json --python /path/to/manim/python --output artifacts/api-typed-values --jobs 1
+```

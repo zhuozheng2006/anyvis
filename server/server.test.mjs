@@ -8,6 +8,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import http from 'node:http';
 import { createAnyVisServer, discoverPython, parseRange } from './server.mjs';
 import { createEmptyProject } from '../src/studio/core/project.ts';
+import { AUTHORING_PROTOCOL } from '../src/studio/core/protocol.ts';
 
 // Exercise the actual HTTP route handler without binding a socket. Some build
 // environments deny listen(); a separate smoke run checks real browser I/O.
@@ -54,6 +55,7 @@ test('desktop injects runtime and static paths without falling back from an expl
     const health = await app.healthPromise;
     assert.equal(health.available, true); assert.equal(health.python, process.execPath);
     assert.equal(health.probeCwd, await realpath(runtimeRoot)); assert.equal(health.worker, await realpath(workerPath));
+    assert.equal((await request(app, '/api/health')).json().authoringProtocol, AUTHORING_PROTOCOL);
     const page = await request(app, '/');
     assert.equal(page.status, 200); assert.match(page.bytes.toString(), /Packaged AnyVis/);
     assert.match(page.headers['Content-Security-Policy'], /frame-ancestors 'none'/);
