@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as Blockly from 'blockly/core';
+import { flushBlocklyEvents as flush } from './test-events';
 import { MatrixField, createMatrixEditor, parseMatrixValue, serializeMatrixDraft } from './matrix-field';
 
 const numeric = { fixedRows: 2, fixedColumns: 2, numericOnly: true };
@@ -99,18 +100,18 @@ describe('matrix editor interactions', () => {
     const workspace = new Blockly.Workspace();
     const block = workspace.newBlock('anyvis_matrix_editor_test');
     const field = block.getField('matrix') as MatrixField;
-    await new Promise((resolve) => setTimeout(resolve, 15));
+    await flush();
     workspace.clearUndo();
     const editor = createMatrixEditor({ value: original, settings: numeric, apply: (value) => field.commitMatrix(value), cancel: vi.fn() });
     const cells = [...editor.querySelectorAll<HTMLInputElement>('.av-matrix-grid input')];
     change(cells[0], '3'); change(cells[3], '4');
     expect(field.getValue()).toBe(original);
     button(editor, '应用矩阵').click();
-    await new Promise((resolve) => setTimeout(resolve, 15));
+    await flush();
     expect(field.getValue()).toBe('[[3,0],[0,4]]');
     expect(workspace.getUndoStack()).toHaveLength(1);
     workspace.undo(false);
-    await new Promise((resolve) => setTimeout(resolve, 15));
+    await flush();
     expect(field.getValue()).toBe(original);
     workspace.dispose(); delete Blockly.Blocks.anyvis_matrix_editor_test;
   });

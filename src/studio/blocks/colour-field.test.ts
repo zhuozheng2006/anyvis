@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as Blockly from 'blockly/core';
+import { flushBlocklyEvents as flush } from './test-events';
 import { ColourField, createColourEditor, normaliseHexColour } from './colour-field';
 
 const workspaces: Blockly.Workspace[] = [];
 afterEach(() => { for (const workspace of workspaces.splice(0)) workspace.dispose(); document.body.replaceChildren(); });
-const flush = () => new Promise((resolve) => setTimeout(resolve, 15));
 
 describe('Colour field', () => {
   it('preserves valid six-digit values and expands short hex without accepting arbitrary CSS', () => {

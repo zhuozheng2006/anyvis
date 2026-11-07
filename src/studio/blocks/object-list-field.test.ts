@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as Blockly from 'blockly/core';
+import { flushBlocklyEvents as flush } from './test-events';
 import {
   ObjectListField,
   createObjectListEditor,
@@ -13,7 +14,6 @@ afterEach(() => {
   for (const workspace of workspaces.splice(0)) workspace.dispose();
   document.body.replaceChildren();
 });
-const flush = () => new Promise((resolve) => setTimeout(resolve, 15));
 
 function button(editor: HTMLElement, label: string): HTMLButtonElement {
   const result = [...editor.querySelectorAll('button')].find((item) => item.textContent?.trim() === label);

@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as Blockly from 'blockly/core';
+import { flushBlocklyEvents as flush } from './test-events';
 import { createMultilineCodeEditor, indentCode, MultilineCodeField } from './multiline-code-field';
 
 const workspaces: Blockly.Workspace[] = [];
-afterEach(() => { for (const workspace of workspaces.splice(0)) workspace.dispose(); document.body.replaceChildren(); });
-const flush = () => new Promise((resolve) => setTimeout(resolve, 15));
+afterEach(() => { for (const workspace of workspaces.splice(0)) workspace.dispose(); document.body.replaceChildren(); vi.unstubAllGlobals(); });
 
 describe('Multiline Python field', () => {
   it('indents and outdents selected lines without touching the next unselected line', () => {
@@ -35,6 +35,9 @@ describe('Multiline Python field', () => {
   });
 
   it('serializes all newlines and undoes an applied code edit in one step', async () => {
+    // Reproduce a frame taking longer than the old 15 ms sleep on CI.
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>
+      window.setTimeout(() => callback(performance.now()), 40));
     const original = 'if True:\n    self.wait(1)\n';
     Blockly.Blocks.av_multiline_field_test = {
       init(this: Blockly.Block) { this.appendDummyInput().appendField(new MultilineCodeField(original), 'CODE'); },

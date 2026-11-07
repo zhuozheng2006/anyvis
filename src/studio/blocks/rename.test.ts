@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import * as Blockly from 'blockly/core';
+import { flushBlocklyEvents as flush } from './test-events';
 import { createAction } from '../core/catalog';
 import type { Project } from '../core/types';
 import { renameProjectObject } from './rename';
@@ -10,7 +11,6 @@ afterEach(() => { for (const ws of workspaces.splice(0)) ws.dispose(); });
 function project(actions: Project['actions']): Project {
   return { schemaVersion: 2, id: 'rename-test', name: '重命名', scene: { dimension: '2d', background: '#111827', width: 1280, height: 720, fps: 30 }, actions };
 }
-const flush = () => new Promise((resolve) => setTimeout(resolve, 15));
 
 describe('Semantic object renaming', () => {
   it('updates references and comma-separated members, while preserving labels and object ids', () => {

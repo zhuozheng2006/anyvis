@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import * as Blockly from 'blockly/core';
+import { flushBlocklyEvents as flush } from './test-events';
 import { createAction } from '../core/catalog';
 import type { Action, Project } from '../core/types';
 import { applyWorkspaceRename, loadProjectWorkspace, registerStudioBlocks, setReferenceNames, setRenameErrorHandler, workspaceToActions } from './model';
@@ -23,7 +24,6 @@ function options(field: Blockly.FieldDropdown) {
   return field.getOptions(false).filter(Array.isArray) as [string, string][];
 }
 function offered(field: Blockly.FieldDropdown) { return options(field).filter(([label, value]) => value && !label.startsWith('⚠')).map(([, value]) => value); }
-const flush = () => new Promise(resolve => setTimeout(resolve, 15));
 afterEach(() => { for (const ws of workspaces.splice(0)) ws.dispose(); });
 
 describe('typed object selection', () => {
