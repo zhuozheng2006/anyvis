@@ -33,9 +33,12 @@ jobs:
       - name: Install isolated Cairo runtime dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcairo2-dev libpango1.0-dev pkg-config ffmpeg fonts-noto-cjk texlive-latex-extra dvisvgm
+          sudo apt-get install -y libcairo2-dev libpango1.0-dev pkg-config ffmpeg xvfb xauth fonts-noto-cjk texlive-latex-extra dvisvgm
           python -m pip install 'manim==0.20.1'
           npm ci
+      - name: Report dependency advisories
+        continue-on-error: true
+        run: npm audit --json
       - name: Validate native evidence handling
         run: python scripts/test_verify_api_registry.py
       - name: Run actual Manim behavior and differential tests
@@ -46,7 +49,7 @@ jobs:
         run: |
           export ANYVIS_PYTHON="$(command -v python)"
           npm run test:api-native
-          python scripts/verify-api-registry.py --native-report artifacts/api/native-evidence.json --native-report artifacts/api/native-families-evidence.json --native-report artifacts/api/native-queries-evidence.json --output artifacts/api/native-coverage.json
+          xvfb-run -a python scripts/verify-api-registry.py --native-report artifacts/api/native-evidence.json --native-report artifacts/api/native-families-evidence.json --native-report artifacts/api/native-queries-evidence.json --output artifacts/api/native-coverage.json
       - name: Run actual worker media integration
         run: |
           export ANYVIS_PYTHON="$(command -v python)"
