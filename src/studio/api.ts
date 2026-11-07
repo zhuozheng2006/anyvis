@@ -1,4 +1,4 @@
-import type { Project } from './core/types';
+import type { MediaAsset, Project } from './core/types';
 
 export type JobStatus = 'queued' | 'running' | 'done' | 'error' | 'cancelled';
 export interface RenderJob {
@@ -36,4 +36,8 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
 }
 export function startRender(project: Project, quality: 'preview' | 'final', revision: string, trustCode: boolean) {
   return api<RenderJob>('/api/render', { method: 'POST', body: JSON.stringify({ project: { ...project, workspace: undefined }, quality, revision, trustCode }) });
+}
+export function uploadAsset(file: File): Promise<MediaAsset> {
+  if (file.size > 64 * 1024 * 1024) throw Error('单个素材最大 64 MB。');
+  return api<MediaAsset>(`/api/assets?name=${encodeURIComponent(file.name)}`, { method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: file });
 }

@@ -3,6 +3,12 @@ import { createApiCompiler } from './api-compiler';
 import { compileApiValue } from './api-values';
 const compile = (v: unknown) => createApiCompiler().value(JSON.stringify(v), new Set(['c']), {});
 describe('structured callback operations', () => {
+    it('preserves literal filesystem paths and propagates trust through deferred values', () => {
+        const path = 'assets/中文 "drawing"\\file.svg';
+        expect(compile({ $path: path })).toMatchObject({ code: `_av_Path(${JSON.stringify(path)})`, requiresTrust: true });
+        expect(compile({ $lambda: { params: [], body: { $path: path } } }).requiresTrust).toBe(true);
+        for (const value of ['', '\0bad', 3, null, [], 'x'.repeat(20001)]) expect(() => compile({ $path: value })).toThrow('$path');
+    });
     it('binds registered instance methods for ApplyMethod without calling them early', () => {
         const result = compile({ $method: { api: 'Circle.shift', receiver: { $ref: 'c' } } });
         expect(result.code).toMatch(/_av_receiver\(objects\["c"\], .*\)\.shift$/);

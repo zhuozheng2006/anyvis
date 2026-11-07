@@ -1,0 +1,23 @@
+import { expect, it } from 'vitest';
+import { createEmptyProject } from './core/project';
+import { appendAction, updateAction } from './authoring';
+import { projectHistory, type ProjectHistory } from './project-history';
+it('undoes cross-view edits together without recording workspace-only synchronization', () => {
+  let state: ProjectHistory = { past: [], present: createEmptyProject(), future: [] };
+  state = projectHistory(state, { type: 'edit', value: appendAction(state.present, 'circle').project });
+  const id = state.present.actions[0].id;
+  state = projectHistory(state, { type: 'edit', value: { ...state.present, workspace: { saved: true } } });
+  expect(state.past).toHaveLength(1);
+  state = projectHistory(state, { type: 'edit', value: updateAction(state.present, id, { duration: 3 }) });
+  state = projectHistory(state, { type: 'edit', value: updateAction(state.present, id, { radius: 2 }) });
+  state = projectHistory(state, { type: 'undo' });
+  expect(state.present.actions[0].fields).toMatchObject({ duration: 3, radius: 1 });
+  state = projectHistory(state, { type: 'undo' });
+  expect(state.present.workspace).toEqual({ saved: true });
+  state = projectHistory(state, { type: 'redo' });
+  expect(state.present.actions[0].fields.duration).toBe(3);
+  state = projectHistory(state, { type: 'edit', value: updateAction(state.present, id, { radius: 4 }) });
+  expect(state.future).toHaveLength(0);
+  state = projectHistory(state, { type: 'edit', value: createEmptyProject() });
+  expect(state.past).toHaveLength(0);
+});

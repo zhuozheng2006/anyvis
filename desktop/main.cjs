@@ -107,15 +107,25 @@ async function finishSmoke(error) {
       if (!opener || opener.disabled) throw new Error('API browser is unavailable.');
       opener.click();
       const input = await until(() => document.querySelector('.av-api-browser[open] input'));
-      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'Circle');
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'Wait');
       input.dispatchEvent(new Event('input', {bubbles:true}));
       const entry = await until(() => [...document.querySelectorAll('.av-api-browser-list article')]
-        .find(row => /^Circle(?:\\s|$)/.test(row.querySelector('code')?.textContent || '')));
+        .find(row => /^Wait(?:\\s|$)/.test(row.querySelector('code')?.textContent || '')));
       const before = document.querySelectorAll('.blocklyBlockCanvas .blocklyDraggable').length;
       entry.querySelector('button').click();
       await until(() => !document.querySelector('.av-api-browser[open]') &&
         document.querySelectorAll('.blocklyBlockCanvas .blocklyDraggable').length > before);
-      return {search:true, addBlock:true};
+      const objectCount = document.querySelectorAll('.om-card').length;
+      document.querySelector('[aria-label="添加新对象"]').click();
+      const circle = await until(() => document.querySelector('[aria-label="添加 圆"]'));
+      circle.click();
+      await until(() => document.querySelectorAll('.om-card').length > objectCount);
+      [...document.querySelectorAll('[role="tab"]')].find(tab => tab.textContent.includes('时间轴')).click();
+      await until(() => document.querySelector('.tl-editor .timeline-editor'));
+      [...document.querySelectorAll('[role="tab"]')].find(tab => tab.textContent.includes('代码')).click();
+      const code = await until(() => document.querySelector('.generated-code .cm-content'));
+      if (code.getAttribute('contenteditable') !== 'false') throw new Error('Generated code must be read-only.');
+      return {search:true, addBlock:true, objectManager:true, timeline:true, readOnlyCode:true};
     })()`);
     const browserCheck = await editorWindow.webContents.executeJavaScript(`(async () => {
       const session = await fetch('/api/session').then(r => r.json());

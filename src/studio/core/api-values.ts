@@ -32,6 +32,7 @@ const VALID_TAGS = new Set([
   '$dict',
   '$complex',
   '$float',
+  '$path',
   '$lambda',
   '$local',
   '$index',
@@ -136,6 +137,11 @@ function compileTagged(
   symbols: Record<string, string>,
 ): string {
   switch (tag) {
+    case '$path': {
+      if (typeof payload !== 'string' || !payload.length || payload.length > MAX_STRING_LENGTH || payload.includes('\0')) throw new Error('$path 必须是非空且不含空字符的路径字符串（最多 20000 字符）。');
+      state.requiresTrust = true;
+      return `_av_Path(${py(payload)})`;
+    }
     case '$method': {
       if (!isPlainObject(payload) || Object.keys(payload).length !== 2 || typeof payload.api !== 'string' || !('receiver' in payload)) throw new Error('$method 需要清单中的对象方法 api 和 receiver。');
       const entry = Object.prototype.hasOwnProperty.call(context.callables, payload.api) ? context.callables[payload.api] : context.resolveCallable?.(payload.api);

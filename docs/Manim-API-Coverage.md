@@ -1,6 +1,6 @@
 # Manim API 覆盖：入口、参数与运行证据
 
-AnyVis 0.3.1 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有限清单的 **1,660 / 1,660 个入口均已接入**；扩展到公开子模块和自定义描述符后，共有 **2,293 个类、函数、方法或属性入口**，每一项都有独立的积木类型和参数字段。
+AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有限清单的 **1,660 / 1,660 个入口均已接入**；扩展到公开子模块和自定义描述符后，共有 **2,293 个类、函数、方法或属性入口**，每一项都有独立的积木类型和参数字段。
 
 这完成了该版本已发现清单的入口接入，**不等于全 Manim 功能或所有参数组合已完成运行验收**。特别是 0.22.1 尚未验证，OpenGL 在本机受环境限制，不能将“可以生成调用”写成“已经渲染通过”。
 
@@ -18,13 +18,13 @@ AnyVis 0.3.1 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 | 可核对的调用签名 | 2,117 | 参数名、种类、必填状态逐项核对 |
 | 没有可反射签名的类 | 5 | 提供显式位置参数列表和命名参数字典，不伪造签名 |
 | 旧清单缺失入口 | 0 | 与固定 gzip 库存逐项比较 |
-| 原生行为证据涉及的独立 API | 419 | 三组真实 Manim 测试合并去重；状态、回调、动画与原生调用差分 |
+| 原生行为证据涉及的独立 API | 599 | 五组真实 Manim 测试合并去重；状态、回调、动画与原生调用差分 |
 
 [机器可读核查报告](research/api-registry-verification.json) · [完整运行时目录](../src/studio/core/api-registry.json) · [以前的常用积木审计](research/curated-api-coverage.md)
 
 ## 使用方式
 
-默认工具箱仍保留 97 个常用中文积木。点击工具栏的 **API 浏览器**，搜索类或方法（例如 `Circle`、`Axes.plot`、`Mobject.rotate`），加入积木，再点击字段选择参数值。搜索继承方法时会定位到实际声明者；同一个方法不因被多个子类继承而重复计算。
+默认工具箱仍保留 100 个常用中文积木。点击工具栏的 **API 浏览器**，搜索类或方法（例如 `Circle`、`Axes.plot`、`Mobject.rotate`），加入积木，再点击字段选择参数值。搜索继承方法时会定位到实际声明者；同一个方法不因被多个子类继承而重复计算。
 
 参数编辑器支持数字、文字、调色板和自由选色、布尔值、对象下拉、多对象勾选、常量、函数、向量、标量函数与曲线/曲面函数。列表、字典和复杂回调支持递归可视编辑，包括嵌套调用、属性、条件、索引和切片；高级 JSON 仍可切换。过深或过大的子树保留为 JSON，不会静默截断。
 
@@ -64,7 +64,7 @@ AnyVis 0.3.1 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 - 2,293 个入口和 2,765 个常量全部解析成功；2,117 项签名匹配，属性写入能力也经过核对。
 - 原生集成测试覆盖构造器、可变参数、位置专用/关键字专用参数、属性读写、类方法、返回值、曲线回调、updater、动态重绘、动画组合、上下文恢复及真实画面像素。测试中的固定断言代码只用于测量，不计为原生 API 实现。
 - [参数曲线工程与视频](../examples/api/README.md)由 21 个可编辑积木生成，实际视频 1280×720、24 fps、565 帧、23.54 秒；所有帧解码通过，并人工查看关键帧。
-- 三组测试合并后，419 个不同入口已有运行证据，仍有 1,874 个入口未取得逐项行为证据。只读差分测试 200 项中 199 项通过，`NumberLine.get_labels` 的默认实例在直接 Manim 调用时抛出缺少 `default_numbers_to_display`，记录为 fixture gap，不计通过。
+- 五组测试合并后，599 个不同入口已有运行证据，仍有 1,694 个入口未取得逐项行为证据。只读差分测试 200 项中 199 项通过，`NumberLine.get_labels` 的默认实例在直接 Manim 调用时抛出缺少 `default_numbers_to_display`，记录为 fixture gap，不计通过。
 - 新增 17 块浮点颜色、绑定方法和动画回调工程，13.17 秒 / 316 帧全部解码，时间戳单调，红色像素确认浮点颜色真实进入视频。
 - 533 个入口专属于 OpenGL，已接入渲染器选择、编译、导出和 worker 路由，但本机 `glcontext` 无法导入 `egl`，**没有通过 OpenGL 原生渲染验收**。切换渲染器不能自动解决宿主环境缺少的后端。
 - `manim.utils.testing.frames_comparison` 因当前环境没有 pytest 而无法导入，明确记录为不可用模块。CLI 入口、Sphinx 文档构建、私有名称和仅在运行时生成的动态成员不在该清单范围内。
@@ -72,18 +72,18 @@ AnyVis 0.3.1 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 
 ## 下一批行为验证分母
 
-419 项证据之外的 1,874 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
+599 项证据之外的 1,694 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
 
 | 未取得行为证据的类型 | 数量 |
 | --- | ---: |
-| 实例方法 | 1,241 |
+| 实例方法 | 1,153 |
 | 类 | 235 |
-| 函数 | 214 |
+| 函数 | 123 |
 | 属性 | 138 |
-| 静态方法 | 33 |
+| 静态方法 | 32 |
 | 类方法 | 13 |
 
-其中 1,341 项可用于通用渲染器，533 项 OpenGL 专属；1,123 项涉及本机权限标记。后续优先扩充 Mobject/VMobject 的变换与路径参数组合，再为 Scene、Camera、配置和文件类接口构建临时目录中的隔离 fixture；OpenGL 需先建立可用的真实上下文。权限标记不是排除项，只是要求测试避免改动用户环境。
+其中 1,161 项可用于通用渲染器，533 项 OpenGL 专属；1,110 项涉及本机权限标记。后续优先扩充 Mobject/VMobject 的变换与路径参数组合，再为 Scene、Camera、配置和文件类接口构建临时目录中的隔离 fixture；OpenGL 需先建立可用的真实上下文。权限标记不是排除项，只是要求测试避免改动用户环境。
 
 ## 复现
 
@@ -95,13 +95,15 @@ npm test
 export ANYVIS_API_REPORT=artifacts/api/native-evidence.json
 export ANYVIS_API_FAMILIES_REPORT=artifacts/api/native-families-evidence.json
 export ANYVIS_API_QUERIES_REPORT=artifacts/api/native-queries-evidence.json
+export ANYVIS_API_UTILITIES_REPORT=artifacts/api/native-utilities-evidence.json
+export ANYVIS_API_MUTATIONS_REPORT=artifacts/api/native-mutations-evidence.json
 npm run test:api-native
 python scripts/test_verify_api_registry.py
-python scripts/verify-api-registry.py --native-report "$ANYVIS_API_REPORT" --native-report "$ANYVIS_API_FAMILIES_REPORT" --native-report "$ANYVIS_API_QUERIES_REPORT"
+python scripts/verify-api-registry.py --native-report "$ANYVIS_API_REPORT" --native-report "$ANYVIS_API_FAMILIES_REPORT" --native-report "$ANYVIS_API_QUERIES_REPORT" --native-report "$ANYVIS_API_UTILITIES_REPORT" --native-report "$ANYVIS_API_MUTATIONS_REPORT"
 npm run build
 npm run test:desktop
 ```
 
-Windows 可先在 PowerShell 设置 `$env:ANYVIS_API_REPORT='artifacts/api/native-evidence.json'`。单独运行 `npm run api:verify` 只验证入口与签名，不附加尚未执行的原生证据。旧的 `audit-manim-coverage.py` 仍核查 97 个常用积木，默认写入 `docs/research/curated-api-coverage.md`，不会覆盖本报告。
+Windows 可先在 PowerShell 设置 `$env:ANYVIS_API_REPORT='artifacts/api/native-evidence.json'`。单独运行 `npm run api:verify` 只验证入口与签名，不附加尚未执行的原生证据。旧的 `audit-manim-coverage.py` 仍核查 100 个常用积木，默认写入 `docs/research/curated-api-coverage.md`，不会覆盖本报告。
 
 行为报告绑定注册表、依赖锁文件、编译器源文件及测试文件的 SHA-256；版本不符、失败或源码过期的证据不能计入。`Native Manim API regression` 工作流在独立 Ubuntu / Python 3.12 / Cairo 环境执行原生测试与 worker 媒体集成，并保存机器可读证据。

@@ -66,6 +66,18 @@ describe('signature-driven API integration', () => {
         expect(result.diagnostics).toEqual([]);
         expect(result.requiresTrust).toBe(true);
     });
+    it('requires trust for module execution even through positional nested calls or deferred callbacks', () => {
+        const entry = getApiEntry('manim.utils.module_ops.get_module')!;
+        expect(entry.requiresTrust).toBe(true);
+        for (const value of [
+            { $call: { api: entry.id, args: ['-'] } },
+            { $lambda: { params: [], body: { $call: { api: entry.id, args: ['-'] } } } },
+        ]) {
+            const result = compileProject(project(createAction('api_value', { name: 'loader', value: JSON.stringify(value) })));
+            expect(result.diagnostics).toEqual([]);
+            expect(result.requiresTrust).toBe(true);
+        }
+    });
     it('requires permission for optional file inputs even on otherwise ordinary geometry APIs', () => {
         expect(compileProject(project(api('Circle', 'circle'))).requiresTrust).toBe(false);
         expect(compileProject(project(api('Circle', 'circle', { background_image: '/tmp/image.png' }))).requiresTrust).toBe(true);

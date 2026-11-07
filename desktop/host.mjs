@@ -132,7 +132,9 @@ export function createProtocolHandler({ getServiceURL, desktopRoot, fetchLocal }
     let body;
     if (['POST', 'DELETE'].includes(request.method)) {
       body = await request.arrayBuffer();
-      if (body.byteLength > 2 * 1024 * 1024) return new Response('请求超过 2 MB。', { status: 413 });
+      const mediaUpload = request.method === 'POST' && url.pathname === '/api/assets';
+      const limit = (mediaUpload ? 64 : 2) * 1024 * 1024;
+      if (body.byteLength > limit) return new Response(mediaUpload ? '素材超过 64 MB。' : '请求超过 2 MB。', { status: 413 });
     }
     try { return await fetchLocal(target.href, { method: request.method, headers, body, redirect: 'manual', signal: request.signal }); }
     catch { return new Response('本地引擎连接中断。请在“运行环境”菜单重试。', { status: 503 }); }

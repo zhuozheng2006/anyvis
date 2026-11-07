@@ -13,7 +13,12 @@ export interface Project {
   name: string;
   scene: { dimension: '2d' | '3d'; renderer?: 'cairo' | 'opengl'; background: string; width: number; height: number; fps: number };
   actions: Action[];
+  assets?: MediaAsset[];
   workspace?: unknown;
+}
+export interface MediaAsset {
+  id: string; name: string; kind: 'image' | 'audio'; extension: string; bytes: number;
+  width?: number; height?: number; duration?: number;
 }
 export type FieldKind = 'number' | 'text' | 'color' | 'select' | 'object' | 'expression' | 'multiline' | 'api-value';
 export interface FieldDefinition {

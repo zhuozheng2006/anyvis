@@ -5,6 +5,7 @@
  * Python extensions and language-only sequence/repeat are deliberately unmapped.
  */
 export const NATIVE_API_MAP: Record<string, string[]> = {
+  image_asset: ['ImageMobject', 'SVGMobject'], audio_play: ['SceneFileWriter.add_audio_segment'], audio_stop: [],
   circle: ['Circle'], square: ['Square'], rectangle: ['Rectangle'], rounded_rectangle: ['RoundedRectangle'],
   triangle: ['Triangle'], polygon: ['RegularPolygon'], ellipse: ['Ellipse'], dot: ['Dot'],
   line: ['Line'], arrow: ['Arrow'], arc: ['Arc'],

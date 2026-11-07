@@ -1,5 +1,6 @@
 import { getBlockDefinition } from './catalog.ts';
 import type { Action, Project } from './types.ts';
+import { validateAssets } from './assets.ts';
 export const DEFAULT_SCENE: Project['scene'] = { dimension: '2d', background: '#0B1020', width: 1920, height: 1080, fps: 30 };
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const finite = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
@@ -67,5 +68,5 @@ export function validateProject(value: unknown): Project {
     });
   };
   const actions = visit(p.actions, 0);
-  return { schemaVersion: 2, id: p.id as string, name: p.name as string, scene: { dimension: scene.dimension as '2d' | '3d', ...(scene.renderer ? {renderer:scene.renderer as 'cairo'|'opengl'} : {}), background: scene.background as string, width: scene.width as number, height: scene.height as number, fps: scene.fps as number }, actions, ...(p.workspace !== undefined ? { workspace: p.workspace } : {}) };
+  return { schemaVersion: 2, id: p.id as string, name: p.name as string, scene: { dimension: scene.dimension as '2d' | '3d', ...(scene.renderer ? {renderer:scene.renderer as 'cairo'|'opengl'} : {}), background: scene.background as string, width: scene.width as number, height: scene.height as number, fps: scene.fps as number }, actions, ...(p.assets !== undefined ? { assets: validateAssets(p.assets) } : {}), ...(p.workspace !== undefined ? { workspace: p.workspace } : {}) };
 }

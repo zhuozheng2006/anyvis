@@ -112,7 +112,7 @@ def consumed_parent_parameters(cls):
 def risky(module, name, result_kind):
     if module.startswith('manimpango') or module.startswith('manim.mobject.text'): return True
     if name in {'Axes','ThreeDAxes','NumberPlane','ComplexPlane','register_font','add_coordinates','add_labels','add_numbers','get_coordinate_labels','get_number_mobject','get_number_mobjects'}: return True
-    if any(part in module for part in ('file_ops','commands','sounds','tex_file_writing','images','scene_file_writer','renderer','opengl','plugins','_config','debug')):
+    if any(part in module for part in ('file_ops','module_ops','commands','sounds','tex_file_writing','images','scene_file_writer','renderer','opengl','plugins','_config','debug')):
         return True
     if name in {'DecimalNumber','Integer','Variable','NumberLine','Table','Matrix','MobjectMatrix','DecimalMatrix','IntegerMatrix','MathTable','IntegerTable','DecimalTable','BarChart','SampleSpace'}: return True
     if result_kind in ('scene','camera') or module.startswith('manim.camera'): return True

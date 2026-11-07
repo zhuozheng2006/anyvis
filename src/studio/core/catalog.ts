@@ -60,6 +60,9 @@ const shape = (type: string, label: string, specific: FieldDefinition[], tooltip
 const animated = (type: string, label: string, specific: FieldDefinition[], tooltip: string) => block(type, label, '动画', [o('target', type === 'matching_tex' ? '原公式' : '对象', type === 'matching_tex' ? '公式' : '圆', type === 'matching_tex' ? ['formula'] : VISUAL_OBJECT_KINDS), ...specific, ...timing()], tooltip);
 
 export const BLOCK_CATALOG: BlockDefinition[] = [
+  block('image_asset', '图片素材', '图形', [t('name', '命名', '图片'), t('asset', '图片素材'), n('height', '显示高度', 3, 0.01, 50), n('opacity', '不透明度', 1, 0, 1), ...position(), s('appear', '出现方式', 'fade', [['淡入', 'fade'], ['直接显示', 'none'], ['暂不显示', 'hidden']]), duration()], '显示上传的透明图片或 SVG，可像其他对象一样移动、缩放和旋转。', { createsObject: true, objectKind: 'mobject' }),
+  block('audio_play', '开始播放配音', '编排', [t('name', '播放名称', '配音'), t('asset', '配音素材'), n('delay', '延后开始（秒）', 0, 0, 600), n('offset', '素材入点（秒）', 0, 0, 7200), n('length', '播放长度（秒，0 为剩余全部）', 0, 0, 600), n('gain', '音量（dB）', 0, -60, 12), s('muted', '静音', 'no', [['有声', 'no'], ['静音', 'yes']])], '在当前动画时间开始播放配音，不阻塞后面的动画；停止积木可提前结束。', { createsObject: true, objectKind: 'audio' }),
+  block('audio_stop', '停止播放配音', '编排', [o('target', '播放名称', '配音', ['audio'])], '停止指定的配音播放，源文件不变。'),
   shape('circle', '圆', [n('radius', '半径', 1, 0.01, 50)], '创建并画出一个圆。选择“暂不显示”可把它用作变形目标。'),
   shape('square', '正方形', [n('side', '边长', 2, 0.01, 50)], '创建正方形，边长使用舞台坐标。'),
   shape('rectangle', '矩形', [n('width', '宽', 3, 0.01, 50), n('height', '高', 1.5, 0.01, 50)], '创建矩形。'),

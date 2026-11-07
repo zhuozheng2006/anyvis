@@ -6,7 +6,7 @@ import type { FieldValue, Project } from '../core/types';
 import {
   actionSignature, actionsToWorkspace, applyWorkspaceRename, createToolbox, detachedBlockCount,
   loadProjectWorkspace, registerStudioBlocks, releaseReferenceNames, saveWorkspace,
-  setReferenceNames, setRenameErrorHandler, START_TYPE, workspaceToActions,
+  setReferenceNames, setRenameErrorHandler, setObjectPresentation, setWorkspaceAssets, START_TYPE, workspaceToActions,
 } from './model';
 import './studio-blocks.css';
 import { ApiBrowser } from './ApiBrowser';
@@ -33,6 +33,9 @@ export interface StudioBlocksProps {
   highlightedBlockId?: string | null;
   readOnly?: boolean;
   onWorkspaceError?(message: string | null): void;
+  animationOnly?: boolean;
+  onUndo?(): void;
+  onRedo?(): void;
 }
 
 const theme = Blockly.Theme.defineTheme('anyvis-studio', {
@@ -87,7 +90,7 @@ function keepNewNamesUnique(workspace: Blockly.Workspace, ids: string[]): void {
 }
 
 export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(function StudioBlocks({
-  project, onChange, onSelect, selectedBlockId, highlightedBlockId, readOnly = false, onWorkspaceError,
+  project, onChange, onSelect, selectedBlockId, highlightedBlockId, readOnly = false, onWorkspaceError, animationOnly = false, onUndo, onRedo,
 }, ref) {
   const host = useRef<HTMLDivElement>(null);
   const search = useRef<HTMLInputElement>(null);
@@ -163,11 +166,12 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     snapshot: () => {
       const ws = workspace.current;
       if (!ws) return latest.current.project;
+      if (actionSignature(latest.current.project.actions) !== lastActions.current) return latest.current.project;
       const actions = workspaceToActions(ws);
       return { ...latest.current.project, actions, workspace: saveWorkspace(ws, actions) };
     },
-    undo: () => workspace.current?.undo(false),
-    redo: () => workspace.current?.undo(true),
+    undo: () => onUndo ? onUndo() : workspace.current?.undo(false),
+    redo: () => onRedo ? onRedo() : workspace.current?.undo(true),
     zoomIn: () => zoom(1), zoomOut: () => zoom(-1), fit,
     highlight: (id) => { if (id) void reveal(id); else revealRequest.current++; workspace.current?.highlightBlock(id); },
     focusSearch: () => search.current?.focus(),
@@ -186,7 +190,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     if (!host.current) return;
     registerStudioBlocks();
     const ws = Blockly.inject(host.current, {
-      toolbox: readOnly ? undefined : createToolbox(), theme, renderer: 'zelos',
+      toolbox: readOnly ? undefined : createToolbox('', animationOnly), theme, renderer: 'zelos',
       trashcan: !readOnly, sounds: false, readOnly,
       move: { scrollbars: true, drag: true, wheel: true },
       zoom: { controls: false, wheel: true, startScale: 0.9, minScale: 0.35, maxScale: 1.5, scaleSpeed: 1.15 },
@@ -194,6 +198,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       maxBlocks: 2000,
     });
     workspace.current = ws;
+    setObjectPresentation(ws, animationOnly);
     let loading = true;
     let disposed = false;
     let referencesDirty = false;
@@ -229,6 +234,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
 
     const publish = () => {
       if (loading || disposed) return;
+      if (actionSignature(latest.current.project.actions) !== lastActions.current) return;
       if (ws.isDragging()) { updateTimer.current = setTimeout(publish, 100); return; }
       try {
         const actions = workspaceToActions(ws);
@@ -244,9 +250,11 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       } catch (cause) { publishError(cause instanceof Error ? cause.message : '积木连接存在问题。'); }
     };
     const listener = (event: Blockly.Events.Abstract) => {
-      if (event.type === Blockly.Events.SELECTED && 'newElementId' in event) {
+      if (event.type === Blockly.Events.SELECTED && 'newElementId' in event && host.current?.getClientRects().length) {
         const id = typeof event.newElementId === 'string' ? event.newElementId : null;
-        latest.current.onSelect?.(id === 'anyvis-scene-start' ? null : id);
+        // Blockly clears its own selection when another editor is clicked. That
+        // asynchronous event must not erase a timeline/object selection.
+        if (id) latest.current.onSelect?.(id === 'anyvis-scene-start' ? null : id);
       }
       if (event.type === Blockly.Events.VIEWPORT_CHANGE) setScale(Math.round(ws.scale * 100));
       if (loading || event.isUiEvent || event.type === Blockly.Events.FINISHED_LOADING) return;
@@ -280,11 +288,12 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       observer.disconnect(); ws.removeChangeListener(listener); releaseReferenceNames(ws); ws.dispose();
       workspace.current = null;
     };
-  }, [project.id, readOnly]);
+  }, [project.id, readOnly, animationOnly]);
 
   useEffect(() => {
     const ws = workspace.current;
     if (!ws) return;
+    setWorkspaceAssets(ws, project.assets || []);
     const signature = actionSignature(project.actions);
     if (signature === lastActions.current) return;
     if (updateTimer.current) clearTimeout(updateTimer.current);
@@ -304,11 +313,11 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
   useEffect(() => {
     const ws = workspace.current;
     if (!ws || readOnly) return;
-    ws.updateToolbox(createToolbox(query));
+    ws.updateToolbox(createToolbox(query, animationOnly));
     setReferenceNames(ws, latest.current.project.actions);
     if (query.trim()) ws.getToolbox()?.selectItemByPosition(0);
     else ws.getToolbox()?.clearSelection();
-  }, [query, readOnly, project.id]);
+  }, [query, readOnly, project.id, animationOnly]);
 
   useEffect(() => {
     workspace.current?.highlightBlock(highlightedBlockId ?? selectedBlockId ?? null);
@@ -317,16 +326,16 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
   return <section className="av-block-editor" aria-label="动画积木工作区">
     <div className="av-block-toolbar">
       <div className="av-block-search"><Search size={15} aria-hidden="true" />
-        <input ref={search} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索积木，如：圆、公式、移动" aria-label="搜索积木" />
+        <input ref={search} value={query} onChange={(event) => setQuery(event.target.value)} placeholder={animationOnly ? '搜索动作，如：移动、变形、循环' : '搜索积木，如：圆、公式、移动'} aria-label="搜索积木" />
         {query && <button type="button" aria-label="清空搜索" onClick={() => setQuery('')}><X size={14} /></button>}
       </div>
       <button type="button" className="av-api-open" disabled={readOnly} onClick={()=>setApiOpen(true)} title="按名称查找 Manim 的类、方法和属性">API 浏览器</button>
       <div className="av-block-history">
-        <button type="button" aria-label="撤销积木修改" title="撤销（Ctrl / ⌘ Z）" onClick={() => workspace.current?.undo(false)} disabled={readOnly}><Undo2 size={16} /></button>
-        <button type="button" aria-label="重做积木修改" title="重做（Ctrl / ⌘ Shift Z）" onClick={() => workspace.current?.undo(true)} disabled={readOnly}><Redo2 size={16} /></button>
+        <button type="button" aria-label="撤销积木修改" title="撤销（Ctrl / ⌘ Z）" onClick={() => onUndo ? onUndo() : workspace.current?.undo(false)} disabled={readOnly}><Undo2 size={16} /></button>
+        <button type="button" aria-label="重做积木修改" title="重做（Ctrl / ⌘ Shift Z）" onClick={() => onRedo ? onRedo() : workspace.current?.undo(true)} disabled={readOnly}><Redo2 size={16} /></button>
       </div>
     </div>
-    {apiOpen && <ApiBrowser onAdd={type=>addApiBlock.current(type)} onClose={()=>setApiOpen(false)}/>}
+    {apiOpen && <ApiBrowser mode={animationOnly ? 'actions' : 'all'} onAdd={type=>addApiBlock.current(type)} onClose={()=>setApiOpen(false)}/>}
     <div className="av-block-canvas" ref={host} />
     <div className="av-block-footer">
       <span className={error || stats.detached ? 'av-block-status is-warning' : 'av-block-status'}>

@@ -80,7 +80,7 @@ try {
   const sessionURL = `http://127.0.0.1:${enginePort}/api/session`;
   const sessionCheck = async response => typeof (await response.json()).token === 'string';
   if (await responds(sessionURL, sessionCheck)) console.log(`复用已运行的 AnyVis 引擎（${enginePort}）。`);
-  else start('Manim 引擎服务', process.execPath, ['server/server.mjs']);
+  else start('Manim 引擎服务', process.execPath, [...(production ? [] : ['--watch', '--watch-preserve-output']), 'server/server.mjs']);
   await waitReady(sessionURL, sessionCheck, 'Manim 引擎服务');
   const url = `http://127.0.0.1:${production ? enginePort : uiPort}`;
   if (!production) {

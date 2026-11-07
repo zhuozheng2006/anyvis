@@ -4,6 +4,7 @@ import { getBlockDefinition } from './catalog.ts';
 import { compileExpression, RESERVED_SYMBOLS } from './expression.ts';
 import { validateProject } from './project.ts';
 import type { Action, CompileResult, Diagnostic, Project } from './types.ts';
+import { assetPath } from './assets.ts';
 
 const py = (value: string): string => JSON.stringify(value).replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
 const TEX_COMMANDS = new Set(('frac dfrac tfrac sqrt sin cos tan arcsin arccos arctan sinh cosh tanh log ln exp lim limsup liminf max min sup inf det gcd mod bmod pmod arg deg ker dim hom Pr sum prod coprod int iint iiint oint bigcup bigcap cup cap union intersection left right middle big Big bigg Bigg bigl bigr Bigl Bigr biggl biggr Biggl Biggr text textrm textbf textit mathrm mathbf mathit mathsf mathtt mathcal mathbb mathfrak boldsymbol operatorname overline underline overbrace underbrace overset underset hat widehat tilde widetilde bar vec dot ddot ddots vdots cdots ldots dots alpha beta gamma delta epsilon varepsilon zeta eta theta vartheta iota kappa lambda mu nu xi pi varpi rho varrho sigma varsigma tau upsilon phi varphi chi psi omega Gamma Delta Theta Lambda Xi Pi Sigma Upsilon Phi Psi Omega infty partial nabla ell hbar imath jmath Re Im wp aleph forall exists nexists neg land lor lnot implies iff because therefore in notin ni subset supset subseteq supseteq nsubseteq nsupseteq emptyset varnothing setminus to mapsto rightarrow leftarrow leftrightarrow Rightarrow Leftarrow Leftrightarrow longrightarrow longleftarrow longleftrightarrow Longrightarrow Longleftarrow Longleftrightarrow uparrow downarrow updownarrow hookrightarrow hookleftarrow leadsto cdot times div pm mp ast star circ bullet odot otimes oplus ominus oslash wedge vee perp parallel angle measuredangle triangle le leq ge geq ne neq equiv approx sim simeq cong propto ll gg prec succ preceq succeq asymp mid colon quad qquad enspace thinspace medspace thickspace space hspace vspace phantom hphantom vphantom smash color textcolor begin end displaystyle textstyle scriptstyle scriptscriptstyle limits nolimits substack binom dbinom tbinom choose brace brack bmatrix pmatrix matrix cases aligned gather split cancel boxed fbox lbrace rbrace langle rangle lfloor rfloor lceil rceil vert Vert lvert rvert lVert rVert backslash complement degree percent').split(' '));
@@ -33,6 +34,10 @@ export function compileProject(input: Project | unknown): CompileResult {
   const apiResultOwners = new Map<string,string>();
   const containsApi = (actions: Action[]): boolean => actions.some(a => !!getBlockDefinition(a.type)?.apiId || containsApi(a.children ?? []) || (a.branches ?? []).some(containsApi));
   const usesApi = containsApi(project.actions);
+  const hasAudio = (actions: Action[]): boolean => actions.some(a => a.type === 'audio_play' || a.type === 'audio_stop' || hasAudio(a.children || []) || (a.branches || []).some(hasAudio));
+  const usesAudio = hasAudio(project.actions);
+  let timelineClock = 0;
+  const audioEndpoints: { name: string; start: number; end: number; id: string }[] = [];
   const apiCompiler = usesApi ? createApiCompiler() : undefined;
   if (usesApi) for (const name of API_BUILTINS) { if (name !== '@frame' || project.scene.dimension === '2d') objects.set(name, {kind:'api-value', visible:false}); }
   let requiresTrust = false;
@@ -92,6 +97,7 @@ export function compileProject(input: Project | unknown): CompileResult {
   emit(`class AnyVisScene(${project.scene.dimension === '3d' ? 'ThreeDScene' : 'MovingCameraScene'}):`);
   emit('    def construct(self):');
   emit('        objects = {}');
+  if (usesAudio) emit('        _av_audio_tracks = []');
   if (usesApi) {
     emit("        objects.update({'@scene': self, '@camera': self.camera, '@renderer': self.renderer})");
     if (project.scene.dimension === '2d') emit(project.scene.renderer === 'opengl' ? "        objects['@frame'] = self.camera" : "        objects['@frame'] = self.camera.frame");
@@ -119,6 +125,14 @@ export function compileProject(input: Project | unknown): CompileResult {
     let construction = '';
     let reposition = false;
     switch (a.type) {
+      case 'image_asset': {
+        stmt('_anyvis_image_compat()', a);
+        const asset = project.assets?.find(item => item.id === str(a, 'asset') && item.kind === 'image');
+        if (!asset) throw Error('请选择已上传的图片素材。');
+        construction = `${asset.extension === 'svg' ? 'SVGMobject' : 'ImageMobject'}(${py(assetPath(asset))}).set_height(${num(a, 'height')}).set_opacity(${num(a, 'opacity')})`;
+        reposition = true;
+        break;
+      }
       case 'circle': construction = `Circle(radius=${num(a, 'radius')})`; reposition = true; break;
       case 'square': construction = `Square(side_length=${num(a, 'side')})`; reposition = true; break;
       case 'rectangle': construction = `Rectangle(width=${num(a, 'width')}, height=${num(a, 'height')})`; reposition = true; break;
@@ -252,6 +266,7 @@ export function compileProject(input: Project | unknown): CompileResult {
   };
   const animation = (a: Action): AnimationValue | null => {
     const definition = getBlockDefinition(a.type)!;
+    if (a.type === 'audio_play' || a.type === 'audio_stop') return null;
     if (a.type === 'api_value') {
       const name=str(a,'name');
       if (!name || name.trim()!==name || name.startsWith('@') || name.length>100 || /[\r\n\0]/.test(name)) throw new Error('请填写有效的结果名称。');
@@ -342,6 +357,32 @@ export function compileProject(input: Project | unknown): CompileResult {
   };
   const command = (a: Action): number | null => {
     switch (a.type) {
+      case 'audio_play': {
+        const asset = project.assets?.find(item => item.id === str(a, 'asset') && item.kind === 'audio');
+        if (!asset) throw Error('请选择已上传的配音素材。');
+        const name = str(a, 'name');
+        if (!name || name.trim() !== name || name.startsWith('@') || name.length > 100) throw Error('请填写有效的配音播放名称。');
+        if (objects.has(name) && apiResultOwners.get(name) !== a.id) throw Error(`对象“${name}”已经存在。`);
+        const remaining = asset.duration! - num(a, 'offset');
+        const length = num(a, 'length') || remaining;
+        if (remaining <= 0 || length > remaining + .001) throw Error('配音裁剪范围超出素材时长。');
+        const previous = [...audioEndpoints].reverse().find(item => item.name === name);
+        if (previous) previous.end = Math.max(previous.start, Math.min(previous.end, timelineClock));
+        const start = timelineClock + num(a, 'delay');
+        audioEndpoints.push({ name, start, end: start + length, id: a.id });
+        objects.set(name, { kind: 'audio', visible: false }); apiResultOwners.set(name, a.id);
+        stmt(`if ${py(name)} in objects: objects[${py(name)}]['end'] = self.time`, a);
+        stmt(`objects[${py(name)}] = {'path': ${py(assetPath(asset))}, 'start': self.time + ${num(a, 'delay')}, 'offset': ${num(a, 'offset')}, 'length': ${length}, 'gain': ${num(a, 'gain')}, 'muted': ${str(a, 'muted') === 'yes' ? 'True' : 'False'}, 'end': None}`, a);
+        stmt(`_av_audio_tracks.append(objects[${py(name)}])`, a);
+        break;
+      }
+      case 'audio_stop': {
+        const target = ref(a, 'target', ['audio']);
+        const previous = [...audioEndpoints].reverse().find(item => item.name === str(a, 'target'));
+        if (previous) previous.end = Math.max(previous.start, Math.min(previous.end, timelineClock));
+        stmt(`${target}['end'] = self.time`, a);
+        break;
+      }
       case 'set_position': stmt(`${ref(a)}.move_to(${point(a)})`, a); break;
       case 'set_style': stmt(`${ref(a)}.set_color(${tint(a)}).set_fill(opacity=${num(a, 'fill')}).set_stroke(width=${num(a, 'stroke')})`, a); break;
       case 'set_layer': stmt(`${ref(a)}.set_z_index(${num(a, 'layer')})`, a); break;
@@ -397,8 +438,10 @@ export function compileProject(input: Project | unknown): CompileResult {
     return { expression: `AnimationGroup(${animations.map((v) => v.expression).join(', ')}, lag_ratio=0)`, duration: Math.max(...animations.map((v) => v.duration)), targets };
   };
   const run = (actions: Action[]): number => {
+    const base = timelineClock;
     let total = 0;
     for (const a of actions) {
+      timelineClock = base + total;
       try {
         check(a);
         stmt(`# block ${py(a.id)}: ${getBlockDefinition(a.type)!.label}`, a);
@@ -423,7 +466,7 @@ export function compileProject(input: Project | unknown): CompileResult {
         }
         const value = animation(a);
         if (value) { stmt(`self.play(${value.expression})`, a); total += value.duration; }
-        else if (!getBlockDefinition(a.type)!.createsObject) {
+        else if (!getBlockDefinition(a.type)!.createsObject || a.type === 'audio_play') {
           const length = command(a);
           if (length === null) throw new Error(`积木 ${a.type} 尚未实现。`);
           total += length;
@@ -431,10 +474,90 @@ export function compileProject(input: Project | unknown): CompileResult {
         if (total > 600) throw new Error('单个场景超过 10 分钟，请拆分为多个项目。');
       } catch (error) { diagnostics.push({ blockId: a.id, severity: 'error', message: (error as Error).message }); }
     }
+    timelineClock = base + total;
     return total;
   };
-  const duration = run(project.actions);
+  let duration = run(project.actions);
+  for (const track of audioEndpoints) {
+    if (track.end > track.start) duration = Math.max(duration, track.end);
+    if (track.end > 600 && track.end > track.start) diagnostics.push({ blockId: track.id, severity: 'error', message: '配音使场景超过 10 分钟，请裁剪或拆分场景。' });
+  }
+  if (usesAudio) emit('        _anyvis_finish_audio(self, _av_audio_tracks)');
   if (duration === 0 && !uncertainDuration) emit('        self.wait(0.1)');
   for (const line of apiCompiler?.imports() ?? []) emit(line);
+  if (usesAudio) emit(`
+def _anyvis_decode_audio(path, offset, length):
+    # Decode through Manim's PyAV dependency; no external ffmpeg executable.
+    import av
+    from pydub import AudioSegment
+    rate = 48000
+    chunks = []
+    with av.open(path) as container:
+        stream = container.streams.audio[0]
+        origin = float((stream.start_time or 0) * stream.time_base)
+        begin, end = origin + offset, origin + offset + length
+        if offset > 0: container.seek(max(0, int(begin / stream.time_base)), stream=stream, backward=True)
+        resampler = av.AudioResampler(format='s16', layout='stereo', rate=rate)
+        cursor = origin
+        def append(frame):
+            nonlocal cursor
+            time = float(frame.time) if frame.time is not None else cursor
+            cursor = time + frame.samples / rate
+            left = max(0, round((begin-time)*rate))
+            right = min(frame.samples, round((end-time)*rate))
+            if right > left:
+                samples = frame.to_ndarray().reshape(-1, 2)[left:right]
+                chunks.append(samples.tobytes())
+        for frame in container.decode(stream):
+            for output in resampler.resample(frame): append(output)
+            if cursor >= end: break
+        for output in resampler.resample(None): append(output)
+    if not chunks: raise ValueError('No audio samples in the selected range')
+    return AudioSegment(data=b''.join(chunks), sample_width=2, frame_rate=rate, channels=2)
+
+def _anyvis_finish_audio(scene, tracks):
+    clips = []
+    for track in tracks:
+        end = track['start'] + track['length']
+        if track['end'] is not None: end = min(end, track['end'])
+        length = max(0, end - track['start'])
+        if length <= 0: continue
+        if end > 600: raise ValueError('Audio exceeds the 10 minute scene budget')
+        segment = _anyvis_decode_audio(track['path'], track['offset'], length)
+        segment = segment[:round(length*1000)]
+        clips.append((track, segment, end))
+    end = max([float(scene.time)] + [clip[2] for clip in clips])
+    if end > scene.time: scene.wait(end - scene.time, frozen_frame=False)
+    for track, segment, _ in clips:
+        if not track['muted']:
+            scene.renderer.file_writer.add_audio_segment(segment.apply_gain(track['gain']), time=track['start'])
+`);
+  if (flattenHasImage(project.actions)) emit(IMAGE_COMPAT);
   return { code: lines.join('\n') + '\n', sourceMap, duration: uncertainDuration ? null : Math.max(duration, 0.1), diagnostics, requiresTrust };
 }
+
+function flattenHasImage(actions: Action[]): boolean {
+  return actions.some(a => a.type === 'image_asset' || flattenHasImage(a.children || []) || (a.branches || []).some(flattenHasImage));
+}
+const IMAGE_COMPAT = `
+def _anyvis_image_compat():
+    # Manim 0.20.1 builds its transparent image canvas from a 2-D float array.
+    # Pillow 13 rejects that invalid mode/dtype pair. Scope the correction to
+    # the Manim camera module; all real image arrays keep Pillow's normal path.
+    import manim.camera.camera as camera_module
+    from PIL import Image as pil_image
+    if getattr(camera_module.Image, '_anyvis_blank_canvas', False): return
+    try:
+        pil_image.fromarray(np.zeros((1, 1)), mode='RGBA')
+        return
+    except (ValueError, TypeError):
+        pass
+    class CameraImage:
+        _anyvis_blank_canvas = True
+        def __getattr__(self, name): return getattr(pil_image, name)
+        def fromarray(self, array, mode=None):
+            if mode == 'RGBA' and array.ndim == 2 and array.dtype.kind == 'f' and not np.any(array):
+                return pil_image.new('RGBA', (array.shape[1], array.shape[0]))
+            return pil_image.fromarray(array, mode=mode)
+    camera_module.Image = CameraImage()
+`;

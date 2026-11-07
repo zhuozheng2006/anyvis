@@ -1,0 +1,305 @@
+/* Scoped styles for AssetShelf (.om-asset-*) */
+
+.om-asset-shelf {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 280px;
+  max-height: 480px;
+  overflow: hidden;
+}
+
+.om-asset-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.om-asset-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.om-asset-tab-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.om-asset-tab-btn:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.om-asset-tab-btn-active {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+  font-weight: 600;
+}
+
+.om-asset-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.om-asset-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.om-asset-upload-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.om-asset-upload-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.om-asset-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 12px;
+}
+
+.om-asset-error-dismiss {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0 4px;
+}
+
+.om-asset-dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 24px 16px;
+  text-align: center;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.om-asset-dropzone:hover,
+.om-asset-dropzone-active {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.om-asset-dropzone-icon {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.om-asset-dropzone-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.om-asset-dropzone-sub {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.om-asset-scroll-content {
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 4px;
+}
+
+.om-asset-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.om-asset-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.om-asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.om-asset-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.om-asset-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.om-asset-preview-box {
+  width: 100%;
+  height: 100px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.om-asset-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.om-asset-meta {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.om-asset-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.om-asset-detail {
+  font-size: 11px;
+  color: #64748b;
+  display: flex;
+  justify-content: space-between;
+}
+
+.om-asset-footer {
+  padding: 6px 10px 8px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.om-asset-btn-primary {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.om-asset-btn-primary:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.om-asset-audio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.om-asset-audio-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.om-asset-audio-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 120px;
+  max-width: 200px;
+}
+
+.om-asset-audio-controls {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.om-asset-audio-player {
+  width: 100%;
+  height: 32px;
+}
+
+.om-asset-btn-track {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: #fdf2f8;
+  color: #db2777;
+  border: 1px solid #fbcfe8;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.om-asset-btn-track:hover {
+  background: #db2777;
+  color: #ffffff;
+}
+
+.om-asset-empty {
+  text-align: center;
+  padding: 24px;
+  color: #94a3b8;
+  font-size: 13px;
+}

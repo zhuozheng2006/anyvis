@@ -1,7 +1,7 @@
 {
   "engineVersion": "0.20.1",
   "registryVersion": "0.20.1",
-  "registrySha256": "b8abc5de5f7055bf52f081901f14a15f04b0415ace0686d2679fa6d16a8b61ff",
+  "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
   "entryCount": 2293,
   "byKind": {
     "function": 267,
@@ -117,14 +117,19 @@
       "manim.mobject.geometry.arc.Annulus",
       "manim.mobject.geometry.arc.Arc",
       "manim.mobject.geometry.arc.Arc.get_arc_center",
+      "manim.mobject.geometry.arc.Arc.move_arc_center_to",
+      "manim.mobject.geometry.arc.Arc.stop_angle",
       "manim.mobject.geometry.arc.ArcBetweenPoints",
       "manim.mobject.geometry.arc.ArcPolygon",
       "manim.mobject.geometry.arc.Circle",
+      "manim.mobject.geometry.arc.Circle.from_three_points",
       "manim.mobject.geometry.arc.Circle.point_at_angle",
+      "manim.mobject.geometry.arc.Circle.surround",
       "manim.mobject.geometry.arc.CurvedArrow",
       "manim.mobject.geometry.arc.Dot",
       "manim.mobject.geometry.arc.Ellipse",
       "manim.mobject.geometry.arc.Sector",
+      "manim.mobject.geometry.arc.TipableVMobject.add_tip",
       "manim.mobject.geometry.arc.TipableVMobject.get_default_tip_length",
       "manim.mobject.geometry.arc.TipableVMobject.get_end",
       "manim.mobject.geometry.arc.TipableVMobject.get_first_handle",
@@ -136,6 +141,7 @@
       "manim.mobject.geometry.arc.TipableVMobject.get_unpositioned_tip",
       "manim.mobject.geometry.arc.TipableVMobject.has_start_tip",
       "manim.mobject.geometry.arc.TipableVMobject.has_tip",
+      "manim.mobject.geometry.arc.TipableVMobject.pop_tips",
       "manim.mobject.geometry.boolean_ops.Difference",
       "manim.mobject.geometry.boolean_ops.Exclusion",
       "manim.mobject.geometry.boolean_ops.Intersection",
@@ -154,14 +160,21 @@
       "manim.mobject.geometry.line.DoubleArrow",
       "manim.mobject.geometry.line.Line",
       "manim.mobject.geometry.line.Line.get_angle",
+      "manim.mobject.geometry.line.Line.get_projection",
       "manim.mobject.geometry.line.Line.get_slope",
       "manim.mobject.geometry.line.Line.get_unit_vector",
       "manim.mobject.geometry.line.Line.get_vector",
+      "manim.mobject.geometry.line.Line.put_start_and_end_on",
+      "manim.mobject.geometry.line.Line.set_angle",
+      "manim.mobject.geometry.line.Line.set_length",
+      "manim.mobject.geometry.line.Line.set_path_arc",
+      "manim.mobject.geometry.line.Line.set_points_by_ends",
       "manim.mobject.geometry.line.RightAngle",
       "manim.mobject.geometry.line.TangentLine",
       "manim.mobject.geometry.polygram.Cutout",
       "manim.mobject.geometry.polygram.Polygon",
       "manim.mobject.geometry.polygram.Polygram.get_vertices",
+      "manim.mobject.geometry.polygram.Polygram.round_corners",
       "manim.mobject.geometry.polygram.Rectangle",
       "manim.mobject.geometry.polygram.RegularPolygon",
       "manim.mobject.geometry.polygram.RoundedRectangle",
@@ -220,27 +233,45 @@
       "manim.mobject.matrix.Matrix.get_mob_matrix",
       "manim.mobject.matrix.Matrix.get_rows",
       "manim.mobject.mobject.Mobject.add",
+      "manim.mobject.mobject.Mobject.add_background_rectangle",
+      "manim.mobject.mobject.Mobject.add_n_more_submobjects",
+      "manim.mobject.mobject.Mobject.add_to_back",
       "manim.mobject.mobject.Mobject.add_updater",
+      "manim.mobject.mobject.Mobject.align_data",
+      "manim.mobject.mobject.Mobject.align_on_border",
+      "manim.mobject.mobject.Mobject.align_submobjects",
+      "manim.mobject.mobject.Mobject.align_to",
       "manim.mobject.mobject.Mobject.always",
       "manim.mobject.mobject.Mobject.animate",
       "manim.mobject.mobject.Mobject.apply_complex_function",
       "manim.mobject.mobject.Mobject.apply_function",
+      "manim.mobject.mobject.Mobject.apply_function_to_position",
+      "manim.mobject.mobject.Mobject.apply_function_to_submobject_positions",
+      "manim.mobject.mobject.Mobject.apply_matrix",
+      "manim.mobject.mobject.Mobject.apply_points_function_about_point",
       "manim.mobject.mobject.Mobject.arrange",
       "manim.mobject.mobject.Mobject.arrange_in_grid",
+      "manim.mobject.mobject.Mobject.arrange_submobjects",
+      "manim.mobject.mobject.Mobject.become",
+      "manim.mobject.mobject.Mobject.center",
       "manim.mobject.mobject.Mobject.clear_updaters",
       "manim.mobject.mobject.Mobject.copy",
       "manim.mobject.mobject.Mobject.depth",
+      "manim.mobject.mobject.Mobject.fade",
       "manim.mobject.mobject.Mobject.family_members_with_points",
       "manim.mobject.mobject.Mobject.flip",
       "manim.mobject.mobject.Mobject.generate_target",
       "manim.mobject.mobject.Mobject.get_all_points",
       "manim.mobject.mobject.Mobject.get_array_attrs",
       "manim.mobject.mobject.Mobject.get_bottom",
+      "manim.mobject.mobject.Mobject.get_boundary_point",
       "manim.mobject.mobject.Mobject.get_center",
       "manim.mobject.mobject.Mobject.get_center_of_mass",
       "manim.mobject.mobject.Mobject.get_color",
+      "manim.mobject.mobject.Mobject.get_coord",
       "manim.mobject.mobject.Mobject.get_corner",
       "manim.mobject.mobject.Mobject.get_critical_point",
+      "manim.mobject.mobject.Mobject.get_edge_center",
       "manim.mobject.mobject.Mobject.get_end",
       "manim.mobject.mobject.Mobject.get_extremum_along_dim",
       "manim.mobject.mobject.Mobject.get_family",
@@ -268,24 +299,59 @@
       "manim.mobject.mobject.Mobject.has_points",
       "manim.mobject.mobject.Mobject.has_time_based_updater",
       "manim.mobject.mobject.Mobject.height",
+      "manim.mobject.mobject.Mobject.insert",
+      "manim.mobject.mobject.Mobject.interpolate_color",
+      "manim.mobject.mobject.Mobject.invert",
       "manim.mobject.mobject.Mobject.is_off_screen",
+      "manim.mobject.mobject.Mobject.length_over_dim",
+      "manim.mobject.mobject.Mobject.match_color",
+      "manim.mobject.mobject.Mobject.match_coord",
+      "manim.mobject.mobject.Mobject.match_depth",
+      "manim.mobject.mobject.Mobject.match_dim_size",
+      "manim.mobject.mobject.Mobject.match_height",
+      "manim.mobject.mobject.Mobject.match_points",
+      "manim.mobject.mobject.Mobject.match_width",
+      "manim.mobject.mobject.Mobject.match_x",
+      "manim.mobject.mobject.Mobject.match_y",
+      "manim.mobject.mobject.Mobject.match_z",
       "manim.mobject.mobject.Mobject.move_to",
+      "manim.mobject.mobject.Mobject.next_to",
+      "manim.mobject.mobject.Mobject.nonempty_submobjects",
+      "manim.mobject.mobject.Mobject.point_from_proportion",
+      "manim.mobject.mobject.Mobject.push_self_into_submobjects",
       "manim.mobject.mobject.Mobject.remove",
+      "manim.mobject.mobject.Mobject.repeat",
+      "manim.mobject.mobject.Mobject.replace",
+      "manim.mobject.mobject.Mobject.rescale_to_fit",
+      "manim.mobject.mobject.Mobject.reset_points",
       "manim.mobject.mobject.Mobject.restore",
+      "manim.mobject.mobject.Mobject.reverse_points",
       "manim.mobject.mobject.Mobject.rotate",
+      "manim.mobject.mobject.Mobject.rotate_about_origin",
       "manim.mobject.mobject.Mobject.save_state",
       "manim.mobject.mobject.Mobject.scale",
       "manim.mobject.mobject.Mobject.scale_to_fit_height",
       "manim.mobject.mobject.Mobject.scale_to_fit_width",
       "manim.mobject.mobject.Mobject.set_color",
+      "manim.mobject.mobject.Mobject.set_coord",
+      "manim.mobject.mobject.Mobject.set_submobject_colors_by_gradient",
       "manim.mobject.mobject.Mobject.set_x",
       "manim.mobject.mobject.Mobject.set_y",
       "manim.mobject.mobject.Mobject.set_z",
       "manim.mobject.mobject.Mobject.set_z_index",
       "manim.mobject.mobject.Mobject.shift",
+      "manim.mobject.mobject.Mobject.shift_onto_screen",
+      "manim.mobject.mobject.Mobject.shuffle",
+      "manim.mobject.mobject.Mobject.shuffle_submobjects",
+      "manim.mobject.mobject.Mobject.sort",
+      "manim.mobject.mobject.Mobject.space_out_submobjects",
       "manim.mobject.mobject.Mobject.split",
+      "manim.mobject.mobject.Mobject.stretch",
       "manim.mobject.mobject.Mobject.stretch_to_fit_height",
       "manim.mobject.mobject.Mobject.stretch_to_fit_width",
+      "manim.mobject.mobject.Mobject.surround",
+      "manim.mobject.mobject.Mobject.to_corner",
+      "manim.mobject.mobject.Mobject.to_edge",
       "manim.mobject.mobject.Mobject.width",
       "manim.mobject.svg.brace.Brace.get_direction",
       "manim.mobject.svg.brace.Brace.get_tip",
@@ -333,10 +399,18 @@
       "manim.mobject.types.vectorized_mobject.VDict.get_all_submobjects",
       "manim.mobject.types.vectorized_mobject.VGroup",
       "manim.mobject.types.vectorized_mobject.VMobject",
+      "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve",
       "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve_to",
       "manim.mobject.types.vectorized_mobject.VMobject.add_line_to",
+      "manim.mobject.types.vectorized_mobject.VMobject.add_points_as_corners",
+      "manim.mobject.types.vectorized_mobject.VMobject.add_quadratic_bezier_curve_to",
+      "manim.mobject.types.vectorized_mobject.VMobject.add_subpath",
+      "manim.mobject.types.vectorized_mobject.VMobject.append_points",
+      "manim.mobject.types.vectorized_mobject.VMobject.append_vectorized_mobject",
+      "manim.mobject.types.vectorized_mobject.VMobject.clear_points",
       "manim.mobject.types.vectorized_mobject.VMobject.close_path",
       "manim.mobject.types.vectorized_mobject.VMobject.color",
+      "manim.mobject.types.vectorized_mobject.VMobject.consider_points_equals",
       "manim.mobject.types.vectorized_mobject.VMobject.fill_color",
       "manim.mobject.types.vectorized_mobject.VMobject.get_anchors",
       "manim.mobject.types.vectorized_mobject.VMobject.get_anchors_and_handles",
@@ -355,6 +429,8 @@
       "manim.mobject.types.vectorized_mobject.VMobject.get_gradient_start_and_end_points",
       "manim.mobject.types.vectorized_mobject.VMobject.get_group_class",
       "manim.mobject.types.vectorized_mobject.VMobject.get_last_point",
+      "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_length",
+      "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_points",
       "manim.mobject.types.vectorized_mobject.VMobject.get_num_curves",
       "manim.mobject.types.vectorized_mobject.VMobject.get_point_mobject",
       "manim.mobject.types.vectorized_mobject.VMobject.get_points_defining_boundary",
@@ -368,17 +444,30 @@
       "manim.mobject.types.vectorized_mobject.VMobject.get_stroke_rgbas",
       "manim.mobject.types.vectorized_mobject.VMobject.get_stroke_width",
       "manim.mobject.types.vectorized_mobject.VMobject.get_style",
+      "manim.mobject.types.vectorized_mobject.VMobject.get_subcurve",
       "manim.mobject.types.vectorized_mobject.VMobject.get_subpaths",
       "manim.mobject.types.vectorized_mobject.VMobject.has_new_path_started",
+      "manim.mobject.types.vectorized_mobject.VMobject.insert_n_curves",
       "manim.mobject.types.vectorized_mobject.VMobject.is_closed",
+      "manim.mobject.types.vectorized_mobject.VMobject.make_jagged",
+      "manim.mobject.types.vectorized_mobject.VMobject.make_smooth",
       "manim.mobject.types.vectorized_mobject.VMobject.match_style",
       "manim.mobject.types.vectorized_mobject.VMobject.n_points_per_curve",
       "manim.mobject.types.vectorized_mobject.VMobject.point_from_proportion",
+      "manim.mobject.types.vectorized_mobject.VMobject.proportion_from_point",
+      "manim.mobject.types.vectorized_mobject.VMobject.resize_points",
+      "manim.mobject.types.vectorized_mobject.VMobject.reverse_direction",
+      "manim.mobject.types.vectorized_mobject.VMobject.rotate_sheen_direction",
+      "manim.mobject.types.vectorized_mobject.VMobject.set_background_stroke",
+      "manim.mobject.types.vectorized_mobject.VMobject.set_cap_style",
       "manim.mobject.types.vectorized_mobject.VMobject.set_fill",
+      "manim.mobject.types.vectorized_mobject.VMobject.set_opacity",
       "manim.mobject.types.vectorized_mobject.VMobject.set_points_as_corners",
       "manim.mobject.types.vectorized_mobject.VMobject.set_points_smoothly",
       "manim.mobject.types.vectorized_mobject.VMobject.set_sheen",
+      "manim.mobject.types.vectorized_mobject.VMobject.set_sheen_direction",
       "manim.mobject.types.vectorized_mobject.VMobject.set_stroke",
+      "manim.mobject.types.vectorized_mobject.VMobject.start_new_path",
       "manim.mobject.types.vectorized_mobject.VMobject.stroke_color",
       "manim.mobject.types.vectorized_mobject.VectorizedPoint.get_location",
       "manim.mobject.types.vectorized_mobject.VectorizedPoint.height",
@@ -392,7 +481,22 @@
       "manim.scene.scene.Scene.clear",
       "manim.scene.scene.Scene.wait",
       "manim.utils.bezier.bezier",
+      "manim.utils.bezier.bezier_remap",
+      "manim.utils.bezier.get_quadratic_approximation_of_cubic",
+      "manim.utils.bezier.get_smooth_closed_cubic_bezier_handle_points",
+      "manim.utils.bezier.get_smooth_cubic_bezier_handle_points",
+      "manim.utils.bezier.get_smooth_open_cubic_bezier_handle_points",
+      "manim.utils.bezier.integer_interpolate",
       "manim.utils.bezier.interpolate",
+      "manim.utils.bezier.inverse_interpolate",
+      "manim.utils.bezier.is_closed",
+      "manim.utils.bezier.match_interpolate",
+      "manim.utils.bezier.mid",
+      "manim.utils.bezier.partial_bezier_points",
+      "manim.utils.bezier.point_lies_on_bezier",
+      "manim.utils.bezier.proportions_along_bezier_curve_for_point",
+      "manim.utils.bezier.split_bezier",
+      "manim.utils.bezier.subdivide_bezier",
       "manim.utils.color.core.HSV.h",
       "manim.utils.color.core.HSV.hue",
       "manim.utils.color.core.HSV.s",
@@ -415,6 +519,48 @@
       "manim.utils.color.core.ManimColor.to_integer",
       "manim.utils.color.core.ManimColor.to_rgb",
       "manim.utils.color.core.ManimColor.to_rgba",
+      "manim.utils.config_ops.merge_dicts_recursively",
+      "manim.utils.config_ops.update_dict_recursively",
+      "manim.utils.file_ops.add_extension_if_not_present",
+      "manim.utils.file_ops.add_version_before_extension",
+      "manim.utils.file_ops.get_template_names",
+      "manim.utils.file_ops.get_template_path",
+      "manim.utils.file_ops.is_gif_format",
+      "manim.utils.file_ops.is_mov_format",
+      "manim.utils.file_ops.is_mp4_format",
+      "manim.utils.file_ops.is_png_format",
+      "manim.utils.file_ops.is_webm_format",
+      "manim.utils.file_ops.seek_full_path_from_defaults",
+      "manim.utils.file_ops.write_to_movie",
+      "manim.utils.iterables.adjacent_n_tuples",
+      "manim.utils.iterables.adjacent_pairs",
+      "manim.utils.iterables.all_elements_are_instances",
+      "manim.utils.iterables.batch_by_property",
+      "manim.utils.iterables.concatenate_lists",
+      "manim.utils.iterables.hash_obj",
+      "manim.utils.iterables.list_difference_update",
+      "manim.utils.iterables.list_update",
+      "manim.utils.iterables.listify",
+      "manim.utils.iterables.make_even",
+      "manim.utils.iterables.make_even_by_cycling",
+      "manim.utils.iterables.remove_list_redundancies",
+      "manim.utils.iterables.remove_nones",
+      "manim.utils.iterables.resize_array",
+      "manim.utils.iterables.resize_preserving_order",
+      "manim.utils.iterables.resize_with_interpolation",
+      "manim.utils.iterables.stretch_array_to_length",
+      "manim.utils.iterables.tuplify",
+      "manim.utils.iterables.uniq_chain",
+      "manim.utils.module_ops.get_module",
+      "manim.utils.module_ops.get_scene_classes_from_module",
+      "manim.utils.module_ops.get_scenes_to_render",
+      "manim.utils.module_ops.scene_classes_from_file",
+      "manim.utils.paths.clockwise_path",
+      "manim.utils.paths.counterclockwise_path",
+      "manim.utils.paths.path_along_arc",
+      "manim.utils.paths.path_along_circles",
+      "manim.utils.paths.spiral_path",
+      "manim.utils.paths.straight_path",
       "manim.utils.rate_functions.double_smooth",
       "manim.utils.rate_functions.ease_in_back",
       "manim.utils.rate_functions.ease_in_bounce",
@@ -460,29 +606,64 @@
       "manim.utils.rate_functions.there_and_back",
       "manim.utils.rate_functions.there_and_back_with_pause",
       "manim.utils.rate_functions.wiggle",
+      "manim.utils.simple_functions.binary_search",
+      "manim.utils.simple_functions.clip",
+      "manim.utils.simple_functions.sigmoid",
+      "manim.utils.space_ops.R3_to_complex",
+      "manim.utils.space_ops.angle_axis_from_quaternion",
       "manim.utils.space_ops.angle_between_vectors",
+      "manim.utils.space_ops.angle_of_vector",
+      "manim.utils.space_ops.cartesian_to_spherical",
+      "manim.utils.space_ops.center_of_mass",
+      "manim.utils.space_ops.compass_directions",
+      "manim.utils.space_ops.complex_func_to_R3_func",
+      "manim.utils.space_ops.complex_to_R3",
       "manim.utils.space_ops.cross",
+      "manim.utils.space_ops.cross2d",
+      "manim.utils.space_ops.earclip_triangulation",
+      "manim.utils.space_ops.find_intersection",
+      "manim.utils.space_ops.get_unit_normal",
+      "manim.utils.space_ops.get_winding_number",
+      "manim.utils.space_ops.line_intersection",
+      "manim.utils.space_ops.midpoint",
+      "manim.utils.space_ops.norm_squared",
       "manim.utils.space_ops.normalize",
+      "manim.utils.space_ops.normalize_along_axis",
+      "manim.utils.space_ops.perpendicular_bisector",
+      "manim.utils.space_ops.quaternion_conjugate",
+      "manim.utils.space_ops.quaternion_from_angle_axis",
+      "manim.utils.space_ops.quaternion_mult",
+      "manim.utils.space_ops.regular_vertices",
       "manim.utils.space_ops.rotate_vector",
+      "manim.utils.space_ops.rotation_about_z",
       "manim.utils.space_ops.rotation_matrix",
+      "manim.utils.space_ops.rotation_matrix_from_quaternion",
+      "manim.utils.space_ops.rotation_matrix_transpose",
+      "manim.utils.space_ops.rotation_matrix_transpose_from_quaternion",
+      "manim.utils.space_ops.shoelace",
+      "manim.utils.space_ops.shoelace_direction",
+      "manim.utils.space_ops.spherical_to_cartesian",
+      "manim.utils.space_ops.thick_diagonal",
+      "manim.utils.space_ops.z_to_vector",
       "manim.utils.tex.TexTemplate.body"
     ],
     "reports": [
       {
         "fixture": "src/studio/core/api.native.spec-node.mjs",
         "sourceFiles": {
-          "package-lock.json": "686405c5517e0ca4d92de1f072fbfca2929aca3ae3b4dcce069255889a0338f4",
-          "src/studio/core/api-compiler.ts": "51f7b95421a71cf5692686a904687be0db083ab7761349a995b56c494252f6a3",
-          "src/studio/core/api-values.ts": "e4f9a98efdfe844f452aac1f1df789686e9ac59a780571785ebaf20122bdfadb",
-          "src/studio/core/compiler.ts": "3f245fcd7167c08dfa4bda313ffbd5d9a9e29c2746c82c300985cc248b304fcb",
+          "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
+          "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
+          "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
+          "src/studio/core/compiler.ts": "547734a60709d36415402ea519113de985b43463c5ffb6fc672168066059262b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
           "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
           "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
-          "src/studio/core/catalog.ts": "00243d9744285cb01f7c16bdea8b3a49e29d405cd2cc3eab82c3aac98dbbf85d",
-          "src/studio/core/project.ts": "c677ae164d0a53fe6b1cbb9b9f55c46e8da477762d9950f616c1c7d63bb1365f",
+          "src/studio/core/catalog.ts": "9bf3c574559ec58e5b1f2e82a5045a36f5ee7a395a704641fffa5ffa141983b6",
+          "src/studio/core/project.ts": "e501095d78e107ed15d8cf937aa119ebed5c32b7fc41842f12130a7733980e1f",
+          "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/api.native.spec-node.mjs": "4b93ebc5ce7537df6515880d2e22952a82f9d68cef19d3f17fc94a60be318744"
         },
-        "registrySha256": "b8abc5de5f7055bf52f081901f14a15f04b0415ace0686d2679fa6d16a8b61ff",
+        "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "apiIds": [
           "manim.animation.composition.Succession",
           "manim.animation.fading.FadeIn",
@@ -522,18 +703,19 @@
       {
         "fixture": "src/studio/core/api-families.native.spec-node.mjs",
         "sourceFiles": {
-          "package-lock.json": "686405c5517e0ca4d92de1f072fbfca2929aca3ae3b4dcce069255889a0338f4",
-          "src/studio/core/api-compiler.ts": "51f7b95421a71cf5692686a904687be0db083ab7761349a995b56c494252f6a3",
-          "src/studio/core/api-values.ts": "e4f9a98efdfe844f452aac1f1df789686e9ac59a780571785ebaf20122bdfadb",
-          "src/studio/core/compiler.ts": "3f245fcd7167c08dfa4bda313ffbd5d9a9e29c2746c82c300985cc248b304fcb",
+          "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
+          "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
+          "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
+          "src/studio/core/compiler.ts": "547734a60709d36415402ea519113de985b43463c5ffb6fc672168066059262b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
           "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
           "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
-          "src/studio/core/catalog.ts": "00243d9744285cb01f7c16bdea8b3a49e29d405cd2cc3eab82c3aac98dbbf85d",
-          "src/studio/core/project.ts": "c677ae164d0a53fe6b1cbb9b9f55c46e8da477762d9950f616c1c7d63bb1365f",
+          "src/studio/core/catalog.ts": "9bf3c574559ec58e5b1f2e82a5045a36f5ee7a395a704641fffa5ffa141983b6",
+          "src/studio/core/project.ts": "e501095d78e107ed15d8cf937aa119ebed5c32b7fc41842f12130a7733980e1f",
+          "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/api-families.native.spec-node.mjs": "6b45e7b20b14ced3b96ee999665169d98c556d5c565eb5775320dabee04ee13d"
         },
-        "registrySha256": "b8abc5de5f7055bf52f081901f14a15f04b0415ace0686d2679fa6d16a8b61ff",
+        "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "engineVersion": "0.20.1",
         "renderer": "cairo",
         "passed": true,
@@ -5349,18 +5531,19 @@
       {
         "fixture": "src/studio/core/api-queries.native.spec-node.mjs",
         "sourceFiles": {
-          "package-lock.json": "686405c5517e0ca4d92de1f072fbfca2929aca3ae3b4dcce069255889a0338f4",
-          "src/studio/core/api-compiler.ts": "51f7b95421a71cf5692686a904687be0db083ab7761349a995b56c494252f6a3",
-          "src/studio/core/api-values.ts": "e4f9a98efdfe844f452aac1f1df789686e9ac59a780571785ebaf20122bdfadb",
-          "src/studio/core/compiler.ts": "3f245fcd7167c08dfa4bda313ffbd5d9a9e29c2746c82c300985cc248b304fcb",
+          "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
+          "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
+          "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
+          "src/studio/core/compiler.ts": "547734a60709d36415402ea519113de985b43463c5ffb6fc672168066059262b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
           "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
           "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
-          "src/studio/core/catalog.ts": "00243d9744285cb01f7c16bdea8b3a49e29d405cd2cc3eab82c3aac98dbbf85d",
-          "src/studio/core/project.ts": "c677ae164d0a53fe6b1cbb9b9f55c46e8da477762d9950f616c1c7d63bb1365f",
+          "src/studio/core/catalog.ts": "9bf3c574559ec58e5b1f2e82a5045a36f5ee7a395a704641fffa5ffa141983b6",
+          "src/studio/core/project.ts": "e501095d78e107ed15d8cf937aa119ebed5c32b7fc41842f12130a7733980e1f",
+          "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/api-queries.native.spec-node.mjs": "10feb1bed65dee13c84764366d195746feca11e0f76f78b042bfb0f1d1c4f86e"
         },
-        "registrySha256": "b8abc5de5f7055bf52f081901f14a15f04b0415ace0686d2679fa6d16a8b61ff",
+        "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "passed": true,
         "engineVersion": "0.20.1",
         "renderer": "cairo",
@@ -6369,10 +6552,1059 @@
           }
         ],
         "checks": "Actual compiled calls compared to direct native calls on equivalent concrete fixtures; geometry, arrays, colors, identity, primitives and image snapshots. Fixture gaps are not counted. This is not a per-API movie or all-parameter claim."
+      },
+      {
+        "fixture": "src/studio/core/api-utilities.native.spec-node.mjs",
+        "sourceFiles": {
+          "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
+          "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
+          "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
+          "src/studio/core/compiler.ts": "547734a60709d36415402ea519113de985b43463c5ffb6fc672168066059262b",
+          "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
+          "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
+          "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
+          "src/studio/core/catalog.ts": "9bf3c574559ec58e5b1f2e82a5045a36f5ee7a395a704641fffa5ffa141983b6",
+          "src/studio/core/project.ts": "e501095d78e107ed15d8cf937aa119ebed5c32b7fc41842f12130a7733980e1f",
+          "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
+          "src/studio/core/api-utilities.native.spec-node.mjs": "76ebac017703bdc4ce5084063396405c3bdd67f266188bf13fb3353357e0b4af"
+        },
+        "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
+        "passed": true,
+        "engineVersion": "0.20.1",
+        "renderer": "cairo",
+        "apiIds": [
+          "manim.utils.bezier.bezier",
+          "manim.utils.bezier.bezier_remap",
+          "manim.utils.bezier.get_quadratic_approximation_of_cubic",
+          "manim.utils.bezier.get_smooth_closed_cubic_bezier_handle_points",
+          "manim.utils.bezier.get_smooth_cubic_bezier_handle_points",
+          "manim.utils.bezier.get_smooth_open_cubic_bezier_handle_points",
+          "manim.utils.bezier.integer_interpolate",
+          "manim.utils.bezier.interpolate",
+          "manim.utils.bezier.inverse_interpolate",
+          "manim.utils.bezier.is_closed",
+          "manim.utils.bezier.match_interpolate",
+          "manim.utils.bezier.mid",
+          "manim.utils.bezier.partial_bezier_points",
+          "manim.utils.bezier.point_lies_on_bezier",
+          "manim.utils.bezier.proportions_along_bezier_curve_for_point",
+          "manim.utils.bezier.split_bezier",
+          "manim.utils.bezier.subdivide_bezier",
+          "manim.utils.config_ops.merge_dicts_recursively",
+          "manim.utils.config_ops.update_dict_recursively",
+          "manim.utils.file_ops.add_extension_if_not_present",
+          "manim.utils.file_ops.add_version_before_extension",
+          "manim.utils.file_ops.get_template_names",
+          "manim.utils.file_ops.get_template_path",
+          "manim.utils.file_ops.is_gif_format",
+          "manim.utils.file_ops.is_mov_format",
+          "manim.utils.file_ops.is_mp4_format",
+          "manim.utils.file_ops.is_png_format",
+          "manim.utils.file_ops.is_webm_format",
+          "manim.utils.file_ops.seek_full_path_from_defaults",
+          "manim.utils.file_ops.write_to_movie",
+          "manim.utils.iterables.adjacent_n_tuples",
+          "manim.utils.iterables.adjacent_pairs",
+          "manim.utils.iterables.all_elements_are_instances",
+          "manim.utils.iterables.batch_by_property",
+          "manim.utils.iterables.concatenate_lists",
+          "manim.utils.iterables.hash_obj",
+          "manim.utils.iterables.list_difference_update",
+          "manim.utils.iterables.list_update",
+          "manim.utils.iterables.listify",
+          "manim.utils.iterables.make_even",
+          "manim.utils.iterables.make_even_by_cycling",
+          "manim.utils.iterables.remove_list_redundancies",
+          "manim.utils.iterables.remove_nones",
+          "manim.utils.iterables.resize_array",
+          "manim.utils.iterables.resize_preserving_order",
+          "manim.utils.iterables.resize_with_interpolation",
+          "manim.utils.iterables.stretch_array_to_length",
+          "manim.utils.iterables.tuplify",
+          "manim.utils.iterables.uniq_chain",
+          "manim.utils.module_ops.get_module",
+          "manim.utils.module_ops.get_scene_classes_from_module",
+          "manim.utils.module_ops.get_scenes_to_render",
+          "manim.utils.module_ops.scene_classes_from_file",
+          "manim.utils.paths.clockwise_path",
+          "manim.utils.paths.counterclockwise_path",
+          "manim.utils.paths.path_along_arc",
+          "manim.utils.paths.path_along_circles",
+          "manim.utils.paths.spiral_path",
+          "manim.utils.paths.straight_path",
+          "manim.utils.simple_functions.binary_search",
+          "manim.utils.simple_functions.clip",
+          "manim.utils.simple_functions.sigmoid",
+          "manim.utils.space_ops.R3_to_complex",
+          "manim.utils.space_ops.angle_axis_from_quaternion",
+          "manim.utils.space_ops.angle_between_vectors",
+          "manim.utils.space_ops.angle_of_vector",
+          "manim.utils.space_ops.cartesian_to_spherical",
+          "manim.utils.space_ops.center_of_mass",
+          "manim.utils.space_ops.compass_directions",
+          "manim.utils.space_ops.complex_func_to_R3_func",
+          "manim.utils.space_ops.complex_to_R3",
+          "manim.utils.space_ops.cross",
+          "manim.utils.space_ops.cross2d",
+          "manim.utils.space_ops.earclip_triangulation",
+          "manim.utils.space_ops.find_intersection",
+          "manim.utils.space_ops.get_unit_normal",
+          "manim.utils.space_ops.get_winding_number",
+          "manim.utils.space_ops.line_intersection",
+          "manim.utils.space_ops.midpoint",
+          "manim.utils.space_ops.norm_squared",
+          "manim.utils.space_ops.normalize",
+          "manim.utils.space_ops.normalize_along_axis",
+          "manim.utils.space_ops.perpendicular_bisector",
+          "manim.utils.space_ops.quaternion_conjugate",
+          "manim.utils.space_ops.quaternion_from_angle_axis",
+          "manim.utils.space_ops.quaternion_mult",
+          "manim.utils.space_ops.regular_vertices",
+          "manim.utils.space_ops.rotate_vector",
+          "manim.utils.space_ops.rotation_about_z",
+          "manim.utils.space_ops.rotation_matrix",
+          "manim.utils.space_ops.rotation_matrix_from_quaternion",
+          "manim.utils.space_ops.rotation_matrix_transpose",
+          "manim.utils.space_ops.rotation_matrix_transpose_from_quaternion",
+          "manim.utils.space_ops.shoelace",
+          "manim.utils.space_ops.shoelace_direction",
+          "manim.utils.space_ops.spherical_to_cartesian",
+          "manim.utils.space_ops.thick_diagonal",
+          "manim.utils.space_ops.z_to_vector"
+        ],
+        "outcomes": [
+          {
+            "apiId": "manim.utils.bezier.bezier",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.bezier_remap",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.get_quadratic_approximation_of_cubic",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.get_smooth_cubic_bezier_handle_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.get_smooth_open_cubic_bezier_handle_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.get_smooth_closed_cubic_bezier_handle_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.integer_interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.integer_interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.integer_interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.inverse_interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.match_interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.mid",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.is_closed",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.is_closed",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.partial_bezier_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.split_bezier",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.subdivide_bezier",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.point_lies_on_bezier",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.proportions_along_bezier_curve_for_point",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.point_lies_on_bezier",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.bezier.proportions_along_bezier_curve_for_point",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.config_ops.merge_dicts_recursively",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.config_ops.update_dict_recursively",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.adjacent_n_tuples",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.adjacent_pairs",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.all_elements_are_instances",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.batch_by_property",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.concatenate_lists",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.hash_obj",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.list_difference_update",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.list_update",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.listify",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.listify",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.listify",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.tuplify",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.tuplify",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.tuplify",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.make_even",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.make_even_by_cycling",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.remove_list_redundancies",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.remove_nones",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.resize_array",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.resize_preserving_order",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.resize_with_interpolation",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.stretch_array_to_length",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.iterables.uniq_chain",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.paths.clockwise_path",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.paths.counterclockwise_path",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.paths.straight_path",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.paths.path_along_arc",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.paths.path_along_circles",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.paths.spiral_path",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.simple_functions.binary_search",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.simple_functions.clip",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.simple_functions.clip",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.simple_functions.clip",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.simple_functions.sigmoid",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.simple_functions.sigmoid",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.simple_functions.sigmoid",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.angle_between_vectors",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.cross",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.get_unit_normal",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.cross2d",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.angle_of_vector",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.z_to_vector",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.cartesian_to_spherical",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.spherical_to_cartesian",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.R3_to_complex",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.complex_to_R3",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.complex_func_to_R3_func",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.center_of_mass",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.compass_directions",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.earclip_triangulation",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.find_intersection",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.get_winding_number",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.line_intersection",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.midpoint",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.norm_squared",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.normalize",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.normalize_along_axis",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.perpendicular_bisector",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.angle_axis_from_quaternion",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.quaternion_conjugate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.quaternion_from_angle_axis",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.quaternion_mult",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.regular_vertices",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.rotate_vector",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.rotation_about_z",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.rotation_matrix",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.rotation_matrix_transpose",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.rotation_matrix_from_quaternion",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.rotation_matrix_transpose_from_quaternion",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.shoelace",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.shoelace_direction",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.space_ops.thick_diagonal",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.add_extension_if_not_present",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.add_extension_if_not_present",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.add_version_before_extension",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.seek_full_path_from_defaults",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.get_template_names",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.get_template_path",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.is_gif_format",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.is_mov_format",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.is_mp4_format",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.is_png_format",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.is_webm_format",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.file_ops.write_to_movie",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.module_ops.get_module",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.module_ops.get_scene_classes_from_module",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.module_ops.get_scenes_to_render",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.module_ops.scene_classes_from_file",
+            "status": "verified"
+          }
+        ],
+        "checks": "Compiled calls compared against independent direct native calls; numeric values, shapes, sequence types, mutation results and returned callbacks sampled at multiple inputs. No per-API video claim."
+      },
+      {
+        "fixture": "src/studio/core/api-mutations.native.spec-node.mjs",
+        "sourceFiles": {
+          "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
+          "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
+          "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
+          "src/studio/core/compiler.ts": "547734a60709d36415402ea519113de985b43463c5ffb6fc672168066059262b",
+          "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
+          "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
+          "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
+          "src/studio/core/catalog.ts": "9bf3c574559ec58e5b1f2e82a5045a36f5ee7a395a704641fffa5ffa141983b6",
+          "src/studio/core/project.ts": "e501095d78e107ed15d8cf937aa119ebed5c32b7fc41842f12130a7733980e1f",
+          "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
+          "src/studio/core/api-mutations.native.spec-node.mjs": "9e0729e3bcc79effcde9a6c2d42b844a29bff5e8258a180c534e6690d32aa10f"
+        },
+        "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
+        "passed": true,
+        "engineVersion": "0.20.1",
+        "renderer": "cairo",
+        "apiIds": [
+          "manim.mobject.geometry.arc.Arc.move_arc_center_to",
+          "manim.mobject.geometry.arc.Arc.stop_angle",
+          "manim.mobject.geometry.arc.Circle.from_three_points",
+          "manim.mobject.geometry.arc.Circle.surround",
+          "manim.mobject.geometry.arc.TipableVMobject.add_tip",
+          "manim.mobject.geometry.arc.TipableVMobject.pop_tips",
+          "manim.mobject.geometry.line.Line.get_projection",
+          "manim.mobject.geometry.line.Line.put_start_and_end_on",
+          "manim.mobject.geometry.line.Line.set_angle",
+          "manim.mobject.geometry.line.Line.set_length",
+          "manim.mobject.geometry.line.Line.set_path_arc",
+          "manim.mobject.geometry.line.Line.set_points_by_ends",
+          "manim.mobject.geometry.polygram.Polygram.round_corners",
+          "manim.mobject.mobject.Mobject.add_background_rectangle",
+          "manim.mobject.mobject.Mobject.add_n_more_submobjects",
+          "manim.mobject.mobject.Mobject.add_to_back",
+          "manim.mobject.mobject.Mobject.align_data",
+          "manim.mobject.mobject.Mobject.align_on_border",
+          "manim.mobject.mobject.Mobject.align_submobjects",
+          "manim.mobject.mobject.Mobject.align_to",
+          "manim.mobject.mobject.Mobject.apply_function_to_position",
+          "manim.mobject.mobject.Mobject.apply_function_to_submobject_positions",
+          "manim.mobject.mobject.Mobject.apply_matrix",
+          "manim.mobject.mobject.Mobject.apply_points_function_about_point",
+          "manim.mobject.mobject.Mobject.arrange_submobjects",
+          "manim.mobject.mobject.Mobject.become",
+          "manim.mobject.mobject.Mobject.center",
+          "manim.mobject.mobject.Mobject.fade",
+          "manim.mobject.mobject.Mobject.get_boundary_point",
+          "manim.mobject.mobject.Mobject.get_coord",
+          "manim.mobject.mobject.Mobject.get_edge_center",
+          "manim.mobject.mobject.Mobject.insert",
+          "manim.mobject.mobject.Mobject.interpolate_color",
+          "manim.mobject.mobject.Mobject.invert",
+          "manim.mobject.mobject.Mobject.length_over_dim",
+          "manim.mobject.mobject.Mobject.match_color",
+          "manim.mobject.mobject.Mobject.match_coord",
+          "manim.mobject.mobject.Mobject.match_depth",
+          "manim.mobject.mobject.Mobject.match_dim_size",
+          "manim.mobject.mobject.Mobject.match_height",
+          "manim.mobject.mobject.Mobject.match_points",
+          "manim.mobject.mobject.Mobject.match_width",
+          "manim.mobject.mobject.Mobject.match_x",
+          "manim.mobject.mobject.Mobject.match_y",
+          "manim.mobject.mobject.Mobject.match_z",
+          "manim.mobject.mobject.Mobject.next_to",
+          "manim.mobject.mobject.Mobject.nonempty_submobjects",
+          "manim.mobject.mobject.Mobject.point_from_proportion",
+          "manim.mobject.mobject.Mobject.push_self_into_submobjects",
+          "manim.mobject.mobject.Mobject.repeat",
+          "manim.mobject.mobject.Mobject.replace",
+          "manim.mobject.mobject.Mobject.rescale_to_fit",
+          "manim.mobject.mobject.Mobject.reset_points",
+          "manim.mobject.mobject.Mobject.reverse_points",
+          "manim.mobject.mobject.Mobject.rotate_about_origin",
+          "manim.mobject.mobject.Mobject.set_coord",
+          "manim.mobject.mobject.Mobject.set_submobject_colors_by_gradient",
+          "manim.mobject.mobject.Mobject.shift_onto_screen",
+          "manim.mobject.mobject.Mobject.shuffle",
+          "manim.mobject.mobject.Mobject.shuffle_submobjects",
+          "manim.mobject.mobject.Mobject.sort",
+          "manim.mobject.mobject.Mobject.space_out_submobjects",
+          "manim.mobject.mobject.Mobject.stretch",
+          "manim.mobject.mobject.Mobject.surround",
+          "manim.mobject.mobject.Mobject.to_corner",
+          "manim.mobject.mobject.Mobject.to_edge",
+          "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve",
+          "manim.mobject.types.vectorized_mobject.VMobject.add_points_as_corners",
+          "manim.mobject.types.vectorized_mobject.VMobject.add_quadratic_bezier_curve_to",
+          "manim.mobject.types.vectorized_mobject.VMobject.add_subpath",
+          "manim.mobject.types.vectorized_mobject.VMobject.append_points",
+          "manim.mobject.types.vectorized_mobject.VMobject.append_vectorized_mobject",
+          "manim.mobject.types.vectorized_mobject.VMobject.clear_points",
+          "manim.mobject.types.vectorized_mobject.VMobject.consider_points_equals",
+          "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_length",
+          "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_points",
+          "manim.mobject.types.vectorized_mobject.VMobject.get_subcurve",
+          "manim.mobject.types.vectorized_mobject.VMobject.insert_n_curves",
+          "manim.mobject.types.vectorized_mobject.VMobject.make_jagged",
+          "manim.mobject.types.vectorized_mobject.VMobject.make_smooth",
+          "manim.mobject.types.vectorized_mobject.VMobject.proportion_from_point",
+          "manim.mobject.types.vectorized_mobject.VMobject.resize_points",
+          "manim.mobject.types.vectorized_mobject.VMobject.reverse_direction",
+          "manim.mobject.types.vectorized_mobject.VMobject.rotate_sheen_direction",
+          "manim.mobject.types.vectorized_mobject.VMobject.set_background_stroke",
+          "manim.mobject.types.vectorized_mobject.VMobject.set_cap_style",
+          "manim.mobject.types.vectorized_mobject.VMobject.set_opacity",
+          "manim.mobject.types.vectorized_mobject.VMobject.set_sheen_direction",
+          "manim.mobject.types.vectorized_mobject.VMobject.start_new_path"
+        ],
+        "outcomes": [
+          {
+            "apiId": "manim.mobject.mobject.Mobject.center",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.align_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.align_on_border",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.to_edge",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.to_corner",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.next_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.shift_onto_screen",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.stretch",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.rescale_to_fit",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_width",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_height",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_depth",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_dim_size",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_x",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_y",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_z",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_coord",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.set_coord",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.apply_matrix",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.rotate_about_origin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.become",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.reverse_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.reset_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.align_data",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.apply_function_to_position",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.apply_function_to_submobject_positions",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.apply_points_function_about_point",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.replace",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.add_to_back",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.insert",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.add_n_more_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.arrange_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.align_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.shuffle_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.shuffle",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.sort",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.space_out_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.invert",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.repeat",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.nonempty_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.push_self_into_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.surround",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.fade",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.interpolate_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.set_submobject_colors_by_gradient",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.add_background_rectangle",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.set_opacity",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.set_background_stroke",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.set_sheen_direction",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.rotate_sheen_direction",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.set_cap_style",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.start_new_path",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.add_quadratic_bezier_curve_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.add_points_as_corners",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.add_subpath",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.clear_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.append_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.append_vectorized_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.reverse_direction",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.make_smooth",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.make_jagged",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.insert_n_curves",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.resize_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.get_boundary_point",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.get_edge_center",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.get_coord",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.length_over_dim",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.point_from_proportion",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.proportion_from_point",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_length",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.get_subcurve",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VMobject.consider_points_equals",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.line.Line.put_start_and_end_on",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.line.Line.set_points_by_ends",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.line.Line.set_angle",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.line.Line.set_length",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.line.Line.set_path_arc",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.line.Line.get_projection",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.arc.Arc.move_arc_center_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.arc.Arc.stop_angle",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.arc.Circle.from_three_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.arc.Circle.surround",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.arc.TipableVMobject.add_tip",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.arc.TipableVMobject.pop_tips",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.geometry.polygram.Polygram.round_corners",
+            "status": "verified"
+          }
+        ],
+        "checks": "Actual compiled calls compared to direct native calls on equivalent concrete fixtures; points, submobjects, style, colors, and return identity. Fixture gaps are not counted."
       }
     ]
   },
-  "entriesWithBehaviorEvidence": 419,
+  "entriesWithBehaviorEvidence": 599,
   "entriesWithoutBehaviorEvidence": [
     "manim._config.cli_colors.parse_cli_ctx",
     "manim._config.logger_utils.JSONFormatter",
@@ -6767,20 +7999,14 @@
     "manim.mobject.geometry.arc.Annulus.init_points",
     "manim.mobject.geometry.arc.Arc.generate_points",
     "manim.mobject.geometry.arc.Arc.init_points",
-    "manim.mobject.geometry.arc.Arc.move_arc_center_to",
-    "manim.mobject.geometry.arc.Arc.stop_angle",
     "manim.mobject.geometry.arc.ArcPolygonFromArcs",
-    "manim.mobject.geometry.arc.Circle.from_three_points",
-    "manim.mobject.geometry.arc.Circle.surround",
     "manim.mobject.geometry.arc.CubicBezier",
     "manim.mobject.geometry.arc.CurvedDoubleArrow",
     "manim.mobject.geometry.arc.LabeledDot",
     "manim.mobject.geometry.arc.TangentialArc",
     "manim.mobject.geometry.arc.TipableVMobject",
-    "manim.mobject.geometry.arc.TipableVMobject.add_tip",
     "manim.mobject.geometry.arc.TipableVMobject.assign_tip_attr",
     "manim.mobject.geometry.arc.TipableVMobject.create_tip",
-    "manim.mobject.geometry.arc.TipableVMobject.pop_tips",
     "manim.mobject.geometry.arc.TipableVMobject.position_tip",
     "manim.mobject.geometry.arc.TipableVMobject.reset_endpoints_based_on_tip",
     "manim.mobject.geometry.labeled.Label",
@@ -6792,19 +8018,12 @@
     "manim.mobject.geometry.line.Arrow.scale",
     "manim.mobject.geometry.line.Elbow",
     "manim.mobject.geometry.line.Line.generate_points",
-    "manim.mobject.geometry.line.Line.get_projection",
     "manim.mobject.geometry.line.Line.init_points",
-    "manim.mobject.geometry.line.Line.put_start_and_end_on",
-    "manim.mobject.geometry.line.Line.set_angle",
-    "manim.mobject.geometry.line.Line.set_length",
-    "manim.mobject.geometry.line.Line.set_path_arc",
-    "manim.mobject.geometry.line.Line.set_points_by_ends",
     "manim.mobject.geometry.line.Vector",
     "manim.mobject.geometry.line.Vector.coordinate_label",
     "manim.mobject.geometry.polygram.ConvexHull",
     "manim.mobject.geometry.polygram.Polygram",
     "manim.mobject.geometry.polygram.Polygram.get_vertex_groups",
-    "manim.mobject.geometry.polygram.Polygram.round_corners",
     "manim.mobject.geometry.polygram.RegularPolygram",
     "manim.mobject.geometry.shape_matchers.BackgroundRectangle.pointwise_become_partial",
     "manim.mobject.geometry.shape_matchers.BackgroundRectangle.set_style",
@@ -6936,96 +8155,43 @@
     "manim.mobject.mobject.Group",
     "manim.mobject.mobject.Mobject",
     "manim.mobject.mobject.Mobject.add_animation_override",
-    "manim.mobject.mobject.Mobject.add_background_rectangle",
     "manim.mobject.mobject.Mobject.add_background_rectangle_to_family_members_with_points",
     "manim.mobject.mobject.Mobject.add_background_rectangle_to_submobjects",
-    "manim.mobject.mobject.Mobject.add_n_more_submobjects",
-    "manim.mobject.mobject.Mobject.add_to_back",
-    "manim.mobject.mobject.Mobject.align_data",
-    "manim.mobject.mobject.Mobject.align_on_border",
     "manim.mobject.mobject.Mobject.align_points",
     "manim.mobject.mobject.Mobject.align_points_with_larger",
-    "manim.mobject.mobject.Mobject.align_submobjects",
-    "manim.mobject.mobject.Mobject.align_to",
     "manim.mobject.mobject.Mobject.animation_override_for",
-    "manim.mobject.mobject.Mobject.apply_function_to_position",
-    "manim.mobject.mobject.Mobject.apply_function_to_submobject_positions",
-    "manim.mobject.mobject.Mobject.apply_matrix",
     "manim.mobject.mobject.Mobject.apply_over_attr_arrays",
-    "manim.mobject.mobject.Mobject.apply_points_function_about_point",
     "manim.mobject.mobject.Mobject.apply_to_family",
-    "manim.mobject.mobject.Mobject.arrange_submobjects",
-    "manim.mobject.mobject.Mobject.become",
-    "manim.mobject.mobject.Mobject.center",
-    "manim.mobject.mobject.Mobject.fade",
     "manim.mobject.mobject.Mobject.fade_to",
     "manim.mobject.mobject.Mobject.generate_points",
-    "manim.mobject.mobject.Mobject.get_boundary_point",
-    "manim.mobject.mobject.Mobject.get_coord",
-    "manim.mobject.mobject.Mobject.get_edge_center",
     "manim.mobject.mobject.Mobject.get_merged_array",
     "manim.mobject.mobject.Mobject.get_mobject_type_class",
     "manim.mobject.mobject.Mobject.get_pieces",
     "manim.mobject.mobject.Mobject.init_colors",
-    "manim.mobject.mobject.Mobject.insert",
     "manim.mobject.mobject.Mobject.interpolate",
-    "manim.mobject.mobject.Mobject.interpolate_color",
-    "manim.mobject.mobject.Mobject.invert",
-    "manim.mobject.mobject.Mobject.length_over_dim",
-    "manim.mobject.mobject.Mobject.match_color",
-    "manim.mobject.mobject.Mobject.match_coord",
-    "manim.mobject.mobject.Mobject.match_depth",
-    "manim.mobject.mobject.Mobject.match_dim_size",
-    "manim.mobject.mobject.Mobject.match_height",
-    "manim.mobject.mobject.Mobject.match_points",
     "manim.mobject.mobject.Mobject.match_updaters",
-    "manim.mobject.mobject.Mobject.match_width",
-    "manim.mobject.mobject.Mobject.match_x",
-    "manim.mobject.mobject.Mobject.match_y",
-    "manim.mobject.mobject.Mobject.match_z",
-    "manim.mobject.mobject.Mobject.next_to",
-    "manim.mobject.mobject.Mobject.nonempty_submobjects",
     "manim.mobject.mobject.Mobject.null_point_align",
-    "manim.mobject.mobject.Mobject.point_from_proportion",
     "manim.mobject.mobject.Mobject.pose_at_angle",
     "manim.mobject.mobject.Mobject.proportion_from_point",
-    "manim.mobject.mobject.Mobject.push_self_into_submobjects",
     "manim.mobject.mobject.Mobject.put_start_and_end_on",
     "manim.mobject.mobject.Mobject.reduce_across_dimension",
     "manim.mobject.mobject.Mobject.remove_updater",
-    "manim.mobject.mobject.Mobject.repeat",
     "manim.mobject.mobject.Mobject.repeat_submobject",
-    "manim.mobject.mobject.Mobject.replace",
-    "manim.mobject.mobject.Mobject.rescale_to_fit",
-    "manim.mobject.mobject.Mobject.reset_points",
     "manim.mobject.mobject.Mobject.resume_updating",
-    "manim.mobject.mobject.Mobject.reverse_points",
-    "manim.mobject.mobject.Mobject.rotate_about_origin",
     "manim.mobject.mobject.Mobject.save_image",
     "manim.mobject.mobject.Mobject.scale_to_fit_depth",
     "manim.mobject.mobject.Mobject.set",
     "manim.mobject.mobject.Mobject.set_color_by_gradient",
     "manim.mobject.mobject.Mobject.set_colors_by_radial_gradient",
-    "manim.mobject.mobject.Mobject.set_coord",
     "manim.mobject.mobject.Mobject.set_default",
-    "manim.mobject.mobject.Mobject.set_submobject_colors_by_gradient",
     "manim.mobject.mobject.Mobject.set_submobject_colors_by_radial_gradient",
     "manim.mobject.mobject.Mobject.set_z_index_by_z_Point3D",
-    "manim.mobject.mobject.Mobject.shift_onto_screen",
     "manim.mobject.mobject.Mobject.show",
-    "manim.mobject.mobject.Mobject.shuffle",
-    "manim.mobject.mobject.Mobject.shuffle_submobjects",
-    "manim.mobject.mobject.Mobject.sort",
     "manim.mobject.mobject.Mobject.sort_submobjects",
-    "manim.mobject.mobject.Mobject.space_out_submobjects",
-    "manim.mobject.mobject.Mobject.stretch",
     "manim.mobject.mobject.Mobject.stretch_about_point",
     "manim.mobject.mobject.Mobject.stretch_to_fit_depth",
-    "manim.mobject.mobject.Mobject.surround",
     "manim.mobject.mobject.Mobject.suspend_updating",
     "manim.mobject.mobject.Mobject.throw_error_if_no_points",
-    "manim.mobject.mobject.Mobject.to_corner",
-    "manim.mobject.mobject.Mobject.to_edge",
     "manim.mobject.mobject.Mobject.to_original_color",
     "manim.mobject.mobject.Mobject.update",
     "manim.mobject.mobject.override_animate",
@@ -7665,21 +8831,13 @@
     "manim.mobject.types.vectorized_mobject.VDict.add_key_value_pair",
     "manim.mobject.types.vectorized_mobject.VDict.remove",
     "manim.mobject.types.vectorized_mobject.VGroup.add",
-    "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve",
     "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curves",
-    "manim.mobject.types.vectorized_mobject.VMobject.add_points_as_corners",
-    "manim.mobject.types.vectorized_mobject.VMobject.add_quadratic_bezier_curve_to",
     "manim.mobject.types.vectorized_mobject.VMobject.add_smooth_curve_to",
-    "manim.mobject.types.vectorized_mobject.VMobject.add_subpath",
     "manim.mobject.types.vectorized_mobject.VMobject.align_points",
     "manim.mobject.types.vectorized_mobject.VMobject.align_rgbas",
-    "manim.mobject.types.vectorized_mobject.VMobject.append_points",
-    "manim.mobject.types.vectorized_mobject.VMobject.append_vectorized_mobject",
     "manim.mobject.types.vectorized_mobject.VMobject.apply_function",
     "manim.mobject.types.vectorized_mobject.VMobject.change_anchor_mode",
-    "manim.mobject.types.vectorized_mobject.VMobject.clear_points",
     "manim.mobject.types.vectorized_mobject.VMobject.color_using_background_image",
-    "manim.mobject.types.vectorized_mobject.VMobject.consider_points_equals",
     "manim.mobject.types.vectorized_mobject.VMobject.consider_points_equals_2d",
     "manim.mobject.types.vectorized_mobject.VMobject.fade",
     "manim.mobject.types.vectorized_mobject.VMobject.force_direction",
@@ -7691,36 +8849,21 @@
     "manim.mobject.types.vectorized_mobject.VMobject.get_mobject_type_class",
     "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_function",
     "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_function_with_length",
-    "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_length",
     "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_length_pieces",
-    "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_points",
-    "manim.mobject.types.vectorized_mobject.VMobject.get_subcurve",
     "manim.mobject.types.vectorized_mobject.VMobject.get_subpaths_from_points",
     "manim.mobject.types.vectorized_mobject.VMobject.init_colors",
-    "manim.mobject.types.vectorized_mobject.VMobject.insert_n_curves",
     "manim.mobject.types.vectorized_mobject.VMobject.insert_n_curves_to_point_list",
     "manim.mobject.types.vectorized_mobject.VMobject.interpolate_color",
-    "manim.mobject.types.vectorized_mobject.VMobject.make_jagged",
-    "manim.mobject.types.vectorized_mobject.VMobject.make_smooth",
     "manim.mobject.types.vectorized_mobject.VMobject.match_background_image",
     "manim.mobject.types.vectorized_mobject.VMobject.pointwise_become_partial",
-    "manim.mobject.types.vectorized_mobject.VMobject.proportion_from_point",
-    "manim.mobject.types.vectorized_mobject.VMobject.resize_points",
-    "manim.mobject.types.vectorized_mobject.VMobject.reverse_direction",
     "manim.mobject.types.vectorized_mobject.VMobject.rotate",
-    "manim.mobject.types.vectorized_mobject.VMobject.rotate_sheen_direction",
     "manim.mobject.types.vectorized_mobject.VMobject.scale",
     "manim.mobject.types.vectorized_mobject.VMobject.scale_handle_to_anchor_distances",
     "manim.mobject.types.vectorized_mobject.VMobject.set_anchors_and_handles",
-    "manim.mobject.types.vectorized_mobject.VMobject.set_background_stroke",
-    "manim.mobject.types.vectorized_mobject.VMobject.set_cap_style",
     "manim.mobject.types.vectorized_mobject.VMobject.set_color",
-    "manim.mobject.types.vectorized_mobject.VMobject.set_opacity",
     "manim.mobject.types.vectorized_mobject.VMobject.set_points",
     "manim.mobject.types.vectorized_mobject.VMobject.set_shade_in_3d",
-    "manim.mobject.types.vectorized_mobject.VMobject.set_sheen_direction",
     "manim.mobject.types.vectorized_mobject.VMobject.set_style",
-    "manim.mobject.types.vectorized_mobject.VMobject.start_new_path",
     "manim.mobject.types.vectorized_mobject.VMobject.update_rgbas_array",
     "manim.mobject.types.vectorized_mobject.VectorizedPoint",
     "manim.mobject.types.vectorized_mobject.VectorizedPoint.set_location",
@@ -8035,21 +9178,6 @@
     "manim.scene.zoomed_scene.ZoomedScene.get_zoom_in_animation",
     "manim.scene.zoomed_scene.ZoomedScene.get_zoomed_display_pop_out_animation",
     "manim.scene.zoomed_scene.ZoomedScene.setup",
-    "manim.utils.bezier.bezier_remap",
-    "manim.utils.bezier.get_quadratic_approximation_of_cubic",
-    "manim.utils.bezier.get_smooth_closed_cubic_bezier_handle_points",
-    "manim.utils.bezier.get_smooth_cubic_bezier_handle_points",
-    "manim.utils.bezier.get_smooth_open_cubic_bezier_handle_points",
-    "manim.utils.bezier.integer_interpolate",
-    "manim.utils.bezier.inverse_interpolate",
-    "manim.utils.bezier.is_closed",
-    "manim.utils.bezier.match_interpolate",
-    "manim.utils.bezier.mid",
-    "manim.utils.bezier.partial_bezier_points",
-    "manim.utils.bezier.point_lies_on_bezier",
-    "manim.utils.bezier.proportions_along_bezier_curve_for_point",
-    "manim.utils.bezier.split_bezier",
-    "manim.utils.bezier.subdivide_bezier",
     "manim.utils.caching.handle_caching_play",
     "manim.utils.color.core.HSV",
     "manim.utils.color.core.ManimColor.contrasting",
@@ -8083,8 +9211,6 @@
     "manim.utils.commands.get_dir_layout",
     "manim.utils.commands.get_video_metadata",
     "manim.utils.config_ops.DictAsObject",
-    "manim.utils.config_ops.merge_dicts_recursively",
-    "manim.utils.config_ops.update_dict_recursively",
     "manim.utils.debug.index_labels",
     "manim.utils.debug.print_family",
     "manim.utils.deprecation.deprecated",
@@ -8095,25 +9221,14 @@
     "manim.utils.family.extract_mobject_family_members",
     "manim.utils.family_ops.extract_mobject_family_members",
     "manim.utils.family_ops.restructure_list_to_exclude_certain_family_members",
-    "manim.utils.file_ops.add_extension_if_not_present",
     "manim.utils.file_ops.add_import_statement",
-    "manim.utils.file_ops.add_version_before_extension",
     "manim.utils.file_ops.copy_template_files",
     "manim.utils.file_ops.ensure_executable",
-    "manim.utils.file_ops.get_template_names",
-    "manim.utils.file_ops.get_template_path",
     "manim.utils.file_ops.guarantee_empty_existence",
     "manim.utils.file_ops.guarantee_existence",
-    "manim.utils.file_ops.is_gif_format",
-    "manim.utils.file_ops.is_mov_format",
-    "manim.utils.file_ops.is_mp4_format",
-    "manim.utils.file_ops.is_png_format",
-    "manim.utils.file_ops.is_webm_format",
     "manim.utils.file_ops.modify_atime",
     "manim.utils.file_ops.open_file",
     "manim.utils.file_ops.open_media_file",
-    "manim.utils.file_ops.seek_full_path_from_defaults",
-    "manim.utils.file_ops.write_to_movie",
     "manim.utils.hashing.get_hash_from_play_call",
     "manim.utils.hashing.get_json",
     "manim.utils.images.change_to_rgba_array",
@@ -8121,30 +9236,7 @@
     "manim.utils.images.get_full_raster_image_path",
     "manim.utils.images.get_full_vector_image_path",
     "manim.utils.images.invert_image",
-    "manim.utils.iterables.adjacent_n_tuples",
-    "manim.utils.iterables.adjacent_pairs",
-    "manim.utils.iterables.all_elements_are_instances",
-    "manim.utils.iterables.batch_by_property",
-    "manim.utils.iterables.concatenate_lists",
-    "manim.utils.iterables.hash_obj",
-    "manim.utils.iterables.list_difference_update",
-    "manim.utils.iterables.list_update",
-    "manim.utils.iterables.listify",
-    "manim.utils.iterables.make_even",
-    "manim.utils.iterables.make_even_by_cycling",
-    "manim.utils.iterables.remove_list_redundancies",
-    "manim.utils.iterables.remove_nones",
-    "manim.utils.iterables.resize_array",
-    "manim.utils.iterables.resize_preserving_order",
-    "manim.utils.iterables.resize_with_interpolation",
-    "manim.utils.iterables.stretch_array_to_length",
-    "manim.utils.iterables.tuplify",
-    "manim.utils.iterables.uniq_chain",
-    "manim.utils.module_ops.get_module",
-    "manim.utils.module_ops.get_scene_classes_from_module",
-    "manim.utils.module_ops.get_scenes_to_render",
     "manim.utils.module_ops.prompt_user_for_choice",
-    "manim.utils.module_ops.scene_classes_from_file",
     "manim.utils.opengl.matrix_to_shader_input",
     "manim.utils.opengl.orthographic_projection_matrix",
     "manim.utils.opengl.perspective_projection_matrix",
@@ -8157,12 +9249,6 @@
     "manim.utils.opengl.y_rotation_matrix",
     "manim.utils.opengl.z_rotation_matrix",
     "manim.utils.parameter_parsing.flatten_iterable_parameters",
-    "manim.utils.paths.clockwise_path",
-    "manim.utils.paths.counterclockwise_path",
-    "manim.utils.paths.path_along_arc",
-    "manim.utils.paths.path_along_circles",
-    "manim.utils.paths.spiral_path",
-    "manim.utils.paths.straight_path",
     "manim.utils.polylabel.Cell",
     "manim.utils.polylabel.Polygon",
     "manim.utils.polylabel.Polygon.compute_distance",
@@ -8184,41 +9270,7 @@
     "manim.utils.rate_functions.unit_interval",
     "manim.utils.rate_functions.zero",
     "manim.utils.simple_functions.Comparable",
-    "manim.utils.simple_functions.binary_search",
-    "manim.utils.simple_functions.clip",
-    "manim.utils.simple_functions.sigmoid",
     "manim.utils.sounds.get_full_sound_file_path",
-    "manim.utils.space_ops.R3_to_complex",
-    "manim.utils.space_ops.angle_axis_from_quaternion",
-    "manim.utils.space_ops.angle_of_vector",
-    "manim.utils.space_ops.cartesian_to_spherical",
-    "manim.utils.space_ops.center_of_mass",
-    "manim.utils.space_ops.compass_directions",
-    "manim.utils.space_ops.complex_func_to_R3_func",
-    "manim.utils.space_ops.complex_to_R3",
-    "manim.utils.space_ops.cross2d",
-    "manim.utils.space_ops.earclip_triangulation",
-    "manim.utils.space_ops.find_intersection",
-    "manim.utils.space_ops.get_unit_normal",
-    "manim.utils.space_ops.get_winding_number",
-    "manim.utils.space_ops.line_intersection",
-    "manim.utils.space_ops.midpoint",
-    "manim.utils.space_ops.norm_squared",
-    "manim.utils.space_ops.normalize_along_axis",
-    "manim.utils.space_ops.perpendicular_bisector",
-    "manim.utils.space_ops.quaternion_conjugate",
-    "manim.utils.space_ops.quaternion_from_angle_axis",
-    "manim.utils.space_ops.quaternion_mult",
-    "manim.utils.space_ops.regular_vertices",
-    "manim.utils.space_ops.rotation_about_z",
-    "manim.utils.space_ops.rotation_matrix_from_quaternion",
-    "manim.utils.space_ops.rotation_matrix_transpose",
-    "manim.utils.space_ops.rotation_matrix_transpose_from_quaternion",
-    "manim.utils.space_ops.shoelace",
-    "manim.utils.space_ops.shoelace_direction",
-    "manim.utils.space_ops.spherical_to_cartesian",
-    "manim.utils.space_ops.thick_diagonal",
-    "manim.utils.space_ops.z_to_vector",
     "manim.utils.tex.TexTemplate",
     "manim.utils.tex.TexTemplate.add_to_document",
     "manim.utils.tex.TexTemplate.add_to_preamble",

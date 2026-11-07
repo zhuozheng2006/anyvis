@@ -2,7 +2,17 @@
 
 更新：2026-11-08（北京时间）。仓库：[zhuozheng2006/anyvis](https://github.com/zhuozheng2006/anyvis)，分支 `main`。
 
-当前应用与依赖提交：`1f28edc9f79c15f3ba37919e835eb4dac2c8ce10`。最终原生 CI 为 `42401140743`，已成功；桌面 CI 为 `42401140734`，macOS、Windows、Linux 全部成功，安装包及最终 ASAR 启动检查通过；下载见 verification.md。本地 305 个已跟踪文件与该应用提交已逐项哈希核对一致，后续文档更新不改变应用或依赖。
+当前开发版本 v0.4.0：开源 React Timeline Editor、对象管理、图片/音频上传与真实混音、素材 ZIP、三视图同步与共享撤销已实现。最新测试范围见 [验证记录](verification.md#v040-时间轴对象与素材2026-11-08)。当前本地没有 Git 元数据，使用 GitHub Git Data API 基于远端树增量提交。
+
+## 发布状态
+
+用户已于 2026-11-08 明确授权将本轮 67 个项目文件提交到 `zhuozheng2006/anyvis` 的 main 并运行三平台 CI。基线为 `2f405b7388694383c88949d99594f7111e5382d3`；发布采用基于现有树的增量提交并使用 expected_sha，保留远端其他文件。当前本地验收通过，独立 CI 的最终结果另记于验证记录。第三方许可说明在 public 中，随桌面资源打包。
+
+## v0.4.0 接续检查点
+
+五份原生证据共 599 个不同 API，新增 utilities 与 mutations fixture。运行 `npm run test:api-native` 前设置五个 `ANYVIS_API_*REPORT` 路径，再将五份报告都传给 verify-api-registry.py；完整命令见 API 覆盖文档。当前 authoringProtocol=3，331 项 Vitest、媒体真实集成及桌面资源准备通过。
+
+UI 已用 React Timeline Editor 1.0.0；动画顺序联动、音频独立时间位置与入点。框选、剃刀、关键帧曲线和任意动画重叠尚未实现。库交互不能直接代替 Manim 调度，继续以 Project.actions 为唯一事实来源。素材真实文件位于本地服务缓存，工程通过 ZIP 携带它们；测试输入和生成输出不提交。
 
 ## v0.3.1 接续检查点
 

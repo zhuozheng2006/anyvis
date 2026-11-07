@@ -14,7 +14,7 @@ const compile = (v: unknown) => createApiCompiler().value(JSON.stringify(v), new
 
 describe('visual structured API values', () => {
   it('opens supported structured tags visually and preserves malformed callback names verbatim', () => {
-    const values = [{ $float: 1 }, { $method: { api: 'Mobject.shift', receiver: ref('circle') } }, { $call: { api: 'Dot', args: [] } }, { $op: ['+', 1, 2] }, { $tuple: [1, 2] }];
+    const values = [{ $path: 'assets/图.svg' }, { $float: 1 }, { $method: { api: 'Mobject.shift', receiver: ref('circle') } }, { $call: { api: 'Dot', args: [] } }, { $op: ['+', 1, 2] }, { $tuple: [1, 2] }];
     for (const value of values) {
       const save = vi.fn();
       const editor = createApiValueEditor(field, JSON.stringify(value), ['circle'], save, vi.fn());
@@ -39,6 +39,13 @@ describe('visual structured API values', () => {
     change(tree.element, '值 / API 名称', 'Mobject.rotate');
     expect(compile(tree.read()).code).toMatch(/\)\.rotate$/);
     expect(tree.element.textContent).not.toContain('位置参数');
+  });
+  it('edits filesystem paths without converting them to ordinary strings', () => {
+    const tree = createApiValueTree({ $path: 'assets/图.svg' }, []);
+    input(tree.element, '值 / 本机路径').value = 'assets/另一个图.svg';
+    expect(tree.read()).toEqual({ $path: 'assets/另一个图.svg' });
+    expect(compile(tree.read()).requiresTrust).toBe(true);
+    tree.dispose();
   });
   it('retains malformed or very large imported subtrees without dropping fields or flooding the DOM', () => {
     for (const value of [{ $lambda: { params: [], body: 0, extra: 7 } }, { $call: { api: 'Dot', unsupported: 2 } }, Array.from({ length: 800 }, (_, i) => i)]) {

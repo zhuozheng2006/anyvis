@@ -135,6 +135,7 @@ export function createApiCompiler() {
     };
 }
 export const API_RUNTIME = `
+from pathlib import Path as _av_Path
 import inspect as _av_inspect
 def _av_check_receiver(value, owner):
     if not isinstance(value, owner):

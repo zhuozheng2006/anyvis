@@ -10,7 +10,7 @@ interface TreeNode {
 }
 
 const kinds = [
-  ['number', '数字'], ['float', '浮点数（如 1.0）'], ['text', '文字'], ['boolean', '是 / 否'], ['null', '空值 None'],
+  ['number', '数字'], ['float', '浮点数（如 1.0）'], ['text', '文字'], ['path', '本机路径'], ['boolean', '是 / 否'], ['null', '空值 None'],
   ['ref', '已有对象'], ['local', '回调参数'], ['constant', 'Manim 常量'], ['api', '函数 / 类'],
   ['expr', '数学表达式'], ['list', '列表'], ['array', '数值数组 / 向量'], ['tuple', '元组'],
   ['object', '字典'], ['dict', '带整数 / 元组键的字典'], ['complex', '复数'],
@@ -43,6 +43,7 @@ function kindOf(value: unknown): string {
     case 'constant':
     case 'api':
     case 'expr':
+    case 'path':
       return typeof data === 'string' ? tag : 'json';
     case 'complex':
       return Array.isArray(data) && data.length === 2 ? 'complex' : 'json';
@@ -105,6 +106,7 @@ function initial(kind: string): unknown {
     case 'number': return 0;
     case 'float': return { $float: 0 };
     case 'text': return '';
+    case 'path': return { $path: 'asset.svg' };
     case 'boolean': return false;
     case 'null': return null;
     case 'list': return [];
@@ -254,6 +256,14 @@ export function createApiValueTree(value: unknown, references: string[], onMutat
         case 'text': {
           const el = input('文字', String(seed));
           read = () => el.value;
+          break;
+        }
+        case 'path': {
+          const el = input('本机路径', String(data.$path));
+          read = () => ({ $path: el.value });
+          const note = document.createElement('small');
+          note.textContent = '在运行 Manim 的电脑上解析，需要启用本机权限。';
+          body.append(note);
           break;
         }
         case 'boolean': {

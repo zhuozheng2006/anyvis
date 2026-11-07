@@ -25,6 +25,61 @@ def has_encoder(av, name):
         return False
 
 
+def probe_asset(filename, kind):
+    """Validate uploaded media without executing SVG scripts or external links."""
+    if kind == "image":
+        if filename.suffix.lower() == ".svg":
+            import xml.etree.ElementTree as ET
+            import re
+            text = filename.read_text(encoding="utf-8-sig")
+            if re.search(r"<!DOCTYPE|<!ENTITY|<\?xml-stylesheet", text, re.I):
+                raise ValueError("SVG 不允许外部文档、实体或样式表。")
+            root = ET.fromstring(text)
+            if root.tag.split("}")[-1] != "svg":
+                raise ValueError("不是有效的 SVG。")
+            allowed = {"svg", "g", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "defs", "clipPath", "mask", "linearGradient", "radialGradient", "stop", "title", "desc", "use", "symbol"}
+            for node in root.iter():
+                if node.tag.split("}")[-1] not in allowed:
+                    raise ValueError("SVG 包含不支持的内容，请导出为路径或透明 PNG。")
+                for key, value in node.attrib.items():
+                    attr = key.split("}")[-1].lower()
+                    if attr.startswith("on") or attr in {"base", "src"}:
+                        raise ValueError("SVG 不允许脚本或外部资源。")
+                    if attr == "href" and not re.fullmatch(r"#[\w.-]+", value):
+                        raise ValueError("SVG 只能引用文件内的矢量元素。")
+                    if re.search(r"url\s*\(", value, re.I) and not re.fullmatch(r"url\(\s*#[\w.-]+\s*\)", value):
+                        raise ValueError("SVG 不允许外部资源。")
+            viewbox = root.attrib.get("viewBox", "0 0 512 512").replace(",", " ").split()
+            width, height = float(viewbox[2]), float(viewbox[3])
+            if not 0 < width <= 8192 or not 0 < height <= 8192:
+                raise ValueError("SVG 画布尺寸需在 8192×8192 以内。")
+            emit("asset", kind="image", extension="svg", width=round(width), height=round(height))
+        else:
+            from PIL import Image
+            with Image.open(filename) as image:
+                extension = {"PNG": "png", "JPEG": "jpg", "WEBP": "webp"}.get(image.format)
+                width, height = image.size
+                if not extension or width > 8192 or height > 8192 or width * height > 32_000_000:
+                    raise ValueError("图片需为 PNG/JPEG/WebP，尺寸不超过 8192 边长和 3200 万像素。")
+                if getattr(image, "n_frames", 1) != 1:
+                    raise ValueError("请上传静态图片；动态图片请先选择一帧。")
+                image.verify()
+            emit("asset", kind="image", extension=extension, width=width, height=height)
+    else:
+        import av
+        with av.open(str(filename)) as container:
+            if not container.streams.audio or container.streams.video:
+                raise ValueError("请上传纯音频配音文件。")
+            stream = container.streams.audio[0]
+            duration = float(stream.duration * stream.time_base) if stream.duration is not None else float(container.duration or 0) / av.time_base
+            if not 0 < duration <= 7200:
+                raise ValueError("配音需有有效时长，最长两小时。")
+            # Decode a frame too: container metadata alone is not sufficient.
+            if next(container.decode(stream), None) is None:
+                raise ValueError("音频没有可解码的数据。")
+            emit("asset", kind="audio", extension=filename.suffix.lower()[1:], duration=duration)
+
+
 def health():
     try:
         import av
@@ -168,12 +223,16 @@ def render(job_dir):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--health", action="store_true")
+    parser.add_argument("--probe-asset", nargs=2, metavar=("FILE", "KIND"))
     parser.add_argument("job_dir", nargs="?")
     args = parser.parse_args()
     if args.health:
         health()
         return
     try:
+        if args.probe_asset:
+            probe_asset(Path(args.probe_asset[0]), args.probe_asset[1])
+            return
         if not args.job_dir:
             raise ValueError("job_dir is required")
         render(Path(args.job_dir).resolve())

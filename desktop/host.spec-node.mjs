@@ -131,3 +131,14 @@ test('normal application quit closes windows before waiting for requests and eng
   await new Promise(resolve => setImmediate(resolve));
   assert.deepEqual(events, ['defer-quit', 'pagehide-and-close', 'engine-close', 'quit']);
 });
+
+test('desktop forwards binary media uploads without relaxing the JSON request limit', async () => {
+  let forwarded;
+  const handler = createProtocolHandler({ getServiceURL: () => 'http://127.0.0.1:4317/', fetchLocal: async (url, options) => { forwarded = { url, options }; return new Response('{}', { status: 201 }); } });
+  const bytes = new Uint8Array(3 * 1024 * 1024); bytes[0] = 137;
+  const response = await handler(new Request(`${EDITOR_URL}api/assets?name=picture.png`, { method: 'POST', headers: { 'content-type': 'application/octet-stream', 'x-anyvis-token': 'token' }, body: bytes }));
+  assert.equal(response.status, 201); assert.equal(forwarded.options.body.byteLength, bytes.length);
+  assert.equal(new Uint8Array(forwarded.options.body)[0], 137);
+  assert.equal(forwarded.options.headers.get('content-type'), 'application/octet-stream');
+  assert.equal((await handler(new Request(`${EDITOR_URL}api/render`, { method: 'POST', body: bytes }))).status, 413);
+});

@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import * as Blockly from 'blockly/core';
 import { createAction, BLOCK_CATALOG } from '../core/catalog';
 import type { Project } from '../core/types';
-import { actionsToWorkspace, detachedBlockCount, loadProjectWorkspace, registerStudioBlocks, saveWorkspace, setReferenceNames, workspaceToActions } from './model';
+import { actionsToWorkspace, detachedBlockCount, loadProjectWorkspace, registerStudioBlocks, saveWorkspace, setObjectPresentation, setReferenceNames, workspaceToActions } from './model';
 
 registerStudioBlocks();
 const workspaces: Blockly.Workspace[] = [];
@@ -93,4 +93,20 @@ describe('Studio Blockly model', () => {
     loadProjectWorkspace({ ...project(actions), workspace: saved }, ws);
     expect(workspaceToActions(ws)[0].fields.radius).toBe(1);
   });
+});
+
+it('shows compact object cues while preserving hidden geometry and uploaded asset references', () => {
+  const image = createAction('image_asset', { name: '主角', asset: 'a'.repeat(64), height: 4, x: 2 });
+  const play = createAction('audio_play', { asset: 'b'.repeat(64) });
+  const p = { ...project([image, play]), assets: [
+    { id: 'a'.repeat(64), name: '主角.png', kind: 'image' as const, extension: 'png', bytes: 10, width: 32, height: 32 },
+    { id: 'b'.repeat(64), name: '讲解.wav', kind: 'audio' as const, extension: 'wav', bytes: 10, duration: 2 },
+  ] };
+  const ws = new Blockly.Workspace(); workspaces.push(ws); setObjectPresentation(ws, true); loadProjectWorkspace(p, ws);
+  const block = ws.getBlockById(image.id)!;
+  expect(block.getInput('field_height')?.isVisible()).not.toBe(true);
+  expect(block.getField('name')?.isEnabled()).toBe(false);
+  const field = ws.getBlockById(play.id)!.getField('asset') as Blockly.FieldDropdown;
+  expect(field.getOptions(false)).toContainEqual(['讲解.wav', 'b'.repeat(64)]);
+  expect(workspaceToActions(ws)).toEqual(p.actions);
 });

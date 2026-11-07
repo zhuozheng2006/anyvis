@@ -38,7 +38,7 @@ export function buildPrompt(project: Project, request: string): string {
       ...(field.options ? { choices: field.options.map(option => option[1]) } : {}),
       ...(field.min !== undefined ? { min: field.min, max: field.max } : {}),
       description: field.description || field.label,
-      ...(field.type === 'api-value' ? { encoding: 'JSON string; empty means omitted. Values: literals, {$ref:name}, {$constant:name}, {$api:canonicalId}, {$lambda:{params:[x],body:{$expr:expression}}}, {$array:[...]}, {$float:1} (explicit Python float, essential for normalized RGB endpoints), {$method:{api:canonicalMethodId,receiver:{$ref:name}}} (bound method for ApplyMethod). This field is a serialized JSON string, not a raw object.' } : {}),
+      ...(field.type === 'api-value' ? { encoding: 'JSON string; empty means omitted. Values: literals, {$ref:name}, {$constant:name}, {$api:canonicalId}, {$lambda:{params:[x],body:{$expr:expression}}}, {$array:[...]}, {$path:"assets/figure.svg"} (Python Path, requires local permission), {$float:1} (explicit Python float, essential for normalized RGB endpoints), {$method:{api:canonicalMethodId,receiver:{$ref:name}}} (bound method for ApplyMethod). This field is a serialized JSON string, not a raw object.' } : {}),
     }])),
   }));
   return `你是 AnyVis 动画创作助手。根据用户需求修改当前作品，返回且只返回完整 JSON 项目，不输出 Python、Markdown 或解释。

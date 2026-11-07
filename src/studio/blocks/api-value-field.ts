@@ -150,7 +150,7 @@ export function infer(raw: string, field: FieldDefinition): string {
             }
 
             // Known structured tags open the recursive editor; it preserves malformed subtrees as JSON.
-            if (['$float', '$method', '$call', '$property', '$tuple', '$dict', '$complex', '$local', '$expr', '$index', '$slice', '$op', '$if', '$not'].includes(tag)) return 'tree';
+            if (['$path', '$float', '$method', '$call', '$property', '$tuple', '$dict', '$complex', '$local', '$expr', '$index', '$slice', '$op', '$if', '$not'].includes(tag)) return 'tree';
 
             // 未知 $tag（如 $number, $text, $boolean, $null 等）一律作为 json 保留，不误当快捷模式
             if (tag.startsWith('$')) {

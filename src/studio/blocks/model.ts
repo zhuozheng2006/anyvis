@@ -1,13 +1,14 @@
 import * as Blockly from 'blockly/core';
 import * as Chinese from 'blockly/msg/zh-hans';
 import { BLOCK_CATALOG, CURATED_BLOCK_CATALOG, getBlockDefinition } from '../core/catalog';
-import type { Action, BlockDefinition, FieldDefinition, FieldValue, Project } from '../core/types';
+import type { Action, BlockDefinition, FieldDefinition, FieldValue, MediaAsset, Project } from '../core/types';
 import { planObjectRename } from './rename';
 import { ColourField } from './colour-field';
 import { MultilineCodeField } from './multiline-code-field';
 import { createMatrixField } from './matrix-field';
 import { ApiValueField } from './api-value-field';
 import { ObjectListField } from './object-list-field';
+import { managedDefinition } from '../authoring';
 
 export const START_TYPE = 'anyvis2_start';
 const PREFIX = 'anyvis2_';
@@ -22,6 +23,12 @@ type BlockState = Blockly.serialization.blocks.State;
 type ContainerBlock = Blockly.Block & { anyvisBranchCount?: number; anyvisDetails?: boolean };
 export type StudioWorkspaceState = { version: 1; actionSignature: string; blockly: object };
 
+const workspaceAssets = new WeakMap<Blockly.Workspace, MediaAsset[]>();
+const objectPresentation = new WeakSet<Blockly.Workspace>();
+export function setWorkspaceAssets(workspace: Blockly.Workspace, assets: MediaAsset[]): void { workspaceAssets.set(workspace, assets); }
+export function setObjectPresentation(workspace: Blockly.Workspace, enabled: boolean): void {
+  if (enabled) objectPresentation.add(workspace); else objectPresentation.delete(workspace);
+}
 export function actionSignature(actions: Action[]): string {
   return JSON.stringify(actions);
 }
@@ -182,6 +189,25 @@ class ObjectReferenceField extends Blockly.FieldDropdown {
   }
 }
 
+class AssetReferenceField extends Blockly.FieldDropdown {
+  constructor(kind: 'image' | 'audio') {
+    super(function (this: Blockly.FieldDropdown) {
+      const ws = this.getSourceBlock()?.workspace;
+      const assets = ws ? workspaceAssets.get(ws) || [] : [];
+      const options: [string, string][] = [['选择已上传素材', ''], ...assets.filter(a => a.kind === kind).map(a => [a.name, a.id] as [string, string])];
+      const current = this.getValue();
+      if (current && !options.some(o => o[1] === current)) options.push(['素材缺失 · 请重新上传', current]);
+      return options;
+    });
+  }
+  protected override doClassValidation_(value?: string): string | null {
+    if (typeof value !== 'string') return null;
+    const options = this.getOptions(false);
+    if (!options.some(o => Array.isArray(o) && o[1] === value)) options.push(['素材缺失 · 请重新上传', value]);
+    return value;
+  }
+}
+
 /** Apply reference edits to the originating Blockly undo transaction. */
 export function applyWorkspaceRename(workspace: Blockly.Workspace, event: Blockly.Events.BlockChange): void {
   if (!event.recordUndo || event.element !== 'field' || event.name !== 'name' || !event.blockId) return;
@@ -203,6 +229,7 @@ export function applyWorkspaceRename(workspace: Blockly.Workspace, event: Blockl
 }
 
 function makeField(field: FieldDefinition, definition: BlockDefinition): Blockly.Field {
+  if (field.name === 'asset' && ['image_asset', 'audio_play'].includes(definition.type)) return new AssetReferenceField(definition.type === 'image_asset' ? 'image' : 'audio');
   if (field.type === 'api-value') {
     const input: ApiValueField = new ApiValueField(field, () => [...referenceMap(input).values()].filter(o => o.connected && o.enabled && o.blockId !== input.getSourceBlock()?.id).map(o => o.name));
     return input;
@@ -252,6 +279,13 @@ function conciseFields(definition: BlockDefinition): Set<string> {
 }
 
 function setDetails(block: ContainerBlock, definition: BlockDefinition, expanded: boolean): void {
+  if (objectPresentation.has(block.workspace) && managedDefinition(definition)) {
+    for (const field of definition.fields) block.getInput(`FIELD_${field.name}`)?.setVisible(['name', 'appear', 'duration', 'mode'].includes(field.name));
+    block.getField('name')?.setEnabled(false);
+    block.anyvisDetails = false;
+    if (block instanceof Blockly.BlockSvg) void block.queueRender();
+    return;
+  }
   const common = conciseFields(definition);
   block.anyvisDetails = expanded;
   for (const field of definition.fields) {
@@ -295,9 +329,10 @@ export function registerStudioBlocks(): void {
   for (const definition of BLOCK_CATALOG) {
     Blockly.Blocks[blockType(definition.type)] = {
       init(this: ContainerBlock) {
-        const heading = this.appendDummyInput('HEADING').appendField(definition.label);
+        const objectCue = objectPresentation.has(this.workspace) && managedDefinition(definition);
+        const heading = this.appendDummyInput('HEADING').appendField(objectCue ? '对象出现 / 准备' : definition.label);
         if (definition.requires3d) heading.appendField(' · 3D');
-        if (definition.fields.length > 4) {
+        if (definition.fields.length > 4 && !objectCue) {
           heading.appendField(new Blockly.FieldDropdown([
             ['常用参数', 'compact'], ['全部参数', 'expanded'],
           ], (value) => {
@@ -305,7 +340,7 @@ export function registerStudioBlocks(): void {
             return value;
           }), '__details');
         }
-        const common = conciseFields(definition);
+        const common = objectCue ? new Set<string>() : conciseFields(definition);
         let row: Blockly.Input | undefined;
         let fieldsInRow = 0;
         for (const field of definition.fields.filter((item) => common.has(item.name))) {
@@ -393,6 +428,7 @@ export function actionsToWorkspace(actions: Action[]): object {
 }
 
 export function loadProjectWorkspace(project: Project, workspace: Blockly.Workspace): void {
+  workspaceAssets.set(workspace, project.assets || []);
   registerStudioBlocks();
   const saved = project.workspace as Partial<StudioWorkspaceState> | undefined;
   const usable = saved?.version === 1 && saved.actionSignature === actionSignature(project.actions) && saved.blockly;
@@ -468,11 +504,12 @@ export function detachedBlockCount(workspace: Blockly.Workspace): number {
   return workspace.getTopBlocks(false).filter((block) => block.type !== START_TYPE).reduce((sum, block) => sum + block.getDescendants(false).length, 0);
 }
 
-export function createToolbox(query = ''): Blockly.utils.toolbox.ToolboxDefinition {
+export function createToolbox(query = '', animationOnly = false): Blockly.utils.toolbox.ToolboxDefinition {
   const normalized = query.toLocaleLowerCase().trim();
-  const definitions = normalized ? BLOCK_CATALOG.filter((definition) => [
+  const candidates = (normalized ? BLOCK_CATALOG : CURATED_BLOCK_CATALOG).filter(d => !animationOnly || !managedDefinition(d));
+  const definitions = normalized ? candidates.filter((definition) => [
     definition.label, definition.type, definition.category, definition.tooltip, ...(definition.keywords ?? []),
-  ].join(' ').toLocaleLowerCase().includes(normalized)).slice(0, 60) : CURATED_BLOCK_CATALOG;
+  ].join(' ').toLocaleLowerCase().includes(normalized)).slice(0, 60) : candidates;
   const categories = [...new Set(definitions.map((definition) => definition.category))];
   if (normalized) return { kind: 'categoryToolbox', contents: [{
     kind: 'category', name: definitions.length ? `搜索 · ${definitions.length}` : '没有找到', colour: '#635bdf',

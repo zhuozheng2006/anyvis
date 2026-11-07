@@ -21,9 +21,9 @@ EVIDENCE_SOURCES={
     'src/studio/core/api-compiler.ts', 'src/studio/core/api-values.ts',
     'src/studio/core/compiler.ts', 'src/studio/core/expression.ts',
     'src/studio/core/api-catalog.ts', 'src/studio/core/api-registry.ts',
-    'src/studio/core/catalog.ts', 'src/studio/core/project.ts',
+    'src/studio/core/catalog.ts', 'src/studio/core/project.ts', 'src/studio/core/assets.ts',
 }
-EVIDENCE_FIXTURES={'src/studio/core/api.native.spec-node.mjs', 'src/studio/core/api-families.native.spec-node.mjs', 'src/studio/core/api-queries.native.spec-node.mjs'}
+EVIDENCE_FIXTURES={'src/studio/core/api.native.spec-node.mjs', 'src/studio/core/api-families.native.spec-node.mjs', 'src/studio/core/api-queries.native.spec-node.mjs', 'src/studio/core/api-utilities.native.spec-node.mjs', 'src/studio/core/api-mutations.native.spec-node.mjs'}
 
 def validate_native_evidence(native, registry_hash, ids, version, root=ROOT):
     errors=[]

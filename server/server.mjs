@@ -1,5 +1,7 @@
 import http from 'node:http';
-import { spawn } from 'node:child_process';
+import { spawn, execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { createAssetStore, readAssetBody, ASSET_MIME } from './assets.mjs';
 import { randomBytes, randomUUID, createHash, timingSafeEqual } from 'node:crypto';
 import { createReadStream, existsSync } from 'node:fs';
 import { mkdir, writeFile, stat, rm } from 'node:fs/promises';
@@ -134,6 +136,21 @@ export async function createAnyVisServer(options = {}) {
   let health = { available: false, checking: true, message: '正在检查 Manim 运行环境…', capabilities: {} };
   const healthController = new AbortController();
   const healthPromise = (options.health ? Promise.resolve(options.health) : discoverPython({ pythonPath: options.pythonPath, runtimeRoot: options.runtimeRoot, workerPath, signal: healthController.signal })).then(result => { health = { ...result, checking: false }; return health; });
+  const assets = createAssetStore(path.join(cacheRoot, 'assets'), async (filename, kind) => {
+    await healthPromise;
+    if (!health.available) throw Object.assign(new Error('请先连接可用的 Manim 环境，再上传素材。'), { status: 503 });
+    try {
+      const { stdout } = await promisify(execFile)(health.python, [workerPath, '--probe-asset', filename, kind], { env: workerEnvironment(health.python), timeout: 20_000, maxBuffer: 256 * 1024, windowsHide: true });
+      const line = stdout.split(/\r?\n/).findLast(l => l.startsWith(EVENT_PREFIX));
+      const result = line && JSON.parse(line.slice(EVENT_PREFIX.length));
+      if (result?.event !== 'asset') throw Error('无法识别素材。');
+      return result;
+    } catch (error) {
+      const line = String(error.stdout || '').split(/\r?\n/).findLast(l => l.startsWith(EVENT_PREFIX));
+      if (line) throw Error(JSON.parse(line.slice(EVENT_PREFIX.length)).error || '素材校验失败。');
+      throw Error('素材无法解码或校验超时，请检查文件格式。');
+    }
+  });
 
   function validOrigin(req) {
     const allowedPorts = new Set([actualPort, requestedPort, uiPort].map(String));
@@ -194,7 +211,7 @@ export async function createAnyVisServer(options = {}) {
     const finished = [...jobs.values()].filter(job => ['done', 'error', 'cancelled'].includes(job.status)).sort((a, b) => b.createdAt - a.createdAt);
     let retainedBytes = 0;
     for (const [index, job] of finished.entries()) {
-      let bytes = 0;
+      let bytes = job.assetBytes || 0;
       for (const name of ['video.mp4', 'video.webm', 'poster.png', 'preview.png', 'scene.py', 'render.log', 'job.json']) {
         bytes += await stat(path.join(job.directory, name)).then(value => value.size, () => 0);
       }
@@ -270,6 +287,16 @@ export async function createAnyVisServer(options = {}) {
     const { validateProject } = await import('../src/studio/core/project.ts');
     const { compileProject } = await import('../src/studio/core/compiler.ts');
     const project = validateProject(body.project);
+    const needed = new Set();
+    const collectAssets = actions => { for (const action of actions) { if (['image_asset', 'audio_play'].includes(action.type)) needed.add(action.fields.asset); collectAssets(action.children || []); for (const branch of action.branches || []) collectAssets(branch); } };
+    collectAssets(project.actions);
+    const staged = [];
+    for (const declared of project.assets || []) {
+      if (!needed.has(declared.id)) continue;
+      const stored = await assets.get(declared.id);
+      staged.push({ ...stored.asset, name: declared.name });
+    }
+    if (project.assets) project.assets = project.assets.map(asset => staged.find(a => a.id === asset.id) || asset);
     const compiled = compileProject(project);
     const errors = compiled.diagnostics.filter(d => d.severity === 'error');
     if (errors.length) throw Object.assign(new Error(errors.map(d => d.message).join('\n')), { status: 422, blockId: errors[0].blockId, diagnostics: errors });
@@ -291,9 +318,10 @@ export async function createAnyVisServer(options = {}) {
     if (pending.filter(job => job.status === 'queued').length >= 3) throw Object.assign(new Error('已有多个渲染任务，请等待或停止当前任务。'), { status: 429 });
     const id = randomUUID(); const directory = path.join(cacheRoot, id);
     await mkdir(directory, { recursive: true });
+    await assets.stage(staged, directory);
     await writeFile(path.join(directory, 'scene.py'), compiled.code, 'utf8');
     await writeFile(path.join(directory, 'job.json'), JSON.stringify({ width, height, frameAspect: scene.width / scene.height, fps: scene.fps, background: scene.background, renderer: scene.renderer || 'cairo', duration: compiled.duration }), 'utf8');
-    const job = { id, directory, digest, projectId: project.id, status: 'queued', progress: 0, message: running ? '等待前一个任务完成…' : '准备渲染…', revision, quality, createdAt: Date.now(), code: compiled.code, sourceMap: compiled.sourceMap, duration: compiled.duration, width, height, fps: scene.fps };
+    const job = { id, directory, digest, assetBytes: staged.reduce((sum, asset) => sum + asset.bytes, 0), projectId: project.id, status: 'queued', progress: 0, message: running ? '等待前一个任务完成…' : '准备渲染…', revision, quality, createdAt: Date.now(), code: compiled.code, sourceMap: compiled.sourceMap, duration: compiled.duration, width, height, fps: scene.fps };
     jobs.set(id, job); pending.push(job); schedule(); return job;
   }
 
@@ -309,6 +337,14 @@ export async function createAnyVisServer(options = {}) {
         if (['POST', 'DELETE'].includes(req.method) && !authorized(req)) return json(res, 403, { error: '会话已过期，请刷新页面。' });
         if (pathname === '/api/session' && req.method === 'GET') return json(res, 200, { token });
         if (pathname === '/api/health' && req.method === 'GET') return json(res, 200, { ...health, authoringProtocol: AUTHORING_PROTOCOL });
+        if (pathname === '/api/assets' && req.method === 'POST') return json(res, 201, await assets.import(await readAssetBody(req), url.searchParams.get('name') || ''));
+        const assetMatch = /^\/api\/assets\/([a-f0-9]{64})(\/file)?$/.exec(pathname);
+        if (assetMatch && ['GET', 'HEAD'].includes(req.method)) {
+          const stored = await assets.get(assetMatch[1]);
+          if (!assetMatch[2]) return json(res, 200, stored.asset);
+          res.setHeader('Content-Security-Policy', "default-src 'none'; sandbox");
+          return await serveFile(req, res, stored.filename, ASSET_MIME[stored.asset.extension]);
+        }
         if (pathname === '/api/render' && req.method === 'POST') return json(res, 202, publicJob(await submit(await readJson(req))));
         if (pathname === '/api/ai' && req.method === 'POST') {
           const body = await readJson(req);

@@ -25,3 +25,6 @@ desktop/package-lock.json
 
 # Publish the deterministic gzip inventory; keep expanded JSON local.
 /docs/research/manim-ce-0.20.1-coverage.json
+
+# Local native experiments regenerate their own render output.
+experiments/native-manim/output/

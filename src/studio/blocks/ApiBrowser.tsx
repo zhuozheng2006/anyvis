@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { API_ENTRIES, API_REGISTRY, API_CHINESE_NAMES, apiDocumentation, searchApi } from '../core/api-registry';
 import './api-editor.css';
-export function ApiBrowser({ onAdd, onClose }: {
+import { getBlockDefinition } from '../core/catalog';
+import { managedDefinition } from '../authoring';
+export function ApiBrowser({ onAdd, onClose, mode = 'all' }: {
     onAdd: (type: string) => void;
     onClose: () => void;
+    mode?: 'all' | 'objects' | 'actions';
 }) {
     const dialog = useRef<HTMLDialogElement>(null);
     const [query, setQuery] = useState('');
@@ -11,7 +14,7 @@ export function ApiBrowser({ onAdd, onClose }: {
     const [kind, setKind] = useState('');
     const [page, setPage] = useState(0);
     useEffect(() => { const d = dialog.current; d?.showModal(); d?.querySelector('input')?.focus(); return () => d?.close(); }, []);
-    const results = useMemo(() => searchApi(query, category, kind), [query, category, kind]);
+    const results = useMemo(() => searchApi(query, category, kind).filter(e => mode === 'all' || managedDefinition(getBlockDefinition(e.type)) === (mode === 'objects')), [query, category, kind, mode]);
     const categories = useMemo(() => [...new Set(API_ENTRIES.map(e => e.category))].sort(), []);
     const label: Record<string, string> = { class: '创建对象', function: '函数', method: '对象方法', property: '属性', classmethod: '类方法', staticmethod: '静态方法' };
     return <dialog className="av-api-browser" ref={dialog} onCancel={onClose} aria-labelledby="av-api-title">
