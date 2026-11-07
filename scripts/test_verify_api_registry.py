@@ -46,7 +46,7 @@ class EvidenceTests(unittest.TestCase):
         self.assertTrue(self.errors(report))
 
     def test_source_and_fixture_changes_invalidate_evidence(self):
-        for name in [next(iter(verify.EVIDENCE_SOURCES)), self.report['fixture']]:
+        for name in ['package-lock.json', 'src/studio/core/api-compiler.ts', self.report['fixture']]:
             with self.subTest(file=name):
                 (self.root / name).write_text('changed source')
                 self.assertTrue(any('Source changed' in error for error in self.errors(self.report)))

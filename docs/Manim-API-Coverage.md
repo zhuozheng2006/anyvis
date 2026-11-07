@@ -70,6 +70,21 @@ AnyVis 0.3.1 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 - `manim.utils.testing.frames_comparison` 因当前环境没有 pytest 而无法导入，明确记录为不可用模块。CLI 入口、Sphinx 文档构建、私有名称和仅在运行时生成的动态成员不在该清单范围内。
 - 大部分 API 尚无逐项动画视觉验收；原生断言不等于所有参数组合、所有平台和所有渲染器均验证。自定义 Python 类型，以及 0.22.1 的新增与变更 API 仍需继续工作。
 
+## 下一批行为验证分母
+
+419 项证据之外的 1,874 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
+
+| 未取得行为证据的类型 | 数量 |
+| --- | ---: |
+| 实例方法 | 1,241 |
+| 类 | 235 |
+| 函数 | 214 |
+| 属性 | 138 |
+| 静态方法 | 33 |
+| 类方法 | 13 |
+
+其中 1,341 项可用于通用渲染器，533 项 OpenGL 专属；1,123 项涉及本机权限标记。后续优先扩充 Mobject/VMobject 的变换与路径参数组合，再为 Scene、Camera、配置和文件类接口构建临时目录中的隔离 fixture；OpenGL 需先建立可用的真实上下文。权限标记不是排除项，只是要求测试避免改动用户环境。
+
 ## 复现
 
 在已经安装 Manim 0.20.1 的 Python 环境运行，不会自动安装或修改环境：
@@ -89,4 +104,4 @@ npm run test:desktop
 
 Windows 可先在 PowerShell 设置 `$env:ANYVIS_API_REPORT='artifacts/api/native-evidence.json'`。单独运行 `npm run api:verify` 只验证入口与签名，不附加尚未执行的原生证据。旧的 `audit-manim-coverage.py` 仍核查 97 个常用积木，默认写入 `docs/research/curated-api-coverage.md`，不会覆盖本报告。
 
-行为报告绑定注册表、编译器源文件及测试文件的 SHA-256；版本不符、失败或源码过期的证据不能计入。`Native Manim API regression` 工作流在独立 Ubuntu / Python 3.12 / Cairo 环境执行原生测试与 worker 媒体集成，并保存机器可读证据。
+行为报告绑定注册表、依赖锁文件、编译器源文件及测试文件的 SHA-256；版本不符、失败或源码过期的证据不能计入。`Native Manim API regression` 工作流在独立 Ubuntu / Python 3.12 / Cairo 环境执行原生测试与 worker 媒体集成，并保存机器可读证据。

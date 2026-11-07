@@ -17,6 +17,7 @@ import manim
 
 ROOT=Path(__file__).resolve().parents[1]
 EVIDENCE_SOURCES={
+    'package-lock.json',
     'src/studio/core/api-compiler.ts', 'src/studio/core/api-values.ts',
     'src/studio/core/compiler.ts', 'src/studio/core/expression.ts',
     'src/studio/core/api-catalog.ts', 'src/studio/core/api-registry.ts',

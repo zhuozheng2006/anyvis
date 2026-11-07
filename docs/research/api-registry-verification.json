@@ -471,6 +471,7 @@
       {
         "fixture": "src/studio/core/api.native.spec-node.mjs",
         "sourceFiles": {
+          "package-lock.json": "686405c5517e0ca4d92de1f072fbfca2929aca3ae3b4dcce069255889a0338f4",
           "src/studio/core/api-compiler.ts": "51f7b95421a71cf5692686a904687be0db083ab7761349a995b56c494252f6a3",
           "src/studio/core/api-values.ts": "e4f9a98efdfe844f452aac1f1df789686e9ac59a780571785ebaf20122bdfadb",
           "src/studio/core/compiler.ts": "3f245fcd7167c08dfa4bda313ffbd5d9a9e29c2746c82c300985cc248b304fcb",
@@ -521,6 +522,7 @@
       {
         "fixture": "src/studio/core/api-families.native.spec-node.mjs",
         "sourceFiles": {
+          "package-lock.json": "686405c5517e0ca4d92de1f072fbfca2929aca3ae3b4dcce069255889a0338f4",
           "src/studio/core/api-compiler.ts": "51f7b95421a71cf5692686a904687be0db083ab7761349a995b56c494252f6a3",
           "src/studio/core/api-values.ts": "e4f9a98efdfe844f452aac1f1df789686e9ac59a780571785ebaf20122bdfadb",
           "src/studio/core/compiler.ts": "3f245fcd7167c08dfa4bda313ffbd5d9a9e29c2746c82c300985cc248b304fcb",
@@ -5347,6 +5349,7 @@
       {
         "fixture": "src/studio/core/api-queries.native.spec-node.mjs",
         "sourceFiles": {
+          "package-lock.json": "686405c5517e0ca4d92de1f072fbfca2929aca3ae3b4dcce069255889a0338f4",
           "src/studio/core/api-compiler.ts": "51f7b95421a71cf5692686a904687be0db083ab7761349a995b56c494252f6a3",
           "src/studio/core/api-values.ts": "e4f9a98efdfe844f452aac1f1df789686e9ac59a780571785ebaf20122bdfadb",
           "src/studio/core/compiler.ts": "3f245fcd7167c08dfa4bda313ffbd5d9a9e29c2746c82c300985cc248b304fcb",

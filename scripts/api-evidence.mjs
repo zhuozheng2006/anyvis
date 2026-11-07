@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 const root = new URL('../', import.meta.url);
 export const API_EVIDENCE_SOURCES = [
+  'package-lock.json',
   'src/studio/core/api-compiler.ts', 'src/studio/core/api-values.ts',
   'src/studio/core/compiler.ts', 'src/studio/core/expression.ts',
   'src/studio/core/api-catalog.ts', 'src/studio/core/api-registry.ts',

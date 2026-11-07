@@ -4,6 +4,8 @@
 
 ## v0.3.1 接续检查点
 
+本轮另修复 npm 审计发现的 4 项依赖告警：mathjs 15.2.0、Vitest 5.1.0，升级后审计为 0，287 项应用测试及原生/媒体/桌面构建复验通过。证据绑定 package-lock.json。首次 Ubuntu 原生审计缺少显示环境，已通过 Xvfb 修复（仅模块导入验证，不能算 OpenGL 渲染）。
+
 本轮扩展原生测试到 419 个不同 API：`api.native.spec-node.mjs`、`api-families.native.spec-node.mjs`、`api-queries.native.spec-node.mjs`。对应三份报告位于 `artifacts/api/`，合并审计为 `docs/research/api-registry-verification.json`；报告绑定注册表、编译器和 fixture 哈希，改动运行时后必须重新执行，不能复用旧报告。六组家族共 544 次调用断言；200 项只读差分中 199 项通过，NumberLine.get_labels 的默认原生实例报错被明确列为 gap。
 
 新增 `$float`、`$method` 参数；嵌套调用改为接收对象动态方法分派，修复 RGB 类型与子类 override 问题。UI 少字段积木所有参数现在可见。authoringProtocol 升为 2，旧 Node 后端需重启。递归参数树和弹窗改进由主代理实现并经 Gemini 3.8 Flash High 协作审查；模型第一次提交的草稿回退/observer 清理/视口定位仍存在问题，已回修，并由主代理补充结构化值默认进入可视树、畸形回调参数名无损保存回归；287 项 Vitest、生产构建与桌面资源准备通过。Chrome 768×819 视口中正文滚动、操作栏可见；最终验证结果见 verification.md。

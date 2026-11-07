@@ -36,9 +36,12 @@ jobs:
           sudo apt-get install -y libcairo2-dev libpango1.0-dev pkg-config ffmpeg xvfb xauth fonts-noto-cjk texlive-latex-extra dvisvgm
           python -m pip install 'manim==0.20.1'
           npm ci
-      - name: Report dependency advisories
-        continue-on-error: true
-        run: npm audit --json
+      - name: Check dependency advisories
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p artifacts/api
+          npm audit --json | tee artifacts/api/dependency-audit.json
       - name: Validate native evidence handling
         run: python scripts/test_verify_api_registry.py
       - name: Run actual Manim behavior and differential tests
