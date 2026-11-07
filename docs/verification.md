@@ -74,3 +74,16 @@
 ![长章节中的积木定位](screenshots/geometry-topology-editor.jpg)
 
 此图验证项目载入与编辑，舞台未生成预览；影片由相同编译器和worker的批量入口渲染，不能把截图中的空舞台描述为影片播放验收。
+
+## 最新桌面测试包
+
+[构建42337701921](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921) 对应代码提交 `36f73599b7e6ebbe0e9ce1b520fcf94d4ef27cef`。2026-11-07三平台均通过应用测试、桌面生命周期回归、真实Electron启动检查与安装包构建。
+
+| 系统 | 安装包附件 |
+| --- | --- |
+| Apple Silicon Mac | [ARM64 DMG与ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921/artifacts/13560531669) |
+| Intel Mac | [x64 DMG与ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921/artifacts/13559504798) |
+| Windows x64 | [NSIS安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921/artifacts/13560262868) |
+| Linux x64 | [AppImage与DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921/artifacts/13559928119) |
+
+下载需要GitHub登录，附件于2026-11-21 UTC过期。桌面程序自主启动本地引擎，不需额外Node服务；Python/Manim、中文字体和公式使用的LaTeX仍是外部依赖。macOS使用ad-hoc签名，尚未公证；这仍是桌面测试版，目标机器安装和最终ASAR环境的验收边界见[打包说明](../desktop/PACKAGING.md)。这轮检查没有把内置模板视频播放冒充本机Manim渲染。

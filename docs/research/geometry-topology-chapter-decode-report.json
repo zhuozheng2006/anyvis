@@ -1,0 +1,270 @@
+{
+  "checkedAt": "2026-11-07T04:17:16.967034+00:00",
+  "method": "PyAV full sequential decode of every video frame; strict timestamp ordering and dimensions checked",
+  "pyavVersion": "18.0.0",
+  "expectedChapters": 6,
+  "chapters": [
+    {
+      "chapter": "001-geometry-topology-chapter-1",
+      "video": "artifacts/geometry-topology/chapters/001-geometry-topology-chapter-1/video.mp4",
+      "errors": [],
+      "fileBytes": 5083760,
+      "videoModifiedAt": "2026-11-06T21:46:16.517037+00:00",
+      "renderCompletedAt": "2026-11-06T21:46:18.244Z",
+      "renderSourceHash": "b9a5bd3b1925dc6965df1ff9a2644c80244d10d425fc2c13f9050138f33862e8",
+      "declaredDuration": 300,
+      "expectedDuration": 300,
+      "declaredDimensions": [
+        1280,
+        720
+      ],
+      "declaredFps": 24,
+      "codec": "h264",
+      "streamFps": 24.0,
+      "streamFpsRatio": "24",
+      "streamTimeBase": "1/12288",
+      "streamDeclaredFrames": 7200,
+      "streamDuration": 300.0,
+      "containerDuration": 300.0,
+      "decodedFrames": 7200,
+      "dimensions": [
+        [
+          1280,
+          720
+        ]
+      ],
+      "firstPts": 0,
+      "lastPts": 3685888,
+      "frameTimeBase": "1/12288",
+      "firstTimestamp": 0.0,
+      "lastTimestamp": 299.9583333333333,
+      "frameIntervals": [
+        "1/24"
+      ],
+      "decodedDuration": 300.0,
+      "timestampStrictlyIncreasing": true,
+      "unchangedDuringDecode": true,
+      "videoSha256": "b7b02c6bfa6ddd308c0e89963c5c8289111279b6116df491fcd9439b858dbf33",
+      "passed": true
+    },
+    {
+      "chapter": "002-geometry-topology-chapter-2",
+      "video": "artifacts/geometry-topology/chapters/002-geometry-topology-chapter-2/video.mp4",
+      "errors": [],
+      "fileBytes": 4443104,
+      "videoModifiedAt": "2026-11-06T21:46:12.888295+00:00",
+      "renderCompletedAt": "2026-11-06T21:46:14.642Z",
+      "renderSourceHash": "c5bfd26bfdd827cf4c46a9736d35cd50b41cb1e4d745198784e754539f0ee352",
+      "declaredDuration": 300,
+      "expectedDuration": 300,
+      "declaredDimensions": [
+        1280,
+        720
+      ],
+      "declaredFps": 24,
+      "codec": "h264",
+      "streamFps": 24.0,
+      "streamFpsRatio": "24",
+      "streamTimeBase": "1/12288",
+      "streamDeclaredFrames": 7200,
+      "streamDuration": 300.0,
+      "containerDuration": 300.0,
+      "decodedFrames": 7200,
+      "dimensions": [
+        [
+          1280,
+          720
+        ]
+      ],
+      "firstPts": 0,
+      "lastPts": 3685888,
+      "frameTimeBase": "1/12288",
+      "firstTimestamp": 0.0,
+      "lastTimestamp": 299.9583333333333,
+      "frameIntervals": [
+        "1/24"
+      ],
+      "decodedDuration": 300.0,
+      "timestampStrictlyIncreasing": true,
+      "unchangedDuringDecode": true,
+      "videoSha256": "2e7ae9c792fb5d4746f13cf16360883423cc0d15f9a0b05fa7ac89de97512c73",
+      "passed": true
+    },
+    {
+      "chapter": "003-geometry-topology-chapter-3",
+      "video": "artifacts/geometry-topology/chapters/003-geometry-topology-chapter-3/video.mp4",
+      "errors": [],
+      "fileBytes": 6427681,
+      "videoModifiedAt": "2026-11-06T21:46:20.897390+00:00",
+      "renderCompletedAt": "2026-11-06T21:46:22.788Z",
+      "renderSourceHash": "fd712bad9a9c1ffe41c74a9b02dd304d2a2e1f20d6e01e25ac00b28c2cc67792",
+      "declaredDuration": 300,
+      "expectedDuration": 300,
+      "declaredDimensions": [
+        1280,
+        720
+      ],
+      "declaredFps": 24,
+      "codec": "h264",
+      "streamFps": 24.0,
+      "streamFpsRatio": "24",
+      "streamTimeBase": "1/12288",
+      "streamDeclaredFrames": 7200,
+      "streamDuration": 300.0,
+      "containerDuration": 300.0,
+      "decodedFrames": 7200,
+      "dimensions": [
+        [
+          1280,
+          720
+        ]
+      ],
+      "firstPts": 0,
+      "lastPts": 3685888,
+      "frameTimeBase": "1/12288",
+      "firstTimestamp": 0.0,
+      "lastTimestamp": 299.9583333333333,
+      "frameIntervals": [
+        "1/24"
+      ],
+      "decodedDuration": 300.0,
+      "timestampStrictlyIncreasing": true,
+      "unchangedDuringDecode": true,
+      "videoSha256": "f13106707c027618243d169ab73bfa7090c53e54de2cdb9c3a404302c31fcb6c",
+      "passed": true
+    },
+    {
+      "chapter": "004-geometry-topology-chapter-4",
+      "video": "artifacts/geometry-topology/chapters/004-geometry-topology-chapter-4/video.mp4",
+      "errors": [],
+      "fileBytes": 3750495,
+      "videoModifiedAt": "2026-11-06T21:46:14.959886+00:00",
+      "renderCompletedAt": "2026-11-06T21:46:16.696Z",
+      "renderSourceHash": "b0f1a133e622de8138e76cc7890bdaaa291df75b52652aaa0e33b89b78e9ffb2",
+      "declaredDuration": 300,
+      "expectedDuration": 300,
+      "declaredDimensions": [
+        1280,
+        720
+      ],
+      "declaredFps": 24,
+      "codec": "h264",
+      "streamFps": 24.0,
+      "streamFpsRatio": "24",
+      "streamTimeBase": "1/12288",
+      "streamDeclaredFrames": 7200,
+      "streamDuration": 300.0,
+      "containerDuration": 300.0,
+      "decodedFrames": 7200,
+      "dimensions": [
+        [
+          1280,
+          720
+        ]
+      ],
+      "firstPts": 0,
+      "lastPts": 3685888,
+      "frameTimeBase": "1/12288",
+      "firstTimestamp": 0.0,
+      "lastTimestamp": 299.9583333333333,
+      "frameIntervals": [
+        "1/24"
+      ],
+      "decodedDuration": 300.0,
+      "timestampStrictlyIncreasing": true,
+      "unchangedDuringDecode": true,
+      "videoSha256": "3f56a56bb616577a96977bc552e845cac7950c077048a8790951160b66e8a4a5",
+      "passed": true
+    },
+    {
+      "chapter": "005-geometry-topology-chapter-5",
+      "video": "artifacts/geometry-topology/chapters/005-geometry-topology-chapter-5/video.mp4",
+      "errors": [],
+      "fileBytes": 8365455,
+      "videoModifiedAt": "2026-11-06T21:49:02.825674+00:00",
+      "renderCompletedAt": "2026-11-06T21:49:04.387Z",
+      "renderSourceHash": "77c1dff08298c63a6b88187d7478320ce4c8ef7da1416e580ea48726ea48882d",
+      "declaredDuration": 300,
+      "expectedDuration": 300,
+      "declaredDimensions": [
+        1280,
+        720
+      ],
+      "declaredFps": 24,
+      "codec": "h264",
+      "streamFps": 24.0,
+      "streamFpsRatio": "24",
+      "streamTimeBase": "1/12288",
+      "streamDeclaredFrames": 7200,
+      "streamDuration": 300.0,
+      "containerDuration": 300.0,
+      "decodedFrames": 7200,
+      "dimensions": [
+        [
+          1280,
+          720
+        ]
+      ],
+      "firstPts": 0,
+      "lastPts": 3685888,
+      "frameTimeBase": "1/12288",
+      "firstTimestamp": 0.0,
+      "lastTimestamp": 299.9583333333333,
+      "frameIntervals": [
+        "1/24"
+      ],
+      "decodedDuration": 300.0,
+      "timestampStrictlyIncreasing": true,
+      "unchangedDuringDecode": true,
+      "videoSha256": "4026c952e2c0873381c05bce8b77bce5da0966585795ac7d27041c28e069929b",
+      "passed": true
+    },
+    {
+      "chapter": "006-geometry-topology-chapter-6",
+      "video": "artifacts/geometry-topology/chapters/006-geometry-topology-chapter-6/video.mp4",
+      "errors": [],
+      "fileBytes": 5524625,
+      "videoModifiedAt": "2026-11-06T21:48:07.885648+00:00",
+      "renderCompletedAt": "2026-11-06T21:48:09.412Z",
+      "renderSourceHash": "0514a17044c5fc6ecee99afb7168368eaa5504ef635c560256f3568eaa1e6151",
+      "declaredDuration": 300.0416666666667,
+      "expectedDuration": 300,
+      "declaredDimensions": [
+        1280,
+        720
+      ],
+      "declaredFps": 24,
+      "codec": "h264",
+      "streamFps": 24.0,
+      "streamFpsRatio": "24",
+      "streamTimeBase": "1/12288",
+      "streamDeclaredFrames": 7201,
+      "streamDuration": 300.0416666666667,
+      "containerDuration": 300.041667,
+      "decodedFrames": 7201,
+      "dimensions": [
+        [
+          1280,
+          720
+        ]
+      ],
+      "firstPts": 0,
+      "lastPts": 3686400,
+      "frameTimeBase": "1/12288",
+      "firstTimestamp": 0.0,
+      "lastTimestamp": 300.0,
+      "frameIntervals": [
+        "1/24"
+      ],
+      "decodedDuration": 300.0416666666667,
+      "timestampStrictlyIncreasing": true,
+      "unchangedDuringDecode": true,
+      "videoSha256": "74e8960bd9ca53899cf6aaced0fcf738919566c0d19b23bf98ef9e381d822291",
+      "passed": true
+    }
+  ],
+  "totalFrames": 43201,
+  "totalDecodedDuration": 1800.0416666666667,
+  "elapsedSeconds": 8.978,
+  "passed": true
+}

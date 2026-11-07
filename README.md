@@ -6,6 +6,8 @@ AnyVis v0.2.2 提供积木创作、原生动画预览、视频与 Python 导出�
 
 ![AnyVis Studio 的颜色编辑器与真实预览](docs/screenshots/studio-polish.jpg)
 
+[下载桌面测试包：macOS / Windows / Linux](docs/verification.md#最新桌面测试包) · [30分钟影片与可编辑工程](examples/geometry-topology/README.md)
+
 ## 启动
 
 需要 **Node.js 22.18+**、npm，以及安装 Manim 的 Python 环境。本次原生渲染验证使用 **Manim CE 0.20.1 / Cairo / Python 3.12**；并未声称完成 0.22.1 或干净机器安装验收。

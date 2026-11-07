@@ -1,0 +1,650 @@
+[
+  {
+    "chapter": 1,
+    "shot": 1,
+    "chapterTime": 18.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 1,
+    "shot": 2,
+    "chapterTime": 43.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 1,
+    "shot": 3,
+    "chapterTime": 68.0,
+    "shotTime": 18.0,
+    "mae": 0.1870753761574074,
+    "fractionPixelsOver25": 6.184895833333334e-05,
+    "topBottomMae": 0.2051436011904762
+  },
+  {
+    "chapter": 1,
+    "shot": 4,
+    "chapterTime": 93.0,
+    "shotTime": 18.0,
+    "mae": 0.12648799189814816,
+    "fractionPixelsOver25": 2.2786458333333334e-05,
+    "topBottomMae": 0.14366815476190475
+  },
+  {
+    "chapter": 1,
+    "shot": 5,
+    "chapterTime": 118.0,
+    "shotTime": 18.0,
+    "mae": 0.19779188368055556,
+    "fractionPixelsOver25": 8.246527777777778e-05,
+    "topBottomMae": 0.1940766369047619
+  },
+  {
+    "chapter": 1,
+    "shot": 6,
+    "chapterTime": 143.0,
+    "shotTime": 18.0,
+    "mae": 0.17376627604166667,
+    "fractionPixelsOver25": 2.8211805555555554e-05,
+    "topBottomMae": 0.16399330357142858
+  },
+  {
+    "chapter": 1,
+    "shot": 7,
+    "chapterTime": 168.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 1,
+    "shot": 8,
+    "chapterTime": 193.0,
+    "shotTime": 18.0,
+    "mae": 0.20041268807870372,
+    "fractionPixelsOver25": 6.510416666666667e-06,
+    "topBottomMae": 0.31104910714285716
+  },
+  {
+    "chapter": 1,
+    "shot": 9,
+    "chapterTime": 218.0,
+    "shotTime": 18.0,
+    "mae": 0.10284469039351851,
+    "fractionPixelsOver25": 3.2552083333333335e-06,
+    "topBottomMae": 0.17875595238095238
+  },
+  {
+    "chapter": 1,
+    "shot": 10,
+    "chapterTime": 243.0,
+    "shotTime": 18.0,
+    "mae": 0.0821654369212963,
+    "fractionPixelsOver25": 3.2552083333333335e-06,
+    "topBottomMae": 0.13638318452380951
+  },
+  {
+    "chapter": 1,
+    "shot": 11,
+    "chapterTime": 268.0,
+    "shotTime": 18.0,
+    "mae": 0.16408022280092593,
+    "fractionPixelsOver25": 7.595486111111111e-06,
+    "topBottomMae": 0.1567797619047619
+  },
+  {
+    "chapter": 1,
+    "shot": 12,
+    "chapterTime": 293.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 2,
+    "shot": 1,
+    "chapterTime": 18.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 2,
+    "shot": 2,
+    "chapterTime": 43.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 2,
+    "shot": 3,
+    "chapterTime": 68.0,
+    "shotTime": 18.0,
+    "mae": 0.10750868055555556,
+    "fractionPixelsOver25": 2.4956597222222224e-05,
+    "topBottomMae": 0.14949776785714286
+  },
+  {
+    "chapter": 2,
+    "shot": 4,
+    "chapterTime": 93.0,
+    "shotTime": 18.0,
+    "mae": 0.17966941550925927,
+    "fractionPixelsOver25": 0.0013932291666666667,
+    "topBottomMae": 0.17767931547619048
+  },
+  {
+    "chapter": 2,
+    "shot": 5,
+    "chapterTime": 118.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 2,
+    "shot": 6,
+    "chapterTime": 143.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 2,
+    "shot": 7,
+    "chapterTime": 168.0,
+    "shotTime": 18.0,
+    "mae": 0.18793077256944443,
+    "fractionPixelsOver25": 0.001162109375,
+    "topBottomMae": 0.19397916666666667
+  },
+  {
+    "chapter": 2,
+    "shot": 8,
+    "chapterTime": 193.0,
+    "shotTime": 18.0,
+    "mae": 0.2267216435185185,
+    "fractionPixelsOver25": 0.0011555989583333333,
+    "topBottomMae": 0.22737648809523808
+  },
+  {
+    "chapter": 2,
+    "shot": 9,
+    "chapterTime": 218.0,
+    "shotTime": 18.0,
+    "mae": 0.17568287037037036,
+    "fractionPixelsOver25": 2.170138888888889e-05,
+    "topBottomMae": 0.16799255952380954
+  },
+  {
+    "chapter": 2,
+    "shot": 10,
+    "chapterTime": 243.0,
+    "shotTime": 18.0,
+    "mae": 0.1549435763888889,
+    "fractionPixelsOver25": 7.378472222222222e-05,
+    "topBottomMae": 0.1846934523809524
+  },
+  {
+    "chapter": 2,
+    "shot": 11,
+    "chapterTime": 268.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 2,
+    "shot": 12,
+    "chapterTime": 293.0,
+    "shotTime": 18.0,
+    "mae": 0.36514539930555556,
+    "fractionPixelsOver25": 0.0001247829861111111,
+    "topBottomMae": 0.3740595238095238
+  },
+  {
+    "chapter": 3,
+    "shot": 1,
+    "chapterTime": 18.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 3,
+    "shot": 2,
+    "chapterTime": 43.0,
+    "shotTime": 18.0,
+    "mae": 0.1243995949074074,
+    "fractionPixelsOver25": 1.0850694444444445e-05,
+    "topBottomMae": 0.16831770833333334
+  },
+  {
+    "chapter": 3,
+    "shot": 3,
+    "chapterTime": 68.0,
+    "shotTime": 18.0,
+    "mae": 0.14878291377314815,
+    "fractionPixelsOver25": 7.161458333333333e-05,
+    "topBottomMae": 0.18638913690476192
+  },
+  {
+    "chapter": 3,
+    "shot": 4,
+    "chapterTime": 93.0,
+    "shotTime": 18.0,
+    "mae": 0.18265805844907407,
+    "fractionPixelsOver25": 1.736111111111111e-05,
+    "topBottomMae": 0.1554330357142857
+  },
+  {
+    "chapter": 3,
+    "shot": 5,
+    "chapterTime": 118.0,
+    "shotTime": 18.0,
+    "mae": 0.7227242476851852,
+    "fractionPixelsOver25": 0.00032877604166666667,
+    "topBottomMae": 0.7432485119047619
+  },
+  {
+    "chapter": 3,
+    "shot": 6,
+    "chapterTime": 143.0,
+    "shotTime": 18.0,
+    "mae": 0.6831807002314815,
+    "fractionPixelsOver25": 0.00037434895833333336,
+    "topBottomMae": 0.7313013392857143
+  },
+  {
+    "chapter": 3,
+    "shot": 7,
+    "chapterTime": 168.0,
+    "shotTime": 18.0,
+    "mae": 0.09536313657407407,
+    "fractionPixelsOver25": 1.6276041666666666e-05,
+    "topBottomMae": 0.16316145833333334
+  },
+  {
+    "chapter": 3,
+    "shot": 8,
+    "chapterTime": 193.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 3,
+    "shot": 9,
+    "chapterTime": 218.0,
+    "shotTime": 18.0,
+    "mae": 0.2632298900462963,
+    "fractionPixelsOver25": 4.557291666666667e-05,
+    "topBottomMae": 0.3608735119047619
+  },
+  {
+    "chapter": 3,
+    "shot": 10,
+    "chapterTime": 243.0,
+    "shotTime": 18.0,
+    "mae": 0.5173285590277777,
+    "fractionPixelsOver25": 0.0001345486111111111,
+    "topBottomMae": 0.41798958333333336
+  },
+  {
+    "chapter": 3,
+    "shot": 11,
+    "chapterTime": 268.0,
+    "shotTime": 18.0,
+    "mae": 0.1676710792824074,
+    "fractionPixelsOver25": 3.146701388888889e-05,
+    "topBottomMae": 0.24110565476190476
+  },
+  {
+    "chapter": 3,
+    "shot": 12,
+    "chapterTime": 293.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 1,
+    "chapterTime": 18.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 2,
+    "chapterTime": 43.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 3,
+    "chapterTime": 68.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 4,
+    "chapterTime": 93.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 5,
+    "chapterTime": 118.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 6,
+    "chapterTime": 143.0,
+    "shotTime": 18.0,
+    "mae": 0.1618970630787037,
+    "fractionPixelsOver25": 1.3020833333333334e-05,
+    "topBottomMae": 0.1376480654761905
+  },
+  {
+    "chapter": 4,
+    "shot": 7,
+    "chapterTime": 168.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 8,
+    "chapterTime": 193.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 9,
+    "chapterTime": 218.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 10,
+    "chapterTime": 243.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 11,
+    "chapterTime": 268.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 4,
+    "shot": 12,
+    "chapterTime": 293.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 5,
+    "shot": 1,
+    "chapterTime": 18.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 5,
+    "shot": 2,
+    "chapterTime": 43.0,
+    "shotTime": 18.0,
+    "mae": 0.13633608217592594,
+    "fractionPixelsOver25": 2.4956597222222224e-05,
+    "topBottomMae": 0.16235193452380953
+  },
+  {
+    "chapter": 5,
+    "shot": 3,
+    "chapterTime": 68.0,
+    "shotTime": 18.0,
+    "mae": 0.8158543113425926,
+    "fractionPixelsOver25": 0.000244140625,
+    "topBottomMae": 0.6201622023809524
+  },
+  {
+    "chapter": 5,
+    "shot": 4,
+    "chapterTime": 93.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 5,
+    "shot": 5,
+    "chapterTime": 118.0,
+    "shotTime": 18.0,
+    "mae": 0.10057327835648149,
+    "fractionPixelsOver25": 2.170138888888889e-06,
+    "topBottomMae": 0.1802641369047619
+  },
+  {
+    "chapter": 5,
+    "shot": 6,
+    "chapterTime": 143.0,
+    "shotTime": 18.0,
+    "mae": 0.14251302083333334,
+    "fractionPixelsOver25": 1.5190972222222222e-05,
+    "topBottomMae": 0.16000520833333334
+  },
+  {
+    "chapter": 5,
+    "shot": 7,
+    "chapterTime": 168.0,
+    "shotTime": 18.0,
+    "mae": 0.24650282118055555,
+    "fractionPixelsOver25": 3.7977430555555556e-05,
+    "topBottomMae": 0.20524925595238094
+  },
+  {
+    "chapter": 5,
+    "shot": 8,
+    "chapterTime": 193.0,
+    "shotTime": 18.0,
+    "mae": 0.5823520688657408,
+    "fractionPixelsOver25": 0.00010959201388888889,
+    "topBottomMae": 0.4828854166666667
+  },
+  {
+    "chapter": 5,
+    "shot": 9,
+    "chapterTime": 218.0,
+    "shotTime": 18.0,
+    "mae": 0.9189091435185185,
+    "fractionPixelsOver25": 0.00027886284722222223,
+    "topBottomMae": 0.9304159226190476
+  },
+  {
+    "chapter": 5,
+    "shot": 10,
+    "chapterTime": 243.0,
+    "shotTime": 18.0,
+    "mae": 0.6435951967592592,
+    "fractionPixelsOver25": 0.00040798611111111114,
+    "topBottomMae": 0.7044114583333333
+  },
+  {
+    "chapter": 5,
+    "shot": 11,
+    "chapterTime": 268.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 5,
+    "shot": 12,
+    "chapterTime": 293.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 6,
+    "shot": 1,
+    "chapterTime": 18.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 6,
+    "shot": 2,
+    "chapterTime": 43.0,
+    "shotTime": 18.0,
+    "mae": 0.17467737268518518,
+    "fractionPixelsOver25": 2.387152777777778e-05,
+    "topBottomMae": 0.17671651785714285
+  },
+  {
+    "chapter": 6,
+    "shot": 3,
+    "chapterTime": 68.0,
+    "shotTime": 18.0,
+    "mae": 0.07861436631944445,
+    "fractionPixelsOver25": 3.2552083333333335e-06,
+    "topBottomMae": 0.12905133928571427
+  },
+  {
+    "chapter": 6,
+    "shot": 4,
+    "chapterTime": 93.0,
+    "shotTime": 18.0,
+    "mae": 0.18557146990740742,
+    "fractionPixelsOver25": 1.4105902777777777e-05,
+    "topBottomMae": 0.1596049107142857
+  },
+  {
+    "chapter": 6,
+    "shot": 5,
+    "chapterTime": 118.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 6,
+    "shot": 6,
+    "chapterTime": 143.0,
+    "shotTime": 18.0,
+    "mae": 0.2533546730324074,
+    "fractionPixelsOver25": 0.00017578125,
+    "topBottomMae": 0.3731860119047619
+  },
+  {
+    "chapter": 6,
+    "shot": 7,
+    "chapterTime": 168.0,
+    "shotTime": 18.0,
+    "mae": 0.17765697337962963,
+    "fractionPixelsOver25": 2.2786458333333334e-05,
+    "topBottomMae": 0.24041666666666667
+  },
+  {
+    "chapter": 6,
+    "shot": 8,
+    "chapterTime": 193.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 6,
+    "shot": 9,
+    "chapterTime": 218.0,
+    "shotTime": 18.0,
+    "mae": 0.0,
+    "fractionPixelsOver25": 0.0,
+    "topBottomMae": 0.0
+  },
+  {
+    "chapter": 6,
+    "shot": 10,
+    "chapterTime": 243.0,
+    "shotTime": 18.0,
+    "mae": 0.2895836950231481,
+    "fractionPixelsOver25": 2.387152777777778e-05,
+    "topBottomMae": 0.4104122023809524
+  },
+  {
+    "chapter": 6,
+    "shot": 11,
+    "chapterTime": 268.0,
+    "shotTime": 18.0,
+    "mae": 0.6037192563657408,
+    "fractionPixelsOver25": 9.006076388888889e-05,
+    "topBottomMae": 0.7070922619047619
+  },
+  {
+    "chapter": 6,
+    "shot": 12,
+    "chapterTime": 293.0,
+    "shotTime": 18.0,
+    "mae": 0.24556495949074075,
+    "fractionPixelsOver25": 2.170138888888889e-05,
+    "topBottomMae": 0.20885342261904763
+  }
+]
