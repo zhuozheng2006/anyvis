@@ -12,7 +12,7 @@
 | 服务集成 | 项目→服务编译器→真实 Manim→可播放媒体，诊断与取消链路通过 |
 | 可编辑演示 | 21 块工程生成约 23.54 秒、1280×720、24 fps 视频，565 帧全部解码；关键帧人工查看 |
 | 浏览器 | API 搜索、圆积木添加、常用色板选色已实际操作；原工程另行保留 |
-| 桌面 | 本地宿主/打包回归通过；本版本三平台 CI 结果以本节后续记录为准，旧版构建不能替代本版验证 |
+| 桌面 | 本地宿主/打包回归通过；本版本三平台 CI、最终 ASAR 启动与 API 搜索/添加通过，见文末下载与验证记录 |
 
 示例：[参数改变整条曲线](../examples/api/README.md)。[完整审计报告与边界](Manim-API-Coverage.md)。
 
@@ -99,13 +99,19 @@
 
 ## 最新桌面测试包
 
-[构建42337701921](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921) 对应代码提交 `36f73599b7e6ebbe0e9ce1b520fcf94d4ef27cef`。2026-11-07三平台均通过应用测试、桌面生命周期回归、真实Electron启动检查与安装包构建。
+**AnyVis v0.3.0**：[构建42379483960](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960) 对应提交 `c31aa313aec4a505c639ec0077ac41f87360847b`。2026-11-07（北京时间）macOS、Windows、Linux 全部成功。
 
-| 系统 | 安装包附件 |
-| --- | --- |
-| Apple Silicon Mac | [ARM64 DMG与ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921/artifacts/13560531669) |
-| Intel Mac | [x64 DMG与ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921/artifacts/13559504798) |
-| Windows x64 | [NSIS安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921/artifacts/13560262868) |
-| Linux x64 | [AppImage与DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921/artifacts/13559928119) |
+| 系统 | 安装包附件 | 最终应用启动检查 |
+| --- | --- | --- |
+| Apple Silicon Mac | [ARM64 DMG与ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960/artifacts/13576792694) | ARM64 通过 |
+| Intel Mac | [x64 DMG与ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960/artifacts/13577086498) | 已构建；未在 Intel 机器运行 |
+| Windows x64 | [NSIS安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960/artifacts/13576599871) | x64 通过 |
+| Linux x64 | [AppImage与DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960/artifacts/13577375301) | x64 通过 |
 
-下载需要GitHub登录，附件于2026-11-21 UTC过期。桌面程序自主启动本地引擎，不需额外Node服务；Python/Manim、中文字体和公式使用的LaTeX仍是外部依赖。macOS使用ad-hoc签名，尚未公证；这仍是桌面测试版，目标机器安装和最终ASAR环境的验收边界见[打包说明](../desktop/PACKAGING.md)。这轮检查没有把内置模板视频播放冒充本机Manim渲染。
+本版本每个平台都执行 252 项应用测试、10 项桌面回归、准备目录的真实 Electron 启动，以及安装包构建后 `release/` 中最终 ASAR 应用的启动。最后一项核对打包状态、`app.asar` 路径、外置 worker 文件，实际搜索 Circle 并加入积木，验证会话与协议转发、视频 Range/浏览器解码、引擎重启后存储。检查报告分别为 [Mac](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960/artifacts/13577260634)、[Windows](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960/artifacts/13577715260)、[Linux](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960/artifacts/13577185882)。
+
+本轮发现并修复 macOS CI 的撤销测试竞态：原测试固定等待 15 ms，可能早于 Blockly 的动画帧事件派发。六组字段/引用测试改为等待动画帧与后续 timer，并用 40 ms 慢帧确认多行代码的一步撤销/重做。首轮失败没有被记为通过；以上附件均来自修复后的同一个提交。
+
+下载需要 GitHub 登录，附件于 **2026-11-21 22:02–22:04（北京时间）** 附近过期。桌面程序自主启动本地引擎，不需额外 Node 服务；Python/Manim、中文字体和公式使用的 LaTeX 仍是外部依赖。macOS 使用 ad-hoc 签名、未公证，Windows 未配置发行者签名。CI 验证最终应用，但没有操作安装向导，也没有把内置参考视频播放冒充本机 Manim 渲染。目标机器安装与外部环境验收仍需完成，见[打包说明](../desktop/PACKAGING.md)。
+
+旧版 v0.2.2 的[构建42337701921](https://github.com/zhuozheng2006/anyvis/actions/runs/42337701921)对应 `36f7359`，仅作为历史记录。

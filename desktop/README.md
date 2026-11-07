@@ -43,6 +43,12 @@ npm run desktop
 
 后续构建的 Mac 附件已按架构拆分：M 系列芯片选择 `AnyVis-macOS-arm64-<提交 SHA>`，Intel 芯片选择 `AnyVis-macOS-x64-<提交 SHA>`。每个附件只包含对应架构的 DMG / ZIP；Windows 和 Linux 的附件保持不变。
 
+## v0.3.0 最新验证
+
+[构建42379483960](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960)（`c31aa313aec4a505c639ec0077ac41f87360847b`）三平台通过：252 项应用测试、10 项桌面回归、API 浏览器搜索/添加、准备目录启动、安装包构建，以及最终 ASAR 应用启动。最终启动覆盖 Mac ARM64、Windows x64、Linux x64；Intel Mac 安装包已生成，未在 Intel 机器实测。
+
+[下载新版安装包与检查报告](../docs/verification.md#最新桌面测试包)。最终 ASAR 检查验证 worker/资源路径、视频、协议与重启存储，不替代安装向导或外部 Python/Manim 渲染验收。下方和前面的旧版本记录保留供追溯。
+
 ## AI 接口
 
 前端 `src/studio/ai/project-assistant.ts` 提供：
@@ -56,7 +62,7 @@ npm run desktop
 
 OpenAI 请求字段依据官方 [Chat Completions API 文档](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)。兼容服务的接口差异仍需实际服务验收；本次不使用用户密钥或代替用户发送付费模型请求。
 
-## 本次验证
+## v0.2 历史验证
 
 - `npm run desktop:prepare` 通过：TypeScript、Vite 页面和自包含服务端 ESM 包全部构建成功。
 - `npm run test:desktop`：本地 10 项通过。覆盖设置持久化/损坏恢复、关闭中的启动竞态、失败重试、固定协议来源、token/Range 转发、正常退出先保存并关闭窗口，以及删除源码目录后从独立打包文件启动服务。

@@ -2,7 +2,7 @@
 
 **用 Scratch 风格积木制作真实 Manim 动画。**
 
-AnyVis v0.3.0 提供积木创作、原生动画预览、视频与 Python 导出，以及可编辑的 AI 作品导入。提供浏览器界面 + 本地 Manim 服务，以及自主启动服务的 Electron 桌面版。v0.2.2 的三平台安装包构建和真实 Electron 启动检查已经通过；新版打包状态见验证记录。Python/Manim 仍需外部安装。[完整设计方案](docs/AnyVis-Design-v0.2.md)
+AnyVis v0.3.0 提供积木创作、原生动画预览、视频与 Python 导出，以及可编辑的 AI 作品导入。提供浏览器界面 + 本地 Manim 服务，以及自主启动服务的 Electron 桌面版。v0.3.0 的三平台安装包构建、最终 ASAR 应用启动及 API 搜索/添加检查已经通过；下载与验证范围见验证记录。Python/Manim 仍需外部安装。[完整设计方案](docs/AnyVis-Design-v0.2.md)
 
 ![AnyVis Studio 的颜色编辑器与真实预览](docs/screenshots/studio-polish.jpg)
 

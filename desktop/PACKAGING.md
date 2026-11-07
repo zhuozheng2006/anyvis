@@ -2,7 +2,7 @@
 
 这套配置把编辑器、Electron 宿主和本地服务打包为 AnyVis 桌面应用。桌面进程负责启动和关闭自己的服务，不需要用户另外打开终端。Manim 的 Python 环境仍是外部依赖，可在桌面菜单中选择 Python 解释器路径并持久保存；当前安装包不包含 Python、Manim、LaTeX 或额外中文字体。
 
-**当前状态：配置与源码检查不等于安装验收。** 本次本机 npm registry 无法解析，未下载 Electron 或 electron-builder，也未在本机生成、安装并验证最终安装包。GitHub Actions 中的实际构建和启动结果应以对应提交的工作流日志及附件为准。首次正式发行前，还需要按本文最后的清单在目标系统上安装和渲染验证。
+**v0.3.0 状态：三平台构建与最终 ASAR 应用启动已通过。** [构建42379483960](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960) 对应 `c31aa313aec4a505c639ec0077ac41f87360847b`，最终应用启动覆盖 Mac ARM64、Windows x64、Linux x64，另生成 Intel Mac 安装包。[下载与检查报告](../docs/verification.md#最新桌面测试包)。本机仍未完成安装包安装与外部 Manim 渲染验收；首次正式发行前需完成本文末尾清单。
 
 2026-11-06，[构建 42295108033](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033) 已成功完成三平台真实 Electron 启动检查和安装包构建。对应提交为 `5b7e5545f9475e9dad62f530be1ba089b59fbfe2`：
 
@@ -75,9 +75,9 @@ Electron 路径：
 
 Linux 使用 Xvfb，并为当前 CI 临时环境中的 Chromium sandbox helper 设置官方二进制需要的属主和权限；不会通过 `--no-sandbox` 关闭渲染器沙箱。
 
-检查会启动实际本地服务，等待 Studio 标题栏及 Blockly 工作区出现，再通过固定协议验证会话、携带 token 的 POST、视频 Range 请求和浏览器视频解码。随后重启内部引擎，确认固定地址下的本地存储仍可读取。成功退出 0，失败退出 1，整体有 30 秒超时。
+检查会启动实际本地服务，等待 Studio 标题栏及 Blockly 工作区出现，打开 API 浏览器、搜索 Circle 并添加积木，再通过固定协议验证会话、携带 token 的 POST、视频 Range 请求和浏览器视频解码。随后重启内部引擎，确认固定地址下的本地存储仍可读取。成功退出 0，失败退出 1，整体有 30 秒超时。
 
-未安装 Manim 时允许壳启动检查通过；环境尚未检测完成时报告 `health.available: false, checking: true`，并不代表确认缺少环境。这项检查不能证明 Manim 渲染成功。CI 还会运行桌面生命周期和隔离 bundle 的 Node 回归测试。启动检查使用准备后的应用和构建工具提供的 Electron，不能代替最终 ASAR 或安装包的安装测试。macOS 的启动检查只覆盖 runner 本身的架构，不同时证明另一架构可运行。
+未安装 Manim 时允许壳启动检查通过；环境尚未检测完成时报告 `health.available: false, checking: true`，并不代表确认缺少环境。这项检查不能证明 Manim 渲染成功。CI 还会运行桌面生命周期和隔离 bundle 的 Node 回归测试。v0.3.0 增加第二轮检查：安装包构建后运行 `node scripts/check-packaged-desktop.mjs`，启动 `release/` 下的最终应用，要求 `app.isPackaged` 为真、应用路径为 `app.asar`、外置 worker 存在，并重复上述界面与协议检查。Linux 通过 Xvfb 运行并保留 Chromium sandbox。这可以验证实际 ASAR 资源路径，仍不能代替安装向导或外部 Manim 环境验收。macOS 的启动检查只覆盖 runner 本身的架构，不同时证明另一架构可运行。
 
 成功的安装包保存为以下工作流附件，保留 14 天。macOS 按架构分开上传，避免把四个文件合为一个过大的压缩包：
 
@@ -88,7 +88,7 @@ Linux 使用 Xvfb，并为当前 CI 临时环境中的 Chromium sandbox helper �
 | Windows x64 | `AnyVis-Windows-<提交 SHA>` |
 | Linux x64 | `AnyVis-Linux-<提交 SHA>` |
 
-检查报告和本次真实解析的桌面工具锁文件另存为 `AnyVis-<平台>-checks-<提交 SHA>`。下载后核对提交 SHA。若构建失败，检查附件可能只含锁文件，应查看失败日志，不能据此判断启动通过。
+准备目录的 `smoke-result.json`、最终 ASAR 的 `packaged-smoke-result.json` 和本次真实解析的桌面工具锁文件另存为 `AnyVis-<平台>-checks-<提交 SHA>`。下载后核对提交 SHA。若构建失败，检查附件可能只含锁文件，应查看失败日志，不能据此判断启动通过。
 
 ## 正式发行前的安装验收
 
