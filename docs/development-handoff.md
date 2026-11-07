@@ -1,6 +1,8 @@
 # AnyVis 开发接续记录
 
-更新：2026-11-07（北京时间）。仓库：[zhuozheng2006/anyvis](https://github.com/zhuozheng2006/anyvis)，分支 `main`。
+更新：2026-11-08（北京时间）。仓库：[zhuozheng2006/anyvis](https://github.com/zhuozheng2006/anyvis)，分支 `main`。
+
+当前应用与依赖提交：`1f28edc9f79c15f3ba37919e835eb4dac2c8ce10`。最终原生 CI 为 `42401140743`，已成功；桌面 CI 为 `42401140734`，macOS、Windows、Linux 全部成功，安装包及最终 ASAR 启动检查通过；下载见 verification.md。本地 305 个已跟踪文件与该应用提交已逐项哈希核对一致，后续文档更新不改变应用或依赖。
 
 ## v0.3.1 接续检查点
 

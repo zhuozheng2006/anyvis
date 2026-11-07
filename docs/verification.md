@@ -14,7 +14,7 @@
 
 首次独立 Ubuntu CI 的 419 项原生行为通过，但完整入口审计因 OpenGL 窗口模块缺少显示服务失败。修复仅为审计命令提供 Xvfb，未删除任何失败条目；[修复后的原生 CI](https://github.com/zhuozheng2006/anyvis/actions/runs/42400588533)通过。Xvfb 导入检查不等于 OpenGL 真实渲染。
 
-更新依赖前的[三平台桌面构建](https://github.com/zhuozheng2006/anyvis/actions/runs/42400241234)全部通过；当前依赖版本的三平台桌面 CI 状态随后补齐；下方 v0.3.0 安装包只对应历史版本。完整 API 行为验收尚未完成，533 项 OpenGL 专属入口仍缺少可用本机渲染后端。
+最终应用提交为 `1f28edc9f79c15f3ba37919e835eb4dac2c8ce10`。[最终独立原生 CI](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140743)通过：依赖审计 0 项、2293 项入口全部解析、2117 项签名一致、419 项原生行为证据、真实媒体集成通过。[审计与行为证据附件](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140743/artifacts/13585930255)。当前依赖版本的[三平台桌面 CI](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734)结果见文末；下方 v0.3.0 安装包只对应历史版本。完整 API 行为验收尚未完成，533 项 OpenGL 专属入口仍缺少可用本机渲染后端。
 
 ## v0.3.0 API 扩展（2026-11-07）
 
@@ -114,6 +114,23 @@
 此图验证项目载入与编辑，舞台未生成预览；影片由相同编译器和worker的批量入口渲染，不能把截图中的空舞台描述为影片播放验收。
 
 ## 最新桌面测试包
+
+**AnyVis v0.3.1**：[最终构建 42401140734](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734)，对应应用与依赖提交 `1f28edc9f79c15f3ba37919e835eb4dac2c8ce10`。2026-11-08（北京时间）三平台全部成功。
+
+| 系统 | 安装包附件 | 最终应用启动检查 |
+| --- | --- | --- |
+| Apple Silicon Mac | [ARM64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734/artifacts/13585751994) | ARM64 通过 |
+| Intel Mac | [x64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734/artifacts/13586020317) | 已构建；未在 Intel 机器运行 |
+| Windows x64 | [NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734/artifacts/13584863724) | x64 通过 |
+| Linux x64 | [AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734/artifacts/13585269190) | x64 通过 |
+
+每个平台运行 287 项应用测试、10 项桌面回归、准备目录的 Electron 启动、安装包构建和最终 ASAR 应用启动；最后一项验证打包状态、外置 worker、API 搜索/添加、会话与固定协议、视频 Range/解码，以及引擎重启后的存储。检查报告：[Mac](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734/artifacts/13585458417)、[Windows](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734/artifacts/13585755880)、[Linux](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734/artifacts/13585348906)。
+
+另有[独立 Manim CI](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140743)真实执行 Cairo 渲染与媒体集成，不以桌面参考视频冒充 Manim 渲染。依赖审计为 0 项已知告警；这不是不存在任何安全问题的保证。
+
+附件需要 GitHub 登录，于 **2026-11-22 02:27–02:30（北京时间）** 附近过期。Python/Manim、中文字体和 LaTeX 仍为外部依赖；macOS ad-hoc 签名且未公证，Windows 未配置发行者签名。未运行安装向导，也未在目标机器完整验收外部环境或 Intel Mac 启动。已运行旧服务时，请在原启动终端按 Ctrl+C 后重新运行 `npm run studio`；桌面版退出后使用新安装包。
+
+## v0.3.0 历史桌面测试包
 
 **AnyVis v0.3.0**：[构建42379483960](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960) 对应提交 `c31aa313aec4a505c639ec0077ac41f87360847b`。2026-11-07（北京时间）macOS、Windows、Linux 全部成功。
 
