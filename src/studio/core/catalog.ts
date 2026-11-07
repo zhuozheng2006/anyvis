@@ -1,5 +1,6 @@
 import type { Action, BlockDefinition, FieldDefinition, FieldValue } from './types.ts';
 import { NATIVE_API_MAP } from './native-api-map.ts';
+import { API_BLOCK_CATALOG } from './api-catalog.ts';
 
 /** These are concrete catalogue kinds, not Python inheritance categories. */
 const VISUAL_OBJECT_KINDS = ['mobject', 'text', 'formula', 'number', 'axes', 'number_line', 'curve', 'matrix', 'graph', 'axes3d'];
@@ -159,6 +160,8 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
 ];
 
 export const BLOCK_CATEGORIES = Object.entries(COLORS).map(([name, colour]) => ({ name, colour }));
+export const CURATED_BLOCK_CATALOG = [...BLOCK_CATALOG];
+BLOCK_CATALOG.push(...API_BLOCK_CATALOG);
 const byType = new Map(BLOCK_CATALOG.map((definition) => [definition.type, definition]));
 export function getBlockDefinition(type: string): BlockDefinition | undefined { return byType.get(type); }
 export function createAction(type: string, overrides: Record<string, FieldValue> = {}): Action {

@@ -106,6 +106,16 @@ jobs:
 
       - name: Build installers without publishing
         run: node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never ${{ matrix.builder-args }}
+      - name: Check packaged ASAR application on macOS and Windows
+        if: runner.os != 'Linux'
+        run: node scripts/check-packaged-desktop.mjs
+      - name: Check packaged ASAR application on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo chown root:root release/linux-unpacked/chrome-sandbox
+          sudo chmod 4755 release/linux-unpacked/chrome-sandbox
+          xvfb-run -a node scripts/check-packaged-desktop.mjs
       - name: Upload installers
         if: runner.os != 'macOS'
         uses: actions/upload-artifact@v7.0.2
@@ -147,6 +157,7 @@ jobs:
           name: AnyVis-${{ matrix.platform }}-checks-${{ github.sha }}
           path: |
             desktop-build/smoke-result.json
+            desktop-build/packaged-smoke-result.json
             desktop/package-lock.json
           if-no-files-found: warn
           retention-days: 14

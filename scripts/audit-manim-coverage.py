@@ -53,7 +53,7 @@ def load_catalog(path: Path | None) -> tuple[list[dict[str, Any]], list[str]]:
         data = json.loads(path.read_text(encoding="utf-8"))
     else:
         # Argument arrays avoid shell interpolation; the child only imports project metadata.
-        code = "import { BLOCK_CATALOG } from './src/studio/core/catalog.ts'; import { NATIVE_RUNTIME_APIS } from './src/studio/core/native-api-map.ts'; process.stdout.write(JSON.stringify({blocks:BLOCK_CATALOG,runtimeApis:NATIVE_RUNTIME_APIS}));"
+        code = "import { CURATED_BLOCK_CATALOG as BLOCK_CATALOG } from './src/studio/core/catalog.ts'; import { NATIVE_RUNTIME_APIS } from './src/studio/core/native-api-map.ts'; process.stdout.write(JSON.stringify({blocks:BLOCK_CATALOG,runtimeApis:NATIVE_RUNTIME_APIS}));"
         completed = subprocess.run(["node", "--input-type=module", "-e", code], cwd=ROOT, text=True, capture_output=True, check=False)
         if completed.returncode:
             raise ValueError("Cannot read BLOCK_CATALOG with Node. Use Node with native TypeScript support, or --catalog JSON.\n" + completed.stderr)
@@ -394,7 +394,7 @@ def main() -> None:
     except (ValueError, OSError, json.JSONDecodeError) as error:
         parser.error(str(error))
     output = args.output or ROOT / f"docs/research/manim-ce-{manim.__version__}-coverage.json.gz"
-    markdown_output = args.markdown or ROOT / "docs/Manim-API-Coverage.md"
+    markdown_output = args.markdown or ROOT / "docs/research/curated-api-coverage.md"
     markdown_output.parent.mkdir(parents=True, exist_ok=True)
     write_report(output, report)
     markdown_output.write_text(markdown(report, args.evidence), encoding="utf-8")

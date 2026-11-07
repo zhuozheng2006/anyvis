@@ -15,6 +15,7 @@ export function validateProject(value: unknown): Project {
   if (!record(p.scene)) fail('项目缺少场景设置。');
   const scene = p.scene as Record<string, unknown>;
   if (!['2d', '3d'].includes(String(scene.dimension))) fail('场景类型必须为二维或三维。');
+  if (scene.renderer !== undefined && !['cairo','opengl'].includes(String(scene.renderer))) fail('渲染器必须为 Cairo 或 OpenGL。');
   if (typeof scene.background !== 'string' || !/^#[\da-fA-F]{6}$/.test(scene.background)) fail('背景颜色需要六位十六进制颜色。');
   for (const [key, min, max] of [['width', 256, 3840], ['height', 144, 2160], ['fps', 1, 60]] as const) {
     if (!finite(scene[key]) || !Number.isInteger(scene[key]) || scene[key] < min || scene[key] > max) fail(`场景 ${key} 必须是 ${min}–${max} 之间的整数。`);
@@ -46,7 +47,7 @@ export function validateProject(value: unknown): Project {
           if (f.step === 1 && !Number.isInteger(v)) fail(`${definition!.label}的“${f.label}”需要整数。`);
         } else {
           if (typeof v !== 'string') fail(`${definition!.label}的“${f.label}”需要文本。`);
-          if ((v as string).length > (a.type === 'code' ? 20000 : 4000)) fail(`${definition!.label}的“${f.label}”太长。`);
+          if ((v as string).length > (a.type === 'code' || f.type === 'api-value' ? 20000 : 4000)) fail(`${definition!.label}的“${f.label}”太长。`);
           if (f.type === 'color' && !/^#[\da-fA-F]{6}$/.test(v as string)) fail(`${definition!.label}颜色格式不正确。`);
           if (f.type === 'select' && !f.options?.some(([, option]) => option === v)) fail(`${definition!.label}的“${f.label}”不是有效选项。`);
         }
@@ -66,5 +67,5 @@ export function validateProject(value: unknown): Project {
     });
   };
   const actions = visit(p.actions, 0);
-  return { schemaVersion: 2, id: p.id as string, name: p.name as string, scene: { dimension: scene.dimension as '2d' | '3d', background: scene.background as string, width: scene.width as number, height: scene.height as number, fps: scene.fps as number }, actions, ...(p.workspace !== undefined ? { workspace: p.workspace } : {}) };
+  return { schemaVersion: 2, id: p.id as string, name: p.name as string, scene: { dimension: scene.dimension as '2d' | '3d', ...(scene.renderer ? {renderer:scene.renderer as 'cairo'|'opengl'} : {}), background: scene.background as string, width: scene.width as number, height: scene.height as number, fps: scene.fps as number }, actions, ...(p.workspace !== undefined ? { workspace: p.workspace } : {}) };
 }

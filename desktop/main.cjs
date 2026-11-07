@@ -94,6 +94,29 @@ async function finishSmoke(error) {
       if (!rootReady) await new Promise(resolve => setTimeout(resolve, 50));
     }
     if (!rootReady) throw new Error('Studio editor or Blockly workspace did not mount.');
+    // Exercise the generated API catalog in the actual bundled renderer.
+    const apiCatalog = await editorWindow.webContents.executeJavaScript(`(async () => {
+      const until = async predicate => {
+        for (let i = 0; i < 100; i++) {
+          const value = predicate(); if (value) return value;
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
+        throw new Error('API browser interaction timed out.');
+      };
+      const opener = document.querySelector('.av-api-open');
+      if (!opener || opener.disabled) throw new Error('API browser is unavailable.');
+      opener.click();
+      const input = await until(() => document.querySelector('.av-api-browser[open] input'));
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'Circle');
+      input.dispatchEvent(new Event('input', {bubbles:true}));
+      const entry = await until(() => [...document.querySelectorAll('.av-api-browser-list article')]
+        .find(row => /^Circle(?:\\s|$)/.test(row.querySelector('code')?.textContent || '')));
+      const before = document.querySelectorAll('.blocklyBlockCanvas .blocklyDraggable').length;
+      entry.querySelector('button').click();
+      await until(() => !document.querySelector('.av-api-browser[open]') &&
+        document.querySelectorAll('.blocklyBlockCanvas .blocklyDraggable').length > before);
+      return {search:true, addBlock:true};
+    })()`);
     const browserCheck = await editorWindow.webContents.executeJavaScript(`(async () => {
       const session = await fetch('/api/session').then(r => r.json());
       const result = await fetch('/api/render', {method:'POST',headers:{'Content-Type':'application/json','X-AnyVis-Token':session.token},body:'{'});
@@ -119,7 +142,7 @@ async function finishSmoke(error) {
     await editorWindow.loadURL(host.EDITOR_URL);
     const storage = await editorWindow.webContents.executeJavaScript("localStorage.getItem('anyvis-desktop-smoke')");
     if (storage !== 'persisted') throw new Error('Desktop storage failed to persist.');
-    if (smokeResult) await writeFile(smokeResult, JSON.stringify({ ok: true, origin: browserCheck.origin, rootReady, session: true, videoRange: true, videoDecoded: true, storageAcrossRestart: true, ports: [previousPort, engine.service.port], health: status.health, electron: process.versions.electron }, null, 2));
+    if (smokeResult) await writeFile(smokeResult, JSON.stringify({ ok: true, origin: browserCheck.origin, rootReady, apiCatalog, packaged: app.isPackaged, appPath: app.getAppPath(), workerExists: existsSync(path.join(app.isPackaged ? process.resourcesPath : path.resolve(__dirname, '..'), 'runtime', 'worker.py')), session: true, videoRange: true, videoDecoded: true, storageAcrossRestart: true, ports: [previousPort, engine.service.port], health: status.health, electron: process.versions.electron }, null, 2));
     process.exitCode = 0;
   } catch (failure) {
     if (smokeResult) await writeFile(smokeResult, JSON.stringify({ ok: false, error: failure.message, electron: process.versions.electron }, null, 2)).catch(() => {});

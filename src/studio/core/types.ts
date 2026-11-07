@@ -11,11 +11,11 @@ export interface Project {
   schemaVersion: 2;
   id: string;
   name: string;
-  scene: { dimension: '2d' | '3d'; background: string; width: number; height: number; fps: number };
+  scene: { dimension: '2d' | '3d'; renderer?: 'cairo' | 'opengl'; background: string; width: number; height: number; fps: number };
   actions: Action[];
   workspace?: unknown;
 }
-export type FieldKind = 'number' | 'text' | 'color' | 'select' | 'object' | 'expression' | 'multiline';
+export type FieldKind = 'number' | 'text' | 'color' | 'select' | 'object' | 'expression' | 'multiline' | 'api-value';
 export interface FieldDefinition {
   name: string;
   label: string;
@@ -37,6 +37,7 @@ export interface FieldDefinition {
   emptyLabel?: string;
   /** Optional richer editor; underlying serialized field type stays unchanged. */
   editor?: 'matrix';
+  apiParameter?: import('./api-registry.ts').ApiParameter;
 }
 export interface BlockDefinition {
   type: string;
@@ -53,6 +54,7 @@ export interface BlockDefinition {
   keywords?: string[];
   /** Public API entry points used by this block, not complete parameter/behavior coverage. */
   nativeApis?: string[];
+  apiId?: string;
 }
 export interface Diagnostic { blockId?: string; message: string; severity: 'error' | 'warning' }
 export interface CompileResult {

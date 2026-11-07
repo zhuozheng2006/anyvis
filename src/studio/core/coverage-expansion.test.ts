@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BLOCK_CATALOG, createAction } from './catalog.ts';
+import { CURATED_BLOCK_CATALOG, createAction } from './catalog.ts';
 import { compileProject } from './compiler.ts';
 import { NATIVE_API_MAP } from './native-api-map.ts';
 import { createEmptyProject } from './project.ts';
@@ -35,8 +35,8 @@ describe('native coverage expansion', () => {
     expect(result.code).toContain('.set_z_index(5)');
   });
   it('accounts for every catalogue entry without counting arbitrary code as native support', () => {
-    expect(Object.keys(NATIVE_API_MAP).sort()).toEqual(BLOCK_CATALOG.map(b => b.type).sort());
-    for (const block of BLOCK_CATALOG) expect(block.nativeApis).toEqual(NATIVE_API_MAP[block.type]);
+    expect(Object.keys(NATIVE_API_MAP).sort()).toEqual(CURATED_BLOCK_CATALOG.map(b => b.type).sort());
+    for (const block of CURATED_BLOCK_CATALOG) expect(block.nativeApis).toEqual(NATIVE_API_MAP[block.type]);
     expect(NATIVE_API_MAP.code).toEqual([]);
     expect(NATIVE_API_MAP.sequence).toEqual([]);
     expect(NATIVE_API_MAP.repeat).toEqual([]);

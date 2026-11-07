@@ -16,8 +16,8 @@ export function planObjectRename(actions: Action[], actionId: string, candidate:
   if (!source || !definition?.createsObject) throw new Error('只能重命名创建对象的积木。');
   const name = candidate.trim();
   const previous = String(source.fields.name);
-  if (!name || name.length > 100 || /[\r\n\0,，]/.test(name)) throw new Error('名称需要 1–100 个字符，不能含换行或逗号。');
-  const isTracker = definition.objectKind === 'tracker';
+  if (!name || name.startsWith('@') || name.length > 100 || /[\r\n\0,，]/.test(name)) throw new Error('名称需要 1–100 个字符，不能含换行或逗号。');
+  const isTracker = source.type === 'tracker';
   if (isTracker && (!/^[A-Za-z][A-Za-z_0-9]{0,30}$/.test(name) || RESERVED_SYMBOLS.has(name))) {
     throw new Error('参数名用英文字母开头，可含数字和下划线；请避开 x、t、pi 等数学名称。');
   }
@@ -36,6 +36,21 @@ export function planObjectRename(actions: Action[], actionId: string, candidate:
       if (typeof value !== 'string') continue;
       const kind = field.reference ?? (field.type === 'object' ? 'object' : field.type === 'expression' ? 'expression' : undefined);
       let renamed = value;
+      if (field.type === 'api-value' && value) {
+        try {
+          const walk = (node: unknown, locals: string[] = []): unknown => {
+            if (Array.isArray(node)) return node.map(n => walk(n,locals));
+            if (!node || typeof node !== 'object') return node;
+            const obj=node as Record<string,unknown>;
+            if (Object.keys(obj).length===1 && obj.$ref===previous) return {$ref:name};
+            if (Object.keys(obj).length===1 && typeof obj.$expr==='string' && isTracker && !locals.includes(previous)) return {$expr:obj.$expr.replace(/[A-Za-z_][A-Za-z_0-9]*/g,t=>t===previous?name:t)};
+            if (obj.$lambda && typeof obj.$lambda==='object') {const l=obj.$lambda as {params:string[];body:unknown}; return {$lambda:{...l,body:walk(l.body,[...locals,...l.params])}};}
+            return Object.fromEntries(Object.entries(obj).map(([k,v])=>[k,walk(v,locals)]));
+          };
+          const before=JSON.parse(value); const after=walk(before);
+          if(JSON.stringify(before)!==JSON.stringify(after)) renamed=JSON.stringify(after);
+        } catch { /* Preserve invalid drafts for the compiler diagnostic. */ }
+      }
       if (kind === 'object' && value === previous) renamed = name;
       if (kind === 'object-list') {
         renamed = value.split(/([,，])/).map((part) => part.trim() === previous ? part.replace(previous, () => name) : part).join('');

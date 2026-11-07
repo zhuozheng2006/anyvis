@@ -1,3 +1,5 @@
+import { createApiCompiler, API_RUNTIME, API_BUILTINS } from './api-compiler.ts';
+import { getApiEntry } from './api-registry.ts';
 import { getBlockDefinition } from './catalog.ts';
 import { compileExpression, RESERVED_SYMBOLS } from './expression.ts';
 import { validateProject } from './project.ts';
@@ -28,6 +30,11 @@ export function compileProject(input: Project | unknown): CompileResult {
   const sourceMap: Record<number, string> = {};
   const objects = new Map<string, ObjectInfo>();
   const trackers = new Map<string, string>();
+  const apiResultOwners = new Map<string,string>();
+  const containsApi = (actions: Action[]): boolean => actions.some(a => !!getBlockDefinition(a.type)?.apiId || containsApi(a.children ?? []) || (a.branches ?? []).some(containsApi));
+  const usesApi = containsApi(project.actions);
+  const apiCompiler = usesApi ? createApiCompiler() : undefined;
+  if (usesApi) for (const name of API_BUILTINS) { if (name !== '@frame' || project.scene.dimension === '2d') objects.set(name, {kind:'api-value', visible:false}); }
   let requiresTrust = false;
   let uncertainDuration = false;
   let expanded = 0;
@@ -35,7 +42,8 @@ export function compileProject(input: Project | unknown): CompileResult {
     lines.push(text);
     if (action) sourceMap[lines.length] = action.id;
   };
-  const stmt = (text: string, action: Action) => emit(`        ${text}`, action);
+  let indent = 8;
+  const stmt = (text: string, action: Action) => emit(`${' '.repeat(indent)}${text}`, action);
   const str = (a: Action, key: string) => String(a.fields[key] ?? '');
   const num = (a: Action, key: string) => Number(a.fields[key]);
   const symbolMap = (locals: string[] = []) => Object.assign(Object.fromEntries(trackers), Object.fromEntries(locals.map((v) => [v, v]))) as Record<string, string>;
@@ -45,6 +53,7 @@ export function compileProject(input: Project | unknown): CompileResult {
     const info = objects.get(name);
     if (info?.retired) throw new Error(`对象“${name}”已被替换，请操作替换后的新对象，或先用“直接显示”重新加入旧对象。`);
     if (!info) throw new Error(`找不到对象“${name || '（未选择）'}”。请先创建它，再连接这一步。`);
+    if (!kinds && info.kind === 'animation') throw new Error(`“${name}”是动画，请选择图形对象。`);
     if (!kinds && info.kind === 'tracker') throw new Error(`“${name}”是数值参数，不能当作图形使用。请用“改变参数”积木。`);
     if (kinds && !kinds.includes(info.kind)) throw new Error(`“${name}”的类型不适合这里，需要 ${kinds.join(' / ')}。`);
     return `objects[${py(name)}]`;
@@ -72,6 +81,7 @@ export function compileProject(input: Project | unknown): CompileResult {
   emit('import numpy as np');
   emit('import manimpango');
   emit('');
+  if (usesApi) for (const line of API_RUNTIME.trim().split('\n')) emit(line);
   emit('def _anyvis_font():');
   emit('    available = set(manimpango.list_fonts())');
   emit('    for font in ("Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", "Heiti SC", "Arial Unicode MS"):');
@@ -82,7 +92,12 @@ export function compileProject(input: Project | unknown): CompileResult {
   emit(`class AnyVisScene(${project.scene.dimension === '3d' ? 'ThreeDScene' : 'MovingCameraScene'}):`);
   emit('    def construct(self):');
   emit('        objects = {}');
+  if (usesApi) {
+    emit("        objects.update({'@scene': self, '@camera': self.camera, '@renderer': self.renderer})");
+    if (project.scene.dimension === '2d') emit(project.scene.renderer === 'opengl' ? "        objects['@frame'] = self.camera" : "        objects['@frame'] = self.camera.frame");
+  }
   emit('        _font = _anyvis_font()');
+  if (project.scene.renderer === 'opengl') emit('        from manim.mobject.opengl.opengl_mobject import OpenGLMobject');
   emit(`        self.camera.background_color = ${py(project.scene.background)}`);
   emit('        np.random.seed(0)');
 
@@ -96,7 +111,7 @@ export function compileProject(input: Project | unknown): CompileResult {
   const creation = (a: Action): AnimationValue | null => {
     const definition = getBlockDefinition(a.type)!;
     const name = str(a, 'name').trim();
-    if (!name || name.length > 100 || /[\r\n\0]/.test(name)) throw new Error('对象需要 1–100 个字符的名称，不可包含换行。');
+    if (!name || name.startsWith('@') || name.length > 100 || /[\r\n\0]/.test(name)) throw new Error('对象需要 1–100 个字符的名称，不可包含换行。');
     if (objects.has(name)) throw new Error(`对象“${name}”已经存在。请使用不同名称；重复积木内建议操作已有对象。`);
     // Normalize whitespace consistently before creating and referencing the name.
     if (name !== str(a, 'name')) throw new Error('对象名称开头或结尾不能包含空格。');
@@ -237,6 +252,38 @@ export function compileProject(input: Project | unknown): CompileResult {
   };
   const animation = (a: Action): AnimationValue | null => {
     const definition = getBlockDefinition(a.type)!;
+    if (a.type === 'api_value') {
+      const name=str(a,'name');
+      if (!name || name.trim()!==name || name.startsWith('@') || name.length>100 || /[\r\n\0]/.test(name)) throw new Error('请填写有效的结果名称。');
+      if (objects.has(name) && apiResultOwners.get(name)!==a.id) throw new Error(`结果“${name}”已存在。`);
+      apiResultOwners.set(name,a.id);
+      const result=apiCompiler!.value(str(a,'value'),new Set(objects.keys()),symbolMap());
+      requiresTrust ||= result.requiresTrust;
+      const target=`objects[${py(name)}]`;stmt(`${target} = ${result.code}`,a);
+      objects.set(name,{kind:'api-value',visible:str(a,'mode')==='show'});
+      if(str(a,'mode')==='show') stmt(`_av_show(self, ${target})`,a);
+      if(str(a,'mode')==='play') {stmt(`${target}.set_run_time(${num(a,'duration')})`,a);return {expression:target,duration:num(a,'duration'),targets:result.references};}
+      return null;
+    }
+    const api = definition.apiId ? getApiEntry(definition.apiId) : undefined;
+    if (api) {
+      const name = str(a, 'name');
+      if (!name || name.trim() !== name || name.startsWith('@') || name.length > 100 || /[\r\n\0]/.test(name)) throw new Error('结果需要一个有效名称；@ 开头的名称保留给场景。');
+      if (objects.has(name) && apiResultOwners.get(name)!==a.id) throw new Error(`结果“${name}”已存在，请使用不同名称。`);
+      apiResultOwners.set(name,a.id);
+      if (api.renderer === 'opengl' && project.scene.renderer !== 'opengl') throw new Error('此 API 需要 OpenGL，请先在画面设置切换渲染器（需要本机支持 OpenGL）。');
+      const result = apiCompiler!.compile(a, api, new Set([...objects].filter(([,v])=>!v.retired).map(([n])=>n)), symbolMap());
+      requiresTrust ||= result.requiresTrust;
+      result.prelude.forEach(line=>stmt(line,a));
+      const target = `objects[${py(name)}]`;
+      stmt(`${target} = ${result.expression}`, a);
+      if (result.mode === 'play') stmt(`${target}.set_run_time(${num(a,'duration')})`, a);
+      objects.set(name, {kind: ['play','animate'].includes(result.mode)?'animation':api.resultKind === 'value' ? 'api-value' : api.resultKind, visible: result.mode === 'show', ...(api.name.endsWith('Group') ? {members:result.references} : {})});
+      if (result.mode === 'show') stmt(`_av_show(self, ${target})`,a);
+      if (api.owner?.includes('.scene.') && !['get_mobject_family_members','get_top_level_mobjects'].includes(api.name)) uncertainDuration = true;
+      if (result.mode === 'play' || result.mode === 'animate') return { expression:`${target}`, duration:num(a,'duration'), targets:result.references.length ? result.references : [name] };
+      return null;
+    }
     if (definition.createsObject) return creation(a);
     const name = str(a, 'target');
     let expression = '';
@@ -344,8 +391,8 @@ export function compileProject(input: Project | unknown): CompileResult {
     }) : a.children ?? [];
     if (!children.length) throw new Error('“同时执行”里还没有动画。');
     const animations = children.map(collect);
-    const family = (name: string): string[] => [name, ...(objects.get(name)?.members ?? []).flatMap(family)];
-    const targets = animations.flatMap((v) => [...new Set(v.targets.flatMap(family))]);
+    const family = (name: string, seen=new Set<string>()): string[] => { if(seen.has(name)) return []; seen.add(name); return [name, ...(objects.get(name)?.members ?? []).flatMap(n=>family(n,seen))]; };
+    const targets = animations.flatMap((v) => [...new Set(v.targets.flatMap(n=>family(n)))]);
     if (new Set(targets).size !== targets.length) throw new Error('同时执行的动画正在修改同一个对象。请改为依次执行，或分别操作不同对象。');
     return { expression: `AnimationGroup(${animations.map((v) => v.expression).join(', ')}, lag_ratio=0)`, duration: Math.max(...animations.map((v) => v.duration)), targets };
   };
@@ -355,6 +402,13 @@ export function compileProject(input: Project | unknown): CompileResult {
       try {
         check(a);
         stmt(`# block ${py(a.id)}: ${getBlockDefinition(a.type)!.label}`, a);
+        if (a.type === 'api_context') {
+          const result=apiCompiler!.value(str(a,'context'),new Set(objects.keys()),symbolMap());
+          requiresTrust ||= result.requiresTrust;
+          stmt(`with ${result.code}:`,a);indent+=4;
+          try {stmt('pass',a);total+=run(a.children??[]);}finally{indent-=4;}
+          continue;
+        }
         if (a.type === 'sequence') { total += run(a.children ?? []); if (total > 600) throw new Error('单个场景超过 10 分钟，请拆分为多个项目。'); continue; }
         if (a.type === 'repeat') {
           for (let i = 0; i < num(a, 'count'); i++) { total += run(a.children ?? []); if (total > 600 || expanded > 2000) throw new Error('重复后超出场景预算（10 分钟 / 2000 步骤），请减少重复次数。'); }
@@ -381,5 +435,6 @@ export function compileProject(input: Project | unknown): CompileResult {
   };
   const duration = run(project.actions);
   if (duration === 0 && !uncertainDuration) emit('        self.wait(0.1)');
+  for (const line of apiCompiler?.imports() ?? []) emit(line);
   return { code: lines.join('\n') + '\n', sourceMap, duration: uncertainDuration ? null : Math.max(duration, 0.1), diagnostics, requiresTrust };
 }

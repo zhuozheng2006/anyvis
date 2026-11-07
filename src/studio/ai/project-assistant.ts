@@ -1,10 +1,11 @@
-import { BLOCK_CATALOG } from '../core/catalog.ts';
+import { searchApi } from '../core/api-registry.ts';
+import { BLOCK_CATALOG, CURATED_BLOCK_CATALOG, getBlockDefinition } from '../core/catalog.ts';
 import { compileProject } from '../core/compiler.ts';
 import { validateProject } from '../core/project.ts';
 import type { Action, Project } from '../core/types.ts';
 
 const MAX_JSON_CHARS = 500_000;
-const forbiddenTypes = new Set(BLOCK_CATALOG.filter(block => block.requiresTrust || block.type === 'code').map(block => block.type));
+const forbiddenTypes = new Set(BLOCK_CATALOG.filter(block => block.type === 'code').map(block => block.type));
 
 function visit(actions: Action[], fn: (action: Action) => void) {
   for (const action of actions) {
@@ -23,7 +24,12 @@ export function buildPrompt(project: Project, request: string): string {
   const portable = { ...current, workspace: undefined };
   const snapshot = JSON.stringify(portable);
   if (snapshot.length > 150_000) throw new Error('当前作品过大，请先拆分为较短的场景，再使用 AI 编辑。');
-  const catalogue = BLOCK_CATALOG.filter(block => !forbiddenTypes.has(block.type)).map(block => ({
+  const used = new Set<string>(); visit(current.actions,a=>used.add(a.type));
+  const matching = query.match(/[A-Za-z][A-Za-z_0-9.]*/g) || [];
+  for (const token of matching) for (const entry of searchApi(token).slice(0, 6)) used.add(entry.type);
+  const selected = new Map(CURATED_BLOCK_CATALOG.map(b=>[b.type,b]));
+  for (const type of [...used].slice(0, 60)) {const block=getBlockDefinition(type); if(block) selected.set(type,block);}
+  const catalogue = [...selected.values()].filter(block => !forbiddenTypes.has(block.type)).map(block => ({
     type: block.type, label: block.label, tooltip: block.tooltip,
     ...(block.container ? { container: block.container } : {}),
     ...(block.requires3d ? { requires3d: true } : {}),
@@ -31,7 +37,8 @@ export function buildPrompt(project: Project, request: string): string {
       default: field.default,
       ...(field.options ? { choices: field.options.map(option => option[1]) } : {}),
       ...(field.min !== undefined ? { min: field.min, max: field.max } : {}),
-      description: field.label,
+      description: field.description || field.label,
+      ...(field.type === 'api-value' ? { encoding: 'JSON string; empty means omitted. Values: literals, {$ref:name}, {$constant:name}, {$api:canonicalId}, {$lambda:{params:[x],body:{$expr:expression}}}, {$array:[...]}. This field is a serialized JSON string, not a raw object.' } : {}),
     }])),
   }));
   return `你是 AnyVis 动画创作助手。根据用户需求修改当前作品，返回且只返回完整 JSON 项目，不输出 Python、Markdown 或解释。
@@ -44,7 +51,7 @@ export function buildPrompt(project: Project, request: string): string {
 4. Transform 保留源对象；目标形状先以 appear="hidden" 创建。matching_tex/replacement_transform 后使用目标对象。
 5. 场景默认舞台横向约 -7.1 到 7.1、纵向 -4 到 4；正文字号通常 24–40，标题 40–52。预留标题区域，避免图文重叠和超出舞台。不要只做一个无讲解的空白模板。
 6. 用 tracker 和 animate_value 表达参数变化；不要创建观众暂停节点。Wait 是视频中的正常阅读停留。
-7. 数学表达式使用目录支持的变量与函数，不能包含 Python 属性访问、lambda、导入或任意代码。严禁 code 块。
+7. 数学表达式使用目录支持的变量与函数，不写 Python 属性访问、导入或任意代码。严禁 code 块。api-value 字段是序列化的 JSON 数据字符串，可使用 $lambda/$call 结构编排已登记函数；需要本机权限的 API 不会自动渲染，用户需先检查生成源码。
 8. 使用三维类型时 scene.dimension="3d"，先设相机，必要时将标题固定到屏幕。普通二维场景使用"2d"。
 9. 保留 schemaVersion=2、场景比例和帧率，除非用户明确要求修改。不返回 workspace 元数据。
 
@@ -74,7 +81,9 @@ export function parseAIProject(text: string, current?: Project): Project {
   });
   const compiled = compileProject(project);
   const errors = compiled.diagnostics.filter(item => item.severity === 'error');
-  if (compiled.requiresTrust) throw new Error('AI 项目包含未经允许的代码扩展，未应用。');
+  // Structured APIs may need local permissions (e.g. TexTemplate or images).
+  // Importing is allowed; the renderer still requires explicit trust and the UI
+  // never auto-renders a project with compiled.requiresTrust. Raw code stays banned.
   if (errors.length) throw new Error(`项目未通过检查：${errors.slice(0, 3).map(item => item.message).join('；')}`);
   // Generated layout is rebuilt from actions. Stale Blockly metadata must not undo edits.
   const { workspace: _workspace, ...result } = project;

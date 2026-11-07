@@ -21,11 +21,11 @@ export function exportStandalonePython(input: Project | unknown): string {
     '# AnyVis can transcode WebM to MP4 when libx264 is unavailable; this file',
     '# uses the native Manim CLI and does not install or replace any codecs.',
     '# Keep the same Manim version, fonts and formula tools for reproducible output.',
-    ...(compiled.requiresTrust ? ['# WARNING: this project contains Python extensions with local system access.'] : []),
+    ...(compiled.requiresTrust ? ['# WARNING: this project contains Python extensions or privileged API calls with local system access.'] : []),
   ].join('\n');
   const settings = [
-    '# Explicit project output settings, matching the AnyVis Cairo worker.',
-    `config.renderer = "cairo"`,
+    '# Explicit project output settings, matching the AnyVis worker.',
+    `config.renderer = "${project.scene.renderer || 'cairo'}"`,
     `config.pixel_width = ${width}`,
     `config.pixel_height = ${height}`,
     `config.frame_height = 8`,

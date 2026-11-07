@@ -1,7 +1,7 @@
 {
   "name": "anyvis",
   "private": true,
-  "version": "0.2.2",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
@@ -18,7 +18,10 @@
     "desktop:install": "npm install --prefix desktop",
     "desktop:prepare": "npm run build && node scripts/prepare-desktop.mjs",
     "desktop:pack": "npm run desktop:prepare && node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never",
-    "test:desktop": "node --test desktop/host.spec-node.mjs desktop/packaging.spec-node.mjs"
+    "test:desktop": "node --test desktop/host.spec-node.mjs desktop/packaging.spec-node.mjs",
+    "test:api-native": "node --test src/studio/core/api.native.spec-node.mjs",
+    "api:generate": "python scripts/generate-api-registry.py",
+    "api:verify": "python scripts/verify-api-registry.py"
   },
   "dependencies": {
     "react": "^19.2.0",

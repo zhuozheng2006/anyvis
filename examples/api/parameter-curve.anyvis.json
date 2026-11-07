@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 2,
+  "id": "anyvis-api-tour",
+  "name": "API 积木 · 一个参数改变整条曲线",
+  "scene": {
+    "dimension": "2d",
+    "background": "#0B1020",
+    "width": 1280,
+    "height": 720,
+    "fps": 24
+  },
+  "actions": [
+    {
+      "id": "api-tour-1",
+      "type": "text",
+      "fields": {
+        "name": "标题",
+        "text": "一个参数，怎样改变整条曲线？",
+        "fontSize": 34,
+        "maxWidth": 12,
+        "color": "#E5EDF8",
+        "x": 0,
+        "y": 3.15,
+        "z": 0,
+        "appear": "fade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "api-tour-2",
+      "type": "text",
+      "fields": {
+        "name": "副标题",
+        "text": "y = a · sin(x)　｜　把对象、方法和回调函数连接起来",
+        "fontSize": 20,
+        "maxWidth": 12,
+        "color": "#8494AF",
+        "x": 0,
+        "y": 2.5,
+        "z": 0,
+        "appear": "fade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "api-tour-3",
+      "type": "axes",
+      "fields": {
+        "name": "坐标系",
+        "xMin": -3.5,
+        "xMax": 3.5,
+        "yMin": -2.2,
+        "yMax": 2.2,
+        "xLength": 9,
+        "yLength": 4,
+        "color": "#40516C",
+        "x": 0,
+        "y": -0.3,
+        "z": 0,
+        "appear": "create",
+        "duration": 1
+      }
+    },
+    {
+      "id": "api-tour-4",
+      "type": "tracker",
+      "fields": {
+        "name": "a",
+        "value": 1
+      }
+    },
+    {
+      "id": "api-tour-5",
+      "type": "api_2abce8686924ae3f",
+      "fields": {
+        "name": "变化的曲线",
+        "p_func": "{\"$lambda\":{\"params\":[],\"body\":{\"$call\":{\"api\":\"CoordinateSystem.plot\",\"receiver\":{\"$ref\":\"坐标系\"},\"args\":[{\"$lambda\":{\"params\":[\"x\"],\"body\":{\"$expr\":\"a*sin(x)\"}}}],\"kwargs\":{\"x_range\":[-3.14,3.14],\"color\":\"#64D9C1\",\"stroke_width\":4}}}}}",
+        "mode": "store",
+        "duration": 1
+      }
+    },
+    {
+      "id": "api-tour-6",
+      "type": "api_a4d3ab48fb4cf980",
+      "fields": {
+        "name": "画出曲线",
+        "p_mobject": "{\"$ref\":\"变化的曲线\"}",
+        "p_lag_ratio": "",
+        "p_introducer": "",
+        "p_kwargs": "",
+        "p_use_override": "",
+        "mode": "play",
+        "duration": 1.5
+      }
+    },
+    {
+      "id": "api-tour-7",
+      "type": "text",
+      "fields": {
+        "name": "参数名",
+        "text": "a =",
+        "fontSize": 24,
+        "maxWidth": 12,
+        "color": "#F2CB80",
+        "x": 0,
+        "y": 1.7,
+        "z": 0,
+        "appear": "fade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "api-tour-8",
+      "type": "move",
+      "fields": {
+        "target": "参数名",
+        "x": 4.7,
+        "y": 1.7,
+        "z": 0,
+        "duration": 0.3,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "api-tour-9",
+      "type": "dynamic_number",
+      "fields": {
+        "name": "参数读数",
+        "parameter": "a",
+        "places": 2,
+        "fontSize": 27,
+        "color": "#F2CB80",
+        "x": 5.5,
+        "y": 1.7,
+        "z": 0,
+        "appear": "fade",
+        "duration": 0.5
+      }
+    },
+    {
+      "id": "api-tour-10",
+      "type": "text",
+      "fields": {
+        "name": "说明一",
+        "text": "增大 a：横坐标不动，高度按同一比例放大。",
+        "fontSize": 24,
+        "maxWidth": 12,
+        "color": "#E5EDF8",
+        "x": 0,
+        "y": -2.9,
+        "z": 0,
+        "appear": "fade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "api-tour-11",
+      "type": "api_4bffecb2fc8695ea",
+      "fields": {
+        "name": "放大振幅",
+        "receiver": "a",
+        "p_value": "2",
+        "mode": "animate",
+        "duration": 4
+      }
+    },
+    {
+      "id": "api-tour-12",
+      "type": "wait",
+      "fields": {
+        "duration": 1
+      }
+    },
+    {
+      "id": "api-tour-13",
+      "type": "fade_out",
+      "fields": {
+        "target": "说明一",
+        "duration": 0.4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "api-tour-14",
+      "type": "text",
+      "fields": {
+        "name": "说明二",
+        "text": "减小 a：波峰与波谷一起靠近横轴，周期保持不变。",
+        "fontSize": 24,
+        "maxWidth": 12,
+        "color": "#E5EDF8",
+        "x": 0,
+        "y": -2.9,
+        "z": 0,
+        "appear": "fade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "api-tour-15",
+      "type": "api_4bffecb2fc8695ea",
+      "fields": {
+        "name": "减小振幅",
+        "receiver": "a",
+        "p_value": "0.4",
+        "mode": "animate",
+        "duration": 4
+      }
+    },
+    {
+      "id": "api-tour-16",
+      "type": "wait",
+      "fields": {
+        "duration": 1
+      }
+    },
+    {
+      "id": "api-tour-17",
+      "type": "fade_out",
+      "fields": {
+        "target": "说明二",
+        "duration": 0.4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "api-tour-18",
+      "type": "text",
+      "fields": {
+        "name": "说明三",
+        "text": "函数规则没有换；动画来自同一个参数的连续变化。",
+        "fontSize": 24,
+        "maxWidth": 12,
+        "color": "#E5EDF8",
+        "x": 0,
+        "y": -2.9,
+        "z": 0,
+        "appear": "fade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "api-tour-19",
+      "type": "api_4bffecb2fc8695ea",
+      "fields": {
+        "name": "回到单位振幅",
+        "receiver": "a",
+        "p_value": "1",
+        "mode": "animate",
+        "duration": 3
+      }
+    },
+    {
+      "id": "api-tour-20",
+      "type": "text",
+      "fields": {
+        "name": "结语",
+        "text": "每一个步骤，仍然可以打开积木修改。",
+        "fontSize": 19,
+        "maxWidth": 12,
+        "color": "#8494AF",
+        "x": 0,
+        "y": -3.5,
+        "z": 0,
+        "appear": "fade",
+        "duration": 0.6
+      }
+    },
+    {
+      "id": "api-tour-21",
+      "type": "wait",
+      "fields": {
+        "duration": 2
+      }
+    }
+  ]
+}

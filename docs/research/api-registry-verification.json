@@ -1,0 +1,86 @@
+{
+  "engineVersion": "0.20.1",
+  "registryVersion": "0.20.1",
+  "registrySha256": "b8abc5de5f7055bf52f081901f14a15f04b0415ace0686d2679fa6d16a8b61ff",
+  "entryCount": 2293,
+  "byKind": {
+    "function": 267,
+    "class": 331,
+    "method": 1473,
+    "property": 171,
+    "classmethod": 18,
+    "staticmethod": 33
+  },
+  "resolvedEntries": 2293,
+  "verifiedSignatures": 2117,
+  "signatureUnavailable": [
+    "manim.constants.QualityDict",
+    "manim.utils.commands.VideoMetadata",
+    "manim.utils.exceptions.EndSceneEarlyException",
+    "manim.utils.exceptions.MultiAnimationOverrideException",
+    "manim.utils.exceptions.RerunSceneException"
+  ],
+  "parameterFields": 9136,
+  "properties": 171,
+  "writableProperties": 128,
+  "constants": 2765,
+  "resolvedConstants": 2765,
+  "previousBoundedInventory": 1660,
+  "previousInventoryMissing": [],
+  "renderer": {
+    "cairoOrSharedEntries": 1760,
+    "openGLSpecificEntries": 533,
+    "openGLBehaviorVerified": false,
+    "openGLLocalBlocker": "glcontext cannot import egl on this macOS Manim installation"
+  },
+  "unavailableModules": [
+    {
+      "module": "manim.utils.testing.frames_comparison",
+      "error": "ModuleNotFoundError: No module named 'pytest'"
+    }
+  ],
+  "excluded": [
+    "CLI entry points",
+    "Sphinx documentation-build helpers",
+    "private names",
+    "dynamic runtime-only attributes"
+  ],
+  "nativeBehaviorEvidence": {
+    "registrySha256": "b8abc5de5f7055bf52f081901f14a15f04b0415ace0686d2679fa6d16a8b61ff",
+    "apiIds": [
+      "manim.animation.composition.Succession",
+      "manim.animation.fading.FadeIn",
+      "manim.animation.fading.FadeOut",
+      "manim.animation.transform.Transform",
+      "manim.animation.updaters.mobject_update_utils.always_redraw",
+      "manim.mobject.geometry.arc.Circle",
+      "manim.mobject.geometry.arc.Dot",
+      "manim.mobject.geometry.polygram.Square",
+      "manim.mobject.graphing.coordinate_systems.Axes",
+      "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot",
+      "manim.mobject.mobject.Mobject.add_updater",
+      "manim.mobject.mobject.Mobject.arrange",
+      "manim.mobject.mobject.Mobject.clear_updaters",
+      "manim.mobject.mobject.Mobject.copy",
+      "manim.mobject.mobject.Mobject.get_center",
+      "manim.mobject.mobject.Mobject.shift",
+      "manim.mobject.mobject.Mobject.width",
+      "manim.mobject.types.vectorized_mobject.VGroup",
+      "manim.mobject.value_tracker.ValueTracker",
+      "manim.mobject.value_tracker.ValueTracker.set_value",
+      "manim.mobject.vector_field.ArrowVectorField",
+      "manim.scene.scene.Scene.wait",
+      "manim.utils.bezier.bezier",
+      "manim.utils.bezier.interpolate",
+      "manim.utils.color.core.ManimColor.from_rgb",
+      "manim.utils.color.core.ManimColor.to_hex",
+      "manim.utils.space_ops.rotate_vector"
+    ],
+    "engineVersion": "0.20.1",
+    "renderer": "cairo",
+    "checks": "Runtime assertions for geometry, return values, property writes, callbacks/updaters, grouping, animation composition, context restoration and nonblank frame pixels. This fixture does not export a movie.",
+    "passed": true
+  },
+  "failures": [],
+  "interpretation": "All entries have blocks and structured argument inputs. Static resolution and signature checks are not per-API render or complete parameter-combination coverage."
+}

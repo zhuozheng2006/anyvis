@@ -9,6 +9,7 @@ import {
   setReferenceNames, setRenameErrorHandler, START_TYPE, workspaceToActions,
 } from './model';
 import './studio-blocks.css';
+import { ApiBrowser } from './ApiBrowser';
 
 export interface StudioBlocksHandle {
   snapshot(): Project;
@@ -96,6 +97,8 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
   const lastState = useRef('');
   const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const revealRequest = useRef(0);
+  const [apiOpen, setApiOpen] = useState(false);
+  const addApiBlock = useRef<(type:string)=>void>(()=>{});
   const [query, setQuery] = useState('');
   const [stats, setStats] = useState({ connected: 0, detached: 0 });
   const [error, setError] = useState<string | null>(null);
@@ -134,6 +137,28 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     if (workspace.current === ws && request === revealRequest.current && ws.getBlockById(id)) ws.centerOnBlock(id, true);
   };
 
+  const addBlock = (type:string, fields?:Record<string,FieldValue>) => {
+      const ws = workspace.current;
+      if (!ws || readOnly) return;
+      const definition = getBlockDefinition(type);
+      if (!definition) return;
+      const action = createAction(type, fields);
+      const wrapped = actionsToWorkspace([action]) as { blocks: { blocks: Blockly.serialization.blocks.State[] } };
+      const state = wrapped.blocks.blocks[0].next?.block;
+      if (!state) return;
+      Blockly.Events.setGroup(true);
+      try {
+        const block = Blockly.serialization.blocks.append(state, ws, { recordUndo: true }) as Blockly.BlockSvg;
+        const start = ws.getTopBlocks(false).find((item) => item.type === START_TYPE);
+        let last = start;
+        while (last?.getNextBlock()) last = last.getNextBlock()!;
+        if (last?.nextConnection && block.previousConnection) last.nextConnection.connect(block.previousConnection);
+        block.select();
+        ws.centerOnBlock(block.id, true);
+      } finally { Blockly.Events.setGroup(false); }
+    };
+  addApiBlock.current = addBlock;
+
   useImperativeHandle(ref, () => ({
     snapshot: () => {
       const ws = workspace.current;
@@ -154,26 +179,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       finally { Blockly.Events.setGroup(false); }
     },
     showDetails: (id) => { void reveal(id, true); },
-    addBlock: (type, fields) => {
-      const ws = workspace.current;
-      if (!ws || readOnly) return;
-      const definition = getBlockDefinition(type);
-      if (!definition) return;
-      const action = createAction(type, fields);
-      const wrapped = actionsToWorkspace([action]) as { blocks: { blocks: Blockly.serialization.blocks.State[] } };
-      const state = wrapped.blocks.blocks[0].next?.block;
-      if (!state) return;
-      Blockly.Events.setGroup(true);
-      try {
-        const block = Blockly.serialization.blocks.append(state, ws, { recordUndo: true }) as Blockly.BlockSvg;
-        const start = ws.getTopBlocks(false).find((item) => item.type === START_TYPE);
-        let last = start;
-        while (last?.getNextBlock()) last = last.getNextBlock()!;
-        if (last?.nextConnection && block.previousConnection) last.nextConnection.connect(block.previousConnection);
-        block.select();
-        ws.centerOnBlock(block.id, true);
-      } finally { Blockly.Events.setGroup(false); }
-    },
+    addBlock,
   }));
 
   useEffect(() => {
@@ -314,11 +320,13 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
         <input ref={search} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索积木，如：圆、公式、移动" aria-label="搜索积木" />
         {query && <button type="button" aria-label="清空搜索" onClick={() => setQuery('')}><X size={14} /></button>}
       </div>
+      <button type="button" className="av-api-open" disabled={readOnly} onClick={()=>setApiOpen(true)} title="按名称查找 Manim 的类、方法和属性">API 浏览器</button>
       <div className="av-block-history">
         <button type="button" aria-label="撤销积木修改" title="撤销（Ctrl / ⌘ Z）" onClick={() => workspace.current?.undo(false)} disabled={readOnly}><Undo2 size={16} /></button>
         <button type="button" aria-label="重做积木修改" title="重做（Ctrl / ⌘ Shift Z）" onClick={() => workspace.current?.undo(true)} disabled={readOnly}><Redo2 size={16} /></button>
       </div>
     </div>
+    {apiOpen && <ApiBrowser onAdd={type=>addApiBlock.current(type)} onClose={()=>setApiOpen(false)}/>}
     <div className="av-block-canvas" ref={host} />
     <div className="av-block-footer">
       <span className={error || stats.detached ? 'av-block-status is-warning' : 'av-block-status'}>

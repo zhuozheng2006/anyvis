@@ -95,7 +95,7 @@ def render(job_dir):
     if native_format == "webm" and not has_encoder(av, "libvpx-vp9"):
         raise RuntimeError("当前 Python 缺少 H.264 和 VP9 编码器。请选择含视频编码支持的 Manim 环境。")
     config = {
-        "renderer": "cairo", "pixel_width": int(settings["width"]), "pixel_height": int(settings["height"]),
+        "renderer": settings.get("renderer", "cairo"), "pixel_width": int(settings["width"]), "pixel_height": int(settings["height"]),
         "frame_width": 8 * settings.get("frameAspect", settings["width"] / settings["height"]), "frame_height": 8,
         "frame_rate": fps, "background_color": settings["background"],
         "media_dir": str(job_dir / "media"), "output_file": "render." + native_format,
@@ -121,7 +121,12 @@ def render(job_dir):
                      message=f"已渲染 {float(self.time):.1f} 秒")
                 return result
 
-        scene = InstrumentedScene()
+        try:
+            scene = InstrumentedScene()
+        except (ImportError, RuntimeError) as error:
+            if config["renderer"] == "opengl":
+                raise RuntimeError("本机 OpenGL 离屏渲染不可用。可切回 Cairo 使用普通图形，或导出 Python 在支持 OpenGL 的 Manim 环境运行。详情: " + str(error)) from error
+            raise
         # Publish actual Cairo frames at a bounded rate while the video is still
         # rendering. Atomic replacement prevents the UI reading a half-written PNG.
         original_render = scene.renderer.render

@@ -7,6 +7,7 @@ export interface RenderJob {
   blockId?: string; revision?: string;
 }
 export interface EngineHealth {
+  authoringProtocol?: number;
   available: boolean; version?: string; python?: string; latex?: boolean;
   codec?: string; message?: string; error?: string;
   [key: string]: unknown;

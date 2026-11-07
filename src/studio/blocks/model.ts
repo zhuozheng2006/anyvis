@@ -1,11 +1,12 @@
 import * as Blockly from 'blockly/core';
 import * as Chinese from 'blockly/msg/zh-hans';
-import { BLOCK_CATALOG, getBlockDefinition } from '../core/catalog';
+import { BLOCK_CATALOG, CURATED_BLOCK_CATALOG, getBlockDefinition } from '../core/catalog';
 import type { Action, BlockDefinition, FieldDefinition, FieldValue, Project } from '../core/types';
 import { planObjectRename } from './rename';
 import { ColourField } from './colour-field';
 import { MultilineCodeField } from './multiline-code-field';
 import { createMatrixField } from './matrix-field';
+import { ApiValueField } from './api-value-field';
 import { ObjectListField } from './object-list-field';
 
 export const START_TYPE = 'anyvis2_start';
@@ -69,7 +70,7 @@ export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[
       const definition = getBlockDefinition(block.type.slice(PREFIX.length));
       const name = block.getFieldValue('name');
       if (definition?.createsObject && typeof name === 'string' && name) {
-        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: block.id, connected: connected.has(block.id), enabled: enabled.has(block.id) });
+        objects.set(name, { name, kind: definition.apiId && ['play','animate'].includes(String(block.getFieldValue('mode'))) ? 'animation' : definition.objectKind || 'mobject', blockId: block.id, connected: connected.has(block.id), enabled: enabled.has(block.id) });
       }
     }
   } else {
@@ -78,7 +79,7 @@ export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[
       const definition = getBlockDefinition(action.type);
       const name = action.fields.name;
       if (definition?.createsObject && typeof name === 'string' && name) {
-        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: action.id, connected: true, enabled: true });
+        objects.set(name, { name, kind: definition.apiId && ['play','animate'].includes(String(action.fields.mode)) ? 'animation' : definition.objectKind || 'mobject', blockId: action.id, connected: true, enabled: true });
       }
     });
   }
@@ -134,6 +135,7 @@ function referenceLabel(input: Blockly.FieldDropdown, definition: FieldDefinitio
     const available = [...referenceMap(input).values()].some(object => compatibleReference(input, definition, object));
     return `${available ? '选择' : '先创建'}${expectedKind(definition)}`;
   }
+  if (definition.name === 'receiver' && ['@scene','@camera','@frame','@renderer'].includes(value)) return value;
   const object = referenceMap(input).get(value);
   if (!object) return `⚠ 已缺失：${value}`;
   if (!object.connected) return `⚠ 未连接：${value}`;
@@ -148,6 +150,7 @@ function referenceOptions(input: Blockly.FieldDropdown, definition: FieldDefinit
   const cached = referenceMenus.get(input);
   if (cached?.objects === objects && cached.value === current && cached.sourceId === sourceId) return cached.options;
   const options: [string, string][] = [[referenceLabel(input, definition, ''), '']];
+  if (definition.name === 'receiver') for (const name of ['@scene','@camera','@frame','@renderer']) options.push([name,name]);
   for (const object of objects.values()) {
     if (compatibleReference(input, definition, object)) options.push([object.name, object.name]);
   }
@@ -200,6 +203,10 @@ export function applyWorkspaceRename(workspace: Blockly.Workspace, event: Blockl
 }
 
 function makeField(field: FieldDefinition, definition: BlockDefinition): Blockly.Field {
+  if (field.type === 'api-value') {
+    const input: ApiValueField = new ApiValueField(field, () => [...referenceMap(input).values()].filter(o => o.connected && o.enabled && o.blockId !== input.getSourceBlock()?.id).map(o => o.name));
+    return input;
+  }
   if (field.reference === 'object-list') {
     const input: ObjectListField = new ObjectListField(String(field.default), () => [...referenceMap(input).values()]
       .filter(object => compatibleReference(input, field, object)).map(object => object.name));
@@ -227,6 +234,11 @@ function makeField(field: FieldDefinition, definition: BlockDefinition): Blockly
 }
 
 function conciseFields(definition: BlockDefinition): Set<string> {
+  if (definition.apiId) {
+    const keys=definition.fields.filter(f=>['name','receiver','mode'].includes(f.name)||f.apiParameter?.required||f.apiParameter?.kind==='var_positional').map(f=>f.name);
+    for (const f of definition.fields) if(keys.length<5 && !keys.includes(f.name) && f.apiParameter && !['var_keyword','var_positional'].includes(f.apiParameter.kind)) keys.push(f.name);
+    return new Set(keys);
+  }
   const names = definition.fields.map((field) => field.name);
   // Catalog order describes the object: keep a formula's LaTeX, a matrix's
   // values, or a surface's functions visible before generic placement fields.
@@ -457,7 +469,7 @@ export function createToolbox(query = ''): Blockly.utils.toolbox.ToolboxDefiniti
   const normalized = query.toLocaleLowerCase().trim();
   const definitions = normalized ? BLOCK_CATALOG.filter((definition) => [
     definition.label, definition.type, definition.category, definition.tooltip, ...(definition.keywords ?? []),
-  ].join(' ').toLocaleLowerCase().includes(normalized)) : BLOCK_CATALOG;
+  ].join(' ').toLocaleLowerCase().includes(normalized)).slice(0, 60) : CURATED_BLOCK_CATALOG;
   const categories = [...new Set(definitions.map((definition) => definition.category))];
   if (normalized) return { kind: 'categoryToolbox', contents: [{
     kind: 'category', name: definitions.length ? `搜索 · ${definitions.length}` : '没有找到', colour: '#635bdf',

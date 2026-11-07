@@ -21,8 +21,14 @@ afterEach(() => { for (const ws of workspaces.splice(0)) ws.dispose(); });
 describe('Studio Blockly model', () => {
   it('preserves every catalog field and selected default through a Blockly round trip', () => {
     // A stale dropdown default or hidden numeric field must not silently alter a scene.
-    const actions = BLOCK_CATALOG.map((definition) => createAction(definition.type));
-    expect(workspaceToActions(workspace(actions))).toEqual(actions);
+    // Projects have a 500-block limit. Test every entry in bounded workspaces,
+    // rather than constructing an invalid >2,000-block recursive Blockly stack.
+    for (let i=0; i<BLOCK_CATALOG.length; i+=150) {
+      const actions=BLOCK_CATALOG.slice(i,i+150).map(d=>createAction(d.type));
+      const ws=workspace(actions);
+      expect(workspaceToActions(ws)).toEqual(actions);
+      workspaces.splice(workspaces.indexOf(ws),1); ws.dispose();
+    }
   });
 
   it('preserves named references, nested actions and explicitly separated parallel branches', () => {

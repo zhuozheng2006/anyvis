@@ -1,264 +1,80 @@
-# Manim API 入口覆盖审计
+# Manim API 覆盖：入口、参数与运行证据
 
-本报告由本机 **Manim CE 0.20.1 / Python 3.12.8** 的只读 introspection 与当前积木目录生成。它不是“完整支持 Manim”的声明。
+AnyVis 0.3.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有限清单的 **1,660 / 1,660 个入口均已接入**；扩展到公开子模块和自定义描述符后，共有 **2,293 个类、函数、方法或属性入口**，每一项都有独立的积木类型和参数字段。
 
-## 当前计数
+这完成了该版本已发现清单的入口接入，**不等于全 Manim 功能或所有参数组合已完成运行验收**。特别是 0.22.1 尚未验证，OpenGL 在本机受环境限制，不能将“可以生成调用”写成“已经渲染通过”。
 
-“有原生入口”只表示至少一个积木使用了对应公开 API；不表示全部参数、Python 值、组合方式或渲染器行为都已支持。
+## 实际数量与核查
 
-| 类别 | 已发现 | 有原生积木入口 | 有明确 API 渲染证据 | 有明确行为证据 |
-| --- | ---: | ---: | ---: | ---: |
-| 公开类（去别名） | 253 | 65 | 18 | 0 |
-| 公开函数（去别名） | 146 | 1 | 0 | 0 |
-| 公开可调用成员（按实际声明类去重） | 1214 | 29 | 1 | 0 |
-| 公开属性 | 47 | 1 | 0 | 0 |
+| 项目 | 数量 | 核查方式 |
+| --- | ---: | --- |
+| 类 | 331 | 真实 Python 对象解析 |
+| 函数 | 267 | 真实 Python 对象解析 |
+| 实例方法 | 1,473 | 按实际声明类去重，继承路径可检索 |
+| 类方法 / 静态方法 | 18 / 33 | 保留绑定语义 |
+| 属性及自定义描述符 | 171 | 其中 128 项提供写入方式 |
+| 参数输入字段 | 9,136 | 原签名 + 未被中间构造器占用的继承参数 |
+| 常量及公开类数据 | 2,765 | 全部真实解析成功 |
+| 可核对的调用签名 | 2,117 | 参数名、种类、必填状态逐项核对 |
+| 没有可反射签名的类 | 5 | 提供显式位置参数列表和命名参数字典，不伪造签名 |
+| 旧清单缺失入口 | 0 | 与固定 gzip 库存逐项比较 |
+| 本轮原生行为断言涉及的独立 API | 27 | 真实 Manim 对象状态、时序、回调及画面像素断言 |
 
-顶层导出名为 254 个类名、146 个函数名；别名去重后见上表。目录共有 97 种积木，其中 94 种带原生 API 映射、2 种为编排语言控制、1 种为代码扩展。
+[机器可读核查报告](research/api-registry-verification.json) · [完整运行时目录](../src/studio/core/api-registry.json) · [以前的常用积木审计](research/curated-api-coverage.md)
 
-此前库存的直接声明成员为 1064 项。本次补充沿公开类 MRO 可访问、但声明者未被顶层直接导出的成员 197 项，统一按真实声明者去重。此前库存计数对比：无变化。
+## 使用方式
 
-未解析的积木 API 映射：0；未解析运行时 API：0。未提供原生映射的普通积木：无。
+默认工具箱仍保留 97 个常用中文积木。点击工具栏的 **API 浏览器**，搜索类或方法（例如 `Circle`、`Axes.plot`、`Mobject.rotate`），加入积木，再点击字段选择参数值。搜索继承方法时会定位到实际声明者；同一个方法不因被多个子类继承而重复计算。
 
-## 分母与证据口径
+参数编辑器支持数字、文字、调色板和自由选色、布尔值、对象下拉、多对象勾选、常量、函数、向量、标量函数与曲线/曲面函数。列表、字典和复杂回调也可使用结构化 JSON；这是高级功能，目前尚未全部做成可嵌套的可视值积木。
 
-1. 类与函数取自 `manim` 包顶层公开导出，定义模块必须属于 Manim；同一对象的不同导出名不重复计数。
-2. 方法与属性沿导出类的真实 MRO 解析，例如 `Axes.plot` 归属 `CoordinateSystem.plot`。同一继承方法不会因出现在多种几何类上而重复增加覆盖数；类方法、静态方法和属性均保留类型与归属。
-3. 每个条目保存签名、参数、默认值描述、模块、声明类及当前积木映射。所有未映射 API 在 JSON 的 `unmapped_api_ids` 中逐项列出，其完整描述保留在 `api_entries`。
-4. 这仍是边界明确的发现库存：尚未穷尽未在包顶层导出的公开模块 API、动态生成成员、C 层描述符、枚举或普通类数据属性。没有把这些未知项伪装成已排除的无用 API，也不据此给出“完整覆盖百分比”。
-5. `inputs_constructible` 和 `parameter_coverage` 保持 `not_audited`，直到逐 API 的参数适配审计完成。代表积木视频不会自动证明它映射的所有 API 参数路径都被运行过。
-6. `render_verified` 只接受明确列出 `api_refs`、引擎版本匹配的原生渲染证据；最后帧冒烟与连续视频分开记录。编译测试不能充当渲染测试。`behavior_verified` 另需状态、身份或时序断言证据。
-7. Python 扩展不计入原生入口；序列和重复属于 AnyVis 编排语言，不能靠给它们附上任意 Manim 名称抬高计数。
+可选参数留空表示使用 Manim 默认值，与 `0`、`false`、空字符串和 `null` 分开。每个 API 的结果可以命名，再被下一块积木引用。执行方式包括保存结果、显示图形、播放动画、动画改变对象，以及可写属性的赋值。`@scene`、`@camera`、二维场景的 `@frame`、`@renderer` 表示当前场景组件。
 
-## 可复现命令
+“参数值 / 回调函数”积木可保存值、函数或调用结果；“临时设置容器”支持 `tempconfig` 等上下文管理器。复杂回调可连接受控的函数/方法调用、属性读取、索引、切片、比较和条件分支；没有把用户文本当 Python 执行。仍可使用单独的 Python 扩展，但不将它计入原生覆盖。
 
-在要审计的 Manim 环境中运行；脚本不会安装依赖、访问网络、启动服务或渲染作品。
+构造器通过 `**kwargs` 转发父类参数时，额外参数是否适用仍受 Manim 本身约束。生成器会排除被中间构造器明确占用的父类参数，例如 `FadeOut` 应使用 `mobjects` 列表，不能用父类 `Animation.mobject` 代替。
+
+## 结构化参数示例
+
+这些对象作为字段的 JSON 字符串保存；通常由参数编辑器或 AI 生成。
+
+```json
+{"$ref":"圆"}
+{"$constant":"BLUE"}
+{"$array":[1,0,0]}
+{"$lambda":{"params":["x"],"body":{"$expr":"sin(x)"}}}
+{"$lambda":{"params":["u","v"],"body":{"$array":[{"$expr":"u"},{"$expr":"v"},{"$expr":"sin(u)*cos(v)"}]}}}
+{"$call":{"api":"Mobject.rotate","receiver":{"$ref":"圆"},"args":[0.5]}}
+{"$property":{"api":"Mobject.width","receiver":{"$ref":"圆"}}}
+{"$if":[{"$op":[">",2,1]},"成立","不成立"]}
+```
+
+还支持 `$tuple`、`$dict`（整数/元组键）、`$complex`、`$index`、`$slice`、`$local`、`$not` 和返回函数的调用。运算符、API 名称与属性均来自明确清单；未知项在编译时拒绝。结构深度、节点数和字段大小有界，无法直接表达任意 Python 对象、生成器或自定义子类定义。
+
+## 安全与 AI 创作
+
+文件、配置、公式工具、字体、渲染器等敏感 API 保留本机权限标记。AI 可以生成结构化 API 项目，但这类项目不会自动渲染，仍须先检查生成源码并显式启用；原始 Python 扩展不能通过 AI 项目导入绕过限制。AI 提示词只包含常用积木、当前项目已使用的 API 和需求相关条目，避免把整个数千项清单塞进每一次请求。
+
+## 已运行证据与剩余边界
+
+- 2,293 个入口和 2,765 个常量全部解析成功；2,117 项签名匹配，属性写入能力也经过核对。
+- 原生集成测试覆盖构造器、可变参数、位置专用/关键字专用参数、属性读写、类方法、返回值、曲线回调、updater、动态重绘、动画组合、上下文恢复及真实画面像素。测试中的固定断言代码只用于测量，不计为原生 API 实现。
+- [参数曲线工程与视频](../examples/api/README.md)由 21 个可编辑积木生成，实际视频 1280×720、24 fps、565 帧、23.54 秒；所有帧解码通过，并人工查看关键帧。
+- 533 个入口专属于 OpenGL，已接入渲染器选择、编译、导出和 worker 路由，但本机 `glcontext` 无法导入 `egl`，**没有通过 OpenGL 原生渲染验收**。切换渲染器不能自动解决宿主环境缺少的后端。
+- `manim.utils.testing.frames_comparison` 因当前环境没有 pytest 而无法导入，明确记录为不可用模块。CLI 入口、Sphinx 文档构建、私有名称和仅在运行时生成的动态成员不在该清单范围内。
+- 大部分 API 尚无逐项动画视觉验收；原生断言不等于所有参数组合、所有平台和所有渲染器均验证。复杂回调的纯可视嵌套编辑、自定义 Python 类型，以及 0.22.1 的新增与变更 API 仍需继续工作。
+
+## 复现
+
+在已经安装 Manim 0.20.1 的 Python 环境运行，不会自动安装或修改环境：
 
 ```sh
-conda activate manim
-python scripts/audit-manim-coverage.py --expected-version 0.20.1 --evidence docs/research/native-blocks-batch-1-evidence.json
+python scripts/generate-api-registry.py --check
+npm test
+ANYVIS_API_REPORT=artifacts/api/native-evidence.json npm run test:api-native
+python scripts/verify-api-registry.py --native-report artifacts/api/native-evidence.json
+npm run build
+npm run test:desktop
 ```
 
-Node 需要支持直接加载 TypeScript。也可以先导出目录 JSON，再通过 `--catalog catalog.json` 输入；输入支持积木数组或 `{"blocks": [...], "runtimeApis": [...]}`。输出位置由 `--output` 和 `--markdown` 指定。默认清单为 `.json.gz`，gzip 时间戳固定为 0；显式指定 `--output path.json` 则输出普通 JSON。`--expected-version` 不匹配即停止，防止把另一个安装环境的结果混入当前记录。
-
-压缩清单保留全部 JSON 数据，可解压后查看：
-
-```sh
-gzip -dc docs/research/manim-ce-0.20.1-coverage.json.gz > docs/research/manim-ce-0.20.1-coverage.json
-```
-
-也可直接用 Python 读取，无需另建解压文件：
-
-```python
-import gzip, json
-with gzip.open('docs/research/manim-ce-0.20.1-coverage.json.gz', 'rt', encoding='utf-8') as stream:
-    report = json.load(stream)
-print(len(report['api_entries']))
-```
-
-目录元数据 SHA-256：`a1d47bf9d94e2b1e9710c3e9c4aefba04f42f503ab9486a81b3b834f6bc817b0`。报告不包含生成时间、私有安装路径或进程内存地址，输入不变时重复生成应字节一致。
-
-## 验证证据
-
-| 证据 | 类型 | 渲染器 | 积木条目数 | 显式 API 条目数 |
-| --- | --- | --- | ---: | ---: |
-| `native-blocks-batch-1-animation` | native_video | cairo | 11 | 11 |
-| `native-blocks-batch-1-geometry` | native_video | cairo | 8 | 8 |
-
-## 各模块尚未覆盖的入口
-
-| 模块 | 发现条目 | 已有入口 | 尚无入口 |
-| --- | ---: | ---: | ---: |
-| `manim._config` | 1 | 0 | 1 |
-| `manim.animation.animation` | 36 | 1 | 35 |
-| `manim.animation.changing` | 5 | 1 | 4 |
-| `manim.animation.composition` | 18 | 1 | 17 |
-| `manim.animation.creation` | 31 | 6 | 25 |
-| `manim.animation.fading` | 6 | 2 | 4 |
-| `manim.animation.growing` | 8 | 4 | 4 |
-| `manim.animation.indication` | 17 | 7 | 10 |
-| `manim.animation.movement` | 10 | 1 | 9 |
-| `manim.animation.numbers` | 4 | 0 | 4 |
-| `manim.animation.rotation` | 4 | 1 | 3 |
-| `manim.animation.specialized` | 1 | 0 | 1 |
-| `manim.animation.speedmodifier` | 9 | 0 | 9 |
-| `manim.animation.transform` | 45 | 4 | 41 |
-| `manim.animation.transform_matching_parts` | 8 | 1 | 7 |
-| `manim.animation.updaters.mobject_update_utils` | 8 | 1 | 7 |
-| `manim.animation.updaters.update` | 6 | 0 | 6 |
-| `manim.camera.camera` | 54 | 0 | 54 |
-| `manim.camera.mapping_camera` | 9 | 0 | 9 |
-| `manim.camera.moving_camera` | 9 | 0 | 9 |
-| `manim.camera.multi_camera` | 6 | 0 | 6 |
-| `manim.camera.three_d_camera` | 28 | 0 | 28 |
-| `manim.constants` | 3 | 0 | 3 |
-| `manim.mobject.frame` | 3 | 0 | 3 |
-| `manim.mobject.geometry.arc` | 46 | 7 | 39 |
-| `manim.mobject.geometry.boolean_ops` | 4 | 0 | 4 |
-| `manim.mobject.geometry.labeled` | 4 | 0 | 4 |
-| `manim.mobject.geometry.line` | 33 | 3 | 30 |
-| `manim.mobject.geometry.polygram` | 15 | 6 | 9 |
-| `manim.mobject.geometry.shape_matchers` | 6 | 2 | 4 |
-| `manim.mobject.geometry.tips` | 14 | 0 | 14 |
-| `manim.mobject.graph` | 10 | 1 | 9 |
-| `manim.mobject.graphing.coordinate_systems` | 71 | 7 | 64 |
-| `manim.mobject.graphing.functions` | 11 | 1 | 10 |
-| `manim.mobject.graphing.number_line` | 19 | 1 | 18 |
-| `manim.mobject.graphing.probability` | 17 | 1 | 16 |
-| `manim.mobject.graphing.scale` | 8 | 0 | 8 |
-| `manim.mobject.logo` | 4 | 0 | 4 |
-| `manim.mobject.matrix` | 15 | 1 | 14 |
-| `manim.mobject.mobject` | 164 | 13 | 151 |
-| `manim.mobject.opengl.dot_cloud` | 4 | 0 | 4 |
-| `manim.mobject.opengl.opengl_mobject` | 185 | 0 | 185 |
-| `manim.mobject.opengl.opengl_point_cloud_mobject` | 20 | 0 | 20 |
-| `manim.mobject.svg.brace` | 14 | 1 | 13 |
-| `manim.mobject.svg.svg_mobject` | 23 | 0 | 23 |
-| `manim.mobject.table` | 22 | 0 | 22 |
-| `manim.mobject.text.code_mobject` | 2 | 0 | 2 |
-| `manim.mobject.text.numbers` | 8 | 1 | 7 |
-| `manim.mobject.text.tex_mobject` | 15 | 1 | 14 |
-| `manim.mobject.text.text_mobject` | 9 | 1 | 8 |
-| `manim.mobject.three_d.polyhedra` | 10 | 0 | 10 |
-| `manim.mobject.three_d.three_d_utils` | 8 | 0 | 8 |
-| `manim.mobject.three_d.three_dimensions` | 35 | 4 | 31 |
-| `manim.mobject.types.image_mobject` | 14 | 0 | 14 |
-| `manim.mobject.types.point_cloud_mobject` | 34 | 0 | 34 |
-| `manim.mobject.types.vectorized_mobject` | 120 | 4 | 116 |
-| `manim.mobject.value_tracker` | 8 | 3 | 5 |
-| `manim.mobject.vector_field` | 17 | 0 | 17 |
-| `manim.plugins.plugins_flags` | 2 | 0 | 2 |
-| `manim.renderer.cairo_renderer` | 12 | 0 | 12 |
-| `manim.scene.moving_camera_scene` | 2 | 0 | 2 |
-| `manim.scene.scene` | 60 | 3 | 57 |
-| `manim.scene.scene_file_writer` | 28 | 0 | 28 |
-| `manim.scene.section` | 5 | 0 | 5 |
-| `manim.scene.three_d_scene` | 18 | 5 | 13 |
-| `manim.scene.vector_space_scene` | 43 | 0 | 43 |
-| `manim.scene.zoomed_scene` | 6 | 0 | 6 |
-| `manim.utils.bezier` | 14 | 0 | 14 |
-| `manim.utils.color.core` | 49 | 0 | 49 |
-| `manim.utils.commands` | 3 | 0 | 3 |
-| `manim.utils.config_ops` | 3 | 0 | 3 |
-| `manim.utils.debug` | 2 | 0 | 2 |
-| `manim.utils.file_ops` | 13 | 0 | 13 |
-| `manim.utils.images` | 4 | 0 | 4 |
-| `manim.utils.iterables` | 13 | 0 | 13 |
-| `manim.utils.paths` | 4 | 0 | 4 |
-| `manim.utils.rate_functions` | 17 | 0 | 17 |
-| `manim.utils.simple_functions` | 3 | 0 | 3 |
-| `manim.utils.sounds` | 1 | 0 | 1 |
-| `manim.utils.space_ops` | 30 | 0 | 30 |
-| `manim.utils.tex` | 8 | 0 | 8 |
-| `manim.utils.tex_templates` | 2 | 0 | 2 |
-
-## 当前积木到公开 API 的映射
-
-| 积木类型 | 中文名称 | 映射的公开 API |
-| --- | --- | --- |
-| `add` | 直接显示 | `Scene.add` |
-| `ambient_rotation` | 镜头自动环绕 | `ThreeDScene.begin_ambient_camera_rotation`、`ThreeDScene.stop_ambient_camera_rotation` |
-| `animate_value` | 改变参数 | `Mobject.animate`、`ValueTracker.set_value` |
-| `annular_sector` | 环形扇区 | `AnnularSector` |
-| `annulus` | 圆环 | `Annulus` |
-| `apply_matrix` | 线性变换 | `Mobject.animate`、`Mobject.apply_matrix` |
-| `arc` | 圆弧 | `Arc` |
-| `area` | 曲线下方面积 | `Axes.get_area` |
-| `arrange` | 排列组合 | `Mobject.arrange` |
-| `arrow` | 箭头 | `Arrow` |
-| `axes` | 坐标系 | `Axes` |
-| `bar_chart` | 柱状图 | `BarChart` |
-| `brace` | 大括号标注 | `Brace` |
-| `camera` | 三维镜头 | `ThreeDScene.move_camera`、`ThreeDScene.set_camera_orientation` |
-| `circle` | 圆 | `Circle` |
-| `circumscribe` | 圈出重点 | `Circumscribe` |
-| `code` | Python 扩展 | 扩展，不计覆盖 |
-| `color` | 改变颜色 | `Mobject.animate`、`Mobject.set_color` |
-| `copy` | 复制对象 | `Mobject.copy` |
-| `create` | 绘制对象 | `Create` |
-| `cube` | 立方体 | `Cube` |
-| `cylinder` | 圆柱 | `Cylinder` |
-| `dashed_line` | 虚线 | `DashedLine` |
-| `decimal` | 数字 | `DecimalNumber` |
-| `dot` | 点 | `Dot` |
-| `draw_border` | 描边并填充 | `DrawBorderThenFill` |
-| `dynamic_dot` | 随参数运动的点 | `Axes.c2p`、`Dot`、`ValueTracker.get_value`、`always_redraw` |
-| `dynamic_line` | 随参数变化的线 | `Axes.c2p`、`Line`、`ValueTracker.get_value`、`always_redraw` |
-| `dynamic_number` | 显示参数数值 | `DecimalNumber`、`ValueTracker.get_value`、`always_redraw` |
-| `dynamic_plot` | 随参数变化的函数 | `Axes.plot`、`ValueTracker.get_value`、`always_redraw` |
-| `ellipse` | 椭圆 | `Ellipse` |
-| `fade_in` | 淡入 | `FadeIn` |
-| `fade_out` | 淡出 | `FadeOut` |
-| `fixed_in_frame` | 固定到屏幕 | `ThreeDScene.add_fixed_in_frame_mobjects` |
-| `flash` | 闪光强调 | `Flash` |
-| `focus_on` | 聚焦强调 | `FocusOn` |
-| `follow` | 文字跟随对象 | `Mobject.add_updater`、`Mobject.get_center`、`Mobject.move_to` |
-| `formula` | 数学公式 | `MathTex` |
-| `function_plot` | 函数图像 | `Axes.plot` |
-| `graph` | 图结构 | `Graph` |
-| `graph_highlight` | 强调图顶点 | `Mobject.animate`、`Mobject.set_color`、`VMobject.set_fill`、`VMobject.set_stroke` |
-| `group` | 组合对象 | `VGroup` |
-| `grow` | 从中心生长 | `GrowFromCenter` |
-| `grow_from_edge` | 从边缘长出 | `GrowFromEdge` |
-| `grow_from_point` | 从指定位置长出 | `GrowFromPoint` |
-| `indicate` | 突出强调 | `Indicate` |
-| `line` | 线段 | `Line` |
-| `matching_tex` | 匹配公式变形 | `TransformMatchingTex` |
-| `matrix` | 矩阵 | `Matrix` |
-| `move` | 移动到 | `Mobject.animate`、`Mobject.move_to` |
-| `next_to` | 放在对象旁 | `Mobject.next_to` |
-| `number_line` | 数轴 | `NumberLine` |
-| `opacity` | 改变透明度 | `Mobject.animate`、`VMobject.set_opacity` |
-| `parallel` | 同时执行 | `AnimationGroup` |
-| `parametric_curve` | 参数曲线 | `ParametricFunction` |
-| `passing_flash` | 流动高亮 | `ShowPassingFlash` |
-| `path_move` | 沿路径运动 | `MoveAlongPath` |
-| `plane` | 网格坐标系 | `NumberPlane` |
-| `polygon` | 正多边形 | `RegularPolygon` |
-| `rectangle` | 矩形 | `Rectangle` |
-| `remove` | 立即移除 | `Scene.remove` |
-| `repeat` | 重复执行 | 编排语言控制 |
-| `replacement_transform` | 替换为另一个对象 | `ReplacementTransform` |
-| `reveal_group` | 逐个显示组合成员 | `ShowIncreasingSubsets` |
-| `riemann` | 黎曼矩形 | `Axes.get_riemann_rectangles` |
-| `rotate` | 旋转 | `Rotate` |
-| `rounded_rectangle` | 圆角矩形 | `RoundedRectangle` |
-| `scale` | 缩放 | `Mobject.animate`、`Mobject.scale` |
-| `sector` | 扇形 | `Sector` |
-| `sequence` | 一组步骤 | 编排语言控制 |
-| `set_layer` | 设置叠放层级 | `Mobject.set_z_index` |
-| `set_position` | 立即定位 | `Mobject.move_to` |
-| `set_style` | 设置样式 | `Mobject.set_color`、`VMobject.set_fill`、`VMobject.set_stroke` |
-| `shift` | 移动一段距离 | `Mobject.animate`、`Mobject.shift` |
-| `shrink` | 缩小到中心 | `ShrinkToCenter` |
-| `sphere` | 球体 | `Sphere` |
-| `spin_in` | 旋转入场 | `SpinInFromNothing` |
-| `square` | 正方形 | `Square` |
-| `star` | 星形 | `Star` |
-| `stop_updaters` | 停止自动更新 | `Mobject.clear_updaters` |
-| `surface` | 参数曲面 | `Surface` |
-| `surrounding_rectangle` | 边框标注 | `SurroundingRectangle` |
-| `tangent` | 切线 | `Axes.c2p`、`Line`、`always_redraw` |
-| `text` | 文字 | `Text` |
-| `three_axes` | 三维坐标系 | `ThreeDAxes` |
-| `trace` | 留下运动轨迹 | `Mobject.get_center`、`TracedPath` |
-| `tracker` | 声明参数 | `ValueTracker` |
-| `transform` | 变成另一个形状 | `Transform` |
-| `transform_from_copy` | 从副本变形 | `TransformFromCopy` |
-| `triangle` | 三角形 | `Triangle` |
-| `type_text` | 逐字显示文字 | `AddTextLetterByLetter` |
-| `uncreate` | 擦除 | `Uncreate` |
-| `underline` | 下划线标注 | `Underline` |
-| `wait` | 等待 | `Scene.wait`、`Wait` |
-| `wave` | 波浪起伏 | `ApplyWave` |
-| `wiggle` | 轻轻摇晃 | `Wiggle` |
-| `write` | 书写对象 | `Write` |
-
-## 独立运行时 API
-
-编译器或运行时使用的 9 个 API 单独记录，不能增加“有原生积木入口”的数字：`MovingCameraScene`、`Scene`、`Scene.play`、`ThreeDScene`、`linear`、`rate_functions.ease_in_sine`、`rate_functions.ease_out_sine`、`smooth`、`there_and_back`。模块公开但未顶层导出的函数保留签名并标记 `inventory_scope: false`，不混入上表的顶层 API 分母。
-
-## 后续验收方向
-
-先从 `unmapped_api_ids` 中筛选创作 API，逐项记录用途和排除理由，再补对应积木、可构造参数、错误定位、行为对照与渲染器验证。自动清单提供检查入口，无法代替这一过程。增加几个常用积木只是进度，不代表完整 API 工作已经完成。
-
-完整机器清单：[manim-ce-0.20.1-coverage.json.gz](research/manim-ce-0.20.1-coverage.json.gz)。
+Windows 可先在 PowerShell 设置 `$env:ANYVIS_API_REPORT='artifacts/api/native-evidence.json'`。单独运行 `npm run api:verify` 只验证入口与签名，不附加尚未执行的原生证据。旧的 `audit-manim-coverage.py` 仍核查 97 个常用积木，默认写入 `docs/research/curated-api-coverage.md`，不会覆盖本报告。

@@ -14,6 +14,7 @@ export function outlineRows(actions: Action[], parent = '', depth = 0, context?:
 }
 
 export function stepTiming(action: Action): string {
+  if(action.type.startsWith('api_') && !['play','animate'].includes(String(action.fields.mode))) return action.fields.mode==='show'?'直接显示':action.fields.mode==='set'?'修改属性':'执行 / 保存';
   if (action.fields.appear === 'hidden') return '暂不显示';
   if (action.fields.appear === 'none') return '直接显示';
   if (action.type === 'repeat') return `${action.fields.count} 次`;
