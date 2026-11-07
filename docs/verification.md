@@ -15,7 +15,7 @@
 | 素材可移植 | 浏览器下载 ZIP，检查项目 + 2 个原始素材 + Python 完整；重新导入后素材、参数和真实预览保留 |
 | 构建 | TypeScript/Vite 与桌面资源准备通过；Studio 大分块警告仍存在 |
 
-浏览器实测发现并修复了隐藏 Blockly 清空时间轴选择、拖动时检查器改变轨道高度、参数下拉 label/value 反转等问题。Gemini 3.8 Flash High 协作实现对象/素材管理与差分 fixture；集成后由主代理复核并测试。当前本机缺少已下载的 Electron 可执行文件，因此本轮本机未完成 Electron UI 冒烟，v0.4.0 提交 `6e105e0` 的三平台 CI 均已完成，含最终 ASAR 启动；Intel Mac 仅构建、未实际运行。
+浏览器实测发现并修复了隐藏 Blockly 清空时间轴选择、拖动时检查器改变轨道高度、参数下拉 label/value 反转等问题。Gemini 3.8 Flash High 协作实现对象/素材管理与差分 fixture；集成后由主代理复核并测试。当前本机缺少已下载的 Electron 可执行文件，因此本轮本机未完成 Electron UI 冒烟，v0.4.0 配乐提交 `4c544f7` 的三平台 CI 均已完成，含最终 ASAR 启动；Intel Mac 仅构建、未实际运行。
 
 协议升级为 authoringProtocol=4；启动器开发模式监视服务源码，新旧协议不符时提示重启。上传位图支持整体移动/缩放/旋转/透明度，角色的独立表情与肢体需要分层或矢量部件。
 
@@ -26,11 +26,13 @@
 
 ### v0.4.0 后续修复与独立 CI
 
-默认配乐支持本地生成舒缓钢琴、无配乐及音量调节。新作品默认钢琴，偏好可记忆；已有/导入工程保留设置。时间轴显示自动铺满的配乐轨，画面设置与对象管理器均可进入。生成器的确定性、毫秒长度、峰值、首尾淡化及 600 秒上限通过；4 秒真实视频为 96 帧，钢琴音轨 RMS 0.0158、峰值 0.0756，关闭后无音频流。浏览器完成切换、真实预览、刷新后的设置恢复；独立 Python 导出包含合成器。
+默认配乐支持本地生成舒缓钢琴、无配乐及音量调节。新作品默认钢琴，偏好可记忆；已有/导入工程保留设置。时间轴显示自动铺满的配乐轨，画面设置与对象管理器均可进入。生成器的确定性、毫秒长度、峰值、首尾淡化及 600 秒上限通过；4 秒真实视频为 96 帧，云端钢琴音轨 RMS 0.01573、峰值 0.07453，关闭后无音频流。浏览器完成切换、真实预览、刷新后的设置恢复；独立 Python 导出包含合成器。
 
 ![默认钢琴配乐与音量设置](screenshots/studio-default-piano.jpg)
 
 服务重启后的过期会话仅自动刷新重试一次；权限拒绝与不明确的网络错误不重试，三项回归通过。
+
+配乐应用提交 `4c544f7c6fd7ea23d8d1ee9171542b5832c971c9` 的[独立原生 CI](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639269)全部通过，包含 662 项 API 行为证据、真实配音分割混音、钢琴与无配乐视频及 600 秒合成检查。[原生验证附件](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639269/artifacts/13590851025)。三平台桌面结果和安装包见下方最新下载。
 
 - `021860b` 修复 SVG 小数 viewBox 被舍入为零，以及无 viewBox 的物理尺寸换算；真实视频逐帧检查蓝色 SVG 图形保留。
 - 首轮原生 CI 在生成 OGG 测试样本时因 PyAV 不含 `libvorbis` 编码器失败。改用仓库内自生成的固定 OGG 样本后，[原生 CI 42411619514](https://github.com/zhuozheng2006/anyvis/actions/runs/42411619514)全部通过。仍实际上传、解码、裁剪和混音，不要求用户环境含 Vorbis 编码器。
@@ -151,16 +153,16 @@
 
 ## 最新桌面测试包
 
-**AnyVis v0.4.0**：[构建 42410963764](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764)，对应 `6e105e0c435c6197bda138b8caec42e7e05d6e53`，三平台构建与最终 ASAR 启动均通过。此包包含新时间轴、对象管理器、图片与配音；不含后续 SVG 尺寸和配音分割修复。
+**AnyVis v0.4.0**：[构建 42413639341](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341)，对应 `4c544f7c6fd7ea23d8d1ee9171542b5832c971c9`，三平台构建与最终 ASAR 启动均通过。包含开源时间轴、对象管理器、图片与配音、SVG 尺寸修复、配音分割、默认钢琴与无配乐设置，以及服务重启后的会话恢复。
 
 | 系统 | 安装包附件 | 实际启动验证 |
 | --- | --- | --- |
-| Apple Silicon Mac | [ARM64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764/artifacts/13589498421) | 通过 |
-| Intel Mac | [x64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764/artifacts/13589762632) | 仅构建，未在 Intel 运行 |
-| Windows x64 | [NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764/artifacts/13589261998) | 通过 |
-| Linux x64 | [AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764/artifacts/13589034604) | 通过 |
+| Apple Silicon Mac | [ARM64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341/artifacts/13590343660) | 通过 |
+| Intel Mac | [x64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341/artifacts/13590373579) | 仅构建，未在 Intel 运行 |
+| Windows x64 | [NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341/artifacts/13590542704) | 通过 |
+| Linux x64 | [AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341/artifacts/13590537713) | 通过 |
 
-每个平台执行 331 项应用测试、11 项桌面回归、准备目录和最终打包应用的 Electron 冒烟；实际操作 API Wait 搜索/添加、Circle 对象管理器、时间轴与只读代码。附件保存 14 天，需要 GitHub 登录。Python/Manim、字体和 LaTeX 仍需外部环境；macOS 尚未公证、Windows 尚未配置发行者签名，未运行安装向导。
+每个平台执行 340 项应用测试、11 项桌面回归、准备目录和最终打包应用的 Electron 冒烟；实际操作 API Wait 搜索/添加、Circle 对象管理器、时间轴、只读代码，以及钢琴→无配乐→钢琴切换。附件保存 14 天（预计北京时间 2026-11-22 到期），需要 GitHub 登录。Python/Manim、字体和 LaTeX 仍需外部环境；macOS 尚未公证、Windows 尚未配置发行者签名，未运行安装向导。
 
 ## v0.3.1 历史桌面测试包
 
