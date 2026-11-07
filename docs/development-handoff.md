@@ -6,13 +6,13 @@
 
 ## 发布状态
 
-用户已于 2026-11-08 明确授权将本轮 67 个项目文件提交到 `zhuozheng2006/anyvis` 的 main 并运行三平台 CI。基线为 `2f405b7388694383c88949d99594f7111e5382d3`；发布采用基于现有树的增量提交并使用 expected_sha，保留远端其他文件。当前本地验收通过，独立 CI 的最终结果另记于验证记录。第三方许可说明在 public 中，随桌面资源打包。
+用户已于 2026-11-08 明确授权将本轮 67 个项目文件提交到 `zhuozheng2006/anyvis` 的 main 并运行三平台 CI。基线为 `2f405b7388694383c88949d99594f7111e5382d3`；发布采用基于现有树的增量提交并使用 expected_sha，保留远端其他文件。已发布 `6e105e0c435c6197bda138b8caec42e7e05d6e53`，三平台 CI 42410963764 全部通过。媒体修复 `021860b4a7f05202bf64f4198fefc20cec2d60b9` 的原生 CI 42411619514 全部通过，桌面 CI 42411619343 三平台也全部通过。第三方许可说明在 public 中，随桌面资源打包。
 
 ## v0.4.0 接续检查点
 
-五份原生证据共 599 个不同 API，新增 utilities 与 mutations fixture。运行 `npm run test:api-native` 前设置五个 `ANYVIS_API_*REPORT` 路径，再将五份报告都传给 verify-api-registry.py；完整命令见 API 覆盖文档。当前 authoringProtocol=3，331 项 Vitest、媒体真实集成及桌面资源准备通过。
+六份原生证据共 662 个不同 API，新增 utilities、mutations 与 config fixture。运行 `npm run test:api-native` 前设置六个 `ANYVIS_API_*REPORT` 路径，再将六份报告都传给 verify-api-registry.py；完整命令见 API 覆盖文档。当前 authoringProtocol=3，333 项 Vitest、媒体真实集成及桌面资源准备通过。
 
-UI 已用 React Timeline Editor 1.0.0；动画顺序联动、音频独立时间位置与入点。框选、剃刀、关键帧曲线和任意动画重叠尚未实现。库交互不能直接代替 Manim 调度，继续以 Project.actions 为唯一事实来源。素材真实文件位于本地服务缓存，工程通过 ZIP 携带它们；测试输入和生成输出不提交。
+UI 已用 React Timeline Editor 1.0.0；动画顺序联动、音频独立时间位置与入点。已实现配音分割；框选、动画剃刀、关键帧曲线和任意动画重叠尚未实现。库交互不能直接代替 Manim 调度，继续以 Project.actions 为唯一事实来源。素材真实文件位于本地服务缓存，工程通过 ZIP 携带它们；测试输入和生成输出不提交。
 
 ## v0.3.1 接续检查点
 

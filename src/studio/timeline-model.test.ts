@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 import { createAction } from './core/catalog';
 import { createEmptyProject, validateProject } from './core/project';
 import { compileProject } from './core/compiler';
-import { audioClips, editAudioClip, moveAnimationClip, resizeAnimationClip } from './timeline-model';
+import { audioClips, editAudioClip, moveAnimationClip, resizeAnimationClip, splitAudioClip } from './timeline-model';
 import { timelineClips } from './authoring';
 const voice = { id: 'b'.repeat(64), name: 'voice.wav', kind: 'audio' as const, extension: 'wav', bytes: 100, duration: 10 };
 const audioProject = () => ({ ...createEmptyProject(), assets: [voice], actions: [createAction('wait', { duration: 2 }), createAction('audio_play', { asset: voice.id, delay: 1, offset: 2, length: 4 }), createAction('wait', { duration: 5 }), createAction('audio_stop', { target: '配音' })] });
@@ -43,4 +43,25 @@ it('muted audio retains timeline length but is excluded from the exported mix', 
   const compiled = compileProject(p);
   expect(compiled.diagnostics).toEqual([]); expect(compiled.duration).toBe(7);
   expect(compiled.code).toContain("'muted': True"); expect(compiled.code).toContain("if not track['muted']:");
+});
+it('cuts audio at the playhead with contiguous source samples and independent cues', () => {
+  const p = audioProject(); p.actions[1].fields.gain = -6;
+  const { project: next, id } = splitAudioClip(p, audioClips(p)[0], 5);
+  const pieces = audioClips(next).sort((a, b) => a.start! - b.start!);
+  expect(pieces.map(c => [c.start, c.offset, c.duration])).toEqual([[3, 2, 2], [5, 4, 2]]);
+  expect(pieces[1].action.id).toBe(id);
+  expect(pieces.every(c => c.action.fields.gain === -6)).toBe(true);
+  expect(new Set(pieces.map(c => c.action.fields.name)).size).toBe(2);
+  expect(next.assets).toEqual(p.assets);
+  expect(compileProject(next).diagnostics).toEqual([]);
+  expect(compileProject(next).duration).toBe(7);
+  expect(p.actions[1].fields.length).toBe(4);
+});
+it('cuts only the audible range and rejects endpoints or nested cues', () => {
+  const p = audioProject(); p.actions[1].fields.length = 8;
+  const clip = audioClips(p)[0];
+  expect(clip.duration).toBe(4);
+  expect(audioClips(splitAudioClip(p, clip, 4).project).find(c => c.action.id !== clip.action.id)?.duration).toBe(3);
+  for (const at of [clip.start!, clip.start! + clip.duration]) expect(() => splitAudioClip(p, clip, at)).toThrow('一帧');
+  expect(() => splitAudioClip(p, { ...clip, editable: false }, 4)).toThrow('嵌套');
 });

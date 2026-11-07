@@ -5,6 +5,8 @@ import { promisify } from 'node:util';
 import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { build } from 'esbuild';
 import { Readable, Writable } from 'node:stream';
 import { setTimeout as delay } from 'node:timers/promises';
 import { createAnyVisServer, discoverPython } from './server.mjs';
@@ -60,9 +62,13 @@ with wave.open('voice.wav','wb') as f:
     headers = { 'x-anyvis-token': (await request(app, '/api/session')).json().token, 'content-type': 'application/json' };
     assert.equal((await request(app, `/api/assets/${image.id}`)).json().id, image.id);
     assert.equal((await request(app, `/api/assets/${voice.id}/file`, { headers: { range: 'bytes=0-31' } })).bytes.length, 32);
-    const project = createEmptyProject(); project.scene = { ...project.scene, width: 640, height: 360, fps: 24 }; project.assets = [image, voice, tiny.json()];
+    let project = createEmptyProject(); project.scene = { ...project.scene, width: 640, height: 360, fps: 24 }; project.assets = [image, voice, tiny.json()];
     project.actions = [createAction('image_asset', { name: '主角', asset: image.id, height: 2, x: -2, appear: 'none' }), createAction('audio_play', { name: '讲解', asset: voice.id, delay: .5, offset: 1, length: 2, gain: -6 }), createAction('shift', { target: '主角', dx: 4, duration: 1 }), createAction('audio_stop', { target: '讲解' }), createAction('wait', { duration: 1 })];
     project.actions.unshift(createAction('image_asset', { name: '矢量', asset: tiny.json().id, height: 1, x: 3, y: 2, appear: 'none' }));
+    const timelineModule = path.join(directory, 'timeline.mjs');
+    await build({ entryPoints: [fileURLToPath(new URL('../src/studio/timeline-model.ts', import.meta.url))], outfile: timelineModule, bundle: true, platform: 'node', format: 'esm', logLevel: 'silent' });
+    const { audioClips, splitAudioClip } = await import(pathToFileURL(timelineModule).href);
+    project = splitAudioClip(project, audioClips(project)[0], .75).project;
     const submitted = await request(app, '/api/render', { method: 'POST', headers, body: { project, quality: 'preview', revision: 'media-fixture' } });
     assert.equal(submitted.status, 202, submitted.bytes.toString());
     let job;
@@ -100,9 +106,10 @@ with av.open(filename) as c:
  def rms(a,b): return float(np.sqrt(np.mean(samples[int(a*rate):int(b*rate)]**2)))
  before,voice,after=rms(.1,.3),rms(.6,.9),rms(1.3,1.6)
  assert before<.003 and after<.003 and .035<voice<.09,(before,voice,after)
+ seam=rms(.72,.78); assert .035<seam<.09,seam
  chunk=samples[int(.6*rate):int(.9*rate)]; frequencies=np.fft.rfftfreq(len(chunk),1/rate)
  tone=float(frequencies[np.abs(np.fft.rfft(chunk)).argmax()]); assert abs(tone-660)<10,tone
- print(json.dumps({'frames':len(centers),'horizontalTravel':centers[-1]-centers[0],'rmsBefore':before,'rmsVoice':voice,'rmsAfter':after,'toneHz':tone}))
+ print(json.dumps({'frames':len(centers),'horizontalTravel':centers[-1]-centers[0],'rmsBefore':before,'rmsVoice':voice,'rmsAfter':after,'rmsCutSeam':seam,'toneHz':tone}))
 `, filename], { timeout: 20_000, maxBuffer: 1024 * 1024 });
     t.diagnostic(stdout.trim());
   } finally { if (app) await app.close(); if (process.env.ANYVIS_KEEP_MEDIA) t.diagnostic(directory); else await rm(directory, { recursive: true, force: true }); }

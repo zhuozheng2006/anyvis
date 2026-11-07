@@ -2,7 +2,7 @@
 
 这套配置把编辑器、Electron 宿主和本地服务打包为 AnyVis 桌面应用。桌面进程负责启动和关闭自己的服务，不需要用户另外打开终端。Manim 的 Python 环境仍是外部依赖，可在桌面菜单中选择 Python 解释器路径并持久保存；当前安装包不包含 Python、Manim、LaTeX 或额外中文字体。
 
-**v0.3.0 状态：三平台构建与最终 ASAR 应用启动已通过。** [构建42379483960](https://github.com/zhuozheng2006/anyvis/actions/runs/42379483960) 对应 `c31aa313aec4a505c639ec0077ac41f87360847b`，最终应用启动覆盖 Mac ARM64、Windows x64、Linux x64，另生成 Intel Mac 安装包。[下载与检查报告](../docs/verification.md#最新桌面测试包)。本机仍未完成安装包安装与外部 Manim 渲染验收；首次正式发行前需完成本文末尾清单。
+**v0.4.0 状态：三平台构建与最终 ASAR 应用启动已通过。** [构建 42410963764](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764) 对应 `6e105e0`。实际启动覆盖 Mac ARM64、Windows x64、Linux x64，另生成 Intel Mac 安装包。[最新下载与验证范围](../docs/verification.md#最新桌面测试包)。本机尚未完成安装向导与外部 Manim 环境验收。
 
 2026-11-06，[构建 42295108033](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033) 已成功完成三平台真实 Electron 启动检查和安装包构建。对应提交为 `5b7e5545f9475e9dad62f530be1ba089b59fbfe2`：
 

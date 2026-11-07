@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Timeline as TimelineEditor, type TimelineState } from '@xzdarcy/react-timeline-editor';
-import { ArrowLeft, ArrowRight, Clock3, Layers3, Magnet, Maximize2, Minus, Music2, Pause, Play, Plus, SkipBack, Trash2, Volume2, VolumeX } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock3, Layers3, Magnet, Maximize2, Minus, Music2, Pause, Play, Plus, Scissors, SkipBack, Trash2, Volume2, VolumeX } from 'lucide-react';
 import type { TimelineRow } from '@xzdarcy/timeline-engine';
 import type { Project } from './core/types';
 import { CURATED_BLOCK_CATALOG, getBlockDefinition } from './core/catalog';
 import { actionLabel, actionTrack, appendAction, flattenActions, managedDefinition, managedObject, parallelWithNext, removeAction, reorderAction, timelineClips, updateAction } from './authoring';
-import { audioClips, checkedEdit, editAudioClip, frameTime, moveAnimationClip, resizeAnimationClip } from './timeline-model';
+import { audioClips, checkedEdit, editAudioClip, frameTime, moveAnimationClip, resizeAnimationClip, splitAudioClip } from './timeline-model';
 import { AudioWaveform } from './AudioWaveform';
 import { ActionInspector } from './ActionInspector';
 import '@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css';
@@ -33,7 +33,7 @@ export function Timeline({ project, selectedId, time, playing = false, canPlay =
   const selectedClip = clips.find(c => c.action.id === selectedId), selectedAudio = audio.find(c => c.action.id === selectedId);
   const definition = selected && getBlockDefinition(selected.type);
   const visual = clips.filter(c => c.action.type !== 'audio_play');
-  const unknown = visual.filter(c => c.start === null || c.duration === null);
+  const unknown = [...visual.filter(c => c.start === null || c.duration === null).map(c => ({ ...c, id: c.action.id })), ...audio.filter(c => c.start === null).map(c => ({ ...c, track: String(c.action.fields.name) }))];
   const tracks = [...new Set(visual.filter(c => c.start !== null && c.duration !== null).map(c => c.track))];
   const knownEnd = Math.max(0, ...clips.map(c => (c.start || 0) + (c.duration || 0)), ...audio.map(c => (c.start || 0) + c.duration));
   const tick = scale < 24 ? 5 : scale < 48 ? 2 : 1;
@@ -58,7 +58,7 @@ export function Timeline({ project, selectedId, time, playing = false, canPlay =
     const clip = audio.find(c => c.id === id);
     mutate(() => clip ? editAudioClip(project, clip, start, end, mode) : mode === 'move' ? moveAnimationClip(project, id, start) : resizeAnimationClip(project, id, end - start));
   };
-  const seek = (value: number) => onSeek(frameTime(Math.max(0, value), project.scene.fps));
+  const seek = (value: number) => onSeek(frameTime(Math.max(0, Math.min(600, value)), project.scene.fps));
   const add = (type: string) => {
     const fields = getBlockDefinition(type)?.fields || [];
     const track = selected ? actionTrack(selected) : tracks.find(t => !['场景与逻辑', '编排'].includes(t));
@@ -74,10 +74,13 @@ export function Timeline({ project, selectedId, time, playing = false, canPlay =
   };
   return <section className="tl-editor" aria-label="动画时间轴" onKeyDown={event => {
     if ((event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')) return;
+    // Leave application/browser shortcuts (save, undo, history navigation) alone.
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
     if (event.code === 'Space') { event.preventDefault(); if (canPlay) onPlay?.(); }
-    else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); seek(time + (event.key === 'ArrowLeft' ? -1 : 1) / project.scene.fps); }
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); seek(time + (event.key === 'ArrowLeft' ? -1 : 1) * (event.shiftKey ? 10 : 1) / project.scene.fps); }
     else if (event.key === 'Home') { event.preventDefault(); seek(0); }
-    else if (event.key.toLowerCase() === 's') setSnapping(v => !v);
+    else if (event.key === 'End') { event.preventDefault(); seek(knownEnd); }
+    else if (event.key.toLowerCase() === 's' && !event.repeat) setSnapping(v => !v);
     else if ((event.key === 'Delete' || event.key === 'Backspace') && selected) { event.preventDefault(); mutate(() => removeAction(project, selected.id)); }
   }}>
     <div className="tl-toolbar">
@@ -114,17 +117,17 @@ export function Timeline({ project, selectedId, time, playing = false, canPlay =
           const clip = audio.find(c => c.id === item.id), source = clip?.action || clips.find(c => c.action.id === item.id)?.action;
           if (!source) return null;
           const label = labels.find(l => l.id === row.id);
-          return <div role="button" tabIndex={0} aria-label={`${clip ? '配音' : actionLabel(source)} · ${label?.name} · ${timecode(item.start, project.scene.fps)}`} aria-pressed={selectedId === source.id} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); onSelect(source.id); } }} className={`tl-item ${clip ? 'audio' : ''} ${item.effectId === 'event' ? 'event' : ''} ${source.fields.muted === 'yes' ? 'muted' : ''}`} style={{ '--clip-colour': label?.colour } as React.CSSProperties} title={clip ? '拖动移动配音；左右边缘裁剪源文件' : '拖动调整顺序；右边缘调整时长；双击打开积木'}>
+          return <div role="button" tabIndex={0} aria-label={`${clip ? '配音' : actionLabel(source)} · ${label?.name} · ${timecode(item.start, project.scene.fps)}`} aria-pressed={selectedId === source.id} onClick={() => onSelect(source.id)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); onSelect(source.id); } }} className={`tl-item ${clip ? 'audio' : ''} ${item.effectId === 'event' ? 'event' : ''} ${source.fields.muted === 'yes' ? 'muted' : ''}`} style={{ '--clip-colour': label?.colour } as React.CSSProperties} title={clip ? '拖动移动配音；左右边缘裁剪源文件' : '拖动调整顺序；右边缘调整时长；双击打开积木'}>
             {clip && <AudioWaveform asset={project.assets?.find(a => a.id === source.fields.asset)} offset={clip.offset} duration={item.end - item.start}/>}<span>{clip ? <Music2 size={12}/> : getBlockDefinition(source.type)?.container ? <Layers3 size={12}/> : null}{clip ? String(source.fields.name) : actionLabel(source)}</span><small>{item.effectId === 'event' ? '事件' : `${(item.end - item.start).toFixed(2)}s`}{clip ? ` · ${Number(source.fields.gain)} dB` : ''}</small>
           </div>;
         }}/>
       {!labels.length && <div className="tl-empty"><Layers3 size={28}/><strong>给对象安排第一段动画</strong><p>从右侧添加对象或上传配音，再安排动画。</p></div>}
     </div>
-    {unknown.length > 0 && <div className="tl-dynamic"><span>动态时长 · 在积木中编排</span>{unknown.map(c => <button key={c.action.id} onClick={() => { onSelect(c.action.id); onShowBlocks(c.action.id); }}>{actionLabel(c.action)} · {c.track}</button>)}</div>}
-    <div className="tl-status"><span>{hint || '拖动片段 · 边缘调整 · S 吸附 · ← → 逐帧 · 空格播放'}</span><span>{timecode(knownEnd, project.scene.fps)} {unknown.length ? '+ 动态片段' : ''}</span></div>
+    {unknown.length > 0 && <div className="tl-dynamic"><span>动态时长 · 在积木中编排</span>{unknown.map(c => <button key={c.id} onClick={() => { onSelect(c.action.id); onShowBlocks(c.action.id); }}>{actionLabel(c.action)} · {c.track}</button>)}</div>}
+    <div className="tl-status"><span title="Home 回到开头；End 到已知结尾；Shift + 方向键移动 10 帧；Delete 删除所选片段">{hint || '拖动片段 · 边缘调整 · S 吸附 · ← → 逐帧 · Shift 快进 · 空格播放'}</span><span>{timecode(knownEnd, project.scene.fps)} {unknown.length ? '+ 动态片段' : ''}</span></div>
     <div className="tl-inspector">
       {selected ? <><div className="tl-selection-heading"><strong>{selectedAudio ? '配音' : actionLabel(selected)} <span>{selectedAudio ? String(selected.fields.name) : actionTrack(selected)}</span></strong><span>{(selectedAudio?.start ?? selectedClip?.start) == null ? '开始时间待定' : `开始 ${timecode((selectedAudio?.start ?? selectedClip?.start)!, project.scene.fps)}`}</span><div className="tl-spacer"/>
-        {selectedAudio ? <button aria-label="配音静音" aria-pressed={selected.fields.muted === 'yes'} onClick={() => mutate(() => updateAction(project, selected.id, { muted: selected.fields.muted === 'yes' ? 'no' : 'yes' }))}>{selected.fields.muted === 'yes' ? <VolumeX size={14}/> : <Volume2 size={14}/>} 静音</button> : <><button aria-label="片段前移" disabled={!selectedClip || selectedClip.index === 0} onClick={() => shiftOrder(-1)}><ArrowLeft size={14}/></button><button aria-label="片段后移" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => shiftOrder(1)}><ArrowRight size={14}/></button><button title="与后一个片段同时执行" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => mutate(() => checkedEdit(project, parallelWithNext(project, selected.id)))}><Layers3 size={14}/> 并行</button></>}
+        {selectedAudio ? <><button aria-label="在播放头处分割配音" disabled={!selectedAudio.editable || selectedAudio.start === null} onClick={() => mutate(() => { const result = splitAudioClip(project, selectedAudio, time); onSelect(result.id); return result.project; })}><Scissors size={14}/> 分割</button><button aria-label="配音静音" aria-pressed={selected.fields.muted === 'yes'} onClick={() => mutate(() => updateAction(project, selected.id, { muted: selected.fields.muted === 'yes' ? 'no' : 'yes' }))}>{selected.fields.muted === 'yes' ? <VolumeX size={14}/> : <Volume2 size={14}/>} 静音</button></> : <><button aria-label="片段前移" disabled={!selectedClip || selectedClip.index === 0} onClick={() => shiftOrder(-1)}><ArrowLeft size={14}/></button><button aria-label="片段后移" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => shiftOrder(1)}><ArrowRight size={14}/></button><button title="与后一个片段同时执行" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => mutate(() => checkedEdit(project, parallelWithNext(project, selected.id)))}><Layers3 size={14}/> 并行</button></>}
         <button onClick={() => onShowBlocks(selected.id)}>积木</button><button aria-label="删除所选片段" onClick={() => mutate(() => removeAction(project, selected.id))}><Trash2 size={14}/></button></div>
         <ActionInspector key={selected.id} action={selected} actions={project.actions} assets={project.assets} fields={managedObject(selected) ? ['appear', 'duration', 'mode'].filter(name => definition?.fields.some(f => f.name === name)) : undefined} onChange={fields => mutate(() => updateAction(project, selected.id, fields))} onError={onError}/>
         {definition?.container && <p className="tl-note">复合片段包含内部动作，双击打开积木。</p>}</> : <p className="tl-note">选择片段编辑参数。动画按顺序联动，可组合并行；配音独立放置和裁剪。</p>}

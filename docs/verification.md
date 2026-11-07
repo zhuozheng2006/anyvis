@@ -6,8 +6,8 @@
 
 | 检查 | 实际结果 |
 | --- | --- |
-| 前端、模型与编译器 | 331 项测试，38 个文件全部通过 |
-| 真实 API 行为 | 五组原生测试合并去重为 599 项，0 失败；新增数值/回调/文件路径隔离 fixture 与变换/路径状态差分 |
+| 前端、模型与编译器 | 333 项测试，38 个文件全部通过 |
+| 真实 API 行为 | 六组原生测试合并去重为 662 项，0 失败；新增数值/回调/文件路径隔离 fixture 与变换/路径状态差分 |
 | 入口与证据审计 | 2,293 项解析、2,117 项签名、2,765 项常量；证据源码指纹有效；4 项证据校验测试通过 |
 | 服务与桌面宿主 | 6 项服务、11 项桌面检查通过；包含 3 MB 原始素材转发和普通 JSON 请求大小隔离 |
 | 原生媒体集成 | 原有渲染/错误定位/取消链路通过；新增透明 PNG 位移和 OGG 配音延迟、入点、增益、停止验证通过，48 帧、水平移动 180 像素、有效片段 660 Hz、前后静音 |
@@ -15,13 +15,20 @@
 | 素材可移植 | 浏览器下载 ZIP，检查项目 + 2 个原始素材 + Python 完整；重新导入后素材、参数和真实预览保留 |
 | 构建 | TypeScript/Vite 与桌面资源准备通过；Studio 大分块警告仍存在 |
 
-浏览器实测发现并修复了隐藏 Blockly 清空时间轴选择、拖动时检查器改变轨道高度、参数下拉 label/value 反转等问题。Gemini 3.8 Flash High 协作实现对象/素材管理与差分 fixture；集成后由主代理复核并测试。当前本机缺少已下载的 Electron 可执行文件，因此本轮本机未完成 Electron UI 冒烟，独立 CI 结果另行记录，不沿用 v0.3.1 的通过状态。
+浏览器实测发现并修复了隐藏 Blockly 清空时间轴选择、拖动时检查器改变轨道高度、参数下拉 label/value 反转等问题。Gemini 3.8 Flash High 协作实现对象/素材管理与差分 fixture；集成后由主代理复核并测试。当前本机缺少已下载的 Electron 可执行文件，因此本轮本机未完成 Electron UI 冒烟，v0.4.0 提交 `6e105e0` 的三平台 CI 均已完成，含最终 ASAR 启动；Intel Mac 仅构建、未实际运行。
 
 协议升级为 authoringProtocol=3；启动器开发模式监视服务源码，新旧协议不符时提示重启。上传位图支持整体移动/缩放/旋转/透明度，角色的独立表情与肢体需要分层或矢量部件。
 
-完整 API 行为覆盖仍未完成：1,694 项尚无逐项证据，包含 533 项 OpenGL 专属入口。关键帧曲线、框选、剃刀工具与任意跨轨动画重叠也仍需实现。
+完整 API 行为覆盖仍未完成：1,631 项尚无逐项证据，包含 533 项 OpenGL 专属入口。已补充播放头处分割配音、一次撤销及 Home/End/Shift 逐帧定位；关键帧曲线、框选、动画剃刀工具与任意跨轨动画重叠仍需实现。
 
-![v0.4.0 时间轴与素材验收](screenshots/studio-timeline-v0.4.jpg)
+![v0.4.0 时间轴与配音分割](screenshots/studio-timeline-v0.4-cut.jpg)
+
+
+### v0.4.0 后续修复与独立 CI
+
+- `021860b` 修复 SVG 小数 viewBox 被舍入为零，以及无 viewBox 的物理尺寸换算；真实视频逐帧检查蓝色 SVG 图形保留。
+- 首轮原生 CI 在生成 OGG 测试样本时因 PyAV 不含 `libvorbis` 编码器失败。改用仓库内自生成的固定 OGG 样本后，[原生 CI 42411619514](https://github.com/zhuozheng2006/anyvis/actions/runs/42411619514)全部通过。仍实际上传、解码、裁剪和混音，不要求用户环境含 Vorbis 编码器。
+- 时间轴新增配音分割，保留源素材连续入点与音量、独立命名，一次撤销还原。模型回归、浏览器操作与真实混音通过；分割点附近 RMS 0.0501，前后静音、有效片段 660 Hz。动态时机的配音显示在待编排列表；组合快捷键不再误触吸附，鼠标选择片段增加直接响应。
 
 ## v0.3.1 行为验证扩展（2026-11-08）
 
@@ -137,6 +144,19 @@
 此图验证项目载入与编辑，舞台未生成预览；影片由相同编译器和worker的批量入口渲染，不能把截图中的空舞台描述为影片播放验收。
 
 ## 最新桌面测试包
+
+**AnyVis v0.4.0**：[构建 42410963764](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764)，对应 `6e105e0c435c6197bda138b8caec42e7e05d6e53`，三平台构建与最终 ASAR 启动均通过。此包包含新时间轴、对象管理器、图片与配音；不含后续 SVG 尺寸和配音分割修复。
+
+| 系统 | 安装包附件 | 实际启动验证 |
+| --- | --- | --- |
+| Apple Silicon Mac | [ARM64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764/artifacts/13589498421) | 通过 |
+| Intel Mac | [x64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764/artifacts/13589762632) | 仅构建，未在 Intel 运行 |
+| Windows x64 | [NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764/artifacts/13589261998) | 通过 |
+| Linux x64 | [AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764/artifacts/13589034604) | 通过 |
+
+每个平台执行 331 项应用测试、11 项桌面回归、准备目录和最终打包应用的 Electron 冒烟；实际操作 API Wait 搜索/添加、Circle 对象管理器、时间轴与只读代码。附件保存 14 天，需要 GitHub 登录。Python/Manim、字体和 LaTeX 仍需外部环境；macOS 尚未公证、Windows 尚未配置发行者签名，未运行安装向导。
+
+## v0.3.1 历史桌面测试包
 
 **AnyVis v0.3.1**：[最终构建 42401140734](https://github.com/zhuozheng2006/anyvis/actions/runs/42401140734)，对应应用与依赖提交 `1f28edc9f79c15f3ba37919e835eb4dac2c8ce10`。2026-11-08（北京时间）三平台全部成功。
 

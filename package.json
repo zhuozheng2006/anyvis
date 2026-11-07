@@ -19,7 +19,7 @@
     "desktop:prepare": "npm run build && node scripts/prepare-desktop.mjs",
     "desktop:pack": "npm run desktop:prepare && node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never",
     "test:desktop": "node --test desktop/host.spec-node.mjs desktop/packaging.spec-node.mjs",
-    "test:api-native": "node --test src/studio/core/api.native.spec-node.mjs src/studio/core/api-families.native.spec-node.mjs src/studio/core/api-queries.native.spec-node.mjs src/studio/core/api-utilities.native.spec-node.mjs src/studio/core/api-mutations.native.spec-node.mjs",
+    "test:api-native": "node --test src/studio/core/api.native.spec-node.mjs src/studio/core/api-families.native.spec-node.mjs src/studio/core/api-queries.native.spec-node.mjs src/studio/core/api-utilities.native.spec-node.mjs src/studio/core/api-mutations.native.spec-node.mjs src/studio/core/api-config.native.spec-node.mjs",
     "api:generate": "python scripts/generate-api-registry.py",
     "api:verify": "python scripts/verify-api-registry.py",
     "test:media": "node --test --test-force-exit server/media.integration.mjs"

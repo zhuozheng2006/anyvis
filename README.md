@@ -2,7 +2,7 @@
 
 **用 Scratch 风格积木制作真实 Manim 动画。**
 
-AnyVis v0.4.0 提供 Scratch 风格积木、基于开源 React Timeline Editor 的时间轴、只读代码视图，以及独立对象和素材管理器。支持上传图片与配音、音轨裁剪和混音、素材工程打包与真实 Manim 视频导出。浏览器 + 本地服务及 Electron 桌面版共享创作模型；Python/Manim 仍需外部安装。[编辑器设计方案](docs/editor-timeline-design.md)
+AnyVis v0.4.0 提供 Scratch 风格积木、基于开源 React Timeline Editor 的时间轴、只读代码视图，以及独立对象和素材管理器。支持上传图片与配音、音轨裁剪、分割和混音、素材工程打包与真实 Manim 视频导出。浏览器 + 本地服务及 Electron 桌面版共享创作模型；Python/Manim 仍需外部安装。[编辑器设计方案](docs/editor-timeline-design.md)
 
 ![AnyVis Studio 时间轴与配音](docs/screenshots/studio-timeline-v0.4.jpg)
 
@@ -87,7 +87,7 @@ npm run build
 
 ## API 覆盖的实际范围
 
-原清单的 1,660 / 1,660 个公开入口均已接入；扩展扫描共有 2,293 个入口，全部真实解析通过。目前 599 个独立 API 有真实行为或差分验证证据，并有连续回调动画与浮点颜色/绑定方法的视频验收。递归参数编辑器支持嵌套回调、列表、字典与条件分支。入口、参数和行为验证分别记录，不以 Python 扩展充数。[完整清单与边界](docs/Manim-API-Coverage.md) · [API 参数曲线示例与视频](examples/api/README.md)。
+原清单的 1,660 / 1,660 个公开入口均已接入；扩展扫描共有 2,293 个入口，全部真实解析通过。目前 662 个独立 API 有真实行为或差分验证证据，并有连续回调动画与浮点颜色/绑定方法的视频验收。递归参数编辑器支持嵌套回调、列表、字典与条件分支。入口、参数和行为验证分别记录，不以 Python 扩展充数。[完整清单与边界](docs/Manim-API-Coverage.md) · [API 参数曲线示例与视频](examples/api/README.md)。
 
 ## 用 AnyVis 制作的半小时影片
 

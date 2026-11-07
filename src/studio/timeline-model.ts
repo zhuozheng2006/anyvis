@@ -1,7 +1,7 @@
 import { createAction, getBlockDefinition } from './core/catalog';
 import { compileProject } from './core/compiler';
 import type { Action, Project } from './core/types';
-import { actionDuration, timelineClips, updateAction } from './authoring';
+import { actionDuration, appendAction, timelineClips, updateAction } from './authoring';
 
 export interface AudioClip {
   id: string; action: Action; start: number | null; duration: number; anchor: number | null;
@@ -61,6 +61,17 @@ export function checkedEdit(before: Project, after: Project): Project {
   const added = compileProject(after).diagnostics.find(d => d.severity === 'error' && !existing.has(`${d.blockId}:${d.message}`));
   if (added) throw Error(added.message);
   return after;
+}
+
+/** Cut the audible range into two independently editable cues, sharing the source. */
+export function splitAudioClip(project: Project, clip: AudioClip, time: number): { project: Project; id: string } {
+  if (!clip.editable || clip.start === null) throw Error('嵌套或动态配音请在积木中编辑。');
+  const cut = frameTime(time, project.scene.fps), left = cut - clip.start, right = clip.duration - left;
+  if (left < 1 / project.scene.fps - 1e-8 || right < 1 / project.scene.fps - 1e-8) throw Error('请把播放头放在配音内部，左右至少各保留一帧。');
+  const first = updateAction(project, clip.action.id, { length: left });
+  const result = appendAction(first, 'audio_play', { ...clip.action.fields, name: `${clip.action.fields.name} 分段`, delay: cut, offset: clip.offset + left, length: right });
+  const next = { ...result.project, actions: [result.action, ...result.project.actions.filter(a => a.id !== result.action.id)] };
+  return { project: checkedEdit(project, next), id: result.action.id };
 }
 
 /** Ripple insertion; waiting gaps can be split, animations cannot be silently overlapped. */
