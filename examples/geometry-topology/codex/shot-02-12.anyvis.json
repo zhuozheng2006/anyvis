@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-2-12",
+  "name": "2.12 留下通向拓扑的问题",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "留下通向拓扑的问题",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  2.12  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "circle",
+      "fields": {
+        "name": "形4",
+        "radius": 1.1,
+        "color": "#63DBC5",
+        "fill": 0,
+        "x": -2.2,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "ellipse",
+      "fields": {
+        "name": "形5",
+        "width": 3.6,
+        "height": 2.2,
+        "color": "#B6A1F2",
+        "fill": 0,
+        "x": 2.2,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "line",
+      "fields": {
+        "name": "形6",
+        "x1": -3.3,
+        "y1": 0.2,
+        "x2": -1.1,
+        "y2": 0.2,
+        "color": "#F3CD85",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "line",
+      "fields": {
+        "name": "形7",
+        "x1": 0.4,
+        "y1": 0.2,
+        "x2": 4,
+        "y2": 0.2,
+        "color": "#F3CD85",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "圆周",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#63DBC5",
+        "x": -2.2,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "椭圆",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#B6A1F2",
+        "x": 2.2,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "ellipse",
+      "fields": {
+        "name": "形10",
+        "width": 4.4,
+        "height": 2.2,
+        "color": "#63DBC5",
+        "fill": 0,
+        "x": -2.2,
+        "y": 0.2,
+        "z": 0,
+        "appear": "hidden",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "拿走标尺，再看对应关系",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "text",
+      "fields": {
+        "name": "文12",
+        "text": "我们已经看到：失去精确尺寸，并不必然失去所有结构。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "text",
+      "fields": {
+        "name": "文13",
+        "text": "接下来要问，点怎样对应，才能既不撕裂，也不合并？\n把刚才的标尺结论暂时放到一边，改为检查哪些点对应\n到哪里。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "remove",
+      "fields": {
+        "target": "文13"
+      }
+    },
+    {
+      "id": "s10",
+      "type": "passing_flash",
+      "fields": {
+        "target": "形4",
+        "color": "#FBBF24",
+        "timeWidth": 0.25,
+        "duration": 3,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s17",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    },
+    {
+      "id": "s18",
+      "type": "remove",
+      "fields": {
+        "target": "文12"
+      }
+    },
+    {
+      "id": "s19",
+      "type": "add",
+      "fields": {
+        "target": "文13"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "transform",
+      "fields": {
+        "target": "形4",
+        "destination": "形10",
+        "duration": 4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}

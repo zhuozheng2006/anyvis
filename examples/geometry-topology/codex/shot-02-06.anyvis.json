@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-2-06",
+  "name": "2.06 面积会以同样倍率改变吗？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "面积会以同样倍率改变吗？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  2.06  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "line",
+      "fields": {
+        "name": "形4",
+        "x1": -2,
+        "y1": -1,
+        "x2": 1,
+        "y2": -1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "line",
+      "fields": {
+        "name": "形5",
+        "x1": -2,
+        "y1": -1,
+        "x2": -2,
+        "y2": 1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "line",
+      "fields": {
+        "name": "形6",
+        "x1": 1,
+        "y1": -1,
+        "x2": -2,
+        "y2": 1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "group",
+      "fields": {
+        "name": "组7",
+        "members": "形4,形5,形6"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "面积：3 → 12",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "3",
+        "fontSize": 23,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": -0.5,
+        "y": -1.35,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "2",
+        "fontSize": 23,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2.35,
+        "y": 0,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "rectangle",
+      "fields": {
+        "name": "形11",
+        "width": 3,
+        "height": 2,
+        "color": "#B6A1F2",
+        "fill": 0.12,
+        "x": -0.5,
+        "y": 0,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "text",
+      "fields": {
+        "name": "文12",
+        "text": "½ × 底 × 高",
+        "fontSize": 26,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 3.8,
+        "y": 0.4,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "text",
+      "fields": {
+        "name": "文13",
+        "text": "长度翻倍时，横向和纵向都翻倍。可以先数覆盖矩形的\n单位方格，再取其中一半核对这个结果。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "text",
+      "fields": {
+        "name": "文14",
+        "text": "三角形面积从3变成12，是原来的4倍，而不是2倍。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文14"
+      }
+    },
+    {
+      "id": "s14",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s19",
+      "type": "remove",
+      "fields": {
+        "target": "文13"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "add",
+      "fields": {
+        "target": "文14"
+      }
+    },
+    {
+      "id": "s13",
+      "type": "indicate",
+      "fields": {
+        "target": "组7",
+        "duration": 3,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    }
+  ]
+}

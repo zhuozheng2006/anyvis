@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-1-11",
+  "name": "1.11 证据应该怎样出现？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "01 / 第一章：先约定，什么才算“同一种形状”？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "证据应该怎样出现？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  1.11  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形4",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#63DBC5",
+        "fill": 0.06,
+        "x": -4,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "text",
+      "fields": {
+        "name": "文5",
+        "text": "观察",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#E6EDF6",
+        "x": -4,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形6",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#B6A1F2",
+        "fill": 0.06,
+        "x": 0,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "规定规则",
+        "fontSize": 25,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形8",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#F3CD85",
+        "fill": 0.06,
+        "x": 4,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "给出理由",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#E6EDF6",
+        "x": 4,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "动画能帮助提出猜想，却不会自动证明猜想。如果只有\n两幅相似的画面而没有理由，就暂时把结论当成猜想。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "接下来每次说“相同”或“不同”，都要给出使用的规\n则和理由。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "remove",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s10",
+      "type": "indicate",
+      "fields": {
+        "target": "文5",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文10"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "add",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "indicate",
+      "fields": {
+        "target": "文7",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "indicate",
+      "fields": {
+        "target": "文9",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s19",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}

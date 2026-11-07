@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-5-03",
+  "name": "5.03 环面多了什么？",
+  "scene": {
+    "dimension": "3d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "camera",
+      "fields": {
+        "phi": 65,
+        "theta": -60,
+        "zoom": 0.9,
+        "duration": 0
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文1"
+      }
+    },
+    {
+      "id": "s4",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "环面多了什么？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文2"
+      }
+    },
+    {
+      "id": "s6",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  5.03  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文3"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "surface",
+      "fields": {
+        "name": "形4",
+        "xExpr": "0+(1.35+0.45*cos(v))*cos(u)",
+        "yExpr": "(1.35+0.45*cos(v))*sin(u)",
+        "zExpr": "0.45*sin(v)",
+        "uMin": 0,
+        "uMax": 6.283185307179586,
+        "vMin": 0,
+        "vMax": 6.283185307179586,
+        "resolution": 20,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文5",
+        "text": "一个把手，零条边界",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文5"
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文6",
+        "text": "环面像甜甜圈的表面，有一个把手，却没有边界边缘。\n沿着曲面走不会碰到边界终点；空隙位于周围空间中，\n不是纸的边缘。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文6"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "中央空隙不是被挖开的边界圆，别把两种“洞”混为一\n谈。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文7"
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文7"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s19",
+      "type": "remove",
+      "fields": {
+        "target": "文6"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "add",
+      "fields": {
+        "target": "文7"
+      }
+    },
+    {
+      "id": "s9",
+      "type": "rotate",
+      "fields": {
+        "target": "形4",
+        "angle": 45,
+        "axis": "RIGHT",
+        "duration": 5,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "wait",
+      "fields": {
+        "duration": 8
+      }
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-1-03",
+  "name": "1.03 比较的是位置，还是对象本身？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "01 / 第一章：先约定，什么才算“同一种形状”？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "比较的是位置，还是对象本身？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  1.03  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "line",
+      "fields": {
+        "name": "形4",
+        "x1": -4,
+        "y1": -0.8,
+        "x2": -1.9000000000000004,
+        "y2": -0.8,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "line",
+      "fields": {
+        "name": "形5",
+        "x1": -4,
+        "y1": -0.8,
+        "x2": -4,
+        "y2": 0.5999999999999999,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "line",
+      "fields": {
+        "name": "形6",
+        "x1": -1.9000000000000004,
+        "y1": -0.8,
+        "x2": -4,
+        "y2": 0.5999999999999999,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "group",
+      "fields": {
+        "name": "组7",
+        "members": "形4,形5,形6"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "copy",
+      "fields": {
+        "name": "形8",
+        "target": "组7",
+        "x": 2.3,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "距离不变，位置可以变",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "把图形搬到另一处，没有改动点之间的距离。用同色字\n母追踪对应的角点，而不是只比较两个轮廓的位置。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "如果允许平移，屏幕位置不同并不妨碍它们相同。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "remove",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s16",
+      "type": "remove",
+      "fields": {
+        "target": "文10"
+      }
+    },
+    {
+      "id": "s17",
+      "type": "add",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s10",
+      "type": "shift",
+      "fields": {
+        "target": "形8",
+        "dx": 0.8,
+        "dy": 0.5,
+        "dz": 0,
+        "duration": 4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}

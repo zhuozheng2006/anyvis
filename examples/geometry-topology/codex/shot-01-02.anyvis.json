@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-1-02",
+  "name": "1.02 先把“形状”说清楚",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "01 / 第一章：先约定，什么才算“同一种形状”？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "先把“形状”说清楚",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  1.02  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "circle",
+      "fields": {
+        "name": "形4",
+        "radius": 1.25,
+        "color": "#63DBC5",
+        "fill": 0,
+        "x": -2.4,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "circle",
+      "fields": {
+        "name": "形5",
+        "radius": 1.25,
+        "color": "#B6A1F2",
+        "fill": 0.35,
+        "x": 2.4,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "text",
+      "fields": {
+        "name": "文6",
+        "text": "只有圆周",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2.4,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "包含内部",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 2.4,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "dot",
+      "fields": {
+        "name": "形8",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 2,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "dot",
+      "fields": {
+        "name": "形9",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 2.7,
+        "y": 0.6,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "dot",
+      "fields": {
+        "name": "形10",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 2.8,
+        "y": -0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "左边只包含圆周上的点；右边还包含整个内部。先说明\n哪些点属于对象，后面才不会把圆周偷偷换成圆盘。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "text",
+      "fields": {
+        "name": "文12",
+        "text": "颜色可以是装饰，也可以表示对象包含的区域，必须先\n说明。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文12"
+      }
+    },
+    {
+      "id": "s14",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s19",
+      "type": "remove",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "add",
+      "fields": {
+        "target": "文12"
+      }
+    },
+    {
+      "id": "s9",
+      "type": "indicate",
+      "fields": {
+        "target": "形8",
+        "duration": 1,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "indicate",
+      "fields": {
+        "target": "形9",
+        "duration": 1,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s13",
+      "type": "indicate",
+      "fields": {
+        "target": "形10",
+        "duration": 1,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-6-07",
+  "name": "6.07 练习六：结的问题问得不同",
+  "scene": {
+    "dimension": "3d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "camera",
+      "fields": {
+        "phi": 65,
+        "theta": -60,
+        "zoom": 0.9,
+        "duration": 0
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "06 / 第六章：带着边界使用工具，重新回答开场问题",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文1"
+      }
+    },
+    {
+      "id": "s4",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "练习六：结的问题问得不同",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文2"
+      }
+    },
+    {
+      "id": "s6",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  6.07  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文3"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "parametric_curve",
+      "fields": {
+        "name": "形4",
+        "xExpr": "-2.6+1.2*cos(t)",
+        "yExpr": "1.2*sin(t)",
+        "zExpr": "0",
+        "tMin": 0,
+        "tMax": 6.283185307179586,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "parametric_curve",
+      "fields": {
+        "name": "形5",
+        "xExpr": "2.6+0.52*(sin(t)+2*sin(2*t))",
+        "yExpr": "0.52*(cos(t)-2*cos(2*t))",
+        "zExpr": "-0.52*sin(3*t)",
+        "tMin": 0,
+        "tMax": 6.283185307179586,
+        "color": "#B6A1F2",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文6",
+        "text": "圆结",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#63DBC5",
+        "x": -3,
+        "y": -1.8,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文6"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "三叶结",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#B6A1F2",
+        "x": 3,
+        "y": -1.8,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文7"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "作为抽象空间，它们都同胚于圆周。请读完整个问句：\n加入周围空间以后，我们要求保留的信息更多了。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s17",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "作为三维空间里的嵌入，环境同位是更强的要求；不要\n用一个答案替代另一个问题。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s19",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "remove",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s14",
+      "type": "passing_flash",
+      "fields": {
+        "target": "形4",
+        "color": "#FBBF24",
+        "timeWidth": 0.25,
+        "duration": 4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "wait",
+      "fields": {
+        "duration": 8
+      }
+    },
+    {
+      "id": "s22",
+      "type": "remove",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s23",
+      "type": "add",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "rotate",
+      "fields": {
+        "target": "形5",
+        "angle": 80,
+        "axis": "UP",
+        "duration": 5,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s24",
+      "type": "wait",
+      "fields": {
+        "duration": 8
+      }
+    }
+  ]
+}

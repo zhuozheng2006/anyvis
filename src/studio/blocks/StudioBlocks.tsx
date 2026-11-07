@@ -95,6 +95,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
   const lastActions = useRef('');
   const lastState = useRef('');
   const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const revealRequest = useRef(0);
   const [query, setQuery] = useState('');
   const [stats, setStats] = useState({ connected: 0, detached: 0 });
   const [error, setError] = useState<string | null>(null);
@@ -109,8 +110,10 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     workspace.current?.zoomToFit();
     if (workspace.current) setScale(Math.round(workspace.current.scale * 100));
   };
-  const reveal = (id: string) => {
+  const reveal = async (id: string, details = false) => {
     const ws = workspace.current;
+    if (!ws) return;
+    const request = ++revealRequest.current;
     let block = ws?.getBlockById(id);
     let expanded = false;
     // Navigating the outline must reveal children of folded containers,
@@ -122,8 +125,13 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     } finally { Blockly.Events.setRecordUndo(recordUndo); }
     // Restored collapsed workspaces can contain children that have never had
     // their SVG paths measured. Render the revealed tree before centering it.
-    if (expanded) ws?.render();
-    ws?.centerOnBlock(id, true);
+    if (expanded) ws.render();
+    if (details) {
+      const target = ws.getBlockById(id);
+      if (target?.getField('__details')) target.setFieldValue('expanded', '__details');
+    }
+    await Blockly.renderManagement.finishQueuedRenders();
+    if (workspace.current === ws && request === revealRequest.current && ws.getBlockById(id)) ws.centerOnBlock(id, true);
   };
 
   useImperativeHandle(ref, () => ({
@@ -136,7 +144,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     undo: () => workspace.current?.undo(false),
     redo: () => workspace.current?.undo(true),
     zoomIn: () => zoom(1), zoomOut: () => zoom(-1), fit,
-    highlight: (id) => { if (id) reveal(id); workspace.current?.highlightBlock(id); },
+    highlight: (id) => { if (id) void reveal(id); else revealRequest.current++; workspace.current?.highlightBlock(id); },
     focusSearch: () => search.current?.focus(),
     updateFields: (id, fields) => {
       const block = workspace.current?.getBlockById(id);
@@ -145,12 +153,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       try { for (const [name, value] of Object.entries(fields)) if (block.getField(name)) block.setFieldValue(String(value), name); }
       finally { Blockly.Events.setGroup(false); }
     },
-    showDetails: (id) => {
-      reveal(id);
-      const block = workspace.current?.getBlockById(id);
-      if (block?.getField('__details')) block.setFieldValue('expanded', '__details');
-      workspace.current?.centerOnBlock(id, true);
-    },
+    showDetails: (id) => { void reveal(id, true); },
     addBlock: (type, fields) => {
       const ws = workspace.current;
       if (!ws || readOnly) return;
@@ -187,18 +190,27 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
     workspace.current = ws;
     let loading = true;
     let disposed = false;
+    let referencesDirty = false;
+    let connectionsDirty = false;
+    const detachedStatus = new WeakMap<Blockly.BlockSvg, boolean>();
     const publishError = (message: string | null) => { setError(message); latest.current.onWorkspaceError?.(message); };
     setRenameErrorHandler(ws, publishError);
     const updateStats = () => {
-      const detached = detachedBlockCount(ws);
+      const blocks = ws.getAllBlocks(false);
       const start = ws.getTopBlocks(false).find(block => block.type === START_TYPE);
       const connected = new Set(start?.getDescendants(false).map(block => block.id) || []);
-      for (const block of ws.getAllBlocks(false)) {
+      let detached = 0;
+      for (const block of blocks) {
         const outside = !connected.has(block.id) && block.type !== START_TYPE;
-        block.getSvgRoot()?.classList.toggle('av-block-detached', outside);
-        block.setWarningText(outside ? '这块积木还没有接上。请接到「当动画开始」下方，否则不会进入动画。' : null, 'anyvis-connection');
+        if (outside) detached++;
+        const previous = detachedStatus.get(block);
+        if (previous !== outside) {
+          block.getSvgRoot()?.classList.toggle('av-block-detached', outside);
+          if (outside || previous === true) block.setWarningText(outside ? '这块积木还没有接上。请接到「当动画开始」下方，否则不会进入动画。' : null, 'anyvis-connection');
+          detachedStatus.set(block, outside);
+        }
       }
-      setStats({ connected: Math.max(0, ws.getAllBlocks(false).length - detached - 1), detached });
+      setStats({ connected: Math.max(0, blocks.length - detached - 1), detached });
       setScale(Math.round(ws.scale * 100));
     };
     try {
@@ -214,15 +226,15 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       if (ws.isDragging()) { updateTimer.current = setTimeout(publish, 100); return; }
       try {
         const actions = workspaceToActions(ws);
-        setReferenceNames(ws, actions);
-        updateStats();
+        if (referencesDirty) { setReferenceNames(ws, actions); referencesDirty = false; }
+        if (connectionsDirty) { updateStats(); connectionsDirty = false; }
         publishError(null);
         const state = Blockly.serialization.workspaces.save(ws);
         const serialized = JSON.stringify(state);
         if (serialized === lastState.current) return;
         lastState.current = serialized;
         lastActions.current = actionSignature(actions);
-        latest.current.onChange({ ...latest.current.project, actions, workspace: saveWorkspace(ws, actions) });
+        latest.current.onChange({ ...latest.current.project, actions, workspace: saveWorkspace(ws, actions, state) });
       } catch (cause) { publishError(cause instanceof Error ? cause.message : '积木连接存在问题。'); }
     };
     const listener = (event: Blockly.Events.Abstract) => {
@@ -232,7 +244,14 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       }
       if (event.type === Blockly.Events.VIEWPORT_CHANGE) setScale(Math.round(ws.scale * 100));
       if (loading || event.isUiEvent || event.type === Blockly.Events.FINISHED_LOADING) return;
+      if (event.type === Blockly.Events.BLOCK_CREATE || event.type === Blockly.Events.BLOCK_DELETE || event.type === Blockly.Events.BLOCK_MOVE) {
+        referencesDirty = true;
+        connectionsDirty = true;
+      }
       if (event.type === Blockly.Events.BLOCK_CHANGE) {
+        const change = event as Blockly.Events.BlockChange;
+        if (change.name === 'name' || change.element === 'disabled' || change.element === 'mutation') referencesDirty = true;
+        if (change.element === 'mutation') connectionsDirty = true;
         try { applyWorkspaceRename(ws, event as Blockly.Events.BlockChange); }
         catch (cause) { publishError(cause instanceof Error ? cause.message : '无法更新对象引用。'); }
       }

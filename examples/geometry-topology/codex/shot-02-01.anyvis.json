@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-2-01",
+  "name": "2.01 给形状一个可核对的模型",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "给形状一个可核对的模型",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  2.01  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "line",
+      "fields": {
+        "name": "形4",
+        "x1": -2,
+        "y1": -1,
+        "x2": 1,
+        "y2": -1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "line",
+      "fields": {
+        "name": "形5",
+        "x1": -2,
+        "y1": -1,
+        "x2": -2,
+        "y2": 1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "line",
+      "fields": {
+        "name": "形6",
+        "x1": 1,
+        "y1": -1,
+        "x2": -2,
+        "y2": 1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "group",
+      "fields": {
+        "name": "组7",
+        "members": "形4,形5,形6"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "A(0,0)  B(3,0)  C(0,2)",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "3",
+        "fontSize": 23,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": -0.5,
+        "y": -1.35,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "2",
+        "fontSize": 23,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2.35,
+        "y": 0,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "只靠肉眼容易误判。我们把三个顶点放进坐标系。接下\n来所有数值都从这三个坐标核对，让每次变化都有同一\n参照。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "text",
+      "fields": {
+        "name": "文12",
+        "text": "后面的每次变化，都追踪这三个点，而不是换一张陌生\n的图。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "remove",
+      "fields": {
+        "target": "文12"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "add",
+      "fields": {
+        "target": "文12"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "passing_flash",
+      "fields": {
+        "target": "组7",
+        "color": "#FBBF24",
+        "timeWidth": 0.25,
+        "duration": 4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s19",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}

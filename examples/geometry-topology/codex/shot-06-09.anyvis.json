@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-6-09",
+  "name": "6.09 把“洞”说得更精确",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "06 / 第六章：带着边界使用工具，重新回答开场问题",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "把“洞”说得更精确",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  6.09  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形4",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#63DBC5",
+        "fill": 0.06,
+        "x": -4,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "text",
+      "fields": {
+        "name": "文5",
+        "text": "连通分支",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#E6EDF6",
+        "x": -4,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形6",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#B6A1F2",
+        "fill": 0.06,
+        "x": 0,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "边界",
+        "fontSize": 25,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形8",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#F3CD85",
+        "fill": 0.06,
+        "x": 4,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "把手",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#E6EDF6",
+        "x": 4,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "“洞”是很好的直觉起点，却不是总能直接代入公式的\n量。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "把问题改成有明确定义的结构，计算和反例才有共同语\n言。这些问题可以逐项核对；含混的洞数则可能把不同\n性质混成同一项。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "remove",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s10",
+      "type": "indicate",
+      "fields": {
+        "target": "文5",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文10"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "add",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "indicate",
+      "fields": {
+        "target": "文7",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "indicate",
+      "fields": {
+        "target": "文9",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s19",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}

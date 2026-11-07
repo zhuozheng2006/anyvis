@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-5-08",
+  "name": "5.08 不扭与扭半圈，得到同样的带吗？",
+  "scene": {
+    "dimension": "3d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "camera",
+      "fields": {
+        "phi": 65,
+        "theta": -60,
+        "zoom": 0.9,
+        "duration": 0
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文1"
+      }
+    },
+    {
+      "id": "s4",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "不扭与扭半圈，得到同样的带吗？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文2"
+      }
+    },
+    {
+      "id": "s6",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  5.08  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文3"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "surface",
+      "fields": {
+        "name": "形4",
+        "xExpr": "2.5+(1.45+v*cos(u/2))*cos(u)",
+        "yExpr": "(1.45+v*cos(u/2))*sin(u)",
+        "zExpr": "v*sin(u/2)",
+        "uMin": 0,
+        "uMax": 6.283185307179586,
+        "vMin": -0.48,
+        "vMax": 0.48,
+        "resolution": 24,
+        "color": "#B6A1F2",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "surface",
+      "fields": {
+        "name": "形5",
+        "xExpr": "-2.5+(1.2+v)*cos(u)",
+        "yExpr": "(1.2+v)*sin(u)",
+        "zExpr": "0",
+        "uMin": 0,
+        "uMax": 6.283185307179586,
+        "vMin": -0.35,
+        "vMax": 0.35,
+        "resolution": 20,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文6",
+        "text": "普通环带：b = 2",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2.5,
+        "y": -1.7,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文6"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "莫比乌斯带：b = 1",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 2.5,
+        "y": -1.7,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文7"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "同向接合得到普通环带，反向接合得到莫比乌斯带。先\n沿一条边走，看看能否经过所有边缘，再决定边界究竟\n有几条。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s17",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "两者χ都为0，但沿边界走一圈的结果不同：分别有两\n条和一条边界。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s19",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "remove",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s22",
+      "type": "remove",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s23",
+      "type": "add",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s14",
+      "type": "rotate",
+      "fields": {
+        "target": "形4",
+        "angle": 70,
+        "axis": "OUT",
+        "duration": 5,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s24",
+      "type": "wait",
+      "fields": {
+        "duration": 8
+      }
+    }
+  ]
+}

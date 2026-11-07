@@ -12,6 +12,8 @@ export const START_TYPE = 'anyvis2_start';
 const PREFIX = 'anyvis2_';
 interface ReferenceObject { name: string; kind: string; blockId: string; connected: boolean; enabled: boolean }
 const referenceObjects = new WeakMap<Blockly.Workspace, Map<string, ReferenceObject>>();
+const emptyReferences = new Map<string, ReferenceObject>();
+const referenceMenus = new WeakMap<Blockly.FieldDropdown, { objects: Map<string, ReferenceObject>; value: string | null; sourceId?: string; options: [string, string][] }>();
 const renameFeedback = new WeakMap<Blockly.Workspace, (error: string | null) => void>();
 let registered = false;
 
@@ -41,16 +43,33 @@ export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[
   const blocks = workspace.getAllBlocks(false);
   if (blocks.length) {
     const enabled = new Set<string>();
-    // Read execution semantics so children of a disabled container are also
-    // excluded, even if the child itself has not been individually disabled.
-    try { walkActions(workspaceToActions(workspace), action => enabled.add(action.id)); } catch { /* Loading a partial workspace. */ }
+    const connected = new Set<string>();
+    // Walk connections once, without serializing every unrelated field. A
+    // disabled statement skips its body, but not the following statement.
+    const visit = (first: Blockly.Block | null, active: boolean) => {
+      let block = first;
+      while (block && !connected.has(block.id)) {
+        connected.add(block.id);
+        const executes = active && block.isEnabled();
+        if (executes) enabled.add(block.id);
+        for (const input of block.inputList) {
+          const child = input.connection?.targetBlock();
+          if (child) visit(child, executes);
+        }
+        block = block.getNextBlock();
+      }
+    };
+    for (const start of workspace.getTopBlocks(false).filter(block => block.type === START_TYPE)) {
+      connected.add(start.id);
+      visit(start.getNextBlock(), true);
+    }
     // Once loaded, the actual workspace wins over a lagging React snapshot,
     // including immediately after deleting or renaming a constructor.
     for (const block of blocks) {
       const definition = getBlockDefinition(block.type.slice(PREFIX.length));
       const name = block.getFieldValue('name');
       if (definition?.createsObject && typeof name === 'string' && name) {
-        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: block.id, connected: block.getRootBlock().type === START_TYPE, enabled: enabled.has(block.id) });
+        objects.set(name, { name, kind: definition.objectKind || 'mobject', blockId: block.id, connected: connected.has(block.id), enabled: enabled.has(block.id) });
       }
     }
   } else {
@@ -63,6 +82,13 @@ export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[
       }
     });
   }
+  const previous = referenceObjects.get(workspace);
+  // Keep the same index identity for geometry/text/timing-only edits. Menus
+  // invalidate only when declaration names, kinds or execution status change.
+  if (previous?.size === objects.size && [...objects].every(([name, object]) => {
+    const old = previous.get(name);
+    return old?.blockId === object.blockId && old.kind === object.kind && old.connected === object.connected && old.enabled === object.enabled;
+  })) return;
   referenceObjects.set(workspace, objects);
   for (const block of blocks) for (const input of block.inputList) for (const field of input.fieldRow) {
     if (field instanceof ObjectReferenceField) field.refreshLabel();
@@ -94,7 +120,7 @@ const kindLabels: Record<string, string> = {
 function referenceMap(field: Blockly.Field): Map<string, ReferenceObject> {
   const workspace = field.getSourceBlock()?.workspace;
   const main = workspace?.isFlyout ? (workspace as Blockly.WorkspaceSvg).targetWorkspace : workspace;
-  return main ? referenceObjects.get(main) || new Map() : new Map();
+  return main ? referenceObjects.get(main) || emptyReferences : emptyReferences;
 }
 function expectedKind(field: FieldDefinition): string {
   return field.objectKinds?.length === 1 ? kindLabels[field.objectKinds[0]] || '对象' : '图形对象';
@@ -116,12 +142,17 @@ function referenceLabel(input: Blockly.FieldDropdown, definition: FieldDefinitio
   return compatibleReference(input, definition, object) ? value : `⚠ 类型不符：${value}`;
 }
 function referenceOptions(input: Blockly.FieldDropdown, definition: FieldDefinition): [string, string][] {
+  const objects = referenceMap(input);
+  const current = input.getValue();
+  const sourceId = input.getSourceBlock()?.id;
+  const cached = referenceMenus.get(input);
+  if (cached?.objects === objects && cached.value === current && cached.sourceId === sourceId) return cached.options;
   const options: [string, string][] = [[referenceLabel(input, definition, ''), '']];
-  for (const object of referenceMap(input).values()) {
+  for (const object of objects.values()) {
     if (compatibleReference(input, definition, object)) options.push([object.name, object.name]);
   }
-  const current = input.getValue();
   if (current && !options.some(option => option[1] === current)) options.push([referenceLabel(input, definition, current), current]);
+  referenceMenus.set(input, { objects, value: current, sourceId, options });
   return options;
 }
 class ObjectReferenceField extends Blockly.FieldDropdown {
@@ -142,6 +173,7 @@ class ObjectReferenceField extends Blockly.FieldDropdown {
   }
   refreshLabel(): void {
     const previous = this.getText();
+    if (this.definition && previous === referenceLabel(this, this.definition, this.getValue() || '')) return;
     this.setValue(this.getValue(), false);
     if (this.getText() !== previous) this.forceRerender();
   }
@@ -211,7 +243,10 @@ function setDetails(block: ContainerBlock, definition: BlockDefinition, expanded
     const input = block.getInput(`FIELD_${field.name}`);
     if (input && !common.has(field.name)) input.setVisible(expanded);
   }
-  if (block instanceof Blockly.BlockSvg && block.rendered) block.render();
+  // BlockSvg.rendered means "SVG workspace", not "initialization complete".
+  // Calling render() here flushes the global queue during EVERY block init and
+  // extra-state load, repeatedly measuring the growing connected tree.
+  if (block instanceof Blockly.BlockSvg) void block.queueRender();
 }
 
 function configureBranches(block: ContainerBlock, count: number): void {
@@ -314,6 +349,7 @@ function sequenceState(actions: Action[]): BlockState | undefined {
     const fields: Record<string, FieldValue> = {};
     for (const field of definition.fields) fields[field.name] = action.fields[field.name] ?? field.default;
     const state: BlockState = { type: blockType(action.type), id: action.id, fields };
+    if (action.type === 'sequence' && String(fields.label || '').trim()) state.collapsed = true;
     if (definition.container) {
       state.inputs = {};
       if (action.branches?.length) {
@@ -346,6 +382,8 @@ export function loadProjectWorkspace(project: Project, workspace: Blockly.Worksp
   const saved = project.workspace as Partial<StudioWorkspaceState> | undefined;
   const usable = saved?.version === 1 && saved.actionSignature === actionSignature(project.actions) && saved.blockly;
   const state = usable ? saved.blockly! : actionsToWorkspace(project.actions);
+  const recordUndo = Blockly.Events.getRecordUndo();
+  const eventGroup = Blockly.Events.getGroup();
   Blockly.Events.disable();
   try {
     workspace.clear();
@@ -359,10 +397,16 @@ export function loadProjectWorkspace(project: Project, workspace: Blockly.Worksp
     } catch (error) {
       if (!usable) throw error;
       workspace.clear();
+      setReferenceNames(workspace, project.actions);
       Blockly.serialization.workspaces.load(actionsToWorkspace(project.actions), workspace);
     }
+    setReferenceNames(workspace, project.actions);
     workspace.clearUndo();
   } finally {
+    // Blockly's loader can throw before restoring its global event settings.
+    // A bad saved layout must not disable undo for subsequent user edits.
+    Blockly.Events.setRecordUndo(recordUndo);
+    Blockly.Events.setGroup(eventGroup);
     Blockly.Events.enable();
   }
 }
@@ -401,8 +445,8 @@ export function workspaceToActions(workspace: Blockly.Workspace): Action[] {
   return read(starts[0].getNextBlock());
 }
 
-export function saveWorkspace(workspace: Blockly.Workspace, actions: Action[]): StudioWorkspaceState {
-  return { version: 1, actionSignature: actionSignature(actions), blockly: Blockly.serialization.workspaces.save(workspace) };
+export function saveWorkspace(workspace: Blockly.Workspace, actions: Action[], state?: object): StudioWorkspaceState {
+  return { version: 1, actionSignature: actionSignature(actions), blockly: state ?? Blockly.serialization.workspaces.save(workspace) };
 }
 
 export function detachedBlockCount(workspace: Blockly.Workspace): number {

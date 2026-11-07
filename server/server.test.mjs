@@ -7,6 +7,7 @@ import { Readable, Writable } from 'node:stream';
 import { setTimeout as delay } from 'node:timers/promises';
 import http from 'node:http';
 import { createAnyVisServer, discoverPython, parseRange } from './server.mjs';
+import { createEmptyProject } from '../src/studio/core/project.ts';
 
 // Exercise the actual HTTP route handler without binding a socket. Some build
 // environments deny listen(); a separate smoke run checks real browser I/O.
@@ -91,6 +92,31 @@ test('a listen failure aborts the in-flight runtime probe before rejecting start
     await assert.rejects(createAnyVisServer({ port: 4317, cacheRoot: path.join(directory, 'cache'), pythonPath: process.execPath, workerPath, runtimeRoot: directory }), error => error === failure);
     assert.ok(Date.now() - started < 2000);
   } finally { mocked.mock.restore(); await rm(directory, { recursive: true, force: true }); }
+});
+
+test('closing or reconnecting the service cancels an active AI request immediately', async t => {
+  const directory = await mkdtemp(path.join(tmpdir(), 'anyvis-ai-close-test-'));
+  const app = await createAnyVisServer({ port: 4317, listen: false, cacheRoot: directory, health: { available: false, capabilities: {} } });
+  let fetchStarted;
+  const started = new Promise(resolve => { fetchStarted = resolve; });
+  const mocked = t.mock.method(globalThis, 'fetch', (url, options) => new Promise((resolve, reject) => {
+    fetchStarted();
+    const abort = () => reject(new DOMException('Aborted by service shutdown', 'AbortError'));
+    if (options.signal.aborted) abort();
+    else options.signal.addEventListener('abort', abort, { once: true });
+  }));
+  try {
+    const { token } = (await request(app, '/api/session')).json();
+    const response = request(app, '/api/ai', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-AnyVis-Token': token },
+      body: JSON.stringify({ endpoint: 'https://example.test/v1', model: 'test-model', key: 'local-test-only', prompt: '绘制一个圆', project: createEmptyProject() }),
+    });
+    await started;
+    const at = Date.now(); await app.close();
+    const result = await response;
+    assert.ok(Date.now() - at < 2000);
+    assert.equal(result.status, 408); assert.match(result.json().error, /已取消/);
+  } finally { mocked.mock.restore(); await app.close(); await rm(directory, { recursive: true, force: true }); }
 });
 
 test('local API blocks cross-site execution, DNS-rebinding hosts and missing session tokens', async () => {

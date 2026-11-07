@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-6-05",
+  "name": "6.05 练习四：χ相同就同胚吗？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "06 / 第六章：带着边界使用工具，重新回答开场问题",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "练习四：χ相同就同胚吗？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  6.05  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "annulus",
+      "fields": {
+        "name": "形4",
+        "innerRadius": 0.7,
+        "outerRadius": 1.2,
+        "color": "#63DBC5",
+        "fill": 0.3,
+        "x": -2.5,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "text",
+      "fields": {
+        "name": "文5",
+        "text": "圆环：χ=0，b=2",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2.5,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "rectangle",
+      "fields": {
+        "name": "形6",
+        "width": 2.6,
+        "height": 1.6,
+        "color": "#B6A1F2",
+        "fill": 0,
+        "x": 2.5,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "arrow",
+      "fields": {
+        "name": "形7",
+        "x1": 1.2,
+        "y1": -0.5,
+        "x2": 1.2,
+        "y2": 0.9,
+        "color": "#F3CD85",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "arrow",
+      "fields": {
+        "name": "形8",
+        "x1": 3.8,
+        "y1": 0.9,
+        "x2": 3.8,
+        "y2": -0.5,
+        "color": "#F3CD85",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "反向粘合：b=1",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 2.5,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "一个相同的不变量不能保证对象相同。先尝试用最容易\n核对的差别给理由，再考虑有没有第二条独立证据。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "这个例子已经被边界分支数区分，定向性又提供了另一\n条独立线索。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "remove",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s14",
+      "type": "wait",
+      "fields": {
+        "duration": 11.9
+      }
+    },
+    {
+      "id": "s15",
+      "type": "remove",
+      "fields": {
+        "target": "文10"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "add",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s10",
+      "type": "indicate",
+      "fields": {
+        "target": "文9",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s17",
+      "type": "wait",
+      "fields": {
+        "duration": 11.1
+      }
+    }
+  ]
+}

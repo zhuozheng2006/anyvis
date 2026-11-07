@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-5-02",
+  "name": "5.02 球面为什么给出2？",
+  "scene": {
+    "dimension": "3d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "camera",
+      "fields": {
+        "phi": 65,
+        "theta": -60,
+        "zoom": 0.9,
+        "duration": 0
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文1"
+      }
+    },
+    {
+      "id": "s4",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "球面为什么给出2？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文2"
+      }
+    },
+    {
+      "id": "s6",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  5.02  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文3"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "cube",
+      "fields": {
+        "name": "形4",
+        "side": 2.1,
+        "color": "#63DBC5",
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文5",
+        "text": "V = 8，E = 12，F = 6",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文5"
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文6",
+        "text": "立方体表面与球面同胚，可以借前者的面分解计数。计\n数时可以转动视角检查背面的部分，遮挡不意味着那些\n边和面不存在。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文6"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "得到8−12+6=2；这不是用立方体的实体体积参\n与计数。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文7"
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文7"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s19",
+      "type": "remove",
+      "fields": {
+        "target": "文6"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "add",
+      "fields": {
+        "target": "文7"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "rotate",
+      "fields": {
+        "target": "形4",
+        "angle": 65,
+        "axis": "UP",
+        "duration": 5,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "wait",
+      "fields": {
+        "duration": 8
+      }
+    }
+  ]
+}

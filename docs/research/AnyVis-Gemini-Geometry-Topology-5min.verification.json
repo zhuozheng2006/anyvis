@@ -1,0 +1,13 @@
+{
+  "file": "AnyVis-Gemini-Geometry-Topology-5min.mp4",
+  "durationSeconds": 300.2083333333333,
+  "fps": "24",
+  "width": 1280,
+  "height": 720,
+  "decodedFrames": 7205,
+  "allFramesDecoded": true,
+  "monotonicTimestamps": true,
+  "authoredDuration": 300,
+  "roundingFrames": 5,
+  "sha256": "00e2387113368bcc1643a0a13f673e2f137ebc3b9db8c8eb4b6e1cdd59d9a95a"
+}

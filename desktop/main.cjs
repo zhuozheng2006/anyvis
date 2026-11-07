@@ -178,6 +178,9 @@ app.on('window-all-closed', () => app.quit());
 app.on('before-quit', event => {
   if (mayQuit) return;
   event.preventDefault(); if (quitting) return; quitting = true;
+  // Closing normally flushes renderer drafts and aborts in-flight AI fetches.
+  // Waiting for server.close first could keep those requests alive for 120 s.
+  if (!smoke) for (const win of BrowserWindow.getAllWindows()) if (!win.isDestroyed()) win.close();
   Promise.resolve(engine?.close()).catch(error => console.error('AnyVis engine shutdown:', error.message)).finally(() => { mayQuit = true; if (smoke) app.exit(process.exitCode || 0); else app.quit(); });
 });
 if (!singleInstance) { mayQuit = true; app.quit(); }

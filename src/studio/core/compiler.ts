@@ -223,6 +223,10 @@ export function compileProject(input: Project | unknown): CompileResult {
       default: throw new Error(`创建积木 ${a.type} 尚未实现。`);
     }
     stmt(`${target} = ${construction}`, a);
+    if (a.type === 'text' && num(a, 'maxWidth') > 0) {
+      stmt(`if ${target}.width > ${num(a, 'maxWidth')}:`, a);
+      stmt(`    ${target}.scale_to_fit_width(${num(a, 'maxWidth')})`, a);
+    }
     objects.set(name, { kind: definition.objectKind ?? 'mobject', visible: str(a, 'appear') !== 'hidden', ...(a.type === 'group' ? {members: str(a, 'members').split(',').map(v => v.trim())} : {}), ...(a.type === 'graph' ? {vertices: str(a, 'vertices').split(',').map(v => v.trim())} : {}) });
     if (definition.category === '图形' && a.fields.fill !== undefined) stmt(`${target}.set_color(${tint(a)}).set_fill(${tint(a)}, opacity=${num(a, 'fill')})`, a);
     else if (a.fields.color !== undefined && !['tracker', 'graph', 'surface', 'sphere', 'cube', 'cylinder', 'dynamic_dot', 'dynamic_plot', 'dynamic_line', 'dynamic_number', 'trace', 'area', 'riemann', 'plane', 'tangent'].includes(a.type)) stmt(`${target}.set_color(${tint(a)})`, a);
@@ -236,9 +240,17 @@ export function compileProject(input: Project | unknown): CompileResult {
     if (definition.createsObject) return creation(a);
     const name = str(a, 'target');
     let expression = '';
-    const direct: Record<string, string> = { create: 'Create', write: 'Write', fade_in: 'FadeIn', fade_out: 'FadeOut', uncreate: 'Uncreate', grow: 'GrowFromCenter', draw_border: 'DrawBorderThenFill', indicate: 'Indicate', circumscribe: 'Circumscribe', flash: 'Flash', wiggle: 'Wiggle', shrink: 'ShrinkToCenter' };
+    const direct: Record<string, string> = { create: 'Create', write: 'Write', fade_in: 'FadeIn', fade_out: 'FadeOut', uncreate: 'Uncreate', grow: 'GrowFromCenter', draw_border: 'DrawBorderThenFill', circumscribe: 'Circumscribe', flash: 'Flash', wiggle: 'Wiggle', shrink: 'ShrinkToCenter' };
     if (direct[a.type]) expression = `${direct[a.type]}(${ref(a)}, ${timing(a)})`;
     else switch (a.type) {
+      case 'indicate': {
+        // Indicate is a Transform whose return to its original state is supplied
+        // by its rate function. Keep that round trip when applying user pacing.
+        const easing = str(a, 'easing') || 'smooth';
+        const roundTrip = easing === 'there_and_back' ? 'rate_functions.there_and_back' : `lambda t: rate_functions.there_and_back(rate_functions.${easing}(t))`;
+        expression = `Indicate(${ref(a)}, run_time=${num(a, 'duration')}, rate_func=${roundTrip})`;
+        break;
+      }
       case 'transform': case 'replacement_transform': case 'matching_tex': case 'transform_from_copy': {
         const from = ref(a); const to = ref(a, 'destination');
         if (name === str(a, 'destination')) throw new Error('变形的源对象和目标不能是同一个对象。');
@@ -291,7 +303,10 @@ export function compileProject(input: Project | unknown): CompileResult {
       case 'add':
         if (objects.get(str(a, 'target'))) objects.get(str(a, 'target'))!.retired = false;
         stmt(`self.add(${ref(a)})`, a); break;
-      case 'remove': stmt(`self.remove(${ref(a)})`, a); break;
+      // A group block collects existing objects without adding the group itself.
+      // Cairo Scene.remove does not expand such a group's family automatically.
+      // Keep fixed-in-frame registration so remove -> add preserves placement.
+      case 'remove': stmt(`self.remove(*${ref(a)}.get_family())`, a); break;
       case 'follow': stmt(`${ref(a)}.add_updater(lambda m: m.move_to(${ref(a, 'leader')}.get_center()+np.array([${num(a, 'dx')}, ${num(a, 'dy')}, 0])))`, a); break;
       case 'stop_updaters': stmt(`${ref(a)}.clear_updaters()`, a); break;
       case 'camera':

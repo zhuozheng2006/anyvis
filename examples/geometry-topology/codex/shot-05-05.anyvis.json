@@ -1,0 +1,330 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-5-05",
+  "name": "5.05 粘好以后，点边面还剩多少？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "粘好以后，点边面还剩多少？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  5.05  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "square",
+      "fields": {
+        "name": "形4",
+        "side": 2.8,
+        "color": "#A8B7CC",
+        "fill": 0,
+        "x": 0,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "arrow",
+      "fields": {
+        "name": "形5",
+        "x1": -1.4,
+        "y1": -1,
+        "x2": -1.4,
+        "y2": 1.3,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "arrow",
+      "fields": {
+        "name": "形6",
+        "x1": 1.4,
+        "y1": -1,
+        "x2": 1.4,
+        "y2": 1.3,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "arrow",
+      "fields": {
+        "name": "形7",
+        "x1": -1.2,
+        "y1": 1.6,
+        "x2": 1.2,
+        "y2": 1.6,
+        "color": "#B6A1F2",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "arrow",
+      "fields": {
+        "name": "形8",
+        "x1": -1.2,
+        "y1": -1.2,
+        "x2": 1.2,
+        "y2": -1.2,
+        "color": "#B6A1F2",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "a",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#B6A1F2",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "a",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#B6A1F2",
+        "x": 0,
+        "y": -1.55,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "b",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#63DBC5",
+        "x": -1.85,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "text",
+      "fields": {
+        "name": "文12",
+        "text": "同向对应",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 3,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文13",
+        "text": "环面粘边图",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#E6EDF6",
+        "x": -4,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "text",
+      "fields": {
+        "name": "文14",
+        "text": "四个角 → 一个顶点",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 2.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "text",
+      "fields": {
+        "name": "文15",
+        "text": "1 − 2 + 1 = 0",
+        "fontSize": 28,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 4,
+        "y": -1.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s18",
+      "type": "text",
+      "fields": {
+        "name": "文16",
+        "text": "粘合后四个角成为同一个顶点，两对边成为两条边。这\n不是普通的四边形计数：粘合以后，重复出现的角和边\n要按身份合并。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s19",
+      "type": "text",
+      "fields": {
+        "name": "文17",
+        "text": "因此环面可用V=1、E=2、F=1的胞腔分解，得\n到χ=0。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s20",
+      "type": "remove",
+      "fields": {
+        "target": "文17"
+      }
+    },
+    {
+      "id": "s17",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s22",
+      "type": "remove",
+      "fields": {
+        "target": "文16"
+      }
+    },
+    {
+      "id": "s23",
+      "type": "add",
+      "fields": {
+        "target": "文17"
+      }
+    },
+    {
+      "id": "s14",
+      "type": "indicate",
+      "fields": {
+        "target": "文13",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s24",
+      "type": "wait",
+      "fields": {
+        "duration": 11
+      }
+    }
+  ]
+}

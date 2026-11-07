@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-2-07",
+  "name": "2.07 剪切会打破哪条规则？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "剪切会打破哪条规则？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  2.07  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "line",
+      "fields": {
+        "name": "形4",
+        "x1": -2,
+        "y1": -1,
+        "x2": 1,
+        "y2": -1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "line",
+      "fields": {
+        "name": "形5",
+        "x1": -2,
+        "y1": -1,
+        "x2": -2,
+        "y2": 1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "line",
+      "fields": {
+        "name": "形6",
+        "x1": 1,
+        "y1": -1,
+        "x2": -2,
+        "y2": 1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "group",
+      "fields": {
+        "name": "组7",
+        "members": "形4,形5,形6"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "(x, y) → (x+y, y)",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "3",
+        "fontSize": 23,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": -0.5,
+        "y": -1.35,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "2",
+        "fontSize": 23,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2.35,
+        "y": 0,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "line",
+      "fields": {
+        "name": "形11",
+        "x1": -2,
+        "y1": -1,
+        "x2": 1,
+        "y2": -1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "line",
+      "fields": {
+        "name": "形12",
+        "x1": -2,
+        "y1": -1,
+        "x2": 0,
+        "y2": 1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "line",
+      "fields": {
+        "name": "形13",
+        "x1": 1,
+        "y1": -1,
+        "x2": 0,
+        "y2": 1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "group",
+      "fields": {
+        "name": "组14",
+        "members": "形11,形12,形13"
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "组14"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "text",
+      "fields": {
+        "name": "文15",
+        "text": "现在把每一层向右推，推的量等于它的高度。跟踪顶点\nC的运动最明显：它向右移动，而到横轴的距离保持不\n变。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s21",
+      "type": "text",
+      "fields": {
+        "name": "文16",
+        "text": "底边和高度没有改变，但原来的直角已经变了。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s22",
+      "type": "remove",
+      "fields": {
+        "target": "文16"
+      }
+    },
+    {
+      "id": "s19",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s23",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s24",
+      "type": "remove",
+      "fields": {
+        "target": "文15"
+      }
+    },
+    {
+      "id": "s25",
+      "type": "add",
+      "fields": {
+        "target": "文16"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "remove",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "remove",
+      "fields": {
+        "target": "文10"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "transform",
+      "fields": {
+        "target": "组7",
+        "destination": "组14",
+        "duration": 4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s26",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}

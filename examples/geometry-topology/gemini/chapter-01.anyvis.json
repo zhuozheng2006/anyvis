@@ -1,0 +1,3310 @@
+{
+  "schemaVersion": 2,
+  "id": "29d56efc-3e40-4dbb-b138-bed1b24041bf",
+  "name": "第一章：圆、椭圆、方形在什么意义下是同一种形状？",
+  "scene": {
+    "dimension": "2d",
+    "background": "#0A1128",
+    "width": 1280,
+    "height": 720,
+    "fps": 24
+  },
+  "actions": [
+    {
+      "id": "d2b4a38b-898d-4dab-838a-a4c209334d24",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "8c9715a3-8539-49be-9db8-5f8c1b6caf01",
+          "type": "text",
+          "fields": {
+            "name": "s01_banner",
+            "text": "第一章 · 形状的本质",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "29ce53c1-e2e4-45b7-b97f-9491c0a449ce",
+          "type": "text",
+          "fields": {
+            "name": "s01_sub1",
+            "text": "在欧几里得几何直觉中，\n圆、椭圆与方形显然截然不同。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "3a83ce2d-2ffb-4ce1-8dd5-203e82bff532",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "2902e2af-ee44-48a1-80ce-3dd2819f7d97",
+              "type": "circle",
+              "fields": {
+                "name": "s01_circle",
+                "radius": 1.2,
+                "color": "#2DD4BF",
+                "fill": 0.15,
+                "x": -4.2,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "655ce963-af96-4231-9710-80280214b6b8",
+              "type": "ellipse",
+              "fields": {
+                "name": "s01_ellipse",
+                "width": 2.8,
+                "height": 1.6,
+                "color": "#FBBF24",
+                "fill": 0.15,
+                "x": 0,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "af22bbb1-f31b-4b1e-861d-fe756a2a288f",
+              "type": "square",
+              "fields": {
+                "name": "s01_square",
+                "side": 2.2,
+                "color": "#A855F7",
+                "fill": 0.15,
+                "x": 4.2,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            }
+          ]
+        },
+        {
+          "id": "600a0475-0aeb-498d-b5df-420bb610d056",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "6908b01f-6cf9-45ad-959f-1e19be595c62",
+              "type": "text",
+              "fields": {
+                "name": "s01_lbl_c",
+                "text": "圆 (Circle)",
+                "fontSize": 24,
+                "maxWidth": 4,
+                "color": "#2DD4BF",
+                "x": -4.2,
+                "y": -1.4,
+                "z": 0,
+                "appear": "fade",
+                "duration": 1
+              }
+            },
+            {
+              "id": "381f658c-ebe2-4c39-ac78-9325abebda9e",
+              "type": "text",
+              "fields": {
+                "name": "s01_lbl_e",
+                "text": "椭圆 (Ellipse)",
+                "fontSize": 24,
+                "maxWidth": 4,
+                "color": "#FBBF24",
+                "x": 0,
+                "y": -1.4,
+                "z": 0,
+                "appear": "fade",
+                "duration": 1
+              }
+            },
+            {
+              "id": "76bdc14a-3228-4533-b077-7eb711c7c5d1",
+              "type": "text",
+              "fields": {
+                "name": "s01_lbl_s",
+                "text": "正方形 (Square)",
+                "fontSize": 24,
+                "maxWidth": 4,
+                "color": "#A855F7",
+                "x": 4.2,
+                "y": -1.4,
+                "z": 0,
+                "appear": "fade",
+                "duration": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "0f46b5e7-80ae-4d0f-bd41-d7bfdd369044",
+          "type": "wait",
+          "fields": {
+            "duration": 6
+          }
+        },
+        {
+          "id": "224fa3da-b50e-4419-83c8-f61d425d099f",
+          "type": "fade_out",
+          "fields": {
+            "target": "s01_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "38220dfd-1c48-4ad7-b95a-2a799e53a839",
+          "type": "text",
+          "fields": {
+            "name": "s01_sub2",
+            "text": "但现代拓扑学却给出惊人结论：\n它们在本质上是同一种形状！",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "714175de-dd6a-481d-8265-af8a0c3cbd5f",
+          "type": "indicate",
+          "fields": {
+            "target": "s01_circle",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "e78e87bf-16e7-4cbc-a2ff-2e0c9825352e",
+          "type": "indicate",
+          "fields": {
+            "target": "s01_ellipse",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "ee2324bd-e05b-47f3-88e7-c841e7e17a5c",
+          "type": "indicate",
+          "fields": {
+            "target": "s01_square",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "4db91473-602c-43d4-aa22-70b8ba20a828",
+          "type": "wait",
+          "fields": {
+            "duration": 6.5
+          }
+        },
+        {
+          "id": "ea2ca240-1788-447b-a3df-5a61e81ba807",
+          "type": "fade_out",
+          "fields": {
+            "target": "s01_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "f96dbc8d-721f-44a9-b890-6344ec522653",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "3e4628f6-8162-4ade-b372-4fd57e62b312",
+              "type": "fade_out",
+              "fields": {
+                "target": "s01_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "e053db06-7f88-43f3-8838-1e32468b660f",
+              "type": "fade_out",
+              "fields": {
+                "target": "s01_circle",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "4abe825a-9878-4384-8bda-83ee83be8289",
+              "type": "fade_out",
+              "fields": {
+                "target": "s01_ellipse",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "0b002df1-feaf-4240-9f36-dde713ccc8e6",
+              "type": "fade_out",
+              "fields": {
+                "target": "s01_square",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c89a0909-6061-4a7f-b348-d7a9ef7847f9",
+              "type": "fade_out",
+              "fields": {
+                "target": "s01_lbl_c",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "4c41b8f5-13ac-4097-b5f5-84789de5f52a",
+              "type": "fade_out",
+              "fields": {
+                "target": "s01_lbl_e",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "2ab5b9e8-0287-4c78-8951-96757e6c881e",
+              "type": "fade_out",
+              "fields": {
+                "target": "s01_lbl_s",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3bab228b-8dce-4da8-93f3-6c54949ca403",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "db7add0e-3aba-4c6f-b42d-3a7e90c3fd95",
+          "type": "text",
+          "fields": {
+            "name": "s02_banner",
+            "text": "拓扑直觉 · 橡皮薄膜几何",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "949bdaeb-081c-4ff5-8916-a3e0c0b3b71f",
+          "type": "text",
+          "fields": {
+            "name": "s02_sub1",
+            "text": "设想这个圆环是由\n极具柔韧弹性的橡皮筋做成的。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "d10035c1-8927-467f-b73e-fec72333c6f7",
+          "type": "circle",
+          "fields": {
+            "name": "s02_main",
+            "radius": 1.8,
+            "color": "#2DD4BF",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "create",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "4f79ab1c-9eda-43ee-bd5c-9cdd62c22b4b",
+          "type": "scale",
+          "fields": {
+            "target": "s02_main",
+            "factor": 1.15,
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "0d7c7356-2e7e-45fa-bd97-d4cc2b778b35",
+          "type": "scale",
+          "fields": {
+            "target": "s02_main",
+            "factor": 0.8696,
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "f2282fe9-9308-4f6b-bc3c-bd737032033e",
+          "type": "wait",
+          "fields": {
+            "duration": 4
+          }
+        },
+        {
+          "id": "fa9bd12e-7870-4aa4-9fe4-077cc59daa5e",
+          "type": "fade_out",
+          "fields": {
+            "target": "s02_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "4d6c32c1-690f-4df8-8da8-dd7c584c4e46",
+          "type": "text",
+          "fields": {
+            "name": "s02_sub2",
+            "text": "只要不剪断、不粘合，经过连续形变，\n圆便可变为椭圆甚至方形。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "2d0b10fb-31b2-4606-982f-84b2e993f0ee",
+          "type": "ellipse",
+          "fields": {
+            "name": "s02_target_ellipse",
+            "width": 4,
+            "height": 2,
+            "color": "#FBBF24",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 0.1
+          }
+        },
+        {
+          "id": "72bc7c47-0369-4fb7-8c9b-2cb752875a6e",
+          "type": "transform",
+          "fields": {
+            "target": "s02_main",
+            "destination": "s02_target_ellipse",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "4642f39f-7037-4cf4-b82b-27b26aea4c83",
+          "type": "square",
+          "fields": {
+            "name": "s02_target_square",
+            "side": 3,
+            "color": "#A855F7",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 0.1
+          }
+        },
+        {
+          "id": "5fce6fbf-4b0b-446b-9670-fbb8b9fec84f",
+          "type": "transform",
+          "fields": {
+            "target": "s02_main",
+            "destination": "s02_target_square",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "cc143c6b-1c35-4009-b720-b71ae25190f8",
+          "type": "passing_flash",
+          "fields": {
+            "target": "s02_main",
+            "color": "#FBBF24",
+            "timeWidth": 0.25,
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "f7c1ae33-c0e7-4a42-b2f5-b4908c37d62c",
+          "type": "wait",
+          "fields": {
+            "duration": 4
+          }
+        },
+        {
+          "id": "2a44277a-49ad-46d6-98b4-65fdd62598e6",
+          "type": "fade_out",
+          "fields": {
+            "target": "s02_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "8c052c02-a8d8-45f9-b971-57ef8f2fb226",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "754883eb-e49c-4768-8c60-a2ea2d754b9c",
+              "type": "fade_out",
+              "fields": {
+                "target": "s02_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "6c23c671-c5a7-4c88-af52-029b8b5c926c",
+              "type": "fade_out",
+              "fields": {
+                "target": "s02_main",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "68dbc583-0044-4dcf-a236-23d8620c055f",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "769e16aa-914b-42df-9ea2-2d1e27049092",
+          "type": "text",
+          "fields": {
+            "name": "s03_banner",
+            "text": "几何度量的局限 · 距离与曲率失效",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "6b666890-b67d-458b-bb26-360ee632279d",
+          "type": "text",
+          "fields": {
+            "name": "s03_sub1",
+            "text": "在欧氏几何中：圆具有恒定曲率与恒定半径，\n而方形拥有四个尖锐直角。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "5b126d2d-41b7-44f6-9acb-f95520b44058",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "375c29df-1154-48dc-9f01-6d40ac9d8250",
+              "type": "circle",
+              "fields": {
+                "name": "s03_circle",
+                "radius": 1.5,
+                "color": "#2DD4BF",
+                "fill": 0.15,
+                "x": -3.5,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "cf84d7f2-a35e-40d6-9aca-517a94198080",
+              "type": "square",
+              "fields": {
+                "name": "s03_square",
+                "side": 3,
+                "color": "#A855F7",
+                "fill": 0.15,
+                "x": 3.5,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            }
+          ]
+        },
+        {
+          "id": "dd94eee7-dbe5-420f-8ed9-d3a60dff2595",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "cfb81b7f-1a88-4e9b-8d69-913186cf3f67",
+              "type": "arrow",
+              "fields": {
+                "name": "s03_radius_arrow",
+                "x1": -3.5,
+                "y1": 0.3,
+                "x2": -2,
+                "y2": 0.3,
+                "color": "#FBBF24",
+                "appear": "create",
+                "duration": 1
+              }
+            },
+            {
+              "id": "e5b054f8-392c-4c42-9be9-fedbf78d69aa",
+              "type": "text",
+              "fields": {
+                "name": "s03_radius_lbl",
+                "text": "半径 R 恒定",
+                "fontSize": 22,
+                "maxWidth": 3,
+                "color": "#FBBF24",
+                "x": -2.7,
+                "y": 0.7,
+                "z": 0,
+                "appear": "write",
+                "duration": 1
+              }
+            },
+            {
+              "id": "bf06be09-6144-4165-88be-4b937ae201b4",
+              "type": "dot",
+              "fields": {
+                "name": "s03_corner_dot",
+                "radius": 0.14,
+                "color": "#F43F5E",
+                "fill": 1,
+                "x": 5,
+                "y": 1.8,
+                "z": 0,
+                "appear": "fade",
+                "duration": 1
+              }
+            },
+            {
+              "id": "b8381938-6c99-44c3-872f-937da170bc30",
+              "type": "text",
+              "fields": {
+                "name": "s03_corner_lbl",
+                "text": "90° 尖锐直角",
+                "fontSize": 22,
+                "maxWidth": 3,
+                "color": "#A855F7",
+                "x": 3.5,
+                "y": -1.6,
+                "z": 0,
+                "appear": "write",
+                "duration": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "9d46d906-cd34-49f8-bc8d-40c91ec7b0ff",
+          "type": "wait",
+          "fields": {
+            "duration": 6
+          }
+        },
+        {
+          "id": "76b736fe-88fc-4600-b473-852e4675a2c4",
+          "type": "fade_out",
+          "fields": {
+            "target": "s03_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "7be5e3f3-e2b5-4fb1-be75-701ae4ae0557",
+          "type": "text",
+          "fields": {
+            "name": "s03_sub2",
+            "text": "距离、角度与曲率——\n这些传统度量在柔性形变中荡然无存。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F43F5E",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "f435dcf3-6959-4452-aadb-02d1c6899868",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "62a1ccce-b2a7-4164-bb23-fa4925bda022",
+              "type": "fade_out",
+              "fields": {
+                "target": "s03_radius_arrow",
+                "duration": 0.8,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "499be00f-05a4-4b32-aa42-cd2d6e1069a1",
+              "type": "fade_out",
+              "fields": {
+                "target": "s03_radius_lbl",
+                "duration": 0.8,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "024d9e05-4fe9-451e-9ea0-8fd1cf993476",
+              "type": "fade_out",
+              "fields": {
+                "target": "s03_corner_dot",
+                "duration": 0.8,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "39d62483-a44f-4aba-90f8-8c97dbe8826a",
+              "type": "fade_out",
+              "fields": {
+                "target": "s03_corner_lbl",
+                "duration": 0.8,
+                "easing": "smooth"
+              }
+            }
+          ]
+        },
+        {
+          "id": "53b68592-80e2-4026-8a52-19e482c5fcb3",
+          "type": "formula",
+          "fields": {
+            "name": "s03_metric_tex",
+            "tex": "\\text{Distances } d(x,y) \\text{ are NOT Preserved}",
+            "fontSize": 30,
+            "color": "#F43F5E",
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.7
+          }
+        },
+        {
+          "id": "25518f95-96f7-43d4-a63c-723f76d9a5b6",
+          "type": "indicate",
+          "fields": {
+            "target": "s03_metric_tex",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "0a3c1414-8e60-477b-9c6c-704422e43756",
+          "type": "wait",
+          "fields": {
+            "duration": 5.5
+          }
+        },
+        {
+          "id": "00011ce3-7be6-4cb8-9035-61d70096125a",
+          "type": "fade_out",
+          "fields": {
+            "target": "s03_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "f64835e2-a110-445f-86f9-4b6b1e3cb757",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "d27e4cd8-a7bc-4aeb-86b0-99c671366d33",
+              "type": "fade_out",
+              "fields": {
+                "target": "s03_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "babfa9b7-20a8-4ad6-9342-46ed25dd2e90",
+              "type": "fade_out",
+              "fields": {
+                "target": "s03_circle",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "57eaaae6-4fa8-47c3-9250-4c6dc8992590",
+              "type": "fade_out",
+              "fields": {
+                "target": "s03_square",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "ddcf1bf5-4cea-429a-8cf2-f77e3f60da52",
+              "type": "fade_out",
+              "fields": {
+                "target": "s03_metric_tex",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "431aee6b-9d12-4954-903e-d6bc698e7b30",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "b1f94ab1-22a9-46de-ba7f-33032030e8ad",
+          "type": "text",
+          "fields": {
+            "name": "s04_banner",
+            "text": "拓扑学的视角 · 点的邻域与连通性",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "6abf116c-8028-41ce-bd48-e2b405a1b733",
+          "type": "text",
+          "fields": {
+            "name": "s04_sub1",
+            "text": "如果丢弃了度量标尺，\n几何中究竟还有什么是真正不变的？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "8a2c62b6-dbb7-4d9e-8ec5-37da3fd69b58",
+          "type": "circle",
+          "fields": {
+            "name": "s04_curve",
+            "radius": 1.8,
+            "color": "#2DD4BF",
+            "fill": 0.1,
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "create",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "b9a63a5e-0742-4cb2-8ac6-7b5ad14eabe4",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "e3d7148f-6a5a-4867-b836-f3b4f194333c",
+              "type": "dot",
+              "fields": {
+                "name": "s04_dot1",
+                "radius": 0.12,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": -0.25,
+                "y": 2.1,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            },
+            {
+              "id": "f2cb925b-c405-416d-b976-e4d84cd80950",
+              "type": "dot",
+              "fields": {
+                "name": "s04_dot2",
+                "radius": 0.12,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": 0.25,
+                "y": 2.1,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            },
+            {
+              "id": "b4200233-5065-425b-a8e1-0e209dae2c5b",
+              "type": "circle",
+              "fields": {
+                "name": "s04_neigh",
+                "radius": 0.55,
+                "color": "#A855F7",
+                "fill": 0.25,
+                "x": 0,
+                "y": 2.1,
+                "z": 0,
+                "appear": "create",
+                "duration": 1
+              }
+            },
+            {
+              "id": "bc97f525-339c-443e-bfea-5a012fec128f",
+              "type": "formula",
+              "fields": {
+                "name": "s04_lbl_u",
+                "tex": "U(p)",
+                "fontSize": 28,
+                "color": "#A855F7",
+                "x": 0,
+                "y": 2.9,
+                "z": 0,
+                "appear": "write",
+                "duration": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "0a57df24-e0fd-4d84-8228-96f6646c702c",
+          "type": "wait",
+          "fields": {
+            "duration": 6
+          }
+        },
+        {
+          "id": "916c8d28-7a0f-435b-adc2-b6617c283e52",
+          "type": "fade_out",
+          "fields": {
+            "target": "s04_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "1d060f9a-dcfb-4365-b345-f4bc94c77d89",
+          "type": "text",
+          "fields": {
+            "name": "s04_sub2",
+            "text": "拓扑学只关注最纯粹的关系：\n点与点之间的邻近与连通结构。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#2DD4BF",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "7967e14e-1451-4aed-aba2-e152041e8b24",
+          "type": "wave",
+          "fields": {
+            "target": "s04_curve",
+            "amplitude": 0.25,
+            "ripples": 2,
+            "direction": "UP",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "8f6be35d-669d-40d0-af05-ceedb98368d1",
+          "type": "rotate",
+          "fields": {
+            "target": "s04_curve",
+            "angle": 90,
+            "axis": "OUT",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "6707c120-4953-4727-aa39-be42231eb99f",
+          "type": "circumscribe",
+          "fields": {
+            "target": "s04_neigh",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "6f2cbf90-c987-4d43-959a-ed963331b3fd",
+          "type": "wait",
+          "fields": {
+            "duration": 4.5
+          }
+        },
+        {
+          "id": "ddab98b6-dbd3-4250-be0a-10e6bbd79d00",
+          "type": "fade_out",
+          "fields": {
+            "target": "s04_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "ee77f18e-8b23-452d-87c2-53ee8803391c",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "2ebe8257-367b-4d3b-9cc5-87f87fb6922f",
+              "type": "fade_out",
+              "fields": {
+                "target": "s04_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "6c6a8d1d-bd2b-418e-9af6-faa0c3c19091",
+              "type": "fade_out",
+              "fields": {
+                "target": "s04_curve",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "78083246-ce15-4c04-b868-5f60ebaec8f4",
+              "type": "fade_out",
+              "fields": {
+                "target": "s04_neigh",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "0b89a547-90f6-4120-91cf-c6a701a38632",
+              "type": "fade_out",
+              "fields": {
+                "target": "s04_dot1",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "0cb15df1-b8bc-4ca3-8001-0b218259b54f",
+              "type": "fade_out",
+              "fields": {
+                "target": "s04_dot2",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "540c9da8-4d5d-4776-9aa6-f53d1781ba4e",
+              "type": "fade_out",
+              "fields": {
+                "target": "s04_lbl_u",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c664e902-3fc4-4d3e-a978-bc31cb08050d",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "41b5c28e-10c4-48df-b7e1-e0bd8cbb6f2e",
+          "type": "text",
+          "fields": {
+            "name": "s05_banner",
+            "text": "核心准则一 · 映射的连续性 (Continuity)",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "780f3a0d-3b8f-4597-b040-3795f8207fdf",
+          "type": "text",
+          "fields": {
+            "name": "s05_sub1",
+            "text": "第一个严格数学要求：\n两形状之间的对应映射必须是‘连续’的。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "cf8168c7-6628-482c-ba83-0a4f53305eed",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "4b1d52fe-793f-4b63-9c45-908cf9f59bff",
+              "type": "circle",
+              "fields": {
+                "name": "s05_circ",
+                "radius": 1.4,
+                "color": "#2DD4BF",
+                "fill": 0.15,
+                "x": -3.6,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "96fa94c2-daa9-4f84-89ff-8d225b271c1f",
+              "type": "square",
+              "fields": {
+                "name": "s05_sq",
+                "side": 2.5,
+                "color": "#A855F7",
+                "fill": 0.15,
+                "x": 3.6,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "c0c498d7-4115-4c36-ac3b-81afd4d55562",
+              "type": "arrow",
+              "fields": {
+                "name": "s05_map_arrow",
+                "x1": -1.6,
+                "y1": 0.3,
+                "x2": 1.6,
+                "y2": 0.3,
+                "color": "#FBBF24",
+                "appear": "create",
+                "duration": 1.2
+              }
+            },
+            {
+              "id": "2b8a6f0f-e2bd-4d22-a6db-5e236b783245",
+              "type": "formula",
+              "fields": {
+                "name": "s05_tex_f",
+                "tex": "f: X \\to Y",
+                "fontSize": 34,
+                "color": "#FBBF24",
+                "x": 0,
+                "y": 0.9,
+                "z": 0,
+                "appear": "write",
+                "duration": 1.2
+              }
+            }
+          ]
+        },
+        {
+          "id": "9510fb5d-4bbb-4446-8b50-3da6646ef27f",
+          "type": "wait",
+          "fields": {
+            "duration": 7
+          }
+        },
+        {
+          "id": "2724323f-080a-4829-b431-fb45136d1224",
+          "type": "fade_out",
+          "fields": {
+            "target": "s05_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "44a9cdf5-1208-4072-8554-5e1a7d2355a3",
+          "type": "text",
+          "fields": {
+            "name": "s05_sub2",
+            "text": "原空间中无限贴近的点，经映射后依然保持紧邻，\n中途绝无断开。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "5122c61c-c843-48d8-9c11-113b11d3f56b",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "1f722e2c-95e0-47f9-835a-60ba431cff7f",
+              "type": "dot",
+              "fields": {
+                "name": "s05_p1",
+                "radius": 0.11,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": -3.75,
+                "y": 1.7,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            },
+            {
+              "id": "13bf08ba-b2dc-40ee-9459-2ef1a757a986",
+              "type": "dot",
+              "fields": {
+                "name": "s05_p2",
+                "radius": 0.11,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": -3.45,
+                "y": 1.7,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            },
+            {
+              "id": "b9ad1116-cf08-4741-a064-96f8ef41efab",
+              "type": "dot",
+              "fields": {
+                "name": "s05_fp1",
+                "radius": 0.11,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": 3.45,
+                "y": 1.55,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            },
+            {
+              "id": "62b62e17-966e-4e94-bc2a-bdd3d764d2c7",
+              "type": "dot",
+              "fields": {
+                "name": "s05_fp2",
+                "radius": 0.11,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": 3.75,
+                "y": 1.55,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            }
+          ]
+        },
+        {
+          "id": "9311c45f-6c29-444d-8622-07aef6e989be",
+          "type": "passing_flash",
+          "fields": {
+            "target": "s05_circ",
+            "color": "#2DD4BF",
+            "timeWidth": 0.3,
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "4d22c056-910b-40b8-bc8f-917bd8860467",
+          "type": "passing_flash",
+          "fields": {
+            "target": "s05_sq",
+            "color": "#A855F7",
+            "timeWidth": 0.3,
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "ed6c493a-0262-4a31-9928-ef3117cb7b82",
+          "type": "wait",
+          "fields": {
+            "duration": 5.7
+          }
+        },
+        {
+          "id": "b4430ca9-22f4-4415-be3c-65748a4e492f",
+          "type": "fade_out",
+          "fields": {
+            "target": "s05_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "8d83eb19-5308-44d0-bdee-975980f6e9b8",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "ff0bfdec-a028-4e11-af0d-69b4ddcb0d5e",
+              "type": "fade_out",
+              "fields": {
+                "target": "s05_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "ebef52ca-d28a-4e56-9fa1-89883ec33074",
+              "type": "fade_out",
+              "fields": {
+                "target": "s05_circ",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "9b4e0872-a1a8-4d34-b970-f72c0420739f",
+              "type": "fade_out",
+              "fields": {
+                "target": "s05_sq",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "9bd57ea7-32df-4690-b415-e4581144c7eb",
+              "type": "fade_out",
+              "fields": {
+                "target": "s05_map_arrow",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "fdd12fb9-3401-49c9-a694-9142a57b62c6",
+              "type": "fade_out",
+              "fields": {
+                "target": "s05_tex_f",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "73e65442-662f-4002-b50d-77b73510f67b",
+              "type": "fade_out",
+              "fields": {
+                "target": "s05_p1",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "ff0bcf4e-4f9d-4cd9-8ef0-0719924bf4c0",
+              "type": "fade_out",
+              "fields": {
+                "target": "s05_p2",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "50efd46f-e898-4e4b-93de-54184cad286f",
+              "type": "fade_out",
+              "fields": {
+                "target": "s05_fp1",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "20e88878-0765-4f96-9035-8c6665b69c4f",
+              "type": "fade_out",
+              "fields": {
+                "target": "s05_fp2",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "97e777fe-00c3-4a27-a623-5cb221ca4aae",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "50c4a685-d7da-4f82-9194-3fbcf33f19b9",
+          "type": "text",
+          "fields": {
+            "name": "s06_banner",
+            "text": "拓扑反例 · 撕裂破坏了连续性",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#F43F5E",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "97533843-4f16-4791-b785-b159d4f53a23",
+          "type": "text",
+          "fields": {
+            "name": "s06_sub1",
+            "text": "切断并把切口两侧分开，\n原本紧邻的两点被强行分离。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "4b5e0a6e-0af9-470f-8d82-a673e2aa2b49",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "0187d83a-f907-4f3c-baa6-6d884201c85d",
+              "type": "arc",
+              "fields": {
+                "name": "s06_cut_arc",
+                "radius": 1.5,
+                "start": 20,
+                "angle": 320,
+                "color": "#2DD4BF",
+                "fill": 0,
+                "x": -3.2,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "400e97fb-bbd0-482e-a2eb-9d6f65c5a915",
+              "type": "dot",
+              "fields": {
+                "name": "s06_cp1",
+                "radius": 0.13,
+                "color": "#F43F5E",
+                "fill": 1,
+                "x": -1.75,
+                "y": 0.8,
+                "z": 0,
+                "appear": "fade",
+                "duration": 1
+              }
+            },
+            {
+              "id": "ad140f9a-0638-4815-b40e-8cd4f731211b",
+              "type": "dot",
+              "fields": {
+                "name": "s06_cp2",
+                "radius": 0.13,
+                "color": "#F43F5E",
+                "fill": 1,
+                "x": -1.75,
+                "y": -0.2,
+                "z": 0,
+                "appear": "fade",
+                "duration": 1
+              }
+            },
+            {
+              "id": "b94b4f2e-483d-448b-8c21-768e45779776",
+              "type": "line",
+              "fields": {
+                "name": "s06_straight_line",
+                "x1": 1,
+                "y1": 0.3,
+                "x2": 5.4,
+                "y2": 0.3,
+                "color": "#A855F7",
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "40c7da1e-2cb1-46dc-abf5-24c111a88520",
+              "type": "dot",
+              "fields": {
+                "name": "s06_lp1",
+                "radius": 0.13,
+                "color": "#F43F5E",
+                "fill": 1,
+                "x": 1,
+                "y": 0.3,
+                "z": 0,
+                "appear": "fade",
+                "duration": 1
+              }
+            },
+            {
+              "id": "395da0ec-0dcc-481d-b44d-30dbef8e4f85",
+              "type": "dot",
+              "fields": {
+                "name": "s06_lp2",
+                "radius": 0.13,
+                "color": "#F43F5E",
+                "fill": 1,
+                "x": 5.4,
+                "y": 0.3,
+                "z": 0,
+                "appear": "fade",
+                "duration": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "8ed1cd48-aad8-4f2a-ab41-bb19aeab08db",
+          "type": "wait",
+          "fields": {
+            "duration": 7
+          }
+        },
+        {
+          "id": "548df960-4d8f-4bf0-aafa-8e06354ac446",
+          "type": "fade_out",
+          "fields": {
+            "target": "s06_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "f6660f8f-769a-40d9-bb98-eb86c3f49f69",
+          "type": "text",
+          "fields": {
+            "name": "s06_sub2",
+            "text": "撕裂导致邻近关系破坏——\n线段与圆环在拓扑上绝不相同！",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F43F5E",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "d01a070b-eed1-4ad7-9b3a-15a4c3fc8497",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "0078db02-7e29-4b81-8b84-49db0b5beccc",
+              "type": "dashed_line",
+              "fields": {
+                "name": "s06_gap_line",
+                "x1": 1,
+                "y1": 0.9,
+                "x2": 5.4,
+                "y2": 0.9,
+                "dashLength": 0.18,
+                "dashRatio": 0.6,
+                "color": "#F43F5E",
+                "appear": "create",
+                "duration": 1.2
+              }
+            },
+            {
+              "id": "669a8b00-02b1-4800-82ed-0ede60ded48a",
+              "type": "text",
+              "fields": {
+                "name": "s06_not_homeo",
+                "text": "圆周 S¹ 与线段不同胚",
+                "fontSize": 28,
+                "maxWidth": 12.4,
+                "color": "#F43F5E",
+                "x": -0.8,
+                "y": 1.9,
+                "z": 0,
+                "appear": "write",
+                "duration": 1.5
+              }
+            }
+          ]
+        },
+        {
+          "id": "8808fab0-5e33-47d0-a55c-9755b69d2b2c",
+          "type": "circumscribe",
+          "fields": {
+            "target": "s06_not_homeo",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "fdac44bc-3d0a-4ef8-846f-2007996ddfc5",
+          "type": "wait",
+          "fields": {
+            "duration": 6.5
+          }
+        },
+        {
+          "id": "bc0ec89f-dbd1-40d8-b138-891c1c72c6d9",
+          "type": "fade_out",
+          "fields": {
+            "target": "s06_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "985de923-fcca-4a4e-bf93-1ea132f6a79c",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "038267f6-5c57-42f4-9a86-401aca4996df",
+              "type": "fade_out",
+              "fields": {
+                "target": "s06_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "9c4e6336-0d89-4aa6-b453-8cf2be8a6596",
+              "type": "fade_out",
+              "fields": {
+                "target": "s06_cut_arc",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "1e6dfd50-7b28-4fb9-8548-8a28ade6e7df",
+              "type": "fade_out",
+              "fields": {
+                "target": "s06_straight_line",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "b2d2675c-62df-473a-9dbd-739bd3d9110a",
+              "type": "fade_out",
+              "fields": {
+                "target": "s06_gap_line",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "e82dbe9f-1e00-41e4-adfb-896cb1b4046a",
+              "type": "fade_out",
+              "fields": {
+                "target": "s06_not_homeo",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "fefa7e3b-3813-404e-b1d8-60c420a9b72d",
+              "type": "fade_out",
+              "fields": {
+                "target": "s06_cp1",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "110378c6-8b9d-4bc3-93f9-21078a3c2123",
+              "type": "fade_out",
+              "fields": {
+                "target": "s06_cp2",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "1906e4f2-7618-4379-8575-0ee702e40b23",
+              "type": "fade_out",
+              "fields": {
+                "target": "s06_lp1",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "5b7e6d18-1301-455d-a388-fad340568d20",
+              "type": "fade_out",
+              "fields": {
+                "target": "s06_lp2",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "f764bc7a-a5c3-47b6-97ae-01010a1c8f43",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "4e2c3045-1197-4422-9910-52bde69ca54e",
+          "type": "text",
+          "fields": {
+            "name": "s07_banner",
+            "text": "核心准则二 · 一一对应的双射 (Bijection)",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "d1d9d5cf-f1e3-4595-bb47-0c8b98ea7982",
+          "type": "text",
+          "fields": {
+            "name": "s07_sub1",
+            "text": "第二个严格数学要求：\n映射必须是‘一一对应’的双射。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "cd909fa1-88ab-4361-b3a2-a4dc2b859e81",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "309681a1-3cab-4532-bb47-44d93983fdf7",
+              "type": "dot",
+              "fields": {
+                "name": "s07_origin",
+                "radius": 0.12,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": 0,
+                "y": 0.3,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            },
+            {
+              "id": "100fe49f-cb3c-4921-a287-9fd1af9a1f93",
+              "type": "circle",
+              "fields": {
+                "name": "s07_circ",
+                "radius": 1.4,
+                "color": "#2DD4BF",
+                "fill": 0.1,
+                "x": 0,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "0b0b2aa6-bb5e-452e-b8be-171791c9f0eb",
+              "type": "square",
+              "fields": {
+                "name": "s07_sq",
+                "side": 3.6,
+                "color": "#A855F7",
+                "fill": 0.08,
+                "x": 0,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "c20a624b-f98e-45da-814c-d0957d0ca7fe",
+              "type": "arrow",
+              "fields": {
+                "name": "s07_ray1",
+                "x1": 0,
+                "y1": 0.3,
+                "x2": 2.2,
+                "y2": 1.5,
+                "color": "#FBBF24",
+                "appear": "create",
+                "duration": 1
+              }
+            },
+            {
+              "id": "c6cbf49a-d375-40aa-b446-d02e06de3000",
+              "type": "arrow",
+              "fields": {
+                "name": "s07_ray2",
+                "x1": 0,
+                "y1": 0.3,
+                "x2": -2.2,
+                "y2": 1.5,
+                "color": "#FBBF24",
+                "appear": "create",
+                "duration": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "79ab4a80-94f6-4950-9d25-a5eeda9b7b84",
+          "type": "wait",
+          "fields": {
+            "duration": 7
+          }
+        },
+        {
+          "id": "9f227044-8c33-40a7-9168-03e7d428ac41",
+          "type": "fade_out",
+          "fields": {
+            "target": "s07_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "e79c73b3-4a13-45e4-9d37-c346020f17fb",
+          "type": "text",
+          "fields": {
+            "name": "s07_sub2",
+            "text": "每点对应唯一的目标点，\n既不能将两点捏为一个，也不能漏掉任何点。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "6a4da9d8-9dd5-4c57-8ed1-4048c7448b7c",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "1c11e7d4-166a-406a-8621-4bb2e9510f57",
+              "type": "arrow",
+              "fields": {
+                "name": "s07_ray3",
+                "x1": 0,
+                "y1": 0.3,
+                "x2": 2.2,
+                "y2": -0.9,
+                "color": "#FBBF24",
+                "appear": "create",
+                "duration": 1
+              }
+            },
+            {
+              "id": "86e00f55-a543-42fe-94e8-4e1397aa91e1",
+              "type": "arrow",
+              "fields": {
+                "name": "s07_ray4",
+                "x1": 0,
+                "y1": 0.3,
+                "x2": -2.2,
+                "y2": -0.9,
+                "color": "#FBBF24",
+                "appear": "create",
+                "duration": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "86ecfd06-0bdc-4365-b4f8-0fa5fc16e2e7",
+          "type": "indicate",
+          "fields": {
+            "target": "s07_circ",
+            "duration": 1.2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "aa18a5ea-5c17-4205-954d-90f71f8bde9a",
+          "type": "indicate",
+          "fields": {
+            "target": "s07_sq",
+            "duration": 1.2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "1ae592a0-ecf1-41c8-9a34-2e39abe757a0",
+          "type": "wait",
+          "fields": {
+            "duration": 6.1
+          }
+        },
+        {
+          "id": "87c96eb8-5eb6-4303-9e01-29ba412b241a",
+          "type": "fade_out",
+          "fields": {
+            "target": "s07_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "3c00c680-8a9b-428e-8879-cb39e2b583cb",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "5787af5a-8f22-46c7-b07a-c244a445661e",
+              "type": "fade_out",
+              "fields": {
+                "target": "s07_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "e243fef0-24f2-49d2-9f2a-097ff49397b8",
+              "type": "fade_out",
+              "fields": {
+                "target": "s07_circ",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "60d46449-b071-4c08-bbc9-a08faaecc66f",
+              "type": "fade_out",
+              "fields": {
+                "target": "s07_sq",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "99a0d982-e264-4e5d-b890-37464752eda6",
+              "type": "fade_out",
+              "fields": {
+                "target": "s07_ray1",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "f0464d89-187d-47bf-ba8e-4e1bf9e2790f",
+              "type": "fade_out",
+              "fields": {
+                "target": "s07_ray2",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "26eb4765-2229-46bc-ae11-664a67fc6912",
+              "type": "fade_out",
+              "fields": {
+                "target": "s07_ray3",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "24787abe-4531-4f11-b915-0d6116d9923e",
+              "type": "fade_out",
+              "fields": {
+                "target": "s07_ray4",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "b13a54cb-65c0-4732-8276-985435e857fa",
+              "type": "fade_out",
+              "fields": {
+                "target": "s07_origin",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a3e15f6f-0f35-41e9-b413-63fdeff1058e",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "bcfa2d52-8b3d-4b9e-b63c-99d79074cc63",
+          "type": "text",
+          "fields": {
+            "name": "s08_banner",
+            "text": "拓扑反例 · 粘合破坏了单射与回路结构",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#F43F5E",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "33ff4540-e642-45aa-b552-5624441de682",
+          "type": "text",
+          "fields": {
+            "name": "s08_sub1",
+            "text": "如果将圆环对向捏紧并粘合，\n就会形成一个‘8’字形图形。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "ca3c5029-24f9-44f2-b0b9-3add531b17c3",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "dd07d8bc-ec84-45c9-bfdd-6d3ede697853",
+              "type": "circle",
+              "fields": {
+                "name": "s08_loop1",
+                "radius": 1.1,
+                "color": "#F43F5E",
+                "fill": 0.15,
+                "x": -1.1,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "5a7c6559-7f90-41fa-b982-ff4bbd660de8",
+              "type": "circle",
+              "fields": {
+                "name": "s08_loop2",
+                "radius": 1.1,
+                "color": "#F43F5E",
+                "fill": 0.15,
+                "x": 1.1,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "71fb8c11-e28e-47e1-9428-3bc630e2dfd8",
+              "type": "dot",
+              "fields": {
+                "name": "s08_cross_dot",
+                "radius": 0.16,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": 0,
+                "y": 0.3,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            },
+            {
+              "id": "b66170fb-6d28-4622-96c1-9a0e067f5978",
+              "type": "text",
+              "fields": {
+                "name": "s08_cross_lbl",
+                "text": "交叉粘合点",
+                "fontSize": 24,
+                "maxWidth": 3,
+                "color": "#FBBF24",
+                "x": 0,
+                "y": -1.3,
+                "z": 0,
+                "appear": "write",
+                "duration": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "c6697895-f340-4c04-aa3b-cf0ddb9481b5",
+          "type": "wait",
+          "fields": {
+            "duration": 7
+          }
+        },
+        {
+          "id": "f61b4d24-8168-458d-8bf8-9c43af73f7c1",
+          "type": "fade_out",
+          "fields": {
+            "target": "s08_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c61405a4-c6d0-407d-8f8e-08ac4e76a696",
+          "type": "text",
+          "fields": {
+            "name": "s08_sub2",
+            "text": "粘合使两个原点重合，破坏了一一对应，\n还凭空虚增了闭环！",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F43F5E",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "5b346e90-193f-4aa7-9ba1-a4aa34455bf1",
+          "type": "flash",
+          "fields": {
+            "target": "s08_cross_dot",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "75f1699f-3dfd-4c2b-b204-4157ca4938f3",
+          "type": "wiggle",
+          "fields": {
+            "target": "s08_loop1",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c48362a9-55d6-477c-9fa8-e991918d0e95",
+          "type": "text",
+          "fields": {
+            "name": "s08_tex_fail",
+            "text": "圆环与“8”字形空间不同胚",
+            "fontSize": 28,
+            "maxWidth": 12.4,
+            "color": "#F43F5E",
+            "x": 0,
+            "y": 2.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "b50da3d9-c661-470c-bf71-ebb097c996ef",
+          "type": "wait",
+          "fields": {
+            "duration": 5
+          }
+        },
+        {
+          "id": "450d6d5b-3701-444e-b263-f4f699667bea",
+          "type": "fade_out",
+          "fields": {
+            "target": "s08_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "2d2574e3-5756-416f-9a0e-32c1fdb9bcb2",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "5143888e-f759-4b48-ab1b-589c158ea0bb",
+              "type": "fade_out",
+              "fields": {
+                "target": "s08_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "9f2a2a2b-8b7c-434f-b4ce-97d28a6142b9",
+              "type": "fade_out",
+              "fields": {
+                "target": "s08_loop1",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "8b2e1bad-c4cc-4509-8105-e971d6b3ce8e",
+              "type": "fade_out",
+              "fields": {
+                "target": "s08_loop2",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "b8696a41-6391-4879-b304-585b5a3a9268",
+              "type": "fade_out",
+              "fields": {
+                "target": "s08_cross_dot",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "1602e9ca-3005-4fdc-bedc-383bce0a7464",
+              "type": "fade_out",
+              "fields": {
+                "target": "s08_cross_lbl",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "59b18b20-7fca-43c4-bcea-3fb90d1599be",
+              "type": "fade_out",
+              "fields": {
+                "target": "s08_tex_fail",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "775ceab4-347e-4247-94f0-b37ee3c235fb",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "e14edf6f-45da-4486-af04-5b381c1222b7",
+          "type": "text",
+          "fields": {
+            "name": "s09_banner",
+            "text": "核心准则三 · 逆映射连续与同胚 (Homeomorphism)",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "eadc3569-bc94-4ce0-8c32-a616d881fa95",
+          "type": "text",
+          "fields": {
+            "name": "s09_sub1",
+            "text": "第三个核心准则：不仅正向可连续压缩，\n反向逆映射也必须完全连续。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "89f5f2c2-190f-4b86-8464-30fcd7ada763",
+          "type": "circle",
+          "fields": {
+            "name": "s09_morph",
+            "radius": 1.6,
+            "color": "#2DD4BF",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "create",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "dd05126c-0276-410a-9955-50310f451571",
+          "type": "square",
+          "fields": {
+            "name": "s09_to_sq",
+            "side": 2.8,
+            "color": "#A855F7",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 0.1
+          }
+        },
+        {
+          "id": "a55c9d02-c253-47d4-bcb3-4a0e7f4dff9d",
+          "type": "transform",
+          "fields": {
+            "target": "s09_morph",
+            "destination": "s09_to_sq",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "caf9b404-5312-4c6a-9d57-1a9fad103872",
+          "type": "circle",
+          "fields": {
+            "name": "s09_to_c",
+            "radius": 1.6,
+            "color": "#2DD4BF",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 0.1
+          }
+        },
+        {
+          "id": "86a79fdc-01cd-44c9-98a9-722787241c38",
+          "type": "transform",
+          "fields": {
+            "target": "s09_morph",
+            "destination": "s09_to_c",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "4c1d0d21-3a0f-4ac4-8600-639b4b3f9224",
+          "type": "wait",
+          "fields": {
+            "duration": 3
+          }
+        },
+        {
+          "id": "83b90674-013b-4c65-b143-5e4380370319",
+          "type": "fade_out",
+          "fields": {
+            "target": "s09_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "6365e840-4a65-4cbb-97c6-10a885a9646d",
+          "type": "text",
+          "fields": {
+            "name": "s09_sub2",
+            "text": "双向连续且一一对应——\n在同胚这一等价标准下，它们被视为相同！",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "93994e18-a1d9-4ca3-9cc9-1a6bfc7676a2",
+          "type": "formula",
+          "fields": {
+            "name": "s09_homeo_def",
+            "tex": "X \\cong Y \\iff f \\text{ and } f^{-1} \\text{ are Continuous Bijections}",
+            "fontSize": 28,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": 2.2,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.8
+          }
+        },
+        {
+          "id": "99b6c95d-cf1c-43e3-b74a-cd12cd97b948",
+          "type": "indicate",
+          "fields": {
+            "target": "s09_homeo_def",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c1b7ef9e-5112-4480-a4aa-3dc7546d581c",
+          "type": "circumscribe",
+          "fields": {
+            "target": "s09_morph",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "2408100d-9b50-4560-aee7-0182cdbf7a9d",
+          "type": "wait",
+          "fields": {
+            "duration": 4.7
+          }
+        },
+        {
+          "id": "c53e517f-efda-4085-9445-25991261ba7f",
+          "type": "fade_out",
+          "fields": {
+            "target": "s09_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "e681dc68-93b4-4297-b49b-355d687b8403",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "9bb22759-3ec5-413d-bc2e-95c36e9db46b",
+              "type": "fade_out",
+              "fields": {
+                "target": "s09_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "f1993ec4-94b9-4476-be59-55b1a5ec71c2",
+              "type": "fade_out",
+              "fields": {
+                "target": "s09_morph",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "7d34e72a-6d7a-4d0c-9c82-48f30af0bdb7",
+              "type": "fade_out",
+              "fields": {
+                "target": "s09_homeo_def",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "8d4c5c8f-9fb5-4dc3-affe-b06186d67e98",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "abfac11e-f2db-41ab-8c4f-870132dbea7c",
+          "type": "text",
+          "fields": {
+            "name": "s10_banner",
+            "text": "关键辨析 · 边界与内部：圆周不是圆盘",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "de3a1f39-e275-44f9-b437-5613bf852b38",
+          "type": "text",
+          "fields": {
+            "name": "s10_sub1",
+            "text": "请特别注意拓扑对象的精确定义：\n我们研究的是空心圆周，而非实心圆盘。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "1f015674-0711-46c9-b42c-57cc0b66680e",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "8acaf0dd-12b3-4338-ab9f-5126be75a73c",
+              "type": "circle",
+              "fields": {
+                "name": "s10_circle_1d",
+                "radius": 1.4,
+                "color": "#2DD4BF",
+                "fill": 0,
+                "x": -3.5,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "8068d1ee-53b4-4cb5-8e9a-48f0b5d91166",
+              "type": "text",
+              "fields": {
+                "name": "s10_lbl_1d",
+                "text": "圆周 S¹ (1维流形)",
+                "fontSize": 24,
+                "maxWidth": 3.5,
+                "color": "#2DD4BF",
+                "x": -3.5,
+                "y": -1.5,
+                "z": 0,
+                "appear": "write",
+                "duration": 1
+              }
+            },
+            {
+              "id": "fd8975c0-25e2-4153-85fc-0d2422831f3c",
+              "type": "circle",
+              "fields": {
+                "name": "s10_disk_2d",
+                "radius": 1.4,
+                "color": "#A855F7",
+                "fill": 0.65,
+                "x": 3.5,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "38c60b5d-89ba-41bf-b68c-d4852850c8e7",
+              "type": "text",
+              "fields": {
+                "name": "s10_lbl_2d",
+                "text": "圆盘 D² (2维流形)",
+                "fontSize": 24,
+                "maxWidth": 3.5,
+                "color": "#A855F7",
+                "x": 3.5,
+                "y": -1.5,
+                "z": 0,
+                "appear": "write",
+                "duration": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "e60361db-f47f-429f-a189-3e4badb7f982",
+          "type": "wait",
+          "fields": {
+            "duration": 7
+          }
+        },
+        {
+          "id": "f34b164c-232b-4727-ad2a-47839b78ee27",
+          "type": "fade_out",
+          "fields": {
+            "target": "s10_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "4c39fda3-2de6-4514-9caf-861476f5c38c",
+          "type": "text",
+          "fields": {
+            "name": "s10_sub2",
+            "text": "圆周是一维闭合线，圆盘是二维实心面——\n二者维度不同，绝不同胚！",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "34ada5da-b142-4f1c-a45b-642eb0092ddf",
+          "type": "text",
+          "fields": {
+            "name": "s10_neq",
+            "text": "圆周 S¹ 与圆盘 D² 不同胚！",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F43F5E",
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "dacea402-a719-44b2-a2b9-278f6533403d",
+          "type": "flash",
+          "fields": {
+            "target": "s10_neq",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c9ad2d75-b571-41bc-bb65-4482bd2c4931",
+          "type": "indicate",
+          "fields": {
+            "target": "s10_disk_2d",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "368a7065-fdfb-4fe4-8e99-09a0c8cb9119",
+          "type": "wait",
+          "fields": {
+            "duration": 5
+          }
+        },
+        {
+          "id": "abb043f8-4c1e-42fa-90f1-36a954ba6894",
+          "type": "fade_out",
+          "fields": {
+            "target": "s10_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "fa3c6bec-0057-4721-8bf9-5693561e3738",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "d6a1dd21-10b7-49ac-b0eb-23fd1479f5eb",
+              "type": "fade_out",
+              "fields": {
+                "target": "s10_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "3f6c455c-fd97-4d7b-9de5-a387ba79efd0",
+              "type": "fade_out",
+              "fields": {
+                "target": "s10_circle_1d",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "6fb52e2b-bfaf-4f3e-ae8b-d82d4bd16d70",
+              "type": "fade_out",
+              "fields": {
+                "target": "s10_disk_2d",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c89bfd9c-49d2-480c-a210-77a110ba5d01",
+              "type": "fade_out",
+              "fields": {
+                "target": "s10_neq",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "7fcd09f9-6e3c-4bee-ae9e-bfc4a415f6f8",
+              "type": "fade_out",
+              "fields": {
+                "target": "s10_lbl_1d",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "e225962e-8298-40ca-a3cf-39a2e3636269",
+              "type": "fade_out",
+              "fields": {
+                "target": "s10_lbl_2d",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "e0d317df-a00a-4450-9959-f6bcb6b86aa2",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "588ce5c8-8dd6-4320-a2c7-64dcca5ec0dd",
+          "type": "text",
+          "fields": {
+            "name": "s11_banner",
+            "text": "深层本质 · 拓扑不变量 (Topological Invariants)",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "0fb5eedb-0d16-4f11-959f-035ddb0ade94",
+          "type": "text",
+          "fields": {
+            "name": "s11_sub1",
+            "text": "刚才的双向连续对应证明了它们同胚；\n不变量可以帮助排除不可能的对应。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#F8FAFC",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "c3d6fd19-c906-491f-b27e-48c24c07ba75",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "1af4fa5d-4d32-419b-9af1-6dfb97859042",
+              "type": "circle",
+              "fields": {
+                "name": "s11_c",
+                "radius": 1.1,
+                "color": "#2DD4BF",
+                "fill": 0.1,
+                "x": -4,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "8a9b446d-e13e-4dbf-972a-071cba796cad",
+              "type": "ellipse",
+              "fields": {
+                "name": "s11_e",
+                "width": 2.5,
+                "height": 1.5,
+                "color": "#FBBF24",
+                "fill": 0.1,
+                "x": 0,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "1c57fafc-be9c-44c1-88b1-c3072419626a",
+              "type": "square",
+              "fields": {
+                "name": "s11_s",
+                "side": 2,
+                "color": "#A855F7",
+                "fill": 0.1,
+                "x": 4,
+                "y": 0.3,
+                "z": 0,
+                "appear": "create",
+                "duration": 1.5
+              }
+            },
+            {
+              "id": "22407732-8dcd-43d8-80ce-997e570a8d39",
+              "type": "dot",
+              "fields": {
+                "name": "s11_hole_c",
+                "radius": 0.12,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": -4,
+                "y": 0.3,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            },
+            {
+              "id": "86693a66-b50c-495b-a996-b3832c398925",
+              "type": "dot",
+              "fields": {
+                "name": "s11_hole_e",
+                "radius": 0.12,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": 0,
+                "y": 0.3,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            },
+            {
+              "id": "f771b18f-879c-4670-8f61-cc4c17ff95aa",
+              "type": "dot",
+              "fields": {
+                "name": "s11_hole_s",
+                "radius": 0.12,
+                "color": "#FBBF24",
+                "fill": 1,
+                "x": 4,
+                "y": 0.3,
+                "z": 0,
+                "appear": "fade",
+                "duration": 0.8
+              }
+            }
+          ]
+        },
+        {
+          "id": "d9ff6100-6dad-4e3b-ba76-2d685b621541",
+          "type": "wait",
+          "fields": {
+            "duration": 7
+          }
+        },
+        {
+          "id": "85179cf2-145f-4d72-a8af-460c863f12cb",
+          "type": "fade_out",
+          "fields": {
+            "target": "s11_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "26ed2318-14a5-4d6d-9297-e9b14b7a5532",
+          "type": "text",
+          "fields": {
+            "name": "s11_sub2",
+            "text": "切断一处仍保持连通，切断两处才分成两截——\n回路与孔洞的连通性质完全相同！",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#2DD4BF",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "55a1d948-a94c-49bb-891b-5aa5c39bdb60",
+          "type": "formula",
+          "fields": {
+            "name": "s11_inv_tex",
+            "tex": "\\chi(S^1) = 0, \\quad \\beta_1(S^1) = 1 \\text{ (One Hole)}",
+            "fontSize": 28,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": 2,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.8
+          }
+        },
+        {
+          "id": "858ad0ba-1e85-49fc-af86-a96df357ba7f",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "3204eb7e-7bd2-4202-b122-485e023c5fcb",
+              "type": "passing_flash",
+              "fields": {
+                "target": "s11_c",
+                "color": "#2DD4BF",
+                "timeWidth": 0.3,
+                "duration": 1.5,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "d5e5a8ec-8bb0-432f-ab55-90c5814248fe",
+              "type": "passing_flash",
+              "fields": {
+                "target": "s11_e",
+                "color": "#FBBF24",
+                "timeWidth": 0.3,
+                "duration": 1.5,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "8cd91986-7f2e-4531-a310-c8bf7c1f322f",
+              "type": "passing_flash",
+              "fields": {
+                "target": "s11_s",
+                "color": "#A855F7",
+                "timeWidth": 0.3,
+                "duration": 1.5,
+                "easing": "smooth"
+              }
+            }
+          ]
+        },
+        {
+          "id": "4dbae822-336c-4588-b969-4c2c1d64df31",
+          "type": "wait",
+          "fields": {
+            "duration": 6.2
+          }
+        },
+        {
+          "id": "675b021e-09c2-4e93-b202-0c7285f0510b",
+          "type": "fade_out",
+          "fields": {
+            "target": "s11_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "804710b0-5d75-4177-8bb1-62eb8a90a5fa",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "e25b840f-66ff-4201-865a-4eef1711fbcc",
+              "type": "fade_out",
+              "fields": {
+                "target": "s11_banner",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "3a2e4933-8efa-4db5-b670-99eb3cb28f49",
+              "type": "fade_out",
+              "fields": {
+                "target": "s11_c",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "f1bfd87b-7518-4ef9-b77d-622aa41ad91e",
+              "type": "fade_out",
+              "fields": {
+                "target": "s11_e",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "693012b1-99b1-4820-8968-96e23f09dcda",
+              "type": "fade_out",
+              "fields": {
+                "target": "s11_s",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "49d30098-7c75-4e6f-b82d-d031d9c34964",
+              "type": "fade_out",
+              "fields": {
+                "target": "s11_inv_tex",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "57c6f412-cfb2-454d-af82-a4789b97d7e0",
+              "type": "fade_out",
+              "fields": {
+                "target": "s11_hole_c",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "2516baa5-7402-493a-a434-4cf4fae25cbd",
+              "type": "fade_out",
+              "fields": {
+                "target": "s11_hole_e",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "ccf7b711-a605-40c0-9c31-5b25a60bd17c",
+              "type": "fade_out",
+              "fields": {
+                "target": "s11_hole_s",
+                "duration": 1,
+                "easing": "smooth"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1743cb67-7bcc-45e8-aadc-6787b6b507e7",
+      "type": "sequence",
+      "fields": {
+        "label": ""
+      },
+      "children": [
+        {
+          "id": "58fbb497-2aca-47c0-81bb-ce3934b7be06",
+          "type": "text",
+          "fields": {
+            "name": "s12_banner",
+            "text": "全章总结 · 拓扑同胚的等价标准",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#38BDF8",
+            "x": 0,
+            "y": 3.2,
+            "z": 0,
+            "appear": "fade",
+            "duration": 1
+          }
+        },
+        {
+          "id": "2c1d207d-903f-4c29-97e8-793a312cd9e9",
+          "type": "text",
+          "fields": {
+            "name": "s12_sub1",
+            "text": "在什么意义下它们是同一种形状？\n在同胚这一等价标准下！",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "063e60c2-6d04-4c1c-bbc6-7461ef08131c",
+          "type": "circle",
+          "fields": {
+            "name": "s12_final",
+            "radius": 1.8,
+            "color": "#2DD4BF",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "create",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "87911a93-9181-4f1f-ab27-7bc7efd77924",
+          "type": "ellipse",
+          "fields": {
+            "name": "s12_to_e",
+            "width": 4,
+            "height": 2,
+            "color": "#FBBF24",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 0.1
+          }
+        },
+        {
+          "id": "92d9167a-1655-4a49-8a39-9d62292dcb86",
+          "type": "transform",
+          "fields": {
+            "target": "s12_final",
+            "destination": "s12_to_e",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "18074f30-a03e-4482-b843-64facbe542d9",
+          "type": "square",
+          "fields": {
+            "name": "s12_to_s",
+            "side": 3,
+            "color": "#A855F7",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 0.1
+          }
+        },
+        {
+          "id": "12c30367-781f-46fc-9d21-70e198c06ddd",
+          "type": "transform",
+          "fields": {
+            "target": "s12_final",
+            "destination": "s12_to_s",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "f2b48b63-1ddd-45f3-8efd-6f2d9f337ea4",
+          "type": "circle",
+          "fields": {
+            "name": "s12_to_c",
+            "radius": 1.8,
+            "color": "#2DD4BF",
+            "fill": 0.15,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 0.1
+          }
+        },
+        {
+          "id": "814aac01-f96c-406b-a177-9ad62a1206f1",
+          "type": "transform",
+          "fields": {
+            "target": "s12_final",
+            "destination": "s12_to_c",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "1bd8711e-3996-404e-9c02-7cd8eb3d1d6c",
+          "type": "wait",
+          "fields": {
+            "duration": 1
+          }
+        },
+        {
+          "id": "c7bd4a5f-0e75-4a53-a7a3-a1c76a1708a4",
+          "type": "fade_out",
+          "fields": {
+            "target": "s12_sub1",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "9bf23943-ccfe-4f02-964c-d7cde3379da7",
+          "type": "text",
+          "fields": {
+            "name": "s12_sub2",
+            "text": "抛开僵硬度量，拓扑让我们洞察到\n几何深处最永恒、自由的内在联结。",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#2DD4BF",
+            "x": 0,
+            "y": -3.1,
+            "z": 0,
+            "appear": "write",
+            "duration": 1.5
+          }
+        },
+        {
+          "id": "ecf25b82-ac4b-4245-ab7b-cc102b91378c",
+          "type": "formula",
+          "fields": {
+            "name": "s12_final_tex",
+            "tex": "\\text{Circle} \\cong \\text{Ellipse} \\cong \\text{Square} \\cong S^1",
+            "fontSize": 30,
+            "color": "#FBBF24",
+            "x": 0,
+            "y": 2.3,
+            "z": 0,
+            "appear": "write",
+            "duration": 2
+          }
+        },
+        {
+          "id": "f4651355-5eb0-49c4-8555-29b460d1aeb5",
+          "type": "indicate",
+          "fields": {
+            "target": "s12_final_tex",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "538f0746-2550-4daa-9bd0-eae704c28f5c",
+          "type": "circumscribe",
+          "fields": {
+            "target": "s12_final",
+            "duration": 1.5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "b291e9a3-3b19-45ea-a8da-838d573de25c",
+          "type": "wait",
+          "fields": {
+            "duration": 4
+          }
+        },
+        {
+          "id": "82ad3213-627a-413e-8b64-f71deabd4083",
+          "type": "fade_out",
+          "fields": {
+            "target": "s12_sub2",
+            "duration": 1,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "3ab79bb5-09d6-47b5-b464-75169f7b5c5a",
+          "type": "wait",
+          "fields": {
+            "duration": 1.5
+          }
+        }
+      ]
+    }
+  ]
+}

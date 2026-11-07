@@ -1,0 +1,385 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-3-10",
+  "name": "3.10 给环境同位一个独立名字",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "给环境同位一个独立名字",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  3.10  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "line",
+      "fields": {
+        "name": "形4",
+        "x1": -4,
+        "y1": -1.5,
+        "x2": -4,
+        "y2": 1.5,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "line",
+      "fields": {
+        "name": "形5",
+        "x1": -3,
+        "y1": -1.5,
+        "x2": -3,
+        "y2": 1.5,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "line",
+      "fields": {
+        "name": "形6",
+        "x1": -2,
+        "y1": -1.5,
+        "x2": -2,
+        "y2": 1.5,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "line",
+      "fields": {
+        "name": "形7",
+        "x1": -1,
+        "y1": -1.5,
+        "x2": -1,
+        "y2": 1.5,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "line",
+      "fields": {
+        "name": "形8",
+        "x1": 0,
+        "y1": -1.5,
+        "x2": 0,
+        "y2": 1.5,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "line",
+      "fields": {
+        "name": "形9",
+        "x1": 1,
+        "y1": -1.5,
+        "x2": 1,
+        "y2": 1.5,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "line",
+      "fields": {
+        "name": "形10",
+        "x1": 2,
+        "y1": -1.5,
+        "x2": 2,
+        "y2": 1.5,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "line",
+      "fields": {
+        "name": "形11",
+        "x1": 3,
+        "y1": -1.5,
+        "x2": 3,
+        "y2": 1.5,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "line",
+      "fields": {
+        "name": "形12",
+        "x1": 4,
+        "y1": -1.5,
+        "x2": 4,
+        "y2": 1.5,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "line",
+      "fields": {
+        "name": "形13",
+        "x1": -4,
+        "y1": -1,
+        "x2": 4,
+        "y2": -1,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "line",
+      "fields": {
+        "name": "形14",
+        "x1": -4,
+        "y1": 0,
+        "x2": 4,
+        "y2": 0,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "line",
+      "fields": {
+        "name": "形15",
+        "x1": -4,
+        "y1": 1,
+        "x2": 4,
+        "y2": 1,
+        "color": "#30445E",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "circle",
+      "fields": {
+        "name": "形16",
+        "radius": 1.1,
+        "color": "#63DBC5",
+        "fill": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s17",
+      "type": "dot",
+      "fields": {
+        "name": "形17",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 1.1,
+        "y": 0,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s18",
+      "type": "dot",
+      "fields": {
+        "name": "形18",
+        "radius": 0.065,
+        "color": "#F69A87",
+        "fill": 1,
+        "x": 0,
+        "y": 1.1,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s19",
+      "type": "group",
+      "fields": {
+        "name": "组19",
+        "members": "形4,形5,形6,形7,形8,形9,形10,形11,形12,形13,形14,形15,形16,形17,形18"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "text",
+      "fields": {
+        "name": "文20",
+        "text": "曲线与周围网格，一起连续可逆地变",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s23",
+      "type": "text",
+      "fields": {
+        "name": "文21",
+        "text": "环境同位让整个周围空间连续变化，每一时刻都是自同\n胚，并从恒等变化开始。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s24",
+      "type": "text",
+      "fields": {
+        "name": "文22",
+        "text": "圆结与三叶结不能这样互变；本片引用这一结论，不在\n此证明。这里多要求了周围空间也能一起变化，所以比\n抽象圆周的对应更严格。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s25",
+      "type": "remove",
+      "fields": {
+        "target": "文22"
+      }
+    },
+    {
+      "id": "s22",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s26",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s27",
+      "type": "remove",
+      "fields": {
+        "target": "文21"
+      }
+    },
+    {
+      "id": "s28",
+      "type": "add",
+      "fields": {
+        "target": "文22"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "apply_matrix",
+      "fields": {
+        "target": "组19",
+        "matrix": "[[1,0.5],[0,1]]",
+        "duration": 4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s29",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}

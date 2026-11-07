@@ -1,0 +1,3872 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-chapter-5",
+  "name": "几何与拓扑 · 第5章",
+  "scene": {
+    "dimension": "3d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "c5s1_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.01 先区分外壳与实体"
+      },
+      "children": [
+        {
+          "id": "c5s1_s1",
+          "type": "camera",
+          "fields": {
+            "phi": 65,
+            "theta": -60,
+            "zoom": 0.9,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s1_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s1_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s1_文1"
+          }
+        },
+        {
+          "id": "c5s1_s4",
+          "type": "text",
+          "fields": {
+            "name": "c5s1_文2",
+            "text": "先区分外壳与实体",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s1_文2"
+          }
+        },
+        {
+          "id": "c5s1_s6",
+          "type": "text",
+          "fields": {
+            "name": "c5s1_文3",
+            "text": "形状不只一种看法  ·  5.01  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s1_文3"
+          }
+        },
+        {
+          "id": "c5s1_s8",
+          "type": "sphere",
+          "fields": {
+            "name": "c5s1_形4",
+            "radius": 1.4,
+            "color": "#63DBC5",
+            "x": -2,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s9",
+          "type": "circle",
+          "fields": {
+            "name": "c5s1_形5",
+            "radius": 1.3,
+            "color": "#B6A1F2",
+            "fill": 0.25,
+            "x": 2.7,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s10",
+          "type": "line",
+          "fields": {
+            "name": "c5s1_形6",
+            "x1": 1.4,
+            "y1": 0.2,
+            "x2": 4,
+            "y2": 0.2,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s11",
+          "type": "text",
+          "fields": {
+            "name": "c5s1_文7",
+            "text": "薄壳：二维曲面",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2,
+            "y": -1.8,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s12",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s1_文7"
+          }
+        },
+        {
+          "id": "c5s1_s13",
+          "type": "text",
+          "fields": {
+            "name": "c5s1_文8",
+            "text": "实心球的截面示意",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 2.7,
+            "y": -1.8,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s14",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s1_文8"
+          }
+        },
+        {
+          "id": "c5s1_s17",
+          "type": "text",
+          "fields": {
+            "name": "c5s1_文9",
+            "text": "这里研究的是球面，不是包含内部的实心球。表面上的\n小虫只能沿薄壳活动，我们不会把它穿过球心的路线算\n进去。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s18",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s1_文9"
+          }
+        },
+        {
+          "id": "c5s1_s19",
+          "type": "text",
+          "fields": {
+            "name": "c5s1_文10",
+            "text": "球面局部像一张二维小纸片，放在三维空间不等于它有\n三维内部。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s1_s20",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s1_文10"
+          }
+        },
+        {
+          "id": "c5s1_s21",
+          "type": "remove",
+          "fields": {
+            "target": "c5s1_文10"
+          }
+        },
+        {
+          "id": "c5s1_s15",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s1_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s1_s22",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s1_s23",
+          "type": "remove",
+          "fields": {
+            "target": "c5s1_文9"
+          }
+        },
+        {
+          "id": "c5s1_s24",
+          "type": "add",
+          "fields": {
+            "target": "c5s1_文10"
+          }
+        },
+        {
+          "id": "c5s1_s16",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s1_文8",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s1_s25",
+          "type": "wait",
+          "fields": {
+            "duration": 11
+          }
+        },
+        {
+          "id": "c5s1_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s1_cleanup",
+            "members": "c5s1_文1,c5s1_文2,c5s1_文3,c5s1_形4,c5s1_形5,c5s1_形6,c5s1_文7,c5s1_文8,c5s1_文9,c5s1_文10"
+          }
+        },
+        {
+          "id": "c5s1_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s1_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s2_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.02 球面为什么给出2？"
+      },
+      "children": [
+        {
+          "id": "c5s2_s1",
+          "type": "camera",
+          "fields": {
+            "phi": 65,
+            "theta": -60,
+            "zoom": 0.9,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s2_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s2_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s2_s3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s2_文1"
+          }
+        },
+        {
+          "id": "c5s2_s4",
+          "type": "text",
+          "fields": {
+            "name": "c5s2_文2",
+            "text": "球面为什么给出2？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s2_s5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s2_文2"
+          }
+        },
+        {
+          "id": "c5s2_s6",
+          "type": "text",
+          "fields": {
+            "name": "c5s2_文3",
+            "text": "形状不只一种看法  ·  5.02  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s2_s7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s2_文3"
+          }
+        },
+        {
+          "id": "c5s2_s8",
+          "type": "cube",
+          "fields": {
+            "name": "c5s2_形4",
+            "side": 2.1,
+            "color": "#63DBC5",
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s2_s9",
+          "type": "text",
+          "fields": {
+            "name": "c5s2_文5",
+            "text": "V = 8，E = 12，F = 6",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s2_s10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s2_文5"
+          }
+        },
+        {
+          "id": "c5s2_s13",
+          "type": "text",
+          "fields": {
+            "name": "c5s2_文6",
+            "text": "立方体表面与球面同胚，可以借前者的面分解计数。计\n数时可以转动视角检查背面的部分，遮挡不意味着那些\n边和面不存在。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s2_s14",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s2_文6"
+          }
+        },
+        {
+          "id": "c5s2_s15",
+          "type": "text",
+          "fields": {
+            "name": "c5s2_文7",
+            "text": "得到8−12+6=2；这不是用立方体的实体体积参\n与计数。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s2_s16",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s2_文7"
+          }
+        },
+        {
+          "id": "c5s2_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c5s2_文7"
+          }
+        },
+        {
+          "id": "c5s2_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s2_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s2_s18",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s2_s19",
+          "type": "remove",
+          "fields": {
+            "target": "c5s2_文6"
+          }
+        },
+        {
+          "id": "c5s2_s20",
+          "type": "add",
+          "fields": {
+            "target": "c5s2_文7"
+          }
+        },
+        {
+          "id": "c5s2_s11",
+          "type": "rotate",
+          "fields": {
+            "target": "c5s2_形4",
+            "angle": 65,
+            "axis": "UP",
+            "duration": 5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s2_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 8
+          }
+        },
+        {
+          "id": "c5s2_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s2_cleanup",
+            "members": "c5s2_文1,c5s2_文2,c5s2_文3,c5s2_形4,c5s2_文5,c5s2_文6,c5s2_文7"
+          }
+        },
+        {
+          "id": "c5s2_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s2_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s3_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.03 环面多了什么？"
+      },
+      "children": [
+        {
+          "id": "c5s3_s1",
+          "type": "camera",
+          "fields": {
+            "phi": 65,
+            "theta": -60,
+            "zoom": 0.9,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s3_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s3_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s3_s3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s3_文1"
+          }
+        },
+        {
+          "id": "c5s3_s4",
+          "type": "text",
+          "fields": {
+            "name": "c5s3_文2",
+            "text": "环面多了什么？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s3_s5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s3_文2"
+          }
+        },
+        {
+          "id": "c5s3_s6",
+          "type": "text",
+          "fields": {
+            "name": "c5s3_文3",
+            "text": "形状不只一种看法  ·  5.03  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s3_s7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s3_文3"
+          }
+        },
+        {
+          "id": "c5s3_s8",
+          "type": "surface",
+          "fields": {
+            "name": "c5s3_形4",
+            "xExpr": "0+(1.35+0.45*cos(v))*cos(u)",
+            "yExpr": "(1.35+0.45*cos(v))*sin(u)",
+            "zExpr": "0.45*sin(v)",
+            "uMin": 0,
+            "uMax": 6.283185307179586,
+            "vMin": 0,
+            "vMax": 6.283185307179586,
+            "resolution": 20,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s3_s10",
+          "type": "text",
+          "fields": {
+            "name": "c5s3_文5",
+            "text": "一个把手，零条边界",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s3_s11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s3_文5"
+          }
+        },
+        {
+          "id": "c5s3_s13",
+          "type": "text",
+          "fields": {
+            "name": "c5s3_文6",
+            "text": "环面像甜甜圈的表面，有一个把手，却没有边界边缘。\n沿着曲面走不会碰到边界终点；空隙位于周围空间中，\n不是纸的边缘。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s3_s14",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s3_文6"
+          }
+        },
+        {
+          "id": "c5s3_s15",
+          "type": "text",
+          "fields": {
+            "name": "c5s3_文7",
+            "text": "中央空隙不是被挖开的边界圆，别把两种“洞”混为一\n谈。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s3_s16",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s3_文7"
+          }
+        },
+        {
+          "id": "c5s3_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c5s3_文7"
+          }
+        },
+        {
+          "id": "c5s3_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s3_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s3_s18",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s3_s19",
+          "type": "remove",
+          "fields": {
+            "target": "c5s3_文6"
+          }
+        },
+        {
+          "id": "c5s3_s20",
+          "type": "add",
+          "fields": {
+            "target": "c5s3_文7"
+          }
+        },
+        {
+          "id": "c5s3_s9",
+          "type": "rotate",
+          "fields": {
+            "target": "c5s3_形4",
+            "angle": 45,
+            "axis": "RIGHT",
+            "duration": 5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s3_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 8
+          }
+        },
+        {
+          "id": "c5s3_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s3_cleanup",
+            "members": "c5s3_文1,c5s3_文2,c5s3_文3,c5s3_形4,c5s3_文5,c5s3_文6,c5s3_文7"
+          }
+        },
+        {
+          "id": "c5s3_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s3_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s4_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.04 用方形的粘边规则理解环面"
+      },
+      "children": [
+        {
+          "id": "c5s4_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s4_s1",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文1"
+          }
+        },
+        {
+          "id": "c5s4_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文2",
+            "text": "用方形的粘边规则理解环面",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文2"
+          }
+        },
+        {
+          "id": "c5s4_s3",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文3",
+            "text": "形状不只一种看法  ·  5.04  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文3"
+          }
+        },
+        {
+          "id": "c5s4_s4",
+          "type": "square",
+          "fields": {
+            "name": "c5s4_形4",
+            "side": 2.8,
+            "color": "#A8B7CC",
+            "fill": 0,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_s5",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s4_形5",
+            "x1": -1.4,
+            "y1": -1,
+            "x2": -1.4,
+            "y2": 1.3,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_s6",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s4_形6",
+            "x1": 1.4,
+            "y1": -1,
+            "x2": 1.4,
+            "y2": 1.3,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_s7",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s4_形7",
+            "x1": -1.2,
+            "y1": 1.6,
+            "x2": 1.2,
+            "y2": 1.6,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_s8",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s4_形8",
+            "x1": -1.2,
+            "y1": -1.2,
+            "x2": 1.2,
+            "y2": -1.2,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_s9",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文9",
+            "text": "a",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#B6A1F2",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文9"
+          }
+        },
+        {
+          "id": "c5s4_s10",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文10",
+            "text": "a",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#B6A1F2",
+            "x": 0,
+            "y": -1.55,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文10"
+          }
+        },
+        {
+          "id": "c5s4_s11",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文11",
+            "text": "b",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#63DBC5",
+            "x": -1.85,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文11"
+          }
+        },
+        {
+          "id": "c5s4_s12",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文12",
+            "text": "同向对应",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 3,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed12",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文12"
+          }
+        },
+        {
+          "id": "c5s4_s13",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文13",
+            "text": "环面粘边图",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#E6EDF6",
+            "x": -4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed13",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文13"
+          }
+        },
+        {
+          "id": "c5s4_s16",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文14",
+            "text": "把一对相对边按箭头对应，再对应另一对相对边，会得\n到环面。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed14",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文14"
+          }
+        },
+        {
+          "id": "c5s4_s17",
+          "type": "text",
+          "fields": {
+            "name": "c5s4_文15",
+            "text": "这是一种描述空间的粘合模型；粘合过程本身不是同胚。\n方形只是展示识别关系的模型，箭头指出哪些边上的点\n应被看成同一点。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s4_fixed15",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s4_文15"
+          }
+        },
+        {
+          "id": "c5s4_s18",
+          "type": "remove",
+          "fields": {
+            "target": "c5s4_文15"
+          }
+        },
+        {
+          "id": "c5s4_s15",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s4_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s4_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s4_s20",
+          "type": "remove",
+          "fields": {
+            "target": "c5s4_文14"
+          }
+        },
+        {
+          "id": "c5s4_s21",
+          "type": "add",
+          "fields": {
+            "target": "c5s4_文15"
+          }
+        },
+        {
+          "id": "c5s4_s14",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s4_文13",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s4_s22",
+          "type": "wait",
+          "fields": {
+            "duration": 11
+          }
+        },
+        {
+          "id": "c5s4_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s4_cleanup",
+            "members": "c5s4_文1,c5s4_文2,c5s4_文3,c5s4_形4,c5s4_形5,c5s4_形6,c5s4_形7,c5s4_形8,c5s4_文9,c5s4_文10,c5s4_文11,c5s4_文12,c5s4_文13,c5s4_文14,c5s4_文15"
+          }
+        },
+        {
+          "id": "c5s4_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s4_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s5_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.05 粘好以后，点边面还剩多少？"
+      },
+      "children": [
+        {
+          "id": "c5s5_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s5_s1",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文1"
+          }
+        },
+        {
+          "id": "c5s5_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文2",
+            "text": "粘好以后，点边面还剩多少？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文2"
+          }
+        },
+        {
+          "id": "c5s5_s3",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文3",
+            "text": "形状不只一种看法  ·  5.05  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文3"
+          }
+        },
+        {
+          "id": "c5s5_s4",
+          "type": "square",
+          "fields": {
+            "name": "c5s5_形4",
+            "side": 2.8,
+            "color": "#A8B7CC",
+            "fill": 0,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_s5",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s5_形5",
+            "x1": -1.4,
+            "y1": -1,
+            "x2": -1.4,
+            "y2": 1.3,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_s6",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s5_形6",
+            "x1": 1.4,
+            "y1": -1,
+            "x2": 1.4,
+            "y2": 1.3,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_s7",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s5_形7",
+            "x1": -1.2,
+            "y1": 1.6,
+            "x2": 1.2,
+            "y2": 1.6,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_s8",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s5_形8",
+            "x1": -1.2,
+            "y1": -1.2,
+            "x2": 1.2,
+            "y2": -1.2,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_s9",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文9",
+            "text": "a",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#B6A1F2",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文9"
+          }
+        },
+        {
+          "id": "c5s5_s10",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文10",
+            "text": "a",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#B6A1F2",
+            "x": 0,
+            "y": -1.55,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文10"
+          }
+        },
+        {
+          "id": "c5s5_s11",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文11",
+            "text": "b",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#63DBC5",
+            "x": -1.85,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文11"
+          }
+        },
+        {
+          "id": "c5s5_s12",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文12",
+            "text": "同向对应",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 3,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed12",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文12"
+          }
+        },
+        {
+          "id": "c5s5_s13",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文13",
+            "text": "环面粘边图",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#E6EDF6",
+            "x": -4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed13",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文13"
+          }
+        },
+        {
+          "id": "c5s5_s15",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文14",
+            "text": "四个角 → 一个顶点",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 2.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed14",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文14"
+          }
+        },
+        {
+          "id": "c5s5_s16",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文15",
+            "text": "1 − 2 + 1 = 0",
+            "fontSize": 28,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 4,
+            "y": -1.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed15",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文15"
+          }
+        },
+        {
+          "id": "c5s5_s18",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文16",
+            "text": "粘合后四个角成为同一个顶点，两对边成为两条边。这\n不是普通的四边形计数：粘合以后，重复出现的角和边\n要按身份合并。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed16",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文16"
+          }
+        },
+        {
+          "id": "c5s5_s19",
+          "type": "text",
+          "fields": {
+            "name": "c5s5_文17",
+            "text": "因此环面可用V=1、E=2、F=1的胞腔分解，得\n到χ=0。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s5_fixed17",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s5_文17"
+          }
+        },
+        {
+          "id": "c5s5_s20",
+          "type": "remove",
+          "fields": {
+            "target": "c5s5_文17"
+          }
+        },
+        {
+          "id": "c5s5_s17",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s5_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s5_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s5_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c5s5_文16"
+          }
+        },
+        {
+          "id": "c5s5_s23",
+          "type": "add",
+          "fields": {
+            "target": "c5s5_文17"
+          }
+        },
+        {
+          "id": "c5s5_s14",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s5_文13",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s5_s24",
+          "type": "wait",
+          "fields": {
+            "duration": 11
+          }
+        },
+        {
+          "id": "c5s5_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s5_cleanup",
+            "members": "c5s5_文1,c5s5_文2,c5s5_文3,c5s5_形4,c5s5_形5,c5s5_形6,c5s5_形7,c5s5_形8,c5s5_文9,c5s5_文10,c5s5_文11,c5s5_文12,c5s5_文13,c5s5_文14,c5s5_文15,c5s5_文16,c5s5_文17"
+          }
+        },
+        {
+          "id": "c5s5_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s5_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s6_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.06 χ不同能回答什么？"
+      },
+      "children": [
+        {
+          "id": "c5s6_s1",
+          "type": "camera",
+          "fields": {
+            "phi": 65,
+            "theta": -60,
+            "zoom": 0.9,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s6_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s6_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s6_s3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s6_文1"
+          }
+        },
+        {
+          "id": "c5s6_s4",
+          "type": "text",
+          "fields": {
+            "name": "c5s6_文2",
+            "text": "χ不同能回答什么？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s6_s5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s6_文2"
+          }
+        },
+        {
+          "id": "c5s6_s6",
+          "type": "text",
+          "fields": {
+            "name": "c5s6_文3",
+            "text": "形状不只一种看法  ·  5.06  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s6_s7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s6_文3"
+          }
+        },
+        {
+          "id": "c5s6_s8",
+          "type": "sphere",
+          "fields": {
+            "name": "c5s6_形4",
+            "radius": 1.1,
+            "color": "#63DBC5",
+            "x": -2.7,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s6_s9",
+          "type": "surface",
+          "fields": {
+            "name": "c5s6_形5",
+            "xExpr": "2.7+(1.35+0.45*cos(v))*cos(u)",
+            "yExpr": "(1.35+0.45*cos(v))*sin(u)",
+            "zExpr": "0.45*sin(v)",
+            "uMin": 0,
+            "uMax": 6.283185307179586,
+            "vMin": 0,
+            "vMax": 6.283185307179586,
+            "resolution": 20,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s6_s10",
+          "type": "text",
+          "fields": {
+            "name": "c5s6_文6",
+            "text": "χ = 2",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.7,
+            "y": -1.8,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s6_s11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s6_文6"
+          }
+        },
+        {
+          "id": "c5s6_s12",
+          "type": "text",
+          "fields": {
+            "name": "c5s6_文7",
+            "text": "χ = 0",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 2.7,
+            "y": -1.8,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s6_s13",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s6_文7"
+          }
+        },
+        {
+          "id": "c5s6_s16",
+          "type": "text",
+          "fields": {
+            "name": "c5s6_文8",
+            "text": "欧拉特征数在同胚下不变。这里使用的是一个单向推理：\n如果同胚就同值，因此异值必然不同胚。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s6_s17",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s6_文8"
+          }
+        },
+        {
+          "id": "c5s6_s18",
+          "type": "text",
+          "fields": {
+            "name": "c5s6_文9",
+            "text": "所以数值不同足以排除同胚：球面与环面不是同一种拓\n扑曲面。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s6_s19",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s6_文9"
+          }
+        },
+        {
+          "id": "c5s6_s20",
+          "type": "remove",
+          "fields": {
+            "target": "c5s6_文9"
+          }
+        },
+        {
+          "id": "c5s6_s14",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s6_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s6_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s6_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c5s6_文8"
+          }
+        },
+        {
+          "id": "c5s6_s23",
+          "type": "add",
+          "fields": {
+            "target": "c5s6_文9"
+          }
+        },
+        {
+          "id": "c5s6_s15",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s6_文7",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s6_s24",
+          "type": "wait",
+          "fields": {
+            "duration": 11
+          }
+        },
+        {
+          "id": "c5s6_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s6_cleanup",
+            "members": "c5s6_文1,c5s6_文2,c5s6_文3,c5s6_形4,c5s6_形5,c5s6_文6,c5s6_文7,c5s6_文8,c5s6_文9"
+          }
+        },
+        {
+          "id": "c5s6_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s6_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s7_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.07 一句“有洞”为什么太模糊？"
+      },
+      "children": [
+        {
+          "id": "c5s7_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s7_s1",
+          "type": "text",
+          "fields": {
+            "name": "c5s7_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s7_文1"
+          }
+        },
+        {
+          "id": "c5s7_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s7_文2",
+            "text": "一句“有洞”为什么太模糊？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s7_文2"
+          }
+        },
+        {
+          "id": "c5s7_s3",
+          "type": "text",
+          "fields": {
+            "name": "c5s7_文3",
+            "text": "形状不只一种看法  ·  5.07  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s7_文3"
+          }
+        },
+        {
+          "id": "c5s7_s4",
+          "type": "annulus",
+          "fields": {
+            "name": "c5s7_形4",
+            "innerRadius": 0.7,
+            "outerRadius": 1.2,
+            "color": "#63DBC5",
+            "fill": 0.3,
+            "x": -3.6,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_s5",
+          "type": "ellipse",
+          "fields": {
+            "name": "c5s7_形5",
+            "width": 2.6,
+            "height": 1.6,
+            "color": "#B6A1F2",
+            "fill": 0.18,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_s6",
+          "type": "ellipse",
+          "fields": {
+            "name": "c5s7_形6",
+            "width": 1.1,
+            "height": 0.55,
+            "color": "#0B1324",
+            "fill": 1,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_s7",
+          "type": "circle",
+          "fields": {
+            "name": "c5s7_形7",
+            "radius": 1.2,
+            "color": "#F3CD85",
+            "fill": 0.3,
+            "x": 3.6,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_s8",
+          "type": "text",
+          "fields": {
+            "name": "c5s7_文8",
+            "text": "圆环：b = 2",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -3.6,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_fixed8",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s7_文8"
+          }
+        },
+        {
+          "id": "c5s7_s9",
+          "type": "text",
+          "fields": {
+            "name": "c5s7_文9",
+            "text": "环面示意：b = 0",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s7_文9"
+          }
+        },
+        {
+          "id": "c5s7_s10",
+          "type": "text",
+          "fields": {
+            "name": "c5s7_文10",
+            "text": "圆盘：b = 1",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 3.6,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_fixed10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s7_文10"
+          }
+        },
+        {
+          "id": "c5s7_s13",
+          "type": "text",
+          "fields": {
+            "name": "c5s7_文11",
+            "text": "平面圆环有两条边界，环面没有边界，圆盘有一条边界。\n数边界时沿真实边缘走，不数画在表面上的网格，也不\n数相机造成的轮廓。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_fixed11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s7_文11"
+          }
+        },
+        {
+          "id": "c5s7_s14",
+          "type": "text",
+          "fields": {
+            "name": "c5s7_文12",
+            "text": "边界开口与把手是不同信息，不能只写一个未定义的“\n洞数”。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s7_fixed12",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s7_文12"
+          }
+        },
+        {
+          "id": "c5s7_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c5s7_文12"
+          }
+        },
+        {
+          "id": "c5s7_s11",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s7_形7",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s7_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s7_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c5s7_文11"
+          }
+        },
+        {
+          "id": "c5s7_s18",
+          "type": "add",
+          "fields": {
+            "target": "c5s7_文12"
+          }
+        },
+        {
+          "id": "c5s7_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s7_文10",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s7_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 11
+          }
+        },
+        {
+          "id": "c5s7_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s7_cleanup",
+            "members": "c5s7_文1,c5s7_文2,c5s7_文3,c5s7_形4,c5s7_形5,c5s7_形6,c5s7_形7,c5s7_文8,c5s7_文9,c5s7_文10,c5s7_文11,c5s7_文12"
+          }
+        },
+        {
+          "id": "c5s7_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s7_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s8_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.08 不扭与扭半圈，得到同样的带吗？"
+      },
+      "children": [
+        {
+          "id": "c5s8_s1",
+          "type": "camera",
+          "fields": {
+            "phi": 65,
+            "theta": -60,
+            "zoom": 0.9,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s8_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s8_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s8_s3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s8_文1"
+          }
+        },
+        {
+          "id": "c5s8_s4",
+          "type": "text",
+          "fields": {
+            "name": "c5s8_文2",
+            "text": "不扭与扭半圈，得到同样的带吗？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s8_s5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s8_文2"
+          }
+        },
+        {
+          "id": "c5s8_s6",
+          "type": "text",
+          "fields": {
+            "name": "c5s8_文3",
+            "text": "形状不只一种看法  ·  5.08  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s8_s7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s8_文3"
+          }
+        },
+        {
+          "id": "c5s8_s8",
+          "type": "surface",
+          "fields": {
+            "name": "c5s8_形4",
+            "xExpr": "2.5+(1.45+v*cos(u/2))*cos(u)",
+            "yExpr": "(1.45+v*cos(u/2))*sin(u)",
+            "zExpr": "v*sin(u/2)",
+            "uMin": 0,
+            "uMax": 6.283185307179586,
+            "vMin": -0.48,
+            "vMax": 0.48,
+            "resolution": 24,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s8_s9",
+          "type": "surface",
+          "fields": {
+            "name": "c5s8_形5",
+            "xExpr": "-2.5+(1.2+v)*cos(u)",
+            "yExpr": "(1.2+v)*sin(u)",
+            "zExpr": "0",
+            "uMin": 0,
+            "uMax": 6.283185307179586,
+            "vMin": -0.35,
+            "vMax": 0.35,
+            "resolution": 20,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s8_s10",
+          "type": "text",
+          "fields": {
+            "name": "c5s8_文6",
+            "text": "普通环带：b = 2",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.5,
+            "y": -1.7,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s8_s11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s8_文6"
+          }
+        },
+        {
+          "id": "c5s8_s12",
+          "type": "text",
+          "fields": {
+            "name": "c5s8_文7",
+            "text": "莫比乌斯带：b = 1",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 2.5,
+            "y": -1.7,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s8_s13",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s8_文7"
+          }
+        },
+        {
+          "id": "c5s8_s16",
+          "type": "text",
+          "fields": {
+            "name": "c5s8_文8",
+            "text": "同向接合得到普通环带，反向接合得到莫比乌斯带。先\n沿一条边走，看看能否经过所有边缘，再决定边界究竟\n有几条。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s8_s17",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s8_文8"
+          }
+        },
+        {
+          "id": "c5s8_s18",
+          "type": "text",
+          "fields": {
+            "name": "c5s8_文9",
+            "text": "两者χ都为0，但沿边界走一圈的结果不同：分别有两\n条和一条边界。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s8_s19",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s8_文9"
+          }
+        },
+        {
+          "id": "c5s8_s20",
+          "type": "remove",
+          "fields": {
+            "target": "c5s8_文9"
+          }
+        },
+        {
+          "id": "c5s8_s15",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s8_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s8_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s8_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c5s8_文8"
+          }
+        },
+        {
+          "id": "c5s8_s23",
+          "type": "add",
+          "fields": {
+            "target": "c5s8_文9"
+          }
+        },
+        {
+          "id": "c5s8_s14",
+          "type": "rotate",
+          "fields": {
+            "target": "c5s8_形4",
+            "angle": 70,
+            "axis": "OUT",
+            "duration": 5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s8_s24",
+          "type": "wait",
+          "fields": {
+            "duration": 8
+          }
+        },
+        {
+          "id": "c5s8_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s8_cleanup",
+            "members": "c5s8_文1,c5s8_文2,c5s8_文3,c5s8_形4,c5s8_形5,c5s8_文6,c5s8_文7,c5s8_文8,c5s8_文9"
+          }
+        },
+        {
+          "id": "c5s8_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s8_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s9_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.09 如何看到局部朝向反转？"
+      },
+      "children": [
+        {
+          "id": "c5s9_s1",
+          "type": "camera",
+          "fields": {
+            "phi": 65,
+            "theta": -60,
+            "zoom": 0.9,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s9_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s9_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s9_文1"
+          }
+        },
+        {
+          "id": "c5s9_s4",
+          "type": "text",
+          "fields": {
+            "name": "c5s9_文2",
+            "text": "如何看到局部朝向反转？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s9_文2"
+          }
+        },
+        {
+          "id": "c5s9_s6",
+          "type": "text",
+          "fields": {
+            "name": "c5s9_文3",
+            "text": "形状不只一种看法  ·  5.09  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s9_文3"
+          }
+        },
+        {
+          "id": "c5s9_s8",
+          "type": "surface",
+          "fields": {
+            "name": "c5s9_形4",
+            "xExpr": "0+(1.45+v*cos(u/2))*cos(u)",
+            "yExpr": "(1.45+v*cos(u/2))*sin(u)",
+            "zExpr": "v*sin(u/2)",
+            "uMin": 0,
+            "uMax": 6.283185307179586,
+            "vMin": -0.48,
+            "vMax": 0.48,
+            "resolution": 24,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s9",
+          "type": "text",
+          "fields": {
+            "name": "c5s9_文5",
+            "text": "沿中心一周，局部横向反转",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s9_文5"
+          }
+        },
+        {
+          "id": "c5s9_s11",
+          "type": "dot",
+          "fields": {
+            "name": "c5s9_形6",
+            "radius": 0.055,
+            "color": "#A8B7CC",
+            "fill": 1,
+            "x": 1.77,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s12",
+          "type": "dot",
+          "fields": {
+            "name": "c5s9_形7",
+            "radius": 0.055,
+            "color": "#A8B7CC",
+            "fill": 1,
+            "x": 1.13,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s13",
+          "type": "tracker",
+          "fields": {
+            "name": "c5s9_travel",
+            "value": 0
+          }
+        },
+        {
+          "id": "c5s9_s14",
+          "type": "dynamic_dot",
+          "fields": {
+            "name": "c5s9_形9",
+            "axes": "",
+            "xExpr": "(1.45+0.32*cos(c5s9_travel/2))*cos(c5s9_travel)",
+            "yExpr": "(1.45+0.32*cos(c5s9_travel/2))*sin(c5s9_travel)",
+            "zExpr": "0.32*sin(c5s9_travel/2)",
+            "radius": 0.09,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s15",
+          "type": "dynamic_dot",
+          "fields": {
+            "name": "c5s9_形10",
+            "axes": "",
+            "xExpr": "(1.45-0.32*cos(c5s9_travel/2))*cos(c5s9_travel)",
+            "yExpr": "(1.45-0.32*cos(c5s9_travel/2))*sin(c5s9_travel)",
+            "zExpr": "-0.32*sin(c5s9_travel/2)",
+            "radius": 0.09,
+            "color": "#F69A87",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s18",
+          "type": "text",
+          "fields": {
+            "name": "c5s9_文11",
+            "text": "把前进方向和横向方向一起带着走，回到原处时局部朝\n向反转了。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s19",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s9_文11"
+          }
+        },
+        {
+          "id": "c5s9_s20",
+          "type": "text",
+          "fields": {
+            "name": "c5s9_文12",
+            "text": "这说明无法在整条带上始终一致地选择朝向。初始参照\n留在原处，返回的标记与它直接比较，才能看清是否真\n的反转。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s9_s21",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s9_文12"
+          }
+        },
+        {
+          "id": "c5s9_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c5s9_文12"
+          }
+        },
+        {
+          "id": "c5s9_s17",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s9_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s9_s23",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s9_s24",
+          "type": "remove",
+          "fields": {
+            "target": "c5s9_文11"
+          }
+        },
+        {
+          "id": "c5s9_s25",
+          "type": "add",
+          "fields": {
+            "target": "c5s9_文12"
+          }
+        },
+        {
+          "id": "c5s9_s16",
+          "type": "animate_value",
+          "fields": {
+            "target": "c5s9_travel",
+            "value": 6.283185307179586,
+            "duration": 7,
+            "easing": "linear"
+          }
+        },
+        {
+          "id": "c5s9_s26",
+          "type": "wait",
+          "fields": {
+            "duration": 6
+          }
+        },
+        {
+          "id": "c5s9_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s9_cleanup",
+            "members": "c5s9_文1,c5s9_文2,c5s9_文3,c5s9_形4,c5s9_文5,c5s9_形6,c5s9_形7,c5s9_形9,c5s9_形10,c5s9_文11,c5s9_文12"
+          }
+        },
+        {
+          "id": "c5s9_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s9_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s10_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.10 定向不是“朝镜头的那面”"
+      },
+      "children": [
+        {
+          "id": "c5s10_s1",
+          "type": "camera",
+          "fields": {
+            "phi": 65,
+            "theta": -60,
+            "zoom": 0.9,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s10_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s10_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s10_s3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s10_文1"
+          }
+        },
+        {
+          "id": "c5s10_s4",
+          "type": "text",
+          "fields": {
+            "name": "c5s10_文2",
+            "text": "定向不是“朝镜头的那面”",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s10_s5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s10_文2"
+          }
+        },
+        {
+          "id": "c5s10_s6",
+          "type": "text",
+          "fields": {
+            "name": "c5s10_文3",
+            "text": "形状不只一种看法  ·  5.10  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s10_s7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s10_文3"
+          }
+        },
+        {
+          "id": "c5s10_s8",
+          "type": "surface",
+          "fields": {
+            "name": "c5s10_形4",
+            "xExpr": "(1.45+v)*cos(u)",
+            "yExpr": "(1.45+v)*sin(u)",
+            "zExpr": "0",
+            "uMin": 0,
+            "uMax": 6.283185307179586,
+            "vMin": -0.4,
+            "vMax": 0.4,
+            "resolution": 20,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s10_s9",
+          "type": "tracker",
+          "fields": {
+            "name": "c5s10_travel",
+            "value": 0
+          }
+        },
+        {
+          "id": "c5s10_s10",
+          "type": "dynamic_dot",
+          "fields": {
+            "name": "c5s10_形6",
+            "axes": "",
+            "xExpr": "1.75*cos(c5s10_travel)",
+            "yExpr": "1.75*sin(c5s10_travel)",
+            "zExpr": "0.03",
+            "radius": 0.08,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s10_s11",
+          "type": "dynamic_dot",
+          "fields": {
+            "name": "c5s10_形7",
+            "axes": "",
+            "xExpr": "1.15*cos(c5s10_travel)",
+            "yExpr": "1.15*sin(c5s10_travel)",
+            "zExpr": "0.03",
+            "radius": 0.08,
+            "color": "#F69A87",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s10_s13",
+          "type": "text",
+          "fields": {
+            "name": "c5s10_文8",
+            "text": "普通环带：一周后朝向恢复",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s10_s14",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s10_文8"
+          }
+        },
+        {
+          "id": "c5s10_s16",
+          "type": "text",
+          "fields": {
+            "name": "c5s10_文9",
+            "text": "可定向指能在整个曲面上一致选择局部朝向。改变观察\n方向可能把图像翻过来，却不会改变曲面能否全局一致\n定向。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s10_s17",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s10_文9"
+          }
+        },
+        {
+          "id": "c5s10_s18",
+          "type": "text",
+          "fields": {
+            "name": "c5s10_文10",
+            "text": "普通环带、球面、环面可定向；莫比乌斯带不可定向，\n这不取决于相机角度。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s10_s19",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s10_文10"
+          }
+        },
+        {
+          "id": "c5s10_s20",
+          "type": "remove",
+          "fields": {
+            "target": "c5s10_文10"
+          }
+        },
+        {
+          "id": "c5s10_s15",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s10_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s10_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s10_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c5s10_文9"
+          }
+        },
+        {
+          "id": "c5s10_s23",
+          "type": "add",
+          "fields": {
+            "target": "c5s10_文10"
+          }
+        },
+        {
+          "id": "c5s10_s12",
+          "type": "animate_value",
+          "fields": {
+            "target": "c5s10_travel",
+            "value": 6.283185307179586,
+            "duration": 7,
+            "easing": "linear"
+          }
+        },
+        {
+          "id": "c5s10_s24",
+          "type": "wait",
+          "fields": {
+            "duration": 6
+          }
+        },
+        {
+          "id": "c5s10_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s10_cleanup",
+            "members": "c5s10_文1,c5s10_文2,c5s10_文3,c5s10_形4,c5s10_形6,c5s10_形7,c5s10_文8,c5s10_文9,c5s10_文10"
+          }
+        },
+        {
+          "id": "c5s10_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s10_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s11_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.11 闭曲面公式的条件是什么？"
+      },
+      "children": [
+        {
+          "id": "c5s11_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s11_s1",
+          "type": "text",
+          "fields": {
+            "name": "c5s11_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s11_文1"
+          }
+        },
+        {
+          "id": "c5s11_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s11_文2",
+            "text": "闭曲面公式的条件是什么？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s11_文2"
+          }
+        },
+        {
+          "id": "c5s11_s3",
+          "type": "text",
+          "fields": {
+            "name": "c5s11_文3",
+            "text": "形状不只一种看法  ·  5.11  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s11_文3"
+          }
+        },
+        {
+          "id": "c5s11_s4",
+          "type": "rounded_rectangle",
+          "fields": {
+            "name": "c5s11_形4",
+            "width": 3.5,
+            "height": 1.8,
+            "corner": 0.2,
+            "color": "#63DBC5",
+            "fill": 0.06,
+            "x": -4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_s5",
+          "type": "text",
+          "fields": {
+            "name": "c5s11_文5",
+            "text": "连通、紧致",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#E6EDF6",
+            "x": -4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_fixed5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s11_文5"
+          }
+        },
+        {
+          "id": "c5s11_s6",
+          "type": "rounded_rectangle",
+          "fields": {
+            "name": "c5s11_形6",
+            "width": 3.5,
+            "height": 1.8,
+            "corner": 0.2,
+            "color": "#B6A1F2",
+            "fill": 0.06,
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_s7",
+          "type": "text",
+          "fields": {
+            "name": "c5s11_文7",
+            "text": "可定向",
+            "fontSize": 25,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_fixed7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s11_文7"
+          }
+        },
+        {
+          "id": "c5s11_s8",
+          "type": "rounded_rectangle",
+          "fields": {
+            "name": "c5s11_形8",
+            "width": 3.5,
+            "height": 1.8,
+            "corner": 0.2,
+            "color": "#F3CD85",
+            "fill": 0.06,
+            "x": 4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_s9",
+          "type": "text",
+          "fields": {
+            "name": "c5s11_文9",
+            "text": "无边界",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#E6EDF6",
+            "x": 4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s11_文9"
+          }
+        },
+        {
+          "id": "c5s11_s13",
+          "type": "text",
+          "fields": {
+            "name": "c5s11_文10",
+            "text": "χ = 2 − 2g",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": -1.25,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_fixed10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s11_文10"
+          }
+        },
+        {
+          "id": "c5s11_s14",
+          "type": "text",
+          "fields": {
+            "name": "c5s11_文11",
+            "text": "在这些条件下，g表示把手数，χ=2−2g。我们这\n里只计算球面与环面两个例子，一般曲面分类结论将在\n参考资料中说明。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_fixed11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s11_文11"
+          }
+        },
+        {
+          "id": "c5s11_s15",
+          "type": "text",
+          "fields": {
+            "name": "c5s11_文12",
+            "text": "若有b条边界，可定向曲面公式变为2−2g−b；不\n要把闭曲面公式直接套到带子上。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s11_fixed12",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s11_文12"
+          }
+        },
+        {
+          "id": "c5s11_s16",
+          "type": "remove",
+          "fields": {
+            "target": "c5s11_文12"
+          }
+        },
+        {
+          "id": "c5s11_s10",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s11_文5",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s11_s17",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s11_s18",
+          "type": "remove",
+          "fields": {
+            "target": "c5s11_文11"
+          }
+        },
+        {
+          "id": "c5s11_s19",
+          "type": "add",
+          "fields": {
+            "target": "c5s11_文12"
+          }
+        },
+        {
+          "id": "c5s11_s11",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s11_文7",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s11_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s11_文9",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s11_s20",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c5s11_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s11_cleanup",
+            "members": "c5s11_文1,c5s11_文2,c5s11_文3,c5s11_形4,c5s11_文5,c5s11_形6,c5s11_文7,c5s11_形8,c5s11_文9,c5s11_文10,c5s11_文11,c5s11_文12"
+          }
+        },
+        {
+          "id": "c5s11_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s11_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c5s12_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "5.12 为什么一个数仍然不够？"
+      },
+      "children": [
+        {
+          "id": "c5s12_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c5s12_s1",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文1",
+            "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文1"
+          }
+        },
+        {
+          "id": "c5s12_s2",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文2",
+            "text": "为什么一个数仍然不够？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文2"
+          }
+        },
+        {
+          "id": "c5s12_s3",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文3",
+            "text": "形状不只一种看法  ·  5.12  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文3"
+          }
+        },
+        {
+          "id": "c5s12_s4",
+          "type": "square",
+          "fields": {
+            "name": "c5s12_形4",
+            "side": 2.8,
+            "color": "#A8B7CC",
+            "fill": 0,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_s5",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s12_形5",
+            "x1": -1.4,
+            "y1": -1,
+            "x2": -1.4,
+            "y2": 1.3,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_s6",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s12_形6",
+            "x1": 1.4,
+            "y1": 1.3,
+            "x2": 1.4,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_s7",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s12_形7",
+            "x1": -1.2,
+            "y1": 1.6,
+            "x2": 1.2,
+            "y2": 1.6,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_s8",
+          "type": "arrow",
+          "fields": {
+            "name": "c5s12_形8",
+            "x1": -1.2,
+            "y1": -1.2,
+            "x2": 1.2,
+            "y2": -1.2,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_s9",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文9",
+            "text": "a",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#B6A1F2",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文9"
+          }
+        },
+        {
+          "id": "c5s12_s10",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文10",
+            "text": "a",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#B6A1F2",
+            "x": 0,
+            "y": -1.55,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文10"
+          }
+        },
+        {
+          "id": "c5s12_s11",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文11",
+            "text": "b",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#63DBC5",
+            "x": -1.85,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文11"
+          }
+        },
+        {
+          "id": "c5s12_s12",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文12",
+            "text": "反向对应",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 3,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed12",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文12"
+          }
+        },
+        {
+          "id": "c5s12_s13",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文13",
+            "text": "Klein 瓶粘边图",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#E6EDF6",
+            "x": -4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed13",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文13"
+          }
+        },
+        {
+          "id": "c5s12_s15",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文14",
+            "text": "同为 χ = 0\n定向性不同",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 4,
+            "y": -1.1,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed14",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文14"
+          }
+        },
+        {
+          "id": "c5s12_s17",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文15",
+            "text": "环面与Klein瓶都有χ=0，却因定向性不同而不\n同胚。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed15",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文15"
+          }
+        },
+        {
+          "id": "c5s12_s18",
+          "type": "text",
+          "fields": {
+            "name": "c5s12_文16",
+            "text": "χ不同可以排除；χ相同还要检查别的信息。Klei\nn瓶此处用粘边图表示，不把三维自交画成真实粘合。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c5s12_fixed16",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c5s12_文16"
+          }
+        },
+        {
+          "id": "c5s12_s19",
+          "type": "remove",
+          "fields": {
+            "target": "c5s12_文16"
+          }
+        },
+        {
+          "id": "c5s12_s16",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s12_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s12_s20",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c5s12_s21",
+          "type": "remove",
+          "fields": {
+            "target": "c5s12_文15"
+          }
+        },
+        {
+          "id": "c5s12_s22",
+          "type": "add",
+          "fields": {
+            "target": "c5s12_文16"
+          }
+        },
+        {
+          "id": "c5s12_s14",
+          "type": "indicate",
+          "fields": {
+            "target": "c5s12_文13",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c5s12_s23",
+          "type": "wait",
+          "fields": {
+            "duration": 11
+          }
+        },
+        {
+          "id": "c5s12_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c5s12_cleanup",
+            "members": "c5s12_文1,c5s12_文2,c5s12_文3,c5s12_形4,c5s12_形5,c5s12_形6,c5s12_形7,c5s12_形8,c5s12_文9,c5s12_文10,c5s12_文11,c5s12_文12,c5s12_文13,c5s12_文14,c5s12_文15,c5s12_文16"
+          }
+        },
+        {
+          "id": "c5s12_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c5s12_cleanup"
+          }
+        }
+      ]
+    }
+  ]
+}

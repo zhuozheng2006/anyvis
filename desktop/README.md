@@ -37,7 +37,11 @@ npm run desktop
 
 浏览器和桌面是不同的项目存储空间。已有浏览器作品需导出项目 JSON，再在桌面导入。桌面编辑器不启用 Node integration，保留 context isolation、sandbox 和 CSP，禁用外部页面导航。只有设置窗口有经过来源校验的窄 IPC；剪贴板仅对可信界面允许文字写入，禁止读取权限。
 
-安装包命令、三平台 CI 和发行边界见 [PACKAGING.md](./PACKAGING.md)。本次本地正常安装尝试返回 `ENOTFOUND registry.npmjs.org`，Electron 未安装，**未在本机运行 Electron 窗口或生成安装包**，也未声称签名、公证和跨平台安装验收已完成。已提供 CI 实际启动烟雾测试；只有对应 Actions 成功才算该平台通过。浏览器版仍可通过本地真实 Manim 服务运行。
+安装包命令、三平台 CI 和发行边界见 [PACKAGING.md](./PACKAGING.md)。本次本地正常安装尝试返回 `ENOTFOUND registry.npmjs.org`，Electron 未安装，未在本机运行 Electron 窗口。
+
+2026-11-06 的 [CI 构建 42295108033](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033) 已在 macOS、Windows、Linux 全部通过真实 Electron 启动检查并生成安装包，对应提交 `5b7e5545f9475e9dad62f530be1ba089b59fbfe2`。检查覆盖编辑器/Blockly 挂载、API 会话、视频 Range/解码和重启后存储。安装包可从该构建附件下载；这不等于已在用户机器完成安装或 Manim 环境验收。macOS 仅 ad-hoc 签名、未公证，Windows 未配置发行者签名。
+
+后续构建的 Mac 附件已按架构拆分：M 系列芯片选择 `AnyVis-macOS-arm64-<提交 SHA>`，Intel 芯片选择 `AnyVis-macOS-x64-<提交 SHA>`。每个附件只包含对应架构的 DMG / ZIP；Windows 和 Linux 的附件保持不变。
 
 ## AI 接口
 
@@ -55,7 +59,7 @@ OpenAI 请求字段依据官方 [Chat Completions API 文档](https://developers
 ## 本次验证
 
 - `npm run desktop:prepare` 通过：TypeScript、Vite 页面和自包含服务端 ESM 包全部构建成功。
-- `npm run test:desktop`：9 项通过。覆盖设置持久化/损坏恢复、关闭中的启动竞态、失败重试、固定协议来源、token/Range 转发，以及删除源码目录后从独立打包文件启动服务。
+- `npm run test:desktop`：本地 10 项通过。覆盖设置持久化/损坏恢复、关闭中的启动竞态、失败重试、固定协议来源、token/Range 转发、正常退出先保存并关闭窗口，以及删除源码目录后从独立打包文件启动服务。
 - 启动器、Electron 宿主及 AI 代理 JavaScript 语法检查通过；`--help` 正常。
 - AI helper 及核心依赖图的 TypeScript strict / unused 检查通过。
 - `vitest run src/studio/ai/project-assistant.test.ts desktop/ai-proxy.test.mjs`：9 项通过。覆盖 JSON 导入、代码拒绝、对象引用校验、项目身份、请求次数、失败与截断响应。

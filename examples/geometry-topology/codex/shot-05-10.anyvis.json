@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-5-10",
+  "name": "5.10 定向不是“朝镜头的那面”",
+  "scene": {
+    "dimension": "3d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "camera",
+      "fields": {
+        "phi": 65,
+        "theta": -60,
+        "zoom": 0.9,
+        "duration": 0
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文1"
+      }
+    },
+    {
+      "id": "s4",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "定向不是“朝镜头的那面”",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文2"
+      }
+    },
+    {
+      "id": "s6",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  5.10  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文3"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "surface",
+      "fields": {
+        "name": "形4",
+        "xExpr": "(1.45+v)*cos(u)",
+        "yExpr": "(1.45+v)*sin(u)",
+        "zExpr": "0",
+        "uMin": 0,
+        "uMax": 6.283185307179586,
+        "vMin": -0.4,
+        "vMax": 0.4,
+        "resolution": 20,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "tracker",
+      "fields": {
+        "name": "travel",
+        "value": 0
+      }
+    },
+    {
+      "id": "s10",
+      "type": "dynamic_dot",
+      "fields": {
+        "name": "形6",
+        "axes": "",
+        "xExpr": "1.75*cos(travel)",
+        "yExpr": "1.75*sin(travel)",
+        "zExpr": "0.03",
+        "radius": 0.08,
+        "color": "#F3CD85",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "dynamic_dot",
+      "fields": {
+        "name": "形7",
+        "axes": "",
+        "xExpr": "1.15*cos(travel)",
+        "yExpr": "1.15*sin(travel)",
+        "zExpr": "0.03",
+        "radius": 0.08,
+        "color": "#F69A87",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "普通环带：一周后朝向恢复",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "可定向指能在整个曲面上一致选择局部朝向。改变观察\n方向可能把图像翻过来，却不会改变曲面能否全局一致\n定向。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s17",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "普通环带、球面、环面可定向；莫比乌斯带不可定向，\n这不取决于相机角度。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s19",
+      "type": "fixed_in_frame",
+      "fields": {
+        "target": "文10"
+      }
+    },
+    {
+      "id": "s20",
+      "type": "remove",
+      "fields": {
+        "target": "文10"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s22",
+      "type": "remove",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s23",
+      "type": "add",
+      "fields": {
+        "target": "文10"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "animate_value",
+      "fields": {
+        "target": "travel",
+        "value": 6.283185307179586,
+        "duration": 7,
+        "easing": "linear"
+      }
+    },
+    {
+      "id": "s24",
+      "type": "wait",
+      "fields": {
+        "duration": 6
+      }
+    }
+  ]
+}

@@ -1,0 +1,504 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-3-06",
+  "name": "3.06 圆周与方形边界也能对应吗？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "圆周与方形边界也能对应吗？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  3.06  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "circle",
+      "fields": {
+        "name": "形4",
+        "radius": 1.25,
+        "color": "#63DBC5",
+        "fill": 0,
+        "x": -2.4,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "square",
+      "fields": {
+        "name": "形5",
+        "side": 2.5,
+        "color": "#B6A1F2",
+        "fill": 0,
+        "x": 2.4,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "dot",
+      "fields": {
+        "name": "形6",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -1.15,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "dot",
+      "fields": {
+        "name": "形7",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 3.65,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "dot",
+      "fields": {
+        "name": "形8",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -1.5161165235168155,
+        "y": 1.0838834764831844,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "dot",
+      "fields": {
+        "name": "形9",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 3.65,
+        "y": 1.4499999999999997,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "dot",
+      "fields": {
+        "name": "形10",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -2.4,
+        "y": 1.45,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "dot",
+      "fields": {
+        "name": "形11",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 2.4,
+        "y": 1.45,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "dot",
+      "fields": {
+        "name": "形12",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -3.2838834764831843,
+        "y": 1.0838834764831844,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "dot",
+      "fields": {
+        "name": "形13",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 1.1500000000000001,
+        "y": 1.45,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "dot",
+      "fields": {
+        "name": "形14",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -3.65,
+        "y": 0.20000000000000018,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "dot",
+      "fields": {
+        "name": "形15",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 1.15,
+        "y": 0.20000000000000018,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "dot",
+      "fields": {
+        "name": "形16",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -3.283883476483185,
+        "y": -0.6838834764831843,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s17",
+      "type": "dot",
+      "fields": {
+        "name": "形17",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 1.15,
+        "y": -1.0499999999999996,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s18",
+      "type": "dot",
+      "fields": {
+        "name": "形18",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -2.4000000000000004,
+        "y": -1.05,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s19",
+      "type": "dot",
+      "fields": {
+        "name": "形19",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 2.3999999999999995,
+        "y": -1.05,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s20",
+      "type": "dot",
+      "fields": {
+        "name": "形20",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -1.5161165235168157,
+        "y": -0.6838834764831847,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s21",
+      "type": "dot",
+      "fields": {
+        "name": "形21",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 3.6499999999999995,
+        "y": -1.05,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s22",
+      "type": "text",
+      "fields": {
+        "name": "文22",
+        "text": "沿射线对应：角点不妨碍同胚",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s23",
+      "type": "tracker",
+      "fields": {
+        "name": "ray",
+        "value": 0
+      }
+    },
+    {
+      "id": "s24",
+      "type": "dynamic_dot",
+      "fields": {
+        "name": "形24",
+        "axes": "",
+        "xExpr": "-2.4+1.25*cos(ray)",
+        "yExpr": "0.2+1.25*sin(ray)",
+        "zExpr": "0",
+        "radius": 0.08,
+        "color": "#F3CD85",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s25",
+      "type": "dynamic_dot",
+      "fields": {
+        "name": "形25",
+        "axes": "",
+        "xExpr": "2.4+1.25*cos(ray)/max(abs(cos(ray)),abs(sin(ray)))",
+        "yExpr": "0.2+1.25*sin(ray)/max(abs(cos(ray)),abs(sin(ray)))",
+        "zExpr": "0",
+        "radius": 0.08,
+        "color": "#F3CD85",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s26",
+      "type": "dynamic_line",
+      "fields": {
+        "name": "形26",
+        "axes": "",
+        "x1Expr": "-2.4",
+        "y1Expr": "0.2",
+        "x2Expr": "-2.4+1.25*cos(ray)",
+        "y2Expr": "0.2+1.25*sin(ray)",
+        "color": "#F3CD85",
+        "width": 3,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s27",
+      "type": "dynamic_line",
+      "fields": {
+        "name": "形27",
+        "axes": "",
+        "x1Expr": "2.4",
+        "y1Expr": "0.2",
+        "x2Expr": "2.4+1.25*cos(ray)/max(abs(cos(ray)),abs(sin(ray)))",
+        "y2Expr": "0.2+1.25*sin(ray)/max(abs(cos(ray)),abs(sin(ray)))",
+        "color": "#F3CD85",
+        "width": 3,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s30",
+      "type": "text",
+      "fields": {
+        "name": "文28",
+        "text": "每条射线各遇到圆周和方形边界一次，用它们建立对应。\n这里比较的是两条边界，内部区域不在本次对象中，角\n点也不被切掉。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s31",
+      "type": "text",
+      "fields": {
+        "name": "文29",
+        "text": "转动射线时对应点连续移动，反向也连续；有角不妨碍\n拓扑等价。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s32",
+      "type": "remove",
+      "fields": {
+        "target": "文29"
+      }
+    },
+    {
+      "id": "s29",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s33",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s34",
+      "type": "remove",
+      "fields": {
+        "target": "文28"
+      }
+    },
+    {
+      "id": "s35",
+      "type": "add",
+      "fields": {
+        "target": "文29"
+      }
+    },
+    {
+      "id": "s28",
+      "type": "animate_value",
+      "fields": {
+        "target": "ray",
+        "value": 6.283185307179586,
+        "duration": 7,
+        "easing": "linear"
+      }
+    },
+    {
+      "id": "s36",
+      "type": "wait",
+      "fields": {
+        "duration": 6
+      }
+    }
+  ]
+}

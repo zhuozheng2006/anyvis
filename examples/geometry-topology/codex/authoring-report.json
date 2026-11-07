@@ -1,0 +1,439 @@
+{
+  "generatedAt": "2026-11-06T21:34:26.621Z",
+  "nativeOnly": true,
+  "shots": [
+    {
+      "file": "shot-01-01.anyvis.json",
+      "blocks": 20,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-02.anyvis.json",
+      "blocks": 21,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-03.anyvis.json",
+      "blocks": 18,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-04.anyvis.json",
+      "blocks": 18,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-05.anyvis.json",
+      "blocks": 15,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-06.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-07.anyvis.json",
+      "blocks": 20,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-08.anyvis.json",
+      "blocks": 18,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-09.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-10.anyvis.json",
+      "blocks": 18,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-11.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-01-12.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-01.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-02.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-03.anyvis.json",
+      "blocks": 21,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-04.anyvis.json",
+      "blocks": 26,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-05.anyvis.json",
+      "blocks": 21,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-06.anyvis.json",
+      "blocks": 21,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-07.anyvis.json",
+      "blocks": 26,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-08.anyvis.json",
+      "blocks": 26,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-09.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-10.anyvis.json",
+      "blocks": 16,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-11.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-02-12.anyvis.json",
+      "blocks": 20,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-01.anyvis.json",
+      "blocks": 20,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-02.anyvis.json",
+      "blocks": 16,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-03.anyvis.json",
+      "blocks": 16,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-04.anyvis.json",
+      "blocks": 17,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-05.anyvis.json",
+      "blocks": 20,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-06.anyvis.json",
+      "blocks": 36,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-07.anyvis.json",
+      "blocks": 18,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-08.anyvis.json",
+      "blocks": 16,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-09.anyvis.json",
+      "blocks": 24,
+      "duration": 25,
+      "dimension": "3d"
+    },
+    {
+      "file": "shot-03-10.anyvis.json",
+      "blocks": 29,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-11.anyvis.json",
+      "blocks": 16,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-03-12.anyvis.json",
+      "blocks": 26,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-01.anyvis.json",
+      "blocks": 26,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-02.anyvis.json",
+      "blocks": 30,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-03.anyvis.json",
+      "blocks": 29,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-04.anyvis.json",
+      "blocks": 29,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-05.anyvis.json",
+      "blocks": 29,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-06.anyvis.json",
+      "blocks": 35,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-07.anyvis.json",
+      "blocks": 24,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-08.anyvis.json",
+      "blocks": 25,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-09.anyvis.json",
+      "blocks": 26,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-10.anyvis.json",
+      "blocks": 31,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-11.anyvis.json",
+      "blocks": 27,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-04-12.anyvis.json",
+      "blocks": 27,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-05-01.anyvis.json",
+      "blocks": 25,
+      "duration": 25,
+      "dimension": "3d"
+    },
+    {
+      "file": "shot-05-02.anyvis.json",
+      "blocks": 21,
+      "duration": 25,
+      "dimension": "3d"
+    },
+    {
+      "file": "shot-05-03.anyvis.json",
+      "blocks": 21,
+      "duration": 25,
+      "dimension": "3d"
+    },
+    {
+      "file": "shot-05-04.anyvis.json",
+      "blocks": 22,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-05-05.anyvis.json",
+      "blocks": 24,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-05-06.anyvis.json",
+      "blocks": 24,
+      "duration": 25,
+      "dimension": "3d"
+    },
+    {
+      "file": "shot-05-07.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-05-08.anyvis.json",
+      "blocks": 24,
+      "duration": 25,
+      "dimension": "3d"
+    },
+    {
+      "file": "shot-05-09.anyvis.json",
+      "blocks": 26,
+      "duration": 25,
+      "dimension": "3d"
+    },
+    {
+      "file": "shot-05-10.anyvis.json",
+      "blocks": 24,
+      "duration": 25,
+      "dimension": "3d"
+    },
+    {
+      "file": "shot-05-11.anyvis.json",
+      "blocks": 20,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-05-12.anyvis.json",
+      "blocks": 23,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-01.anyvis.json",
+      "blocks": 20,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-02.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-03.anyvis.json",
+      "blocks": 18,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-04.anyvis.json",
+      "blocks": 29,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-05.anyvis.json",
+      "blocks": 17,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-06.anyvis.json",
+      "blocks": 16,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-07.anyvis.json",
+      "blocks": 24,
+      "duration": 25,
+      "dimension": "3d"
+    },
+    {
+      "file": "shot-06-08.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-09.anyvis.json",
+      "blocks": 19,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-10.anyvis.json",
+      "blocks": 16,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-11.anyvis.json",
+      "blocks": 15,
+      "duration": 25,
+      "dimension": "2d"
+    },
+    {
+      "file": "shot-06-12.anyvis.json",
+      "blocks": 20,
+      "duration": 25,
+      "dimension": "2d"
+    }
+  ],
+  "totalDuration": 1800
+}

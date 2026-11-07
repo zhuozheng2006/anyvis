@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-6-11",
+  "name": "6.11 把方法交给新的例子",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "06 / 第六章：带着边界使用工具，重新回答开场问题",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "把方法交给新的例子",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  6.11  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "circle",
+      "fields": {
+        "name": "形4",
+        "radius": 1.25,
+        "color": "#63DBC5",
+        "fill": 0.25,
+        "x": -2.6,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "text",
+      "fields": {
+        "name": "文5",
+        "text": "圆盘：χ=1，b=1",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2.6,
+        "y": -1.6,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "text",
+      "fields": {
+        "name": "文6",
+        "text": "带一条边界的环面\nχ = 2 − 2×1 − 1 = −1",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#B6A1F2",
+        "x": 2.6,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "先问研究的是整个区域还是边界，再问允许怎样变化。\n不要因为还没有区分出来就说一定相同；暂时无法判断\n也是合理答案。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "然后选择一个可核对的不变量；若信息相同，就诚实地\n继续寻找证据。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "remove",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s7",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s13",
+      "type": "remove",
+      "fields": {
+        "target": "文7"
+      }
+    },
+    {
+      "id": "s14",
+      "type": "add",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "indicate",
+      "fields": {
+        "target": "文6",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "wait",
+      "fields": {
+        "duration": 11
+      }
+    }
+  ]
+}

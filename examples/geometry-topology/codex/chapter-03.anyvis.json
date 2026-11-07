@@ -1,0 +1,4236 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-chapter-3",
+  "name": "几何与拓扑 · 第3章",
+  "scene": {
+    "dimension": "3d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "c3s1_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.01 保留邻近关系是什么意思？"
+      },
+      "children": [
+        {
+          "id": "c3s1_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s1_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s1_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s1_文1"
+          }
+        },
+        {
+          "id": "c3s1_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s1_文2",
+            "text": "保留邻近关系是什么意思？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s1_文2"
+          }
+        },
+        {
+          "id": "c3s1_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s1_文3",
+            "text": "形状不只一种看法  ·  3.01  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s1_文3"
+          }
+        },
+        {
+          "id": "c3s1_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c3s1_形4",
+            "radius": 1.1,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_s5",
+          "type": "ellipse",
+          "fields": {
+            "name": "c3s1_形5",
+            "width": 3.6,
+            "height": 2.2,
+            "color": "#B6A1F2",
+            "fill": 0,
+            "x": 2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_s6",
+          "type": "line",
+          "fields": {
+            "name": "c3s1_形6",
+            "x1": -3.3,
+            "y1": 0.2,
+            "x2": -1.1,
+            "y2": 0.2,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_s7",
+          "type": "line",
+          "fields": {
+            "name": "c3s1_形7",
+            "x1": 0.4,
+            "y1": 0.2,
+            "x2": 4,
+            "y2": 0.2,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_s8",
+          "type": "text",
+          "fields": {
+            "name": "c3s1_文8",
+            "text": "圆周",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#63DBC5",
+            "x": -2.2,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_fixed8",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s1_文8"
+          }
+        },
+        {
+          "id": "c3s1_s9",
+          "type": "text",
+          "fields": {
+            "name": "c3s1_文9",
+            "text": "椭圆",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#B6A1F2",
+            "x": 2.2,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s1_文9"
+          }
+        },
+        {
+          "id": "c3s1_s11",
+          "type": "ellipse",
+          "fields": {
+            "name": "c3s1_形10",
+            "width": 4.4,
+            "height": 2.2,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_s13",
+          "type": "text",
+          "fields": {
+            "name": "c3s1_文11",
+            "text": "相邻点仍连续对应",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_fixed11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s1_文11"
+          }
+        },
+        {
+          "id": "c3s1_s14",
+          "type": "text",
+          "fields": {
+            "name": "c3s1_文12",
+            "text": "拉伸改变距离，却不会把一小簇相邻点突然撕到互不相\n干的位置。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_fixed12",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s1_文12"
+          }
+        },
+        {
+          "id": "c3s1_s15",
+          "type": "text",
+          "fields": {
+            "name": "c3s1_文13",
+            "text": "“连续”把这种直觉变成可检验的条件。放大框只帮助\n观察局部关系，不代表我们已经证明一般连续性的定义。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s1_fixed13",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s1_文13"
+          }
+        },
+        {
+          "id": "c3s1_s16",
+          "type": "remove",
+          "fields": {
+            "target": "c3s1_文13"
+          }
+        },
+        {
+          "id": "c3s1_s10",
+          "type": "passing_flash",
+          "fields": {
+            "target": "c3s1_形4",
+            "color": "#FBBF24",
+            "timeWidth": 0.25,
+            "duration": 3,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s1_s17",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c3s1_s18",
+          "type": "remove",
+          "fields": {
+            "target": "c3s1_文12"
+          }
+        },
+        {
+          "id": "c3s1_s19",
+          "type": "add",
+          "fields": {
+            "target": "c3s1_文13"
+          }
+        },
+        {
+          "id": "c3s1_s12",
+          "type": "transform",
+          "fields": {
+            "target": "c3s1_形4",
+            "destination": "c3s1_形10",
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s1_s20",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c3s1_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s1_cleanup",
+            "members": "c3s1_文1,c3s1_文2,c3s1_文3,c3s1_形4,c3s1_形5,c3s1_形6,c3s1_形7,c3s1_文8,c3s1_文9,c3s1_形10,c3s1_文11,c3s1_文12,c3s1_文13"
+          }
+        },
+        {
+          "id": "c3s1_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s1_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s2_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.02 连续不是“移动得慢”"
+      },
+      "children": [
+        {
+          "id": "c3s2_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s2_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s2_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s2_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s2_文1"
+          }
+        },
+        {
+          "id": "c3s2_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s2_文2",
+            "text": "连续不是“移动得慢”",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s2_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s2_文2"
+          }
+        },
+        {
+          "id": "c3s2_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s2_文3",
+            "text": "形状不只一种看法  ·  3.02  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s2_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s2_文3"
+          }
+        },
+        {
+          "id": "c3s2_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c3s2_形4",
+            "radius": 1.3,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s2_s5",
+          "type": "dot",
+          "fields": {
+            "name": "c3s2_形5",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 0,
+            "y": -1.1,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s2_s6",
+          "type": "dot",
+          "fields": {
+            "name": "c3s2_形6",
+            "radius": 0.065,
+            "color": "#F69A87",
+            "fill": 1,
+            "x": 0,
+            "y": 1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s2_s7",
+          "type": "text",
+          "fields": {
+            "name": "c3s2_文7",
+            "text": "不同的点，能否唯一找回？",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s2_fixed7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s2_文7"
+          }
+        },
+        {
+          "id": "c3s2_s13",
+          "type": "text",
+          "fields": {
+            "name": "c3s2_文8",
+            "text": "连续描述输入与输出的邻近关系，不是动画播放速度。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s2_fixed8",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s2_文8"
+          }
+        },
+        {
+          "id": "c3s2_s14",
+          "type": "text",
+          "fields": {
+            "name": "c3s2_文9",
+            "text": "变化可以非常平滑，却仍把不同点压到一起。请把注意\n力从播放速度转到点的来源：结果是否仍能区分每一个\n原点？",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s2_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s2_文9"
+          }
+        },
+        {
+          "id": "c3s2_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c3s2_文9"
+          }
+        },
+        {
+          "id": "c3s2_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s2_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s2_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c3s2_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c3s2_文8"
+          }
+        },
+        {
+          "id": "c3s2_s18",
+          "type": "add",
+          "fields": {
+            "target": "c3s2_文9"
+          }
+        },
+        {
+          "id": "c3s2_s11",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "c3s2_s8",
+              "type": "move",
+              "fields": {
+                "target": "c3s2_形5",
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "duration": 4,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c3s2_s9",
+              "type": "move",
+              "fields": {
+                "target": "c3s2_形6",
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "duration": 4,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c3s2_s10",
+              "type": "apply_matrix",
+              "fields": {
+                "target": "c3s2_形4",
+                "matrix": "[[1,0],[0,0]]",
+                "duration": 4,
+                "easing": "smooth"
+              }
+            }
+          ]
+        },
+        {
+          "id": "c3s2_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c3s2_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s2_cleanup",
+            "members": "c3s2_文1,c3s2_文2,c3s2_文3,c3s2_形4,c3s2_形5,c3s2_形6,c3s2_文7,c3s2_文8,c3s2_文9"
+          }
+        },
+        {
+          "id": "c3s2_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s2_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s3_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.03 为什么要求一一对应？"
+      },
+      "children": [
+        {
+          "id": "c3s3_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s3_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s3_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s3_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s3_文1"
+          }
+        },
+        {
+          "id": "c3s3_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s3_文2",
+            "text": "为什么要求一一对应？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s3_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s3_文2"
+          }
+        },
+        {
+          "id": "c3s3_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s3_文3",
+            "text": "形状不只一种看法  ·  3.03  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s3_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s3_文3"
+          }
+        },
+        {
+          "id": "c3s3_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c3s3_形4",
+            "radius": 1.3,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s3_s5",
+          "type": "dot",
+          "fields": {
+            "name": "c3s3_形5",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 0,
+            "y": -1.1,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s3_s6",
+          "type": "dot",
+          "fields": {
+            "name": "c3s3_形6",
+            "radius": 0.065,
+            "color": "#F69A87",
+            "fill": 1,
+            "x": 0,
+            "y": 1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s3_s7",
+          "type": "text",
+          "fields": {
+            "name": "c3s3_文7",
+            "text": "不同的点，能否唯一找回？",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s3_fixed7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s3_文7"
+          }
+        },
+        {
+          "id": "c3s3_s13",
+          "type": "text",
+          "fields": {
+            "name": "c3s3_文8",
+            "text": "压扁是连续的，但两个不同点可能得到同一个结果。只\n需找出一对合并的点，就足以否定这个映射的一一对应\n性质。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s3_fixed8",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s3_文8"
+          }
+        },
+        {
+          "id": "c3s3_s14",
+          "type": "text",
+          "fields": {
+            "name": "c3s3_文9",
+            "text": "如果不能唯一找回来源，它就不是我们需要的等价关系。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s3_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s3_文9"
+          }
+        },
+        {
+          "id": "c3s3_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c3s3_文9"
+          }
+        },
+        {
+          "id": "c3s3_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s3_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s3_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c3s3_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c3s3_文8"
+          }
+        },
+        {
+          "id": "c3s3_s18",
+          "type": "add",
+          "fields": {
+            "target": "c3s3_文9"
+          }
+        },
+        {
+          "id": "c3s3_s11",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "c3s3_s8",
+              "type": "move",
+              "fields": {
+                "target": "c3s3_形5",
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "duration": 4,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c3s3_s9",
+              "type": "move",
+              "fields": {
+                "target": "c3s3_形6",
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "duration": 4,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c3s3_s10",
+              "type": "apply_matrix",
+              "fields": {
+                "target": "c3s3_形4",
+                "matrix": "[[1,0],[0,0]]",
+                "duration": 4,
+                "easing": "smooth"
+              }
+            }
+          ]
+        },
+        {
+          "id": "c3s3_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c3s3_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s3_cleanup",
+            "members": "c3s3_文1,c3s3_文2,c3s3_文3,c3s3_形4,c3s3_形5,c3s3_形6,c3s3_文7,c3s3_文8,c3s3_文9"
+          }
+        },
+        {
+          "id": "c3s3_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s3_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s4_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.04 把完整定义放到图旁"
+      },
+      "children": [
+        {
+          "id": "c3s4_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s4_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s4_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s4_文1"
+          }
+        },
+        {
+          "id": "c3s4_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s4_文2",
+            "text": "把完整定义放到图旁",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s4_文2"
+          }
+        },
+        {
+          "id": "c3s4_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s4_文3",
+            "text": "形状不只一种看法  ·  3.04  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s4_文3"
+          }
+        },
+        {
+          "id": "c3s4_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c3s4_形4",
+            "radius": 1.25,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -3,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_s5",
+          "type": "circle",
+          "fields": {
+            "name": "c3s4_形5",
+            "radius": 1.25,
+            "color": "#B6A1F2",
+            "fill": 0,
+            "x": 3,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_s6",
+          "type": "arrow",
+          "fields": {
+            "name": "c3s4_形6",
+            "x1": -1.5,
+            "y1": 0.7,
+            "x2": 1.5,
+            "y2": 0.7,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_s7",
+          "type": "arrow",
+          "fields": {
+            "name": "c3s4_形7",
+            "x1": 1.5,
+            "y1": -0.3,
+            "x2": -1.5,
+            "y2": -0.3,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_s8",
+          "type": "text",
+          "fields": {
+            "name": "c3s4_文8",
+            "text": "双射 + 正向连续 + 逆向连续",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_fixed8",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s4_文8"
+          }
+        },
+        {
+          "id": "c3s4_s11",
+          "type": "text",
+          "fields": {
+            "name": "c3s4_文9",
+            "text": "同胚是一一对应，覆盖目标的全部点。图中两支箭头都\n要检查，不能因为正向没有断裂就忽略反向条件。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s4_文9"
+          }
+        },
+        {
+          "id": "c3s4_s12",
+          "type": "text",
+          "fields": {
+            "name": "c3s4_文10",
+            "text": "而且正向映射与逆映射都连续；这三件事必须一起成立。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s4_fixed10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s4_文10"
+          }
+        },
+        {
+          "id": "c3s4_s13",
+          "type": "remove",
+          "fields": {
+            "target": "c3s4_文10"
+          }
+        },
+        {
+          "id": "c3s4_s9",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s4_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s4_s14",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c3s4_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c3s4_文9"
+          }
+        },
+        {
+          "id": "c3s4_s16",
+          "type": "add",
+          "fields": {
+            "target": "c3s4_文10"
+          }
+        },
+        {
+          "id": "c3s4_s10",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s4_文8",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s4_s17",
+          "type": "wait",
+          "fields": {
+            "duration": 11
+          }
+        },
+        {
+          "id": "c3s4_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s4_cleanup",
+            "members": "c3s4_文1,c3s4_文2,c3s4_文3,c3s4_形4,c3s4_形5,c3s4_形6,c3s4_形7,c3s4_文8,c3s4_文9,c3s4_文10"
+          }
+        },
+        {
+          "id": "c3s4_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s4_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s5_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.05 给圆周与椭圆一个真正的理由"
+      },
+      "children": [
+        {
+          "id": "c3s5_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s5_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s5_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s5_文1"
+          }
+        },
+        {
+          "id": "c3s5_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s5_文2",
+            "text": "给圆周与椭圆一个真正的理由",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s5_文2"
+          }
+        },
+        {
+          "id": "c3s5_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s5_文3",
+            "text": "形状不只一种看法  ·  3.05  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s5_文3"
+          }
+        },
+        {
+          "id": "c3s5_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c3s5_形4",
+            "radius": 1.1,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_s5",
+          "type": "ellipse",
+          "fields": {
+            "name": "c3s5_形5",
+            "width": 3.6,
+            "height": 2.2,
+            "color": "#B6A1F2",
+            "fill": 0,
+            "x": 2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_s6",
+          "type": "line",
+          "fields": {
+            "name": "c3s5_形6",
+            "x1": -3.3,
+            "y1": 0.2,
+            "x2": -1.1,
+            "y2": 0.2,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_s7",
+          "type": "line",
+          "fields": {
+            "name": "c3s5_形7",
+            "x1": 0.4,
+            "y1": 0.2,
+            "x2": 4,
+            "y2": 0.2,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_s8",
+          "type": "text",
+          "fields": {
+            "name": "c3s5_文8",
+            "text": "圆周",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#63DBC5",
+            "x": -2.2,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_fixed8",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s5_文8"
+          }
+        },
+        {
+          "id": "c3s5_s9",
+          "type": "text",
+          "fields": {
+            "name": "c3s5_文9",
+            "text": "椭圆",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#B6A1F2",
+            "x": 2.2,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s5_文9"
+          }
+        },
+        {
+          "id": "c3s5_s11",
+          "type": "ellipse",
+          "fields": {
+            "name": "c3s5_形10",
+            "width": 4.4,
+            "height": 2.2,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_s13",
+          "type": "text",
+          "fields": {
+            "name": "c3s5_文11",
+            "text": "f(x,y) = (2x,y)；逆为 (x/2,y)",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_fixed11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s5_文11"
+          }
+        },
+        {
+          "id": "c3s5_s14",
+          "type": "text",
+          "fields": {
+            "name": "c3s5_文12",
+            "text": "这个拉伸有明确的逆过程：横坐标除以2。把逆映射代\n回原映射可恢复原坐标，这给出了可以直接核对的依据。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_fixed12",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s5_文12"
+          }
+        },
+        {
+          "id": "c3s5_s15",
+          "type": "text",
+          "fields": {
+            "name": "c3s5_文13",
+            "text": "两边都是连续映射，所以圆周与椭圆同胚；依据是映射，\n不是补间效果。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s5_fixed13",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s5_文13"
+          }
+        },
+        {
+          "id": "c3s5_s16",
+          "type": "remove",
+          "fields": {
+            "target": "c3s5_文13"
+          }
+        },
+        {
+          "id": "c3s5_s10",
+          "type": "passing_flash",
+          "fields": {
+            "target": "c3s5_形4",
+            "color": "#FBBF24",
+            "timeWidth": 0.25,
+            "duration": 3,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s5_s17",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c3s5_s18",
+          "type": "remove",
+          "fields": {
+            "target": "c3s5_文12"
+          }
+        },
+        {
+          "id": "c3s5_s19",
+          "type": "add",
+          "fields": {
+            "target": "c3s5_文13"
+          }
+        },
+        {
+          "id": "c3s5_s12",
+          "type": "transform",
+          "fields": {
+            "target": "c3s5_形4",
+            "destination": "c3s5_形10",
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s5_s20",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c3s5_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s5_cleanup",
+            "members": "c3s5_文1,c3s5_文2,c3s5_文3,c3s5_形4,c3s5_形5,c3s5_形6,c3s5_形7,c3s5_文8,c3s5_文9,c3s5_形10,c3s5_文11,c3s5_文12,c3s5_文13"
+          }
+        },
+        {
+          "id": "c3s5_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s5_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s6_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.06 圆周与方形边界也能对应吗？"
+      },
+      "children": [
+        {
+          "id": "c3s6_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s6_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s6_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s6_文1"
+          }
+        },
+        {
+          "id": "c3s6_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s6_文2",
+            "text": "圆周与方形边界也能对应吗？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s6_文2"
+          }
+        },
+        {
+          "id": "c3s6_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s6_文3",
+            "text": "形状不只一种看法  ·  3.06  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s6_文3"
+          }
+        },
+        {
+          "id": "c3s6_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c3s6_形4",
+            "radius": 1.25,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.4,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s5",
+          "type": "square",
+          "fields": {
+            "name": "c3s6_形5",
+            "side": 2.5,
+            "color": "#B6A1F2",
+            "fill": 0,
+            "x": 2.4,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s6",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形6",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -1.15,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s7",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形7",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 3.65,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s8",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形8",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -1.5161165235168155,
+            "y": 1.0838834764831844,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s9",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形9",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 3.65,
+            "y": 1.4499999999999997,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s10",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形10",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -2.4,
+            "y": 1.45,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s11",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形11",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 2.4,
+            "y": 1.45,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s12",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形12",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -3.2838834764831843,
+            "y": 1.0838834764831844,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s13",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形13",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 1.1500000000000001,
+            "y": 1.45,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s14",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形14",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -3.65,
+            "y": 0.20000000000000018,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s15",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形15",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 1.15,
+            "y": 0.20000000000000018,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s16",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形16",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -3.283883476483185,
+            "y": -0.6838834764831843,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s17",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形17",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 1.15,
+            "y": -1.0499999999999996,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s18",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形18",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -2.4000000000000004,
+            "y": -1.05,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s19",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形19",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 2.3999999999999995,
+            "y": -1.05,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s20",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形20",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -1.5161165235168157,
+            "y": -0.6838834764831847,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s21",
+          "type": "dot",
+          "fields": {
+            "name": "c3s6_形21",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 3.6499999999999995,
+            "y": -1.05,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s22",
+          "type": "text",
+          "fields": {
+            "name": "c3s6_文22",
+            "text": "沿射线对应：角点不妨碍同胚",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_fixed22",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s6_文22"
+          }
+        },
+        {
+          "id": "c3s6_s23",
+          "type": "tracker",
+          "fields": {
+            "name": "c3s6_ray",
+            "value": 0
+          }
+        },
+        {
+          "id": "c3s6_s24",
+          "type": "dynamic_dot",
+          "fields": {
+            "name": "c3s6_形24",
+            "axes": "",
+            "xExpr": "-2.4+1.25*cos(c3s6_ray)",
+            "yExpr": "0.2+1.25*sin(c3s6_ray)",
+            "zExpr": "0",
+            "radius": 0.08,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s25",
+          "type": "dynamic_dot",
+          "fields": {
+            "name": "c3s6_形25",
+            "axes": "",
+            "xExpr": "2.4+1.25*cos(c3s6_ray)/max(abs(cos(c3s6_ray)),abs(sin(c3s6_ray)))",
+            "yExpr": "0.2+1.25*sin(c3s6_ray)/max(abs(cos(c3s6_ray)),abs(sin(c3s6_ray)))",
+            "zExpr": "0",
+            "radius": 0.08,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s26",
+          "type": "dynamic_line",
+          "fields": {
+            "name": "c3s6_形26",
+            "axes": "",
+            "x1Expr": "-2.4",
+            "y1Expr": "0.2",
+            "x2Expr": "-2.4+1.25*cos(c3s6_ray)",
+            "y2Expr": "0.2+1.25*sin(c3s6_ray)",
+            "color": "#F3CD85",
+            "width": 3,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s27",
+          "type": "dynamic_line",
+          "fields": {
+            "name": "c3s6_形27",
+            "axes": "",
+            "x1Expr": "2.4",
+            "y1Expr": "0.2",
+            "x2Expr": "2.4+1.25*cos(c3s6_ray)/max(abs(cos(c3s6_ray)),abs(sin(c3s6_ray)))",
+            "y2Expr": "0.2+1.25*sin(c3s6_ray)/max(abs(cos(c3s6_ray)),abs(sin(c3s6_ray)))",
+            "color": "#F3CD85",
+            "width": 3,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_s30",
+          "type": "text",
+          "fields": {
+            "name": "c3s6_文28",
+            "text": "每条射线各遇到圆周和方形边界一次，用它们建立对应。\n这里比较的是两条边界，内部区域不在本次对象中，角\n点也不被切掉。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_fixed28",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s6_文28"
+          }
+        },
+        {
+          "id": "c3s6_s31",
+          "type": "text",
+          "fields": {
+            "name": "c3s6_文29",
+            "text": "转动射线时对应点连续移动，反向也连续；有角不妨碍\n拓扑等价。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s6_fixed29",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s6_文29"
+          }
+        },
+        {
+          "id": "c3s6_s32",
+          "type": "remove",
+          "fields": {
+            "target": "c3s6_文29"
+          }
+        },
+        {
+          "id": "c3s6_s29",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s6_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s6_s33",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c3s6_s34",
+          "type": "remove",
+          "fields": {
+            "target": "c3s6_文28"
+          }
+        },
+        {
+          "id": "c3s6_s35",
+          "type": "add",
+          "fields": {
+            "target": "c3s6_文29"
+          }
+        },
+        {
+          "id": "c3s6_s28",
+          "type": "animate_value",
+          "fields": {
+            "target": "c3s6_ray",
+            "value": 6.283185307179586,
+            "duration": 7,
+            "easing": "linear"
+          }
+        },
+        {
+          "id": "c3s6_s36",
+          "type": "wait",
+          "fields": {
+            "duration": 6
+          }
+        },
+        {
+          "id": "c3s6_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s6_cleanup",
+            "members": "c3s6_文1,c3s6_文2,c3s6_文3,c3s6_形4,c3s6_形5,c3s6_形6,c3s6_形7,c3s6_形8,c3s6_形9,c3s6_形10,c3s6_形11,c3s6_形12,c3s6_形13,c3s6_形14,c3s6_形15,c3s6_形16,c3s6_形17,c3s6_形18,c3s6_形19,c3s6_形20,c3s6_形21,c3s6_文22,c3s6_形24,c3s6_形25,c3s6_形26,c3s6_形27,c3s6_文28,c3s6_文29"
+          }
+        },
+        {
+          "id": "c3s6_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s6_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s7_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.07 一圈为什么不能变成两圈？"
+      },
+      "children": [
+        {
+          "id": "c3s7_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s7_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s7_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s7_文1"
+          }
+        },
+        {
+          "id": "c3s7_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s7_文2",
+            "text": "一圈为什么不能变成两圈？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s7_文2"
+          }
+        },
+        {
+          "id": "c3s7_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s7_文3",
+            "text": "形状不只一种看法  ·  3.07  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s7_文3"
+          }
+        },
+        {
+          "id": "c3s7_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c3s7_形4",
+            "radius": 1.15,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.5,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_s5",
+          "type": "circle",
+          "fields": {
+            "name": "c3s7_形5",
+            "radius": 0.65,
+            "color": "#B6A1F2",
+            "fill": 0,
+            "x": 1.4,
+            "y": 0.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_s6",
+          "type": "circle",
+          "fields": {
+            "name": "c3s7_形6",
+            "radius": 0.65,
+            "color": "#B6A1F2",
+            "fill": 0,
+            "x": 3,
+            "y": -0.35,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_s7",
+          "type": "text",
+          "fields": {
+            "name": "c3s7_文7",
+            "text": "一个分支",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.5,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_fixed7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s7_文7"
+          }
+        },
+        {
+          "id": "c3s7_s8",
+          "type": "text",
+          "fields": {
+            "name": "c3s7_文8",
+            "text": "两个分支",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 2.2,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_fixed8",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s7_文8"
+          }
+        },
+        {
+          "id": "c3s7_s9",
+          "type": "dot",
+          "fields": {
+            "name": "c3s7_形9",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -1.35,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_s12",
+          "type": "text",
+          "fields": {
+            "name": "c3s7_文10",
+            "text": "同胚保留连通性，更一般地保留连通分支数。这次我们\n证明的是不可能，而不是尝试所有变形后报告还没有找\n到。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_fixed10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s7_文10"
+          }
+        },
+        {
+          "id": "c3s7_s13",
+          "type": "text",
+          "fields": {
+            "name": "c3s7_文11",
+            "text": "一个圆周与两个不相交圆周的分支数不同，所以不能同\n胚。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s7_fixed11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s7_文11"
+          }
+        },
+        {
+          "id": "c3s7_s14",
+          "type": "remove",
+          "fields": {
+            "target": "c3s7_文11"
+          }
+        },
+        {
+          "id": "c3s7_s10",
+          "type": "path_move",
+          "fields": {
+            "target": "c3s7_形9",
+            "path": "c3s7_形4",
+            "duration": 5,
+            "easing": "linear"
+          }
+        },
+        {
+          "id": "c3s7_s15",
+          "type": "wait",
+          "fields": {
+            "duration": 7
+          }
+        },
+        {
+          "id": "c3s7_s16",
+          "type": "remove",
+          "fields": {
+            "target": "c3s7_文10"
+          }
+        },
+        {
+          "id": "c3s7_s17",
+          "type": "add",
+          "fields": {
+            "target": "c3s7_文11"
+          }
+        },
+        {
+          "id": "c3s7_s11",
+          "type": "passing_flash",
+          "fields": {
+            "target": "c3s7_形4",
+            "color": "#FBBF24",
+            "timeWidth": 0.25,
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s7_s18",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c3s7_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s7_cleanup",
+            "members": "c3s7_文1,c3s7_文2,c3s7_文3,c3s7_形4,c3s7_形5,c3s7_形6,c3s7_文7,c3s7_文8,c3s7_形9,c3s7_文10,c3s7_文11"
+          }
+        },
+        {
+          "id": "c3s7_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s7_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s8_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.08 “允许变形”的比喻在哪里失效？"
+      },
+      "children": [
+        {
+          "id": "c3s8_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s8_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s8_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s8_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s8_文1"
+          }
+        },
+        {
+          "id": "c3s8_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s8_文2",
+            "text": "“允许变形”的比喻在哪里失效？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s8_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s8_文2"
+          }
+        },
+        {
+          "id": "c3s8_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s8_文3",
+            "text": "形状不只一种看法  ·  3.08  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s8_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s8_文3"
+          }
+        },
+        {
+          "id": "c3s8_s4",
+          "type": "rounded_rectangle",
+          "fields": {
+            "name": "c3s8_形4",
+            "width": 3.5,
+            "height": 1.8,
+            "corner": 0.2,
+            "color": "#63DBC5",
+            "fill": 0.06,
+            "x": -2,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s8_s5",
+          "type": "text",
+          "fields": {
+            "name": "c3s8_文5",
+            "text": "空间之间的映射",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#E6EDF6",
+            "x": -2,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s8_fixed5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s8_文5"
+          }
+        },
+        {
+          "id": "c3s8_s6",
+          "type": "rounded_rectangle",
+          "fields": {
+            "name": "c3s8_形6",
+            "width": 3.5,
+            "height": 1.8,
+            "corner": 0.2,
+            "color": "#B6A1F2",
+            "fill": 0.06,
+            "x": 2,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s8_s7",
+          "type": "text",
+          "fields": {
+            "name": "c3s8_文7",
+            "text": "随时间变化的过程",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#E6EDF6",
+            "x": 2,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s8_fixed7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s8_文7"
+          }
+        },
+        {
+          "id": "c3s8_s10",
+          "type": "text",
+          "fields": {
+            "name": "c3s8_文8",
+            "text": "同胚的定义是两个空间之间存在怎样的映射。两个对象\n是否同胚，与某个指定动画过程是否合格，是不同的判\n断。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s8_fixed8",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s8_文8"
+          }
+        },
+        {
+          "id": "c3s8_s11",
+          "type": "text",
+          "fields": {
+            "name": "c3s8_文9",
+            "text": "一段随时间变化的动画是另一层数据；它的中间步骤也\n需要检查。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s8_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s8_文9"
+          }
+        },
+        {
+          "id": "c3s8_s12",
+          "type": "remove",
+          "fields": {
+            "target": "c3s8_文9"
+          }
+        },
+        {
+          "id": "c3s8_s8",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s8_文5",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s8_s13",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c3s8_s14",
+          "type": "remove",
+          "fields": {
+            "target": "c3s8_文8"
+          }
+        },
+        {
+          "id": "c3s8_s15",
+          "type": "add",
+          "fields": {
+            "target": "c3s8_文9"
+          }
+        },
+        {
+          "id": "c3s8_s9",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s8_文7",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s8_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 11
+          }
+        },
+        {
+          "id": "c3s8_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s8_cleanup",
+            "members": "c3s8_文1,c3s8_文2,c3s8_文3,c3s8_形4,c3s8_文5,c3s8_形6,c3s8_文7,c3s8_文8,c3s8_文9"
+          }
+        },
+        {
+          "id": "c3s8_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s8_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s9_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.09 打结时，到底在比较什么？"
+      },
+      "children": [
+        {
+          "id": "c3s9_s1",
+          "type": "camera",
+          "fields": {
+            "phi": 65,
+            "theta": -60,
+            "zoom": 0.9,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s9_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s9_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s9_s3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s9_文1"
+          }
+        },
+        {
+          "id": "c3s9_s4",
+          "type": "text",
+          "fields": {
+            "name": "c3s9_文2",
+            "text": "打结时，到底在比较什么？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s9_s5",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s9_文2"
+          }
+        },
+        {
+          "id": "c3s9_s6",
+          "type": "text",
+          "fields": {
+            "name": "c3s9_文3",
+            "text": "形状不只一种看法  ·  3.09  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s9_s7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s9_文3"
+          }
+        },
+        {
+          "id": "c3s9_s8",
+          "type": "parametric_curve",
+          "fields": {
+            "name": "c3s9_形4",
+            "xExpr": "-2.6+1.2*cos(t)",
+            "yExpr": "1.2*sin(t)",
+            "zExpr": "0",
+            "tMin": 0,
+            "tMax": 6.283185307179586,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s9_s9",
+          "type": "parametric_curve",
+          "fields": {
+            "name": "c3s9_形5",
+            "xExpr": "2.6+0.52*(sin(t)+2*sin(2*t))",
+            "yExpr": "0.52*(cos(t)-2*cos(2*t))",
+            "zExpr": "-0.52*sin(3*t)",
+            "tMin": 0,
+            "tMax": 6.283185307179586,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s9_s10",
+          "type": "text",
+          "fields": {
+            "name": "c3s9_文6",
+            "text": "圆结",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#63DBC5",
+            "x": -3,
+            "y": -1.8,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s9_s11",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s9_文6"
+          }
+        },
+        {
+          "id": "c3s9_s12",
+          "type": "text",
+          "fields": {
+            "name": "c3s9_文7",
+            "text": "三叶结",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#B6A1F2",
+            "x": 3,
+            "y": -1.8,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s9_s13",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s9_文7"
+          }
+        },
+        {
+          "id": "c3s9_s16",
+          "type": "text",
+          "fields": {
+            "name": "c3s9_文8",
+            "text": "作为抽象空间，普通圆结与三叶结都同胚于圆周。不要\n把投影中的交叉理解为曲线真实相交；这里的曲线位于\n三维空间。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s9_s17",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s9_文8"
+          }
+        },
+        {
+          "id": "c3s9_s18",
+          "type": "text",
+          "fields": {
+            "name": "c3s9_文9",
+            "text": "但把它们放进三维空间后，周围空间中的缠绕方式也成\n了问题。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s9_s19",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s9_文9"
+          }
+        },
+        {
+          "id": "c3s9_s20",
+          "type": "remove",
+          "fields": {
+            "target": "c3s9_文9"
+          }
+        },
+        {
+          "id": "c3s9_s14",
+          "type": "passing_flash",
+          "fields": {
+            "target": "c3s9_形4",
+            "color": "#FBBF24",
+            "timeWidth": 0.25,
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s9_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 8
+          }
+        },
+        {
+          "id": "c3s9_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c3s9_文8"
+          }
+        },
+        {
+          "id": "c3s9_s23",
+          "type": "add",
+          "fields": {
+            "target": "c3s9_文9"
+          }
+        },
+        {
+          "id": "c3s9_s15",
+          "type": "rotate",
+          "fields": {
+            "target": "c3s9_形5",
+            "angle": 80,
+            "axis": "UP",
+            "duration": 5,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s9_s24",
+          "type": "wait",
+          "fields": {
+            "duration": 8
+          }
+        },
+        {
+          "id": "c3s9_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s9_cleanup",
+            "members": "c3s9_文1,c3s9_文2,c3s9_文3,c3s9_形4,c3s9_形5,c3s9_文6,c3s9_文7,c3s9_文8,c3s9_文9"
+          }
+        },
+        {
+          "id": "c3s9_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s9_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s10_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.10 给环境同位一个独立名字"
+      },
+      "children": [
+        {
+          "id": "c3s10_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s10_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s10_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s10_文1"
+          }
+        },
+        {
+          "id": "c3s10_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s10_文2",
+            "text": "给环境同位一个独立名字",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s10_文2"
+          }
+        },
+        {
+          "id": "c3s10_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s10_文3",
+            "text": "形状不只一种看法  ·  3.10  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s10_文3"
+          }
+        },
+        {
+          "id": "c3s10_s4",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形4",
+            "x1": -4,
+            "y1": -1.5,
+            "x2": -4,
+            "y2": 1.5,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s5",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形5",
+            "x1": -3,
+            "y1": -1.5,
+            "x2": -3,
+            "y2": 1.5,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s6",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形6",
+            "x1": -2,
+            "y1": -1.5,
+            "x2": -2,
+            "y2": 1.5,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s7",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形7",
+            "x1": -1,
+            "y1": -1.5,
+            "x2": -1,
+            "y2": 1.5,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s8",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形8",
+            "x1": 0,
+            "y1": -1.5,
+            "x2": 0,
+            "y2": 1.5,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s9",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形9",
+            "x1": 1,
+            "y1": -1.5,
+            "x2": 1,
+            "y2": 1.5,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s10",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形10",
+            "x1": 2,
+            "y1": -1.5,
+            "x2": 2,
+            "y2": 1.5,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s11",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形11",
+            "x1": 3,
+            "y1": -1.5,
+            "x2": 3,
+            "y2": 1.5,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s12",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形12",
+            "x1": 4,
+            "y1": -1.5,
+            "x2": 4,
+            "y2": 1.5,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s13",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形13",
+            "x1": -4,
+            "y1": -1,
+            "x2": 4,
+            "y2": -1,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s14",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形14",
+            "x1": -4,
+            "y1": 0,
+            "x2": 4,
+            "y2": 0,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s15",
+          "type": "line",
+          "fields": {
+            "name": "c3s10_形15",
+            "x1": -4,
+            "y1": 1,
+            "x2": 4,
+            "y2": 1,
+            "color": "#30445E",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s16",
+          "type": "circle",
+          "fields": {
+            "name": "c3s10_形16",
+            "radius": 1.1,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s17",
+          "type": "dot",
+          "fields": {
+            "name": "c3s10_形17",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 1.1,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s18",
+          "type": "dot",
+          "fields": {
+            "name": "c3s10_形18",
+            "radius": 0.065,
+            "color": "#F69A87",
+            "fill": 1,
+            "x": 0,
+            "y": 1.1,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_s19",
+          "type": "group",
+          "fields": {
+            "name": "c3s10_组19",
+            "members": "c3s10_形4,c3s10_形5,c3s10_形6,c3s10_形7,c3s10_形8,c3s10_形9,c3s10_形10,c3s10_形11,c3s10_形12,c3s10_形13,c3s10_形14,c3s10_形15,c3s10_形16,c3s10_形17,c3s10_形18"
+          }
+        },
+        {
+          "id": "c3s10_s21",
+          "type": "text",
+          "fields": {
+            "name": "c3s10_文20",
+            "text": "曲线与周围网格，一起连续可逆地变",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_fixed20",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s10_文20"
+          }
+        },
+        {
+          "id": "c3s10_s23",
+          "type": "text",
+          "fields": {
+            "name": "c3s10_文21",
+            "text": "环境同位让整个周围空间连续变化，每一时刻都是自同\n胚，并从恒等变化开始。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_fixed21",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s10_文21"
+          }
+        },
+        {
+          "id": "c3s10_s24",
+          "type": "text",
+          "fields": {
+            "name": "c3s10_文22",
+            "text": "圆结与三叶结不能这样互变；本片引用这一结论，不在\n此证明。这里多要求了周围空间也能一起变化，所以比\n抽象圆周的对应更严格。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s10_fixed22",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s10_文22"
+          }
+        },
+        {
+          "id": "c3s10_s25",
+          "type": "remove",
+          "fields": {
+            "target": "c3s10_文22"
+          }
+        },
+        {
+          "id": "c3s10_s22",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s10_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s10_s26",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c3s10_s27",
+          "type": "remove",
+          "fields": {
+            "target": "c3s10_文21"
+          }
+        },
+        {
+          "id": "c3s10_s28",
+          "type": "add",
+          "fields": {
+            "target": "c3s10_文22"
+          }
+        },
+        {
+          "id": "c3s10_s20",
+          "type": "apply_matrix",
+          "fields": {
+            "target": "c3s10_组19",
+            "matrix": "[[1,0.5],[0,1]]",
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s10_s29",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c3s10_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s10_cleanup",
+            "members": "c3s10_文1,c3s10_文2,c3s10_文3,c3s10_形4,c3s10_形5,c3s10_形6,c3s10_形7,c3s10_形8,c3s10_形9,c3s10_形10,c3s10_形11,c3s10_形12,c3s10_形13,c3s10_形14,c3s10_形15,c3s10_形16,c3s10_形17,c3s10_形18,c3s10_组19,c3s10_文20,c3s10_文21,c3s10_文22"
+          }
+        },
+        {
+          "id": "c3s10_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s10_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s11_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.11 检查一条常见的错误论证"
+      },
+      "children": [
+        {
+          "id": "c3s11_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s11_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s11_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s11_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s11_文1"
+          }
+        },
+        {
+          "id": "c3s11_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s11_文2",
+            "text": "检查一条常见的错误论证",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s11_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s11_文2"
+          }
+        },
+        {
+          "id": "c3s11_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s11_文3",
+            "text": "形状不只一种看法  ·  3.11  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s11_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s11_文3"
+          }
+        },
+        {
+          "id": "c3s11_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c3s11_形4",
+            "radius": 1.3,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s11_s5",
+          "type": "dot",
+          "fields": {
+            "name": "c3s11_形5",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 0,
+            "y": -1.1,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s11_s6",
+          "type": "dot",
+          "fields": {
+            "name": "c3s11_形6",
+            "radius": 0.065,
+            "color": "#F69A87",
+            "fill": 1,
+            "x": 0,
+            "y": 1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s11_s7",
+          "type": "text",
+          "fields": {
+            "name": "c3s11_文7",
+            "text": "不同的点，能否唯一找回？",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s11_fixed7",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s11_文7"
+          }
+        },
+        {
+          "id": "c3s11_s13",
+          "type": "text",
+          "fields": {
+            "name": "c3s11_文8",
+            "text": "软件的形状变换可能合并点或产生自交，不能自动充当\n拓扑证明。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s11_fixed8",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s11_文8"
+          }
+        },
+        {
+          "id": "c3s11_s14",
+          "type": "text",
+          "fields": {
+            "name": "c3s11_文9",
+            "text": "要核对映射条件，或找到可靠的不变量。从这一拍起，\n所有变形画面都只承担它实际能够支持的那一层证据。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s11_fixed9",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s11_文9"
+          }
+        },
+        {
+          "id": "c3s11_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c3s11_文9"
+          }
+        },
+        {
+          "id": "c3s11_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s11_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s11_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c3s11_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c3s11_文8"
+          }
+        },
+        {
+          "id": "c3s11_s18",
+          "type": "add",
+          "fields": {
+            "target": "c3s11_文9"
+          }
+        },
+        {
+          "id": "c3s11_s11",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "c3s11_s8",
+              "type": "move",
+              "fields": {
+                "target": "c3s11_形5",
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "duration": 4,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c3s11_s9",
+              "type": "move",
+              "fields": {
+                "target": "c3s11_形6",
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "duration": 4,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c3s11_s10",
+              "type": "apply_matrix",
+              "fields": {
+                "target": "c3s11_形4",
+                "matrix": "[[1,0],[0,0]]",
+                "duration": 4,
+                "easing": "smooth"
+              }
+            }
+          ]
+        },
+        {
+          "id": "c3s11_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c3s11_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s11_cleanup",
+            "members": "c3s11_文1,c3s11_文2,c3s11_文3,c3s11_形4,c3s11_形5,c3s11_形6,c3s11_文7,c3s11_文8,c3s11_文9"
+          }
+        },
+        {
+          "id": "c3s11_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s11_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3s12_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "3.12 下一步：能不能用少量数字排除？"
+      },
+      "children": [
+        {
+          "id": "c3s12_camera",
+          "type": "camera",
+          "fields": {
+            "phi": 0,
+            "theta": -90,
+            "zoom": 1,
+            "duration": 0
+          }
+        },
+        {
+          "id": "c3s12_s1",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文1",
+            "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed1",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文1"
+          }
+        },
+        {
+          "id": "c3s12_s2",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文2",
+            "text": "下一步：能不能用少量数字排除？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed2",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文2"
+          }
+        },
+        {
+          "id": "c3s12_s3",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文3",
+            "text": "形状不只一种看法  ·  3.12  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed3",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文3"
+          }
+        },
+        {
+          "id": "c3s12_s4",
+          "type": "line",
+          "fields": {
+            "name": "c3s12_形4",
+            "x1": -1.8,
+            "y1": -1,
+            "x2": 1.8,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_s5",
+          "type": "line",
+          "fields": {
+            "name": "c3s12_形5",
+            "x1": 1.8,
+            "y1": -1,
+            "x2": 1.8,
+            "y2": 1.4,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_s6",
+          "type": "line",
+          "fields": {
+            "name": "c3s12_形6",
+            "x1": 1.8,
+            "y1": 1.4,
+            "x2": -1.8,
+            "y2": 1.4,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_s7",
+          "type": "line",
+          "fields": {
+            "name": "c3s12_形7",
+            "x1": -1.8,
+            "y1": 1.4,
+            "x2": -1.8,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_s8",
+          "type": "line",
+          "fields": {
+            "name": "c3s12_形8",
+            "x1": -1.8,
+            "y1": -1,
+            "x2": 1.8,
+            "y2": 1.4,
+            "color": "#B6A1F2",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_s9",
+          "type": "dot",
+          "fields": {
+            "name": "c3s12_形9",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -1.8,
+            "y": -1,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_s10",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文10",
+            "text": "A",
+            "fontSize": 19,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2,
+            "y": -1.22,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed10",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文10"
+          }
+        },
+        {
+          "id": "c3s12_s11",
+          "type": "dot",
+          "fields": {
+            "name": "c3s12_形11",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 1.8,
+            "y": -1,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_s12",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文12",
+            "text": "B",
+            "fontSize": 19,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 2,
+            "y": -1.22,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed12",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文12"
+          }
+        },
+        {
+          "id": "c3s12_s13",
+          "type": "dot",
+          "fields": {
+            "name": "c3s12_形13",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": 1.8,
+            "y": 1.4,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_s14",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文14",
+            "text": "C",
+            "fontSize": 19,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 2,
+            "y": 1.6199999999999999,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed14",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文14"
+          }
+        },
+        {
+          "id": "c3s12_s15",
+          "type": "dot",
+          "fields": {
+            "name": "c3s12_形15",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -1.8,
+            "y": 1.4,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_s16",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文16",
+            "text": "D",
+            "fontSize": 19,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2,
+            "y": 1.6199999999999999,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed16",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文16"
+          }
+        },
+        {
+          "id": "c3s12_s17",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文17",
+            "text": "不变量不同 ⇒ 不能同胚",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed17",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文17"
+          }
+        },
+        {
+          "id": "c3s12_s20",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文18",
+            "text": "构造同胚有时很难，但找到一个不同的不变量，就能排\n除同胚。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed18",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文18"
+          }
+        },
+        {
+          "id": "c3s12_s21",
+          "type": "text",
+          "fields": {
+            "name": "c3s12_文19",
+            "text": "接下来从网络的点、边和区域开始练习这种思路。一个\n反例或一个不同的保留量，有时比寻找复杂的变形路径\n更直接。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c3s12_fixed19",
+          "type": "fixed_in_frame",
+          "fields": {
+            "target": "c3s12_文19"
+          }
+        },
+        {
+          "id": "c3s12_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c3s12_文19"
+          }
+        },
+        {
+          "id": "c3s12_s18",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s12_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s12_s23",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c3s12_s24",
+          "type": "remove",
+          "fields": {
+            "target": "c3s12_文18"
+          }
+        },
+        {
+          "id": "c3s12_s25",
+          "type": "add",
+          "fields": {
+            "target": "c3s12_文19"
+          }
+        },
+        {
+          "id": "c3s12_s19",
+          "type": "indicate",
+          "fields": {
+            "target": "c3s12_文17",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c3s12_s26",
+          "type": "wait",
+          "fields": {
+            "duration": 11
+          }
+        },
+        {
+          "id": "c3s12_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c3s12_cleanup",
+            "members": "c3s12_文1,c3s12_文2,c3s12_文3,c3s12_形4,c3s12_形5,c3s12_形6,c3s12_形7,c3s12_形8,c3s12_形9,c3s12_文10,c3s12_形11,c3s12_文12,c3s12_形13,c3s12_文14,c3s12_形15,c3s12_文16,c3s12_文17,c3s12_文18,c3s12_文19"
+          }
+        },
+        {
+          "id": "c3s12_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c3s12_cleanup"
+          }
+        }
+      ]
+    }
+  ]
+}

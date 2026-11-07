@@ -107,15 +107,36 @@ jobs:
       - name: Build installers without publishing
         run: node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never ${{ matrix.builder-args }}
       - name: Upload installers
+        if: runner.os != 'macOS'
         uses: actions/upload-artifact@v7.0.2
         with:
           name: AnyVis-${{ matrix.platform }}-${{ github.sha }}
           path: |
-            release/*.dmg
-            release/*.zip
             release/*.exe
             release/*.AppImage
             release/*.deb
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - name: Upload macOS Apple Silicon installers
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: AnyVis-macOS-arm64-${{ github.sha }}
+          path: |
+            release/*-mac-arm64.dmg
+            release/*-mac-arm64.zip
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - name: Upload macOS Intel installers
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: AnyVis-macOS-x64-${{ github.sha }}
+          path: |
+            release/*-mac-x64.dmg
+            release/*-mac-x64.zip
           if-no-files-found: error
           compression-level: 0
           retention-days: 14

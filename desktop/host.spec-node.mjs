@@ -4,6 +4,9 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import { EventEmitter } from 'node:events';
+import vm from 'node:vm';
 import { EDITOR_URL, SETTINGS_URL, isEditorURL, isSettingsURL, externalURL, allowClipboardWrite, createSettingsStore, createEngineController, createProtocolHandler } from './host.mjs';
 const desktopRoot = path.dirname(fileURLToPath(import.meta.url));
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
@@ -108,4 +111,23 @@ test('protocol forwards token and JSON body, blocks oversized or escaping reques
   assert.equal((await handler(new Request('anyvis://desktop/host.mjs'))).status, 404);
   assert.equal((await handler(new Request(SETTINGS_URL))).status, 200);
   assert.equal(calls.length, 1);
+});
+
+test('normal application quit closes windows before waiting for requests and engine cleanup', async () => {
+  const events = []; const app = new EventEmitter(); let connectionClosed = false;
+  Object.assign(app, { setName() {}, requestSingleInstanceLock: () => true, whenReady: () => new Promise(() => {}),
+    quit: () => events.push('quit'), exit: () => events.push('forced-exit') });
+  const electron = { app, protocol: { registerSchemesAsPrivileged() {} }, BrowserWindow: { getAllWindows: () => [{
+    isDestroyed: () => false, close: () => { events.push('pagehide-and-close'); connectionClosed = true; },
+  }] } };
+  const nativeRequire = createRequire(import.meta.url);
+  const context = vm.createContext({ require: name => name === 'electron' ? electron : nativeRequire(name),
+    process: { argv: ['node', 'desktop/main.cjs'], platform: process.platform }, __dirname: desktopRoot, console,
+    fakeEngine: { close: async () => { events.push('engine-close'); assert.equal(connectionClosed, true, 'active renderer requests must close before server shutdown waits'); } },
+  });
+  new vm.Script(await readFile(path.join(desktopRoot, 'main.cjs'), 'utf8')).runInContext(context);
+  new vm.Script('engine = fakeEngine').runInContext(context);
+  app.emit('before-quit', { preventDefault: () => events.push('defer-quit') });
+  await new Promise(resolve => setImmediate(resolve));
+  assert.deepEqual(events, ['defer-quit', 'pagehide-and-close', 'engine-close', 'quit']);
 });

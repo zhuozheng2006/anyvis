@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-3-07",
+  "name": "3.07 一圈为什么不能变成两圈？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "一圈为什么不能变成两圈？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  3.07  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "circle",
+      "fields": {
+        "name": "形4",
+        "radius": 1.15,
+        "color": "#63DBC5",
+        "fill": 0,
+        "x": -2.5,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "circle",
+      "fields": {
+        "name": "形5",
+        "radius": 0.65,
+        "color": "#B6A1F2",
+        "fill": 0,
+        "x": 1.4,
+        "y": 0.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "circle",
+      "fields": {
+        "name": "形6",
+        "radius": 0.65,
+        "color": "#B6A1F2",
+        "fill": 0,
+        "x": 3,
+        "y": -0.35,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "一个分支",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2.5,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "两个分支",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 2.2,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "dot",
+      "fields": {
+        "name": "形9",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -1.35,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "同胚保留连通性，更一般地保留连通分支数。这次我们\n证明的是不可能，而不是尝试所有变形后报告还没有找\n到。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "一个圆周与两个不相交圆周的分支数不同，所以不能同\n胚。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "remove",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s10",
+      "type": "path_move",
+      "fields": {
+        "target": "形9",
+        "path": "形4",
+        "duration": 5,
+        "easing": "linear"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "wait",
+      "fields": {
+        "duration": 7
+      }
+    },
+    {
+      "id": "s16",
+      "type": "remove",
+      "fields": {
+        "target": "文10"
+      }
+    },
+    {
+      "id": "s17",
+      "type": "add",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "passing_flash",
+      "fields": {
+        "target": "形4",
+        "color": "#FBBF24",
+        "timeWidth": 0.25,
+        "duration": 4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}

@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-6-02",
+  "name": "6.02 练习一：圆周与椭圆",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "06 / 第六章：带着边界使用工具，重新回答开场问题",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "练习一：圆周与椭圆",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  6.02  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "circle",
+      "fields": {
+        "name": "形4",
+        "radius": 1.1,
+        "color": "#63DBC5",
+        "fill": 0,
+        "x": -2.2,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "ellipse",
+      "fields": {
+        "name": "形5",
+        "width": 3.6,
+        "height": 2.2,
+        "color": "#B6A1F2",
+        "fill": 0,
+        "x": 2.2,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "line",
+      "fields": {
+        "name": "形6",
+        "x1": -3.3,
+        "y1": 0.2,
+        "x2": -1.1,
+        "y2": 0.2,
+        "color": "#F3CD85",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "line",
+      "fields": {
+        "name": "形7",
+        "x1": 0.4,
+        "y1": 0.2,
+        "x2": 4,
+        "y2": 0.2,
+        "color": "#F3CD85",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "圆周",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#63DBC5",
+        "x": -2.2,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "椭圆",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#B6A1F2",
+        "x": 2.2,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "ellipse",
+      "fields": {
+        "name": "形10",
+        "width": 4.4,
+        "height": 2.2,
+        "color": "#63DBC5",
+        "fill": 0,
+        "x": -2.2,
+        "y": 0.2,
+        "z": 0,
+        "appear": "hidden",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "一般的非圆椭圆与圆周不全等，也不相似。这里的椭圆\n两条半轴不相等；若两条半轴相等，它本身就是一个圆。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "text",
+      "fields": {
+        "name": "文12",
+        "text": "但存在连续可逆的拉伸，所以它们同胚；结论必须带上\n比较标准。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "remove",
+      "fields": {
+        "target": "文12"
+      }
+    },
+    {
+      "id": "s10",
+      "type": "passing_flash",
+      "fields": {
+        "target": "形4",
+        "color": "#FBBF24",
+        "timeWidth": 0.25,
+        "duration": 3,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "add",
+      "fields": {
+        "target": "文12"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "transform",
+      "fields": {
+        "target": "形4",
+        "destination": "形10",
+        "duration": 4,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s19",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}

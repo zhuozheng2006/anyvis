@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-6-04",
+  "name": "6.04 练习三：忘掉外部面会怎样？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "06 / 第六章：带着边界使用工具，重新回答开场问题",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "练习三：忘掉外部面会怎样？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  6.04  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "line",
+      "fields": {
+        "name": "形4",
+        "x1": -1.8,
+        "y1": -1,
+        "x2": 1.8,
+        "y2": -1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "line",
+      "fields": {
+        "name": "形5",
+        "x1": 1.8,
+        "y1": -1,
+        "x2": 1.8,
+        "y2": 1.4,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "line",
+      "fields": {
+        "name": "形6",
+        "x1": 1.8,
+        "y1": 1.4,
+        "x2": -1.8,
+        "y2": 1.4,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "line",
+      "fields": {
+        "name": "形7",
+        "x1": -1.8,
+        "y1": 1.4,
+        "x2": -1.8,
+        "y2": -1,
+        "color": "#63DBC5",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "line",
+      "fields": {
+        "name": "形8",
+        "x1": -1.8,
+        "y1": -1,
+        "x2": 1.8,
+        "y2": 1.4,
+        "color": "#B6A1F2",
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "dot",
+      "fields": {
+        "name": "形9",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -1.8,
+        "y": -1,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "A",
+        "fontSize": 19,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2,
+        "y": -1.22,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "dot",
+      "fields": {
+        "name": "形11",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 1.8,
+        "y": -1,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "text",
+      "fields": {
+        "name": "文12",
+        "text": "B",
+        "fontSize": 19,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 2,
+        "y": -1.22,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "dot",
+      "fields": {
+        "name": "形13",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 1.8,
+        "y": 1.4,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "text",
+      "fields": {
+        "name": "文14",
+        "text": "C",
+        "fontSize": 19,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 2,
+        "y": 1.6199999999999999,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "dot",
+      "fields": {
+        "name": "形15",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": -1.8,
+        "y": 1.4,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s16",
+      "type": "text",
+      "fields": {
+        "name": "文16",
+        "text": "D",
+        "fontSize": 19,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -2,
+        "y": 1.6199999999999999,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s17",
+      "type": "text",
+      "fields": {
+        "name": "文17",
+        "text": "F₁",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#B6A1F2",
+        "x": 0.7,
+        "y": -0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s18",
+      "type": "text",
+      "fields": {
+        "name": "文18",
+        "text": "F₂",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#B6A1F2",
+        "x": -0.7,
+        "y": 0.7,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s19",
+      "type": "text",
+      "fields": {
+        "name": "文19",
+        "text": "F₃：外部",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 4,
+        "y": 1,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s20",
+      "type": "text",
+      "fields": {
+        "name": "文20",
+        "text": "面是平面的区域，外部也算",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s23",
+      "type": "text",
+      "fields": {
+        "name": "文21",
+        "text": "错误结果不是欧拉公式失效，而是F的定义用错了。数\n值碰巧错误并不意味着理论错误，要先检查对象和计数\n约定是否一致。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s24",
+      "type": "text",
+      "fields": {
+        "name": "文22",
+        "text": "外部区域也属于分区；把它补上，才有4−5+3=2。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s25",
+      "type": "remove",
+      "fields": {
+        "target": "文22"
+      }
+    },
+    {
+      "id": "s21",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s26",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s27",
+      "type": "remove",
+      "fields": {
+        "target": "文21"
+      }
+    },
+    {
+      "id": "s28",
+      "type": "add",
+      "fields": {
+        "target": "文22"
+      }
+    },
+    {
+      "id": "s22",
+      "type": "indicate",
+      "fields": {
+        "target": "文20",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s29",
+      "type": "wait",
+      "fields": {
+        "duration": 11
+      }
+    }
+  ]
+}

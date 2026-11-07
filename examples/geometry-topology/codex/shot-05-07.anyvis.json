@@ -1,0 +1,258 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-5-07",
+  "name": "5.07 一句“有洞”为什么太模糊？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "05 / 第五章：把手、边界和定向，为什么不能只“数洞”？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "一句“有洞”为什么太模糊？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  5.07  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "annulus",
+      "fields": {
+        "name": "形4",
+        "innerRadius": 0.7,
+        "outerRadius": 1.2,
+        "color": "#63DBC5",
+        "fill": 0.3,
+        "x": -3.6,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "ellipse",
+      "fields": {
+        "name": "形5",
+        "width": 2.6,
+        "height": 1.6,
+        "color": "#B6A1F2",
+        "fill": 0.18,
+        "x": 0,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "ellipse",
+      "fields": {
+        "name": "形6",
+        "width": 1.1,
+        "height": 0.55,
+        "color": "#0B1324",
+        "fill": 1,
+        "x": 0,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "circle",
+      "fields": {
+        "name": "形7",
+        "radius": 1.2,
+        "color": "#F3CD85",
+        "fill": 0.3,
+        "x": 3.6,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s8",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "圆环：b = 2",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": -3.6,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s9",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "环面示意：b = 0",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文10",
+        "text": "圆盘：b = 1",
+        "fontSize": 24,
+        "maxWidth": 4.1,
+        "color": "#F3CD85",
+        "x": 3.6,
+        "y": -1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文11",
+        "text": "平面圆环有两条边界，环面没有边界，圆盘有一条边界。\n数边界时沿真实边缘走，不数画在表面上的网格，也不\n数相机造成的轮廓。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "text",
+      "fields": {
+        "name": "文12",
+        "text": "边界开口与把手是不同信息，不能只写一个未定义的“\n洞数”。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "remove",
+      "fields": {
+        "target": "文12"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "indicate",
+      "fields": {
+        "target": "形7",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文11"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "add",
+      "fields": {
+        "target": "文12"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "indicate",
+      "fields": {
+        "target": "文10",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s19",
+      "type": "wait",
+      "fields": {
+        "duration": 11
+      }
+    }
+  ]
+}

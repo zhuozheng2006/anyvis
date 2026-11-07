@@ -1,0 +1,213 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-3-08",
+  "name": "3.08 “允许变形”的比喻在哪里失效？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "“允许变形”的比喻在哪里失效？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  3.08  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形4",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#63DBC5",
+        "fill": 0.06,
+        "x": -2,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "text",
+      "fields": {
+        "name": "文5",
+        "text": "空间之间的映射",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#E6EDF6",
+        "x": -2,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形6",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#B6A1F2",
+        "fill": 0.06,
+        "x": 2,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "随时间变化的过程",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#E6EDF6",
+        "x": 2,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "同胚的定义是两个空间之间存在怎样的映射。两个对象\n是否同胚，与某个指定动画过程是否合格，是不同的判\n断。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "一段随时间变化的动画是另一层数据；它的中间步骤也\n需要检查。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "remove",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "indicate",
+      "fields": {
+        "target": "文5",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s13",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s14",
+      "type": "remove",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "add",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s9",
+      "type": "indicate",
+      "fields": {
+        "target": "文7",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "wait",
+      "fields": {
+        "duration": 11
+      }
+    }
+  ]
+}

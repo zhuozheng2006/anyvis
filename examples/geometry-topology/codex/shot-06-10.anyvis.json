@@ -1,0 +1,213 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-6-10",
+  "name": "6.10 这30分钟证明了哪些，引用了哪些？",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "06 / 第六章：带着边界使用工具，重新回答开场问题",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "这30分钟证明了哪些，引用了哪些？",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  6.10  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形4",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#63DBC5",
+        "fill": 0.06,
+        "x": -2,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "text",
+      "fields": {
+        "name": "文5",
+        "text": "已解释的推理",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#E6EDF6",
+        "x": -2,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "rounded_rectangle",
+      "fields": {
+        "name": "形6",
+        "width": 3.5,
+        "height": 1.8,
+        "corner": 0.2,
+        "color": "#B6A1F2",
+        "fill": 0.06,
+        "x": 2,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "已引用的定理",
+        "fontSize": 25,
+        "maxWidth": 4.1,
+        "color": "#E6EDF6",
+        "x": 2,
+        "y": 0.3,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s10",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "我们亲自检查了简单映射，也完成了平面图公式的证明\n思路。认识证明的边界不会削弱结论，反而告诉我们接\n下来该去学习什么。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s11",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "更一般的分类结论有额外理论支撑，本片没有用动画替\n代那些证明。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s12",
+      "type": "remove",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s8",
+      "type": "indicate",
+      "fields": {
+        "target": "文5",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s13",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s14",
+      "type": "remove",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s15",
+      "type": "add",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s9",
+      "type": "indicate",
+      "fields": {
+        "target": "文7",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "wait",
+      "fields": {
+        "duration": 11
+      }
+    }
+  ]
+}

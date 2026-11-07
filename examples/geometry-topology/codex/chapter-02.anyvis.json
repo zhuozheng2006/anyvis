@@ -1,0 +1,3403 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-chapter-2",
+  "name": "几何与拓扑 · 第2章",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "c2s1_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.01 给形状一个可核对的模型"
+      },
+      "children": [
+        {
+          "id": "c2s1_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s1_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s1_文2",
+            "text": "给形状一个可核对的模型",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s1_文3",
+            "text": "形状不只一种看法  ·  2.01  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s4",
+          "type": "line",
+          "fields": {
+            "name": "c2s1_形4",
+            "x1": -2,
+            "y1": -1,
+            "x2": 1,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s5",
+          "type": "line",
+          "fields": {
+            "name": "c2s1_形5",
+            "x1": -2,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s1_形6",
+            "x1": 1,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s7",
+          "type": "group",
+          "fields": {
+            "name": "c2s1_组7",
+            "members": "c2s1_形4,c2s1_形5,c2s1_形6"
+          }
+        },
+        {
+          "id": "c2s1_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s1_文8",
+            "text": "A(0,0)  B(3,0)  C(0,2)",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s1_文9",
+            "text": "3",
+            "fontSize": 23,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": -0.5,
+            "y": -1.35,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s10",
+          "type": "text",
+          "fields": {
+            "name": "c2s1_文10",
+            "text": "2",
+            "fontSize": 23,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.35,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s13",
+          "type": "text",
+          "fields": {
+            "name": "c2s1_文11",
+            "text": "只靠肉眼容易误判。我们把三个顶点放进坐标系。接下\n来所有数值都从这三个坐标核对，让每次变化都有同一\n参照。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s14",
+          "type": "text",
+          "fields": {
+            "name": "c2s1_文12",
+            "text": "后面的每次变化，都追踪这三个点，而不是换一张陌生\n的图。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s1_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c2s1_文12"
+          }
+        },
+        {
+          "id": "c2s1_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s1_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s1_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s1_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s1_文11"
+          }
+        },
+        {
+          "id": "c2s1_s18",
+          "type": "add",
+          "fields": {
+            "target": "c2s1_文12"
+          }
+        },
+        {
+          "id": "c2s1_s11",
+          "type": "passing_flash",
+          "fields": {
+            "target": "c2s1_组7",
+            "color": "#FBBF24",
+            "timeWidth": 0.25,
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s1_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s1_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s1_cleanup",
+            "members": "c2s1_文1,c2s1_文2,c2s1_文3,c2s1_形4,c2s1_形5,c2s1_形6,c2s1_组7,c2s1_文8,c2s1_文9,c2s1_文10,c2s1_文11,c2s1_文12"
+          }
+        },
+        {
+          "id": "c2s1_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s1_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s2_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.02 长度怎样从坐标得到？"
+      },
+      "children": [
+        {
+          "id": "c2s2_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s2_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s2_文2",
+            "text": "长度怎样从坐标得到？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s2_文3",
+            "text": "形状不只一种看法  ·  2.02  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s4",
+          "type": "line",
+          "fields": {
+            "name": "c2s2_形4",
+            "x1": -2,
+            "y1": -1,
+            "x2": 1,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s5",
+          "type": "line",
+          "fields": {
+            "name": "c2s2_形5",
+            "x1": -2,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s2_形6",
+            "x1": 1,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s7",
+          "type": "group",
+          "fields": {
+            "name": "c2s2_组7",
+            "members": "c2s2_形4,c2s2_形5,c2s2_形6"
+          }
+        },
+        {
+          "id": "c2s2_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s2_文8",
+            "text": "3² + 2² = 13",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s2_文9",
+            "text": "3",
+            "fontSize": 23,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": -0.5,
+            "y": -1.35,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s10",
+          "type": "text",
+          "fields": {
+            "name": "c2s2_文10",
+            "text": "2",
+            "fontSize": 23,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.35,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s13",
+          "type": "text",
+          "fields": {
+            "name": "c2s2_文11",
+            "text": "水平与竖直差分别是3和2。把公式中的两个坐标差分\n别与图上的水平、竖直距离对照起来。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s14",
+          "type": "text",
+          "fields": {
+            "name": "c2s2_文12",
+            "text": "勾股定理给出斜边√13；一般距离也由两个坐标差决\n定。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s2_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c2s2_文12"
+          }
+        },
+        {
+          "id": "c2s2_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s2_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s2_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s2_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s2_文11"
+          }
+        },
+        {
+          "id": "c2s2_s18",
+          "type": "add",
+          "fields": {
+            "target": "c2s2_文12"
+          }
+        },
+        {
+          "id": "c2s2_s11",
+          "type": "passing_flash",
+          "fields": {
+            "target": "c2s2_组7",
+            "color": "#FBBF24",
+            "timeWidth": 0.25,
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s2_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s2_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s2_cleanup",
+            "members": "c2s2_文1,c2s2_文2,c2s2_文3,c2s2_形4,c2s2_形5,c2s2_形6,c2s2_组7,c2s2_文8,c2s2_文9,c2s2_文10,c2s2_文11,c2s2_文12"
+          }
+        },
+        {
+          "id": "c2s2_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s2_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s3_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.03 平移为什么保距？"
+      },
+      "children": [
+        {
+          "id": "c2s3_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s3_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s3_文2",
+            "text": "平移为什么保距？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s3_文3",
+            "text": "形状不只一种看法  ·  2.03  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s4",
+          "type": "line",
+          "fields": {
+            "name": "c2s3_形4",
+            "x1": -2,
+            "y1": -1,
+            "x2": 1,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s5",
+          "type": "line",
+          "fields": {
+            "name": "c2s3_形5",
+            "x1": -2,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s3_形6",
+            "x1": 1,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s7",
+          "type": "group",
+          "fields": {
+            "name": "c2s3_组7",
+            "members": "c2s3_形4,c2s3_形5,c2s3_形6"
+          }
+        },
+        {
+          "id": "c2s3_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s3_文8",
+            "text": "(x, y) → (x+1, y−1)",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s3_文9",
+            "text": "3",
+            "fontSize": 23,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": -0.5,
+            "y": -1.35,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s10",
+          "type": "text",
+          "fields": {
+            "name": "c2s3_文10",
+            "text": "2",
+            "fontSize": 23,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.35,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s15",
+          "type": "text",
+          "fields": {
+            "name": "c2s3_文11",
+            "text": "每个点都加上同一位移，两个点的坐标差不会改变。可\n以任选另一对顶点重复计算；相同位移总会在相减时消\n去。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s16",
+          "type": "text",
+          "fields": {
+            "name": "c2s3_文12",
+            "text": "距离依赖坐标差，因此平移保留距离，不只是看起来没\n变。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s3_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s3_文12"
+          }
+        },
+        {
+          "id": "c2s3_s14",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s3_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s3_s18",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s3_s19",
+          "type": "remove",
+          "fields": {
+            "target": "c2s3_文11"
+          }
+        },
+        {
+          "id": "c2s3_s20",
+          "type": "add",
+          "fields": {
+            "target": "c2s3_文12"
+          }
+        },
+        {
+          "id": "c2s3_s11",
+          "type": "remove",
+          "fields": {
+            "target": "c2s3_文9"
+          }
+        },
+        {
+          "id": "c2s3_s12",
+          "type": "remove",
+          "fields": {
+            "target": "c2s3_文10"
+          }
+        },
+        {
+          "id": "c2s3_s13",
+          "type": "shift",
+          "fields": {
+            "target": "c2s3_组7",
+            "dx": 1,
+            "dy": -1,
+            "dz": 0,
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s3_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s3_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s3_cleanup",
+            "members": "c2s3_文1,c2s3_文2,c2s3_文3,c2s3_形4,c2s3_形5,c2s3_形6,c2s3_组7,c2s3_文8,c2s3_文9,c2s3_文10,c2s3_文11,c2s3_文12"
+          }
+        },
+        {
+          "id": "c2s3_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s3_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s4_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.04 旋转为什么也可以重合？"
+      },
+      "children": [
+        {
+          "id": "c2s4_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s4_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s4_文2",
+            "text": "旋转为什么也可以重合？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s4_文3",
+            "text": "形状不只一种看法  ·  2.04  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s4",
+          "type": "line",
+          "fields": {
+            "name": "c2s4_形4",
+            "x1": -2,
+            "y1": -1,
+            "x2": 1,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s5",
+          "type": "line",
+          "fields": {
+            "name": "c2s4_形5",
+            "x1": -2,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s4_形6",
+            "x1": 1,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s7",
+          "type": "group",
+          "fields": {
+            "name": "c2s4_组7",
+            "members": "c2s4_形4,c2s4_形5,c2s4_形6"
+          }
+        },
+        {
+          "id": "c2s4_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s4_文8",
+            "text": "(x, y) → (−y, x)",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s4_文9",
+            "text": "3",
+            "fontSize": 23,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": -0.5,
+            "y": -1.35,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s10",
+          "type": "text",
+          "fields": {
+            "name": "c2s4_文10",
+            "text": "2",
+            "fontSize": 23,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.35,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s13",
+          "type": "line",
+          "fields": {
+            "name": "c2s4_形11",
+            "x1": -2,
+            "y1": -1,
+            "x2": -2,
+            "y2": 2,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s14",
+          "type": "line",
+          "fields": {
+            "name": "c2s4_形12",
+            "x1": -2,
+            "y1": -1,
+            "x2": -4,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s15",
+          "type": "line",
+          "fields": {
+            "name": "c2s4_形13",
+            "x1": -2,
+            "y1": 2,
+            "x2": -4,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s16",
+          "type": "group",
+          "fields": {
+            "name": "c2s4_组14",
+            "members": "c2s4_形11,c2s4_形12,c2s4_形13"
+          }
+        },
+        {
+          "id": "c2s4_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s4_组14"
+          }
+        },
+        {
+          "id": "c2s4_s20",
+          "type": "text",
+          "fields": {
+            "name": "c2s4_文15",
+            "text": "九十度旋转把(x,y)送到(−y,x)。新旧坐标\n可以交换位置或改变正负号，平方和却保持原值。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s21",
+          "type": "text",
+          "fields": {
+            "name": "c2s4_文16",
+            "text": "坐标差的平方和不变，所以长度不变；原有角度也被保\n留。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s4_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c2s4_文16"
+          }
+        },
+        {
+          "id": "c2s4_s19",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s4_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s4_s23",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s4_s24",
+          "type": "remove",
+          "fields": {
+            "target": "c2s4_文15"
+          }
+        },
+        {
+          "id": "c2s4_s25",
+          "type": "add",
+          "fields": {
+            "target": "c2s4_文16"
+          }
+        },
+        {
+          "id": "c2s4_s11",
+          "type": "remove",
+          "fields": {
+            "target": "c2s4_文9"
+          }
+        },
+        {
+          "id": "c2s4_s12",
+          "type": "remove",
+          "fields": {
+            "target": "c2s4_文10"
+          }
+        },
+        {
+          "id": "c2s4_s18",
+          "type": "transform",
+          "fields": {
+            "target": "c2s4_组7",
+            "destination": "c2s4_组14",
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s4_s26",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s4_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s4_cleanup",
+            "members": "c2s4_文1,c2s4_文2,c2s4_文3,c2s4_形4,c2s4_形5,c2s4_形6,c2s4_组7,c2s4_文8,c2s4_文9,c2s4_文10,c2s4_形11,c2s4_形12,c2s4_形13,c2s4_组14,c2s4_文15,c2s4_文16"
+          }
+        },
+        {
+          "id": "c2s4_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s4_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s5_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.05 统一放大保留了什么？"
+      },
+      "children": [
+        {
+          "id": "c2s5_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s5_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s5_文2",
+            "text": "统一放大保留了什么？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s5_文3",
+            "text": "形状不只一种看法  ·  2.05  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s4",
+          "type": "line",
+          "fields": {
+            "name": "c2s5_形4",
+            "x1": -1.6,
+            "y1": -0.7,
+            "x2": 0.19999999999999973,
+            "y2": -0.7,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s5",
+          "type": "line",
+          "fields": {
+            "name": "c2s5_形5",
+            "x1": -1.6,
+            "y1": -0.7,
+            "x2": -1.6,
+            "y2": 0.5,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s5_形6",
+            "x1": 0.19999999999999973,
+            "y1": -0.7,
+            "x2": -1.6,
+            "y2": 0.5,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s7",
+          "type": "group",
+          "fields": {
+            "name": "c2s5_组7",
+            "members": "c2s5_形4,c2s5_形5,c2s5_形6"
+          }
+        },
+        {
+          "id": "c2s5_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s5_文8",
+            "text": "长度 × 2，角度不变",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s5_文9",
+            "text": "3",
+            "fontSize": 23,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": -0.5,
+            "y": -1.35,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s10",
+          "type": "text",
+          "fields": {
+            "name": "c2s5_文10",
+            "text": "2",
+            "fontSize": 23,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.35,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s15",
+          "type": "text",
+          "fields": {
+            "name": "c2s5_文11",
+            "text": "统一放大使每条长度乘2，角度与边长比例不变。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s16",
+          "type": "text",
+          "fields": {
+            "name": "c2s5_文12",
+            "text": "所以相似比全等更宽松：它允许尺寸改变。比较对应边\n的比值，而不是只凭放大后的图形更占屏幕来判断。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s5_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s5_文12"
+          }
+        },
+        {
+          "id": "c2s5_s14",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s5_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s5_s18",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s5_s19",
+          "type": "remove",
+          "fields": {
+            "target": "c2s5_文11"
+          }
+        },
+        {
+          "id": "c2s5_s20",
+          "type": "add",
+          "fields": {
+            "target": "c2s5_文12"
+          }
+        },
+        {
+          "id": "c2s5_s11",
+          "type": "remove",
+          "fields": {
+            "target": "c2s5_文9"
+          }
+        },
+        {
+          "id": "c2s5_s12",
+          "type": "remove",
+          "fields": {
+            "target": "c2s5_文10"
+          }
+        },
+        {
+          "id": "c2s5_s13",
+          "type": "scale",
+          "fields": {
+            "target": "c2s5_组7",
+            "factor": 2,
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s5_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s5_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s5_cleanup",
+            "members": "c2s5_文1,c2s5_文2,c2s5_文3,c2s5_形4,c2s5_形5,c2s5_形6,c2s5_组7,c2s5_文8,c2s5_文9,c2s5_文10,c2s5_文11,c2s5_文12"
+          }
+        },
+        {
+          "id": "c2s5_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s5_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s6_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.06 面积会以同样倍率改变吗？"
+      },
+      "children": [
+        {
+          "id": "c2s6_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s6_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s6_文2",
+            "text": "面积会以同样倍率改变吗？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s6_文3",
+            "text": "形状不只一种看法  ·  2.06  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s4",
+          "type": "line",
+          "fields": {
+            "name": "c2s6_形4",
+            "x1": -2,
+            "y1": -1,
+            "x2": 1,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s5",
+          "type": "line",
+          "fields": {
+            "name": "c2s6_形5",
+            "x1": -2,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s6_形6",
+            "x1": 1,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s7",
+          "type": "group",
+          "fields": {
+            "name": "c2s6_组7",
+            "members": "c2s6_形4,c2s6_形5,c2s6_形6"
+          }
+        },
+        {
+          "id": "c2s6_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s6_文8",
+            "text": "面积：3 → 12",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s6_文9",
+            "text": "3",
+            "fontSize": 23,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": -0.5,
+            "y": -1.35,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s10",
+          "type": "text",
+          "fields": {
+            "name": "c2s6_文10",
+            "text": "2",
+            "fontSize": 23,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.35,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s11",
+          "type": "rectangle",
+          "fields": {
+            "name": "c2s6_形11",
+            "width": 3,
+            "height": 2,
+            "color": "#B6A1F2",
+            "fill": 0.12,
+            "x": -0.5,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s12",
+          "type": "text",
+          "fields": {
+            "name": "c2s6_文12",
+            "text": "½ × 底 × 高",
+            "fontSize": 26,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": 3.8,
+            "y": 0.4,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s15",
+          "type": "text",
+          "fields": {
+            "name": "c2s6_文13",
+            "text": "长度翻倍时，横向和纵向都翻倍。可以先数覆盖矩形的\n单位方格，再取其中一半核对这个结果。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s16",
+          "type": "text",
+          "fields": {
+            "name": "c2s6_文14",
+            "text": "三角形面积从3变成12，是原来的4倍，而不是2倍。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s6_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s6_文14"
+          }
+        },
+        {
+          "id": "c2s6_s14",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s6_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s6_s18",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s6_s19",
+          "type": "remove",
+          "fields": {
+            "target": "c2s6_文13"
+          }
+        },
+        {
+          "id": "c2s6_s20",
+          "type": "add",
+          "fields": {
+            "target": "c2s6_文14"
+          }
+        },
+        {
+          "id": "c2s6_s13",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s6_组7",
+            "duration": 3,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s6_s21",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s6_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s6_cleanup",
+            "members": "c2s6_文1,c2s6_文2,c2s6_文3,c2s6_形4,c2s6_形5,c2s6_形6,c2s6_组7,c2s6_文8,c2s6_文9,c2s6_文10,c2s6_形11,c2s6_文12,c2s6_文13,c2s6_文14"
+          }
+        },
+        {
+          "id": "c2s6_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s6_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s7_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.07 剪切会打破哪条规则？"
+      },
+      "children": [
+        {
+          "id": "c2s7_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s7_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s7_文2",
+            "text": "剪切会打破哪条规则？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s7_文3",
+            "text": "形状不只一种看法  ·  2.07  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s4",
+          "type": "line",
+          "fields": {
+            "name": "c2s7_形4",
+            "x1": -2,
+            "y1": -1,
+            "x2": 1,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s5",
+          "type": "line",
+          "fields": {
+            "name": "c2s7_形5",
+            "x1": -2,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s7_形6",
+            "x1": 1,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s7",
+          "type": "group",
+          "fields": {
+            "name": "c2s7_组7",
+            "members": "c2s7_形4,c2s7_形5,c2s7_形6"
+          }
+        },
+        {
+          "id": "c2s7_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s7_文8",
+            "text": "(x, y) → (x+y, y)",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s7_文9",
+            "text": "3",
+            "fontSize": 23,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": -0.5,
+            "y": -1.35,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s10",
+          "type": "text",
+          "fields": {
+            "name": "c2s7_文10",
+            "text": "2",
+            "fontSize": 23,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.35,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s13",
+          "type": "line",
+          "fields": {
+            "name": "c2s7_形11",
+            "x1": -2,
+            "y1": -1,
+            "x2": 1,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s14",
+          "type": "line",
+          "fields": {
+            "name": "c2s7_形12",
+            "x1": -2,
+            "y1": -1,
+            "x2": 0,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s15",
+          "type": "line",
+          "fields": {
+            "name": "c2s7_形13",
+            "x1": 1,
+            "y1": -1,
+            "x2": 0,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s16",
+          "type": "group",
+          "fields": {
+            "name": "c2s7_组14",
+            "members": "c2s7_形11,c2s7_形12,c2s7_形13"
+          }
+        },
+        {
+          "id": "c2s7_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s7_组14"
+          }
+        },
+        {
+          "id": "c2s7_s20",
+          "type": "text",
+          "fields": {
+            "name": "c2s7_文15",
+            "text": "现在把每一层向右推，推的量等于它的高度。跟踪顶点\nC的运动最明显：它向右移动，而到横轴的距离保持不\n变。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s21",
+          "type": "text",
+          "fields": {
+            "name": "c2s7_文16",
+            "text": "底边和高度没有改变，但原来的直角已经变了。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s7_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c2s7_文16"
+          }
+        },
+        {
+          "id": "c2s7_s19",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s7_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s7_s23",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s7_s24",
+          "type": "remove",
+          "fields": {
+            "target": "c2s7_文15"
+          }
+        },
+        {
+          "id": "c2s7_s25",
+          "type": "add",
+          "fields": {
+            "target": "c2s7_文16"
+          }
+        },
+        {
+          "id": "c2s7_s11",
+          "type": "remove",
+          "fields": {
+            "target": "c2s7_文9"
+          }
+        },
+        {
+          "id": "c2s7_s12",
+          "type": "remove",
+          "fields": {
+            "target": "c2s7_文10"
+          }
+        },
+        {
+          "id": "c2s7_s18",
+          "type": "transform",
+          "fields": {
+            "target": "c2s7_组7",
+            "destination": "c2s7_组14",
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s7_s26",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s7_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s7_cleanup",
+            "members": "c2s7_文1,c2s7_文2,c2s7_文3,c2s7_形4,c2s7_形5,c2s7_形6,c2s7_组7,c2s7_文8,c2s7_文9,c2s7_文10,c2s7_形11,c2s7_形12,c2s7_形13,c2s7_组14,c2s7_文15,c2s7_文16"
+          }
+        },
+        {
+          "id": "c2s7_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s7_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s8_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.08 面积相同，为什么仍不够？"
+      },
+      "children": [
+        {
+          "id": "c2s8_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s8_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s8_文2",
+            "text": "面积相同，为什么仍不够？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s8_文3",
+            "text": "形状不只一种看法  ·  2.08  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s4",
+          "type": "line",
+          "fields": {
+            "name": "c2s8_形4",
+            "x1": -2,
+            "y1": -1,
+            "x2": 1,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s5",
+          "type": "line",
+          "fields": {
+            "name": "c2s8_形5",
+            "x1": -2,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s8_形6",
+            "x1": 1,
+            "y1": -1,
+            "x2": -2,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s7",
+          "type": "group",
+          "fields": {
+            "name": "c2s8_组7",
+            "members": "c2s8_形4,c2s8_形5,c2s8_形6"
+          }
+        },
+        {
+          "id": "c2s8_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s8_文8",
+            "text": "同样的面积，不同的角度",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s8_文9",
+            "text": "3",
+            "fontSize": 23,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": -0.5,
+            "y": -1.35,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s10",
+          "type": "text",
+          "fields": {
+            "name": "c2s8_文10",
+            "text": "2",
+            "fontSize": 23,
+            "maxWidth": 4.1,
+            "color": "#F3CD85",
+            "x": -2.35,
+            "y": 0,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s13",
+          "type": "line",
+          "fields": {
+            "name": "c2s8_形11",
+            "x1": -2,
+            "y1": -1,
+            "x2": 1,
+            "y2": -1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s14",
+          "type": "line",
+          "fields": {
+            "name": "c2s8_形12",
+            "x1": -2,
+            "y1": -1,
+            "x2": 0,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s15",
+          "type": "line",
+          "fields": {
+            "name": "c2s8_形13",
+            "x1": 1,
+            "y1": -1,
+            "x2": 0,
+            "y2": 1,
+            "color": "#63DBC5",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s16",
+          "type": "group",
+          "fields": {
+            "name": "c2s8_组14",
+            "members": "c2s8_形11,c2s8_形12,c2s8_形13"
+          }
+        },
+        {
+          "id": "c2s8_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s8_组14"
+          }
+        },
+        {
+          "id": "c2s8_s20",
+          "type": "text",
+          "fields": {
+            "name": "c2s8_文15",
+            "text": "这次剪切保留面积，却不保留所有长度和角度。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s21",
+          "type": "text",
+          "fields": {
+            "name": "c2s8_文16",
+            "text": "找到一个相同的量，不足以断言两个形状全等。要判断\n全等需要保留所有点间的距离，单独一个面积数值不够。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s8_s22",
+          "type": "remove",
+          "fields": {
+            "target": "c2s8_文16"
+          }
+        },
+        {
+          "id": "c2s8_s19",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s8_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s8_s23",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s8_s24",
+          "type": "remove",
+          "fields": {
+            "target": "c2s8_文15"
+          }
+        },
+        {
+          "id": "c2s8_s25",
+          "type": "add",
+          "fields": {
+            "target": "c2s8_文16"
+          }
+        },
+        {
+          "id": "c2s8_s11",
+          "type": "remove",
+          "fields": {
+            "target": "c2s8_文9"
+          }
+        },
+        {
+          "id": "c2s8_s12",
+          "type": "remove",
+          "fields": {
+            "target": "c2s8_文10"
+          }
+        },
+        {
+          "id": "c2s8_s18",
+          "type": "transform",
+          "fields": {
+            "target": "c2s8_组7",
+            "destination": "c2s8_组14",
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s8_s26",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s8_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s8_cleanup",
+            "members": "c2s8_文1,c2s8_文2,c2s8_文3,c2s8_形4,c2s8_形5,c2s8_形6,c2s8_组7,c2s8_文8,c2s8_文9,c2s8_文10,c2s8_形11,c2s8_形12,c2s8_形13,c2s8_组14,c2s8_文15,c2s8_文16"
+          }
+        },
+        {
+          "id": "c2s8_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s8_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s9_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.09 重新检查圆与椭圆"
+      },
+      "children": [
+        {
+          "id": "c2s9_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s9_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s9_文2",
+            "text": "重新检查圆与椭圆",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s9_文3",
+            "text": "形状不只一种看法  ·  2.09  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c2s9_形4",
+            "radius": 1.1,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s5",
+          "type": "ellipse",
+          "fields": {
+            "name": "c2s9_形5",
+            "width": 3.6,
+            "height": 2.2,
+            "color": "#B6A1F2",
+            "fill": 0,
+            "x": 2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s9_形6",
+            "x1": -3.3,
+            "y1": 0.2,
+            "x2": -1.1,
+            "y2": 0.2,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s7",
+          "type": "line",
+          "fields": {
+            "name": "c2s9_形7",
+            "x1": 0.4,
+            "y1": 0.2,
+            "x2": 4,
+            "y2": 0.2,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s9_文8",
+            "text": "圆周",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#63DBC5",
+            "x": -2.2,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s9_文9",
+            "text": "椭圆",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#B6A1F2",
+            "x": 2.2,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s11",
+          "type": "ellipse",
+          "fields": {
+            "name": "c2s9_形10",
+            "width": 4.4,
+            "height": 2.2,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s13",
+          "type": "text",
+          "fields": {
+            "name": "c2s9_文11",
+            "text": "横向放大两倍、纵向保持，圆周变成椭圆。追踪左右与\n上下四个点，它们受到的伸缩倍率并不相同。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s14",
+          "type": "text",
+          "fields": {
+            "name": "c2s9_文12",
+            "text": "长度和角度可以改变，但每个点仍有唯一对应。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s9_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c2s9_文12"
+          }
+        },
+        {
+          "id": "c2s9_s10",
+          "type": "passing_flash",
+          "fields": {
+            "target": "c2s9_形4",
+            "color": "#FBBF24",
+            "timeWidth": 0.25,
+            "duration": 3,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s9_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s9_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s9_文11"
+          }
+        },
+        {
+          "id": "c2s9_s18",
+          "type": "add",
+          "fields": {
+            "target": "c2s9_文12"
+          }
+        },
+        {
+          "id": "c2s9_s12",
+          "type": "transform",
+          "fields": {
+            "target": "c2s9_形4",
+            "destination": "c2s9_形10",
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s9_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s9_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s9_cleanup",
+            "members": "c2s9_文1,c2s9_文2,c2s9_文3,c2s9_形4,c2s9_形5,c2s9_形6,c2s9_形7,c2s9_文8,c2s9_文9,c2s9_形10,c2s9_文11,c2s9_文12"
+          }
+        },
+        {
+          "id": "c2s9_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s9_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s10_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.10 压扁的瞬间发生了什么？"
+      },
+      "children": [
+        {
+          "id": "c2s10_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s10_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s10_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s10_文2",
+            "text": "压扁的瞬间发生了什么？",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s10_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s10_文3",
+            "text": "形状不只一种看法  ·  2.10  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s10_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c2s10_形4",
+            "radius": 1.3,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": 0,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s10_s5",
+          "type": "dot",
+          "fields": {
+            "name": "c2s10_形5",
+            "radius": 0.065,
+            "color": "#F3CD85",
+            "fill": 1,
+            "x": -1.3,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s10_s6",
+          "type": "dot",
+          "fields": {
+            "name": "c2s10_形6",
+            "radius": 0.065,
+            "color": "#F69A87",
+            "fill": 1,
+            "x": 1.3,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s10_s7",
+          "type": "text",
+          "fields": {
+            "name": "c2s10_文7",
+            "text": "不同的点，能否唯一找回？",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s10_s13",
+          "type": "text",
+          "fields": {
+            "name": "c2s10_文8",
+            "text": "只要a不为零，就能沿横向除以a还原。我们把不可逆\n的零倍率单独停下来检查，不让它混在流畅动画里。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s10_s14",
+          "type": "text",
+          "fields": {
+            "name": "c2s10_文9",
+            "text": "到了a=0，不同点合在一起，恢复原位置的信息丢失\n了。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s10_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c2s10_文9"
+          }
+        },
+        {
+          "id": "c2s10_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s10_形4",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s10_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s10_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s10_文8"
+          }
+        },
+        {
+          "id": "c2s10_s18",
+          "type": "add",
+          "fields": {
+            "target": "c2s10_文9"
+          }
+        },
+        {
+          "id": "c2s10_s11",
+          "type": "parallel",
+          "fields": {},
+          "children": [
+            {
+              "id": "c2s10_s8",
+              "type": "move",
+              "fields": {
+                "target": "c2s10_形5",
+                "x": 0,
+                "y": 0.2,
+                "z": 0,
+                "duration": 4,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c2s10_s9",
+              "type": "move",
+              "fields": {
+                "target": "c2s10_形6",
+                "x": 0,
+                "y": 0.2,
+                "z": 0,
+                "duration": 4,
+                "easing": "smooth"
+              }
+            },
+            {
+              "id": "c2s10_s10",
+              "type": "apply_matrix",
+              "fields": {
+                "target": "c2s10_形4",
+                "matrix": "[[0,0],[0,1]]",
+                "duration": 4,
+                "easing": "smooth"
+              }
+            }
+          ]
+        },
+        {
+          "id": "c2s10_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s10_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s10_cleanup",
+            "members": "c2s10_文1,c2s10_文2,c2s10_文3,c2s10_形4,c2s10_形5,c2s10_形6,c2s10_文7,c2s10_文8,c2s10_文9"
+          }
+        },
+        {
+          "id": "c2s10_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s10_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s11_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.11 先预测，再核对"
+      },
+      "children": [
+        {
+          "id": "c2s11_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s11_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s11_文2",
+            "text": "先预测，再核对",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s11_文3",
+            "text": "形状不只一种看法  ·  2.11  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s4",
+          "type": "rounded_rectangle",
+          "fields": {
+            "name": "c2s11_形4",
+            "width": 3.5,
+            "height": 1.8,
+            "corner": 0.2,
+            "color": "#63DBC5",
+            "fill": 0.06,
+            "x": -4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s5",
+          "type": "text",
+          "fields": {
+            "name": "c2s11_文5",
+            "text": "旋转：保距",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#E6EDF6",
+            "x": -4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s6",
+          "type": "rounded_rectangle",
+          "fields": {
+            "name": "c2s11_形6",
+            "width": 3.5,
+            "height": 1.8,
+            "corner": 0.2,
+            "color": "#B6A1F2",
+            "fill": 0.06,
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s7",
+          "type": "text",
+          "fields": {
+            "name": "c2s11_文7",
+            "text": "缩放：保角",
+            "fontSize": 25,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s8",
+          "type": "rounded_rectangle",
+          "fields": {
+            "name": "c2s11_形8",
+            "width": 3.5,
+            "height": 1.8,
+            "corner": 0.2,
+            "color": "#F3CD85",
+            "fill": 0.06,
+            "x": 4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s11_文9",
+            "text": "剪切：本例保面积",
+            "fontSize": 25,
+            "maxWidth": 4.1,
+            "color": "#E6EDF6",
+            "x": 4,
+            "y": 0.3,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s13",
+          "type": "text",
+          "fields": {
+            "name": "c2s11_文10",
+            "text": "先判断哪种操作一定保留长度，哪种保留角度。判断时\n只依据已经解释的操作定义；一个特殊图形偶然不变还\n不够。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s14",
+          "type": "text",
+          "fields": {
+            "name": "c2s11_文11",
+            "text": "再检查剪切：这个例子保面积，但不能据此把它叫作刚\n体运动。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s11_s15",
+          "type": "remove",
+          "fields": {
+            "target": "c2s11_文11"
+          }
+        },
+        {
+          "id": "c2s11_s10",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s11_文5",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s11_s16",
+          "type": "wait",
+          "fields": {
+            "duration": 10
+          }
+        },
+        {
+          "id": "c2s11_s17",
+          "type": "remove",
+          "fields": {
+            "target": "c2s11_文10"
+          }
+        },
+        {
+          "id": "c2s11_s18",
+          "type": "add",
+          "fields": {
+            "target": "c2s11_文11"
+          }
+        },
+        {
+          "id": "c2s11_s11",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s11_文7",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s11_s12",
+          "type": "indicate",
+          "fields": {
+            "target": "c2s11_文9",
+            "duration": 2,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s11_s19",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s11_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s11_cleanup",
+            "members": "c2s11_文1,c2s11_文2,c2s11_文3,c2s11_形4,c2s11_文5,c2s11_形6,c2s11_文7,c2s11_形8,c2s11_文9,c2s11_文10,c2s11_文11"
+          }
+        },
+        {
+          "id": "c2s11_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s11_cleanup"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c2s12_sequence",
+      "type": "sequence",
+      "fields": {
+        "label": "2.12 留下通向拓扑的问题"
+      },
+      "children": [
+        {
+          "id": "c2s12_s1",
+          "type": "text",
+          "fields": {
+            "name": "c2s12_文1",
+            "text": "02 / 第二章：距离和角度，怎样把形状约束住？",
+            "fontSize": 16,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": 3.52,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s2",
+          "type": "text",
+          "fields": {
+            "name": "c2s12_文2",
+            "text": "留下通向拓扑的问题",
+            "fontSize": 32,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": 2.85,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s3",
+          "type": "text",
+          "fields": {
+            "name": "c2s12_文3",
+            "text": "形状不只一种看法  ·  2.12  /  ANYVIS",
+            "fontSize": 13,
+            "maxWidth": 12.4,
+            "color": "#A8B7CC",
+            "x": 0,
+            "y": -3.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s4",
+          "type": "circle",
+          "fields": {
+            "name": "c2s12_形4",
+            "radius": 1.1,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s5",
+          "type": "ellipse",
+          "fields": {
+            "name": "c2s12_形5",
+            "width": 3.6,
+            "height": 2.2,
+            "color": "#B6A1F2",
+            "fill": 0,
+            "x": 2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s6",
+          "type": "line",
+          "fields": {
+            "name": "c2s12_形6",
+            "x1": -3.3,
+            "y1": 0.2,
+            "x2": -1.1,
+            "y2": 0.2,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s7",
+          "type": "line",
+          "fields": {
+            "name": "c2s12_形7",
+            "x1": 0.4,
+            "y1": 0.2,
+            "x2": 4,
+            "y2": 0.2,
+            "color": "#F3CD85",
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s8",
+          "type": "text",
+          "fields": {
+            "name": "c2s12_文8",
+            "text": "圆周",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#63DBC5",
+            "x": -2.2,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s9",
+          "type": "text",
+          "fields": {
+            "name": "c2s12_文9",
+            "text": "椭圆",
+            "fontSize": 24,
+            "maxWidth": 4.1,
+            "color": "#B6A1F2",
+            "x": 2.2,
+            "y": -1.5,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s11",
+          "type": "ellipse",
+          "fields": {
+            "name": "c2s12_形10",
+            "width": 4.4,
+            "height": 2.2,
+            "color": "#63DBC5",
+            "fill": 0,
+            "x": -2.2,
+            "y": 0.2,
+            "z": 0,
+            "appear": "hidden",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s13",
+          "type": "text",
+          "fields": {
+            "name": "c2s12_文11",
+            "text": "拿走标尺，再看对应关系",
+            "fontSize": 24,
+            "maxWidth": 12.4,
+            "color": "#F3CD85",
+            "x": 0,
+            "y": 1.9,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s14",
+          "type": "text",
+          "fields": {
+            "name": "c2s12_文12",
+            "text": "我们已经看到：失去精确尺寸，并不必然失去所有结构。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s15",
+          "type": "text",
+          "fields": {
+            "name": "c2s12_文13",
+            "text": "接下来要问，点怎样对应，才能既不撕裂，也不合并？\n把刚才的标尺结论暂时放到一边，改为检查哪些点对应\n到哪里。",
+            "fontSize": 26,
+            "maxWidth": 12.4,
+            "color": "#E6EDF6",
+            "x": 0,
+            "y": -2.65,
+            "z": 0,
+            "appear": "none",
+            "duration": 1
+          }
+        },
+        {
+          "id": "c2s12_s16",
+          "type": "remove",
+          "fields": {
+            "target": "c2s12_文13"
+          }
+        },
+        {
+          "id": "c2s12_s10",
+          "type": "passing_flash",
+          "fields": {
+            "target": "c2s12_形4",
+            "color": "#FBBF24",
+            "timeWidth": 0.25,
+            "duration": 3,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s12_s17",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s12_s18",
+          "type": "remove",
+          "fields": {
+            "target": "c2s12_文12"
+          }
+        },
+        {
+          "id": "c2s12_s19",
+          "type": "add",
+          "fields": {
+            "target": "c2s12_文13"
+          }
+        },
+        {
+          "id": "c2s12_s12",
+          "type": "transform",
+          "fields": {
+            "target": "c2s12_形4",
+            "destination": "c2s12_形10",
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "c2s12_s20",
+          "type": "wait",
+          "fields": {
+            "duration": 9
+          }
+        },
+        {
+          "id": "c2s12_cleanupgroup",
+          "type": "group",
+          "fields": {
+            "name": "c2s12_cleanup",
+            "members": "c2s12_文1,c2s12_文2,c2s12_文3,c2s12_形4,c2s12_形5,c2s12_形6,c2s12_形7,c2s12_文8,c2s12_文9,c2s12_形10,c2s12_文11,c2s12_文12,c2s12_文13"
+          }
+        },
+        {
+          "id": "c2s12_cleanupremove",
+          "type": "remove",
+          "fields": {
+            "target": "c2s12_cleanup"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -4,6 +4,16 @@
 
 **当前状态：配置与源码检查不等于安装验收。** 本次本机 npm registry 无法解析，未下载 Electron 或 electron-builder，也未在本机生成、安装并验证最终安装包。GitHub Actions 中的实际构建和启动结果应以对应提交的工作流日志及附件为准。首次正式发行前，还需要按本文最后的清单在目标系统上安装和渲染验证。
 
+2026-11-06，[构建 42295108033](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033) 已成功完成三平台真实 Electron 启动检查和安装包构建。对应提交为 `5b7e5545f9475e9dad62f530be1ba089b59fbfe2`：
+
+| 平台 | 本次生成的附件 |
+| --- | --- |
+| macOS | [旧构建的合并附件](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033/artifacts/13540949516)；后续构建已改为按 ARM64 / x64 分开提供，见下方下载说明 |
+| Windows | [x64 NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033/artifacts/13540989138) |
+| Linux | [x64 AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033/artifacts/13540979175) |
+
+这些 Actions 附件保存至 2026-11-20，下载需要 GitHub 登录；未发布为 GitHub Release。以后提交生成的附件应按其提交 SHA 核对。此结果证明该提交能构建安装包和运行准备后的桌面应用，尚不能替代实际安装、最终 ASAR 路径和外部 Manim 环境的验收。
+
 ## 固定工具版本
 
 `desktop/package.json` 只保存构建工具的 `devDependencies`，不会成为应用内的依赖目录：
@@ -69,7 +79,16 @@ Linux 使用 Xvfb，并为当前 CI 临时环境中的 Chromium sandbox helper �
 
 未安装 Manim 时允许壳启动检查通过；环境尚未检测完成时报告 `health.available: false, checking: true`，并不代表确认缺少环境。这项检查不能证明 Manim 渲染成功。CI 还会运行桌面生命周期和隔离 bundle 的 Node 回归测试。启动检查使用准备后的应用和构建工具提供的 Electron，不能代替最终 ASAR 或安装包的安装测试。macOS 的启动检查只覆盖 runner 本身的架构，不同时证明另一架构可运行。
 
-成功的安装包作为 `AnyVis-<平台>-<提交 SHA>` 工作流附件保存 14 天；检查报告和本次真实解析的桌面工具锁文件单独保存为 `AnyVis-<平台>-checks-<提交 SHA>`。下载后核对提交 SHA。若构建失败，检查附件可能只含锁文件，应查看失败日志，不能据此判断启动通过。
+成功的安装包保存为以下工作流附件，保留 14 天。macOS 按架构分开上传，避免把四个文件合为一个过大的压缩包：
+
+| 使用的系统 | 选择的附件 |
+| --- | --- |
+| Apple Silicon Mac（M 系列） | `AnyVis-macOS-arm64-<提交 SHA>`，包含该架构 DMG / ZIP |
+| Intel Mac | `AnyVis-macOS-x64-<提交 SHA>`，包含该架构 DMG / ZIP |
+| Windows x64 | `AnyVis-Windows-<提交 SHA>` |
+| Linux x64 | `AnyVis-Linux-<提交 SHA>` |
+
+检查报告和本次真实解析的桌面工具锁文件另存为 `AnyVis-<平台>-checks-<提交 SHA>`。下载后核对提交 SHA。若构建失败，检查附件可能只含锁文件，应查看失败日志，不能据此判断启动通过。
 
 ## 正式发行前的安装验收
 

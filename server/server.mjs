@@ -128,7 +128,7 @@ export async function createAnyVisServer(options = {}) {
   const requestedPort = options.port ?? Number(process.env.ANYVIS_PORT || 4317);
   const uiPort = Number(process.env.ANYVIS_UI_PORT || 5174);
   let actualPort = requestedPort;
-  const jobs = new Map(); const pending = [];
+  const jobs = new Map(); const pending = []; const aiControllers = new Set();
   let running = null; let stopped = false;
   let health = { available: false, checking: true, message: '正在检查 Manim 运行环境…', capabilities: {} };
   const healthController = new AbortController();
@@ -299,6 +299,7 @@ export async function createAnyVisServer(options = {}) {
   const server = http.createServer(async (req, res) => {
     try {
       if (!validOrigin(req)) return json(res, 403, { error: '仅允许本机 AnyVis 页面访问。' });
+      if (stopped) return json(res, 503, { error: '服务正在关闭，请稍后重连。' });
       let url;
       try { url = new URL(req.url, 'http://127.0.0.1'); } catch { return json(res, 400, { error: '无效地址。' }); }
       const pathname = url.pathname;
@@ -311,11 +312,13 @@ export async function createAnyVisServer(options = {}) {
         if (pathname === '/api/ai' && req.method === 'POST') {
           const body = await readJson(req);
           const { generateProject } = await import('../desktop/ai-proxy.mjs');
+          if (stopped) return json(res, 503, { error: '服务正在关闭，AI 请求未启动。' });
           const controller = new AbortController();
+          aiControllers.add(controller);
           const timer = setTimeout(() => controller.abort(), 120_000);
           res.once('close', () => { if (!res.writableEnded) controller.abort(); });
           try { return json(res, 200, await generateProject(body, { signal: controller.signal })); }
-          finally { clearTimeout(timer); }
+          finally { clearTimeout(timer); aiControllers.delete(controller); }
         }
         const jobMatch = /^\/api\/jobs\/([\w-]+)$/.exec(pathname);
         if (jobMatch) {
@@ -362,6 +365,7 @@ export async function createAnyVisServer(options = {}) {
   async function close() {
     stopped = true;
     healthController.abort();
+    for (const controller of aiControllers) controller.abort();
     const live = [...jobs.values()].map(job => job.child).filter(child => child && child.exitCode === null);
     for (const job of jobs.values()) cancel(job, '服务正在关闭');
     await Promise.all(live.map(child => new Promise(resolve => {

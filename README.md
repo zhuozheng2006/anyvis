@@ -2,7 +2,7 @@
 
 **用 Scratch 风格积木制作真实 Manim 动画。**
 
-AnyVis v0.2.2 提供积木创作、原生动画预览、视频与 Python 导出，以及可编辑的 AI 作品导入。当前可运行交付采用本机浏览器界面 + 本地 Manim 服务；正式产品仍以托管运行环境的桌面版为目标。[完整设计方案](docs/AnyVis-Design-v0.2.md)
+AnyVis v0.2.2 提供积木创作、原生动画预览、视频与 Python 导出，以及可编辑的 AI 作品导入。提供浏览器界面 + 本地 Manim 服务，以及自主启动服务的 Electron 桌面版。三平台安装包构建和真实 Electron 启动检查已经通过；Python/Manim 仍需外部安装。[完整设计方案](docs/AnyVis-Design-v0.2.md)
 
 ![AnyVis Studio 的颜色编辑器与真实预览](docs/screenshots/studio-polish.jpg)
 
@@ -44,7 +44,7 @@ npm start
 - **AI 辅助**：连接自己的兼容 API 服务生成经过校验的原生积木项目；也可复制包含当前项目和积木目录的提示词，使用已有 AI 后导入 JSON。密钥只在会话中使用，不写入作品。未实际调用付费模型验收。
 - **渲染作业**：取消、超时、缓存、过期预览标识、错误到积木映射、导出时保持求值帧率。
 
-积木目录不等于 Manim 全 API 覆盖。完整 API、连续帧视频流、任意脚本时间跳转、节点图、可回写时间轴、组件编辑器以及桌面运行时打包仍有后续工作，详见设计与验证记录。
+积木目录不等于 Manim 全 API 覆盖。完整 API、连续帧视频流、任意脚本时间跳转、节点图、可回写时间轴、组件编辑器以及完整 Python/LaTeX 运行环境托管仍有后续工作，详见设计与验证记录。
 
 ## 第一次使用
 
@@ -81,8 +81,18 @@ npm run build
 
 原 v0.1 仍可通过 `?legacy=1` 查看，原浏览器草稿没有迁移或覆盖。新版项目采用 schemaVersion 2；旧原型项目需保留原文件，当前不做不完整的自动转换。
 
-桌面程序现在自主启动引擎，提供运行环境设置、固定项目存储地址和退出清理。安装构建工具后可运行 `npm run desktop`，也可使用 `npm run desktop:pack` 打包；参见 desktop/PACKAGING.md。本机依赖下载受限，尚未完成实际 Electron 窗口和安装包验证。参见 [桌面与 AI 接入](desktop/README.md)。按照项目约定，后续成果会持续提交至 GitHub。
+桌面程序自主启动引擎，提供运行环境设置、固定项目存储地址和退出清理。可运行 `npm run desktop` 或 `npm run desktop:pack`；三平台 CI 已实际启动 Electron 并生成安装包，目标机器安装与外部 Manim 联调仍需验收。[安装包与验证边界](desktop/PACKAGING.md)、[桌面与 AI 接入](desktop/README.md)。
 
 ## API 覆盖的实际范围
 
 新增圆环、扇形、星形、标注、波动、逐字出现等19种原生积木。当前审计发现1660个公开API项，97种积木映射96个原生入口；入口、参数和行为验证分别记录，不以Python扩展充数。[完整清单与缺项](docs/Manim-API-Coverage.md)。
+
+## 用 AnyVis 制作的半小时影片
+
+《形状不只一种看法：几何与拓扑》采用六章、72个25秒镜头，通过问题、预测、演示、解释和练习逐步展开。所有画面来自原生积木项目，字幕承担讲解，无配音。
+
+- [影片工程与复现命令](examples/geometry-topology/README.md)：六个可直接导入的五分钟章节，以及72个独立镜头。
+- [内容设计](docs/geometry-topology-film-plan.md)与[制作验收记录](docs/geometry-topology-production.md)。
+- Gemini 3.8 Flash另行制作同主题五分钟样片；它是流程与教学内容的比较样本，不是等长速度基准。
+
+本轮实际使用修复了长章节导入时反复同步重绘的问题：Chrome中386块章节从选定文件到步骤可见约566ms，点击嵌套步骤能够展开定位。命名段落默认折叠，保存过的展开状态保留。新增文字最大宽度、分镜批量渲染与缓存复用，并修复强调动画结束后图形未恢复的问题。

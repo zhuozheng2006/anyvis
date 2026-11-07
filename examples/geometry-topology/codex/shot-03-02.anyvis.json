@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 2,
+  "id": "geometry-topology-3-02",
+  "name": "3.02 连续不是“移动得慢”",
+  "scene": {
+    "dimension": "2d",
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "background": "#0B1324"
+  },
+  "actions": [
+    {
+      "id": "s1",
+      "type": "text",
+      "fields": {
+        "name": "文1",
+        "text": "03 / 第三章：从连续对应到同胚，动画能证明多少？",
+        "fontSize": 16,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": 3.52,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s2",
+      "type": "text",
+      "fields": {
+        "name": "文2",
+        "text": "连续不是“移动得慢”",
+        "fontSize": 32,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": 2.85,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s3",
+      "type": "text",
+      "fields": {
+        "name": "文3",
+        "text": "形状不只一种看法  ·  3.02  /  ANYVIS",
+        "fontSize": 13,
+        "maxWidth": 12.4,
+        "color": "#A8B7CC",
+        "x": 0,
+        "y": -3.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s4",
+      "type": "circle",
+      "fields": {
+        "name": "形4",
+        "radius": 1.3,
+        "color": "#63DBC5",
+        "fill": 0,
+        "x": 0,
+        "y": 0.2,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s5",
+      "type": "dot",
+      "fields": {
+        "name": "形5",
+        "radius": 0.065,
+        "color": "#F3CD85",
+        "fill": 1,
+        "x": 0,
+        "y": -1.1,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s6",
+      "type": "dot",
+      "fields": {
+        "name": "形6",
+        "radius": 0.065,
+        "color": "#F69A87",
+        "fill": 1,
+        "x": 0,
+        "y": 1.5,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s7",
+      "type": "text",
+      "fields": {
+        "name": "文7",
+        "text": "不同的点，能否唯一找回？",
+        "fontSize": 24,
+        "maxWidth": 12.4,
+        "color": "#F3CD85",
+        "x": 0,
+        "y": 1.9,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s13",
+      "type": "text",
+      "fields": {
+        "name": "文8",
+        "text": "连续描述输入与输出的邻近关系，不是动画播放速度。",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s14",
+      "type": "text",
+      "fields": {
+        "name": "文9",
+        "text": "变化可以非常平滑，却仍把不同点压到一起。请把注意\n力从播放速度转到点的来源：结果是否仍能区分每一个\n原点？",
+        "fontSize": 26,
+        "maxWidth": 12.4,
+        "color": "#E6EDF6",
+        "x": 0,
+        "y": -2.65,
+        "z": 0,
+        "appear": "none",
+        "duration": 1
+      }
+    },
+    {
+      "id": "s15",
+      "type": "remove",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s12",
+      "type": "indicate",
+      "fields": {
+        "target": "形4",
+        "duration": 2,
+        "easing": "smooth"
+      }
+    },
+    {
+      "id": "s16",
+      "type": "wait",
+      "fields": {
+        "duration": 10
+      }
+    },
+    {
+      "id": "s17",
+      "type": "remove",
+      "fields": {
+        "target": "文8"
+      }
+    },
+    {
+      "id": "s18",
+      "type": "add",
+      "fields": {
+        "target": "文9"
+      }
+    },
+    {
+      "id": "s11",
+      "type": "parallel",
+      "fields": {},
+      "children": [
+        {
+          "id": "s8",
+          "type": "move",
+          "fields": {
+            "target": "形5",
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "s9",
+          "type": "move",
+          "fields": {
+            "target": "形6",
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "duration": 4,
+            "easing": "smooth"
+          }
+        },
+        {
+          "id": "s10",
+          "type": "apply_matrix",
+          "fields": {
+            "target": "形4",
+            "matrix": "[[1,0],[0,0]]",
+            "duration": 4,
+            "easing": "smooth"
+          }
+        }
+      ]
+    },
+    {
+      "id": "s19",
+      "type": "wait",
+      "fields": {
+        "duration": 9
+      }
+    }
+  ]
+}
