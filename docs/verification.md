@@ -1,5 +1,18 @@
 # AnyVis 验证记录
 
+## 函数曲线实时预览、对象与动作一键克隆、构建分包优化及矩阵/表格/三维多面体原生覆盖扩展（2026-11-08）
+
+十二组真实 Manim 证据合并 **1,350 / 2,293** 个独立入口，新增 60 个原生 API，未验证入口降至 **943** 项（通用/Cairo 仅余 487 项，OpenGL 专属 456 项），全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格数值、几何点集与返回值后置条件对比，0 失败、0 fixture gap：
+- **几何标注、曲线与多边形**：`AnnotationDot`、`ArcPolygonFromArcs`、`CubicBezier`、`CurvedDoubleArrow`、`LabeledDot`、`TangentialArc`、`TipableVMobject`、`Label`、`LabeledArrow`、`LabeledLine`、`LabeledPolygram`、`Polygram`、`Polygram.get_vertex_groups`、`RegularPolygram`、`Angle.from_three_points`、`Vector.coordinate_label`、`Arrow.reset_normal_vector`、`Arrow.scale`、`Line.generate_points`、`Line.init_points`、`BackgroundRectangle.set_style`、`BackgroundRectangle.pointwise_become_partial`。
+- **三维多面体、曲面采样与 3D 几何工具**：`Arrow3D`、`Line3D`、`ThreeDVMobject`、`Polyhedron`、`Polyhedron.extract_face_coords`、`Polyhedron.create_faces`、`Polyhedron.get_edges`、`Polyhedron.update_faces`、`ConvexHull3D`、`Cone.func`、`Cylinder.func`、`Sphere.func`、`Torus.func`、`Surface.func`、`get_3d_vmob_start_corner_index`、`get_3d_vmob_end_corner_index`、`get_3d_vmob_start_corner`、`get_3d_vmob_end_corner`、`get_3d_vmob_gradient_start_and_end_points`、`get_3d_vmob_unit_normal`、`get_3d_vmob_start_corner_unit_normal`、`get_3d_vmob_end_corner_unit_normal`。
+- **矩阵与表格家族**：`Matrix`、`IntegerMatrix`、`DecimalMatrix`、`MobjectMatrix`、`Matrix.add_background_to_entries`、`Matrix.set_column_colors`、`Matrix.set_row_colors`、`get_det_text`、`matrix_to_mobject`、`matrix_to_tex_string`、`Table`、`Table.create`、`IntegerTable`、`DecimalTable`、`MathTable`、`MobjectTable`。
+- **创新功能与工程优化（超越 Desmos/GeoGebra 及同类 Manim 工具）**：
+  - **Desmos 级函数表达式实时曲线预览 (`ExpressionPlotPreview`)**：在属性检视器编辑任何数学函数表达式字段（如 `sin(x)`、`2 * exp(-x^2)`、`k * sin(x)`）时，实时渲染带坐标网格、自动量程缩放、悬停坐标读数 (`x, y`)、与编译器同源的语法诊断以及 6 种经典函数一键填入胶囊的 SVG 曲线图，并自动联动场景中已声明的 `ValueTracker` 动态变量初始值。
+  - **对象与时间轴片段一键克隆 (`duplicateAction`)**：支持在对象管理器一键复制角色对象（自动生成无冲突唯一名称如 `圆 2`、`圆 3`），并在时间轴检视器及快捷键 `D` 支持一键克隆当前动作或复合片段，紧邻原动作插入。
+  - **生产构建精细化代码分包 (`vite.config.ts` `manualChunks`)**：将 `api-registry`、`vendor-blockly`、`vendor-codemirror`、`vendor-math`、`vendor-three`、`vendor-timeline`、`vendor-icons`、`vendor-react` 拆分为独立可缓存 chunk，主编辑器入口 `StudioApp.js` 体积从 **3,453.50 kB** 降至 **330.37 kB**（缩减逾 10 倍）。
+
+本地 356 项应用测试（42 个测试文件）、22 项原生测试入口、6 项证据校验、11 项桌面检查、真实 worker 媒体渲染与混音、确定性钢琴合成及生产构建全部通过。
+
 ## 演播模式、数学公式符号分块助手、画面风格预设与颜色/几何原生覆盖扩展（2026-11-08）
 
 十二组真实 Manim 证据合并 **1,290 / 2,293** 个独立入口，新增 37 个原生 API（覆盖 `manim.utils.color.core` 的全套颜色转换、渐变、插值、HSV 色彩空间，以及箭头尖端 `ArrowTriangleFilledTip`、`ArrowCircleTip`、`StealthTip`、`Vector`、`Cross`、`Elbow`、`ConvexHull` 等），剩余 1,003 项。全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格数值、类型与几何后置条件对比，0 失败、0 fixture gap：

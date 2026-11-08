@@ -3,7 +3,7 @@ import { createAction } from './core/catalog';
 import { createEmptyProject } from './core/project';
 import { compileProject } from './core/compiler';
 import { getApiEntry } from './core/api-registry';
-import { actionDuration, appendAction, managedObject, objectDependents, parallelWithNext, removeAction, removeActions, reorderAction, timelineClips, updateAction } from './authoring';
+import { actionDuration, appendAction, duplicateAction, managedObject, objectDependents, parallelWithNext, removeAction, removeActions, reorderAction, timelineClips, updateAction } from './authoring';
 describe('shared authoring projections', () => {
   it('keeps visual API constructors distinct from named method results', () => {
     expect(managedObject(createAction('circle'))).toBe(true);
@@ -94,5 +94,26 @@ describe('shared authoring projections', () => {
     const allRemoved = removeActions(p, [c1.id, s1.id, c2.id, s2.id]);
     expect(allRemoved.actions.map(a => a.id)).toEqual([wait.id]);
     expect(compileProject(allRemoved).diagnostics).toEqual([]);
+  });
+  it('duplicates objects and actions immediately after the original with unique names and valid code', () => {
+    const c1 = createAction('circle', { name: '圆', radius: 1.5, color: '#FF862F' });
+    const s1 = createAction('shift', { target: '圆', dx: 2, duration: 1 });
+    const p = { ...createEmptyProject(), actions: [c1, s1] };
+
+    const dupObj = duplicateAction(p, c1.id);
+    expect(dupObj.action.id).not.toBe(c1.id);
+    expect(dupObj.action.fields.name).toBe('圆 2');
+    expect(dupObj.action.fields.radius).toBe(1.5);
+    expect(dupObj.project.actions.map(a => a.id)).toEqual([c1.id, dupObj.action.id, s1.id]);
+    expect(compileProject(dupObj.project).diagnostics).toEqual([]);
+
+    const dupObj2 = duplicateAction(dupObj.project, dupObj.action.id);
+    expect(dupObj2.action.fields.name).toBe('圆 3');
+    expect(compileProject(dupObj2.project).diagnostics).toEqual([]);
+
+    const dupShift = duplicateAction(dupObj2.project, s1.id);
+    expect(dupShift.action.fields.target).toBe('圆');
+    expect(dupShift.action.fields.dx).toBe(2);
+    expect(compileProject(dupShift.project).diagnostics).toEqual([]);
   });
 });

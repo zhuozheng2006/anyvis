@@ -66,10 +66,36 @@ const families = {
       ['Elbow', { width: 1.5 }],
       ['Vector', { direction: vec(1, 2, 0) }],
       ['ConvexHull', { points: [vec(0, 0, 0), vec(1, 0, 0), vec(0, 1, 0)] }],
+      ['AnnotationDot', { radius: 0.15 }],
+      ['CubicBezier', { start_anchor: vec(0, 0, 0), start_handle: vec(1, 1, 0), end_handle: vec(2, -1, 0), end_anchor: vec(3, 0, 0) }],
+      ['CurvedDoubleArrow', { start_point: vec(-1, 0, 0), end_point: vec(1, 0, 0) }],
+      ['LabeledDot', { label: 'A' }],
+      ['Label', { label: 'X' }],
+      ['LabeledArrow', { args: ['v'], kwargs: { start: vec(-1, 0, 0), end: vec(1, 0, 0) } }],
+      ['LabeledLine', { label: 'L', kwargs: { start: vec(-1, 0, 0), end: vec(1, 0, 0) } }],
+      ['Polygram', { vertex_groups: [[vec(0, 0, 0), vec(1, 0, 0), vec(0, 1, 0)]] }],
+      ['RegularPolygram', { num_vertices: 5, density: 2 }],
+      ['LabeledPolygram', { vertex_groups: [[vec(0, 0, 0), vec(2, 0, 0), vec(0, 2, 0)]], label: 'P' }],
+      ['Angle.from_three_points', { A: vec(1, 0, 0), B: vec(0, 0, 0), C: vec(0, 1, 0) }],
     ]) api(id, id, params, {}, shape);
+    api('ArcBetweenPoints', 'arc_p1', { start: vec(0, 0, 0), end: vec(1, 0, 0), angle: 0.5 }, {}, shape);
+    api('ArcBetweenPoints', 'arc_p2', { start: vec(1, 0, 0), end: vec(0, 1, 0), angle: 0.5 }, {}, shape);
+    api('ArcBetweenPoints', 'arc_p3', { start: vec(0, 1, 0), end: vec(0, 0, 0), angle: 0.5 }, {}, shape);
+    api('ArcPolygonFromArcs', 'arc_poly_from_arcs', { arcs: [ref('arc_p1'), ref('arc_p2'), ref('arc_p3')] }, {}, shape);
+    api('TipableVMobject', 'tipable_vmob', { tip_length: 0.2 }, {}, 'assert abs($result.tip_length - 0.2) < 1e-6');
+    api('Polygram.get_vertex_groups', 'polygram_vgroups', {}, { receiver: 'Polygram' }, 'assert len($result) == 1');
+    api('Vector.coordinate_label', 'vec_coord_label', {}, { receiver: 'Vector' }, shape);
+    api('Arrow.reset_normal_vector', 'vec_reset_norm', {}, { receiver: 'Vector' }, 'assert np.isfinite($result.normal_vector).all()');
+    api('Arrow.scale', 'vec_scaled', { factor: 1.5 }, { receiver: 'Vector' }, shape);
+    api('BackgroundRectangle.set_style', 'bg_style', { fill_opacity: 0.5 }, { receiver: 'BackgroundRectangle' }, shape);
+    api('Mobject.copy', 'bg_copy', {}, { receiver: 'BackgroundRectangle' }, shape);
+    api('BackgroundRectangle.pointwise_become_partial', 'bg_partial', { mobject: ref('bg_copy'), a: 0, b: 0.5 }, { receiver: 'BackgroundRectangle' }, shape);
     api('StealthTip.length', 'stealth_len', {}, { receiver: 'StealthTip' }, 'assert $result > 0');
     api('Line', 'horizontal', { start: vec(0, 0, 0), end: vec(2, 0, 0) }, {}, 'assert abs($result.get_length()-2)<1e-6');
     api('Line', 'vertical', { start: vec(0, 0, 0), end: vec(0, 2, 0) }, {}, 'assert abs($result.get_length()-2)<1e-6');
+    api('TangentialArc', 'tangential_arc', { line1: ref('horizontal'), line2: ref('vertical'), radius: 0.5 }, {}, shape);
+    api('Line.generate_points', 'line_gen_pts', {}, { receiver: 'horizontal' }, 'assert len(objects["horizontal"].points) > 0');
+    api('Line.init_points', 'line_init_pts', {}, { receiver: 'horizontal' }, 'assert len(objects["horizontal"].points) > 0');
     api('Angle', 'angle', { line1: ref('horizontal'), line2: ref('vertical') }, {}, shape);
     api('RightAngle', 'right_angle', { line1: ref('horizontal'), line2: ref('vertical') }, {}, shape);
     api('Line.get_unit_vector', 'unit', {}, { receiver: 'horizontal' }, 'np.testing.assert_allclose($result,[1,0,0])');
@@ -235,7 +261,49 @@ const families = {
       ['Cone', { base_radius: 0.5, height: 1, resolution: [6, 8] }], ['Torus', { major_radius: 1, minor_radius: 0.3, resolution: [6, 8] }],
       ['Tetrahedron', {}], ['Octahedron', {}], ['Dodecahedron', {}], ['Icosahedron', {}],
       ['Surface', { func: fn(['u', 'v'], vec(expr('u'), expr('v'), expr('u*v'))), resolution: [4, 4] }],
+      ['Arrow3D', { start: vec(0, 0, 0), end: vec(1, 1, 1) }],
+      ['Line3D', { start: vec(0, 0, 0), end: vec(1, 1, 1) }],
+      ['ConvexHull3D', { points: [vec(0, 0, 0), vec(1, 0, 0), vec(0, 1, 0), vec(0, 0, 1)] }],
+      ['Polyhedron', { vertex_coords: [vec(0, 0, 0), vec(1, 0, 0), vec(0, 1, 0), vec(0, 0, 1)], faces_list: [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]] }],
     ]) api(id, id, params, {}, shape);
+    api('ThreeDVMobject', 'three_d_vmob', { shade_in_3d: true }, {}, 'assert $result.shade_in_3d is True');
+    for (const cls of ['Cone', 'Cylinder', 'Sphere', 'Torus', 'Surface']) {
+      api(`${cls}.func`, `${cls}_func_pt`, { u: 0.5, v: 0.5 }, { receiver: cls }, 'assert len($result) == 3 and np.isfinite($result).all()');
+    }
+    api('Polyhedron.extract_face_coords', 'poly_face_coords', {}, { receiver: 'Polyhedron' }, 'assert len($result) == 4');
+    api('Polyhedron.create_faces', 'poly_created_faces', { face_coords: ref('poly_face_coords') }, { receiver: 'Polyhedron' }, 'assert len($result) == 4');
+    api('Polyhedron.get_edges', 'poly_edges', { faces_list: [[0, 1, 2]] }, { receiver: 'Polyhedron' }, 'assert len($result) == 3');
+    api('Polyhedron.update_faces', 'poly_updated_faces', { m: ref('Polyhedron') }, { receiver: 'Polyhedron' }, 'assert len(objects["Polyhedron"].faces) == 4');
+    api('Circle', 'vmob_3d_ref', { radius: 1 }, {}, shape);
+    api('get_3d_vmob_start_corner_index', 'vmob3d_sci', { vmob: ref('vmob_3d_ref') }, {}, 'assert isinstance($result, (int, np.integer))');
+    api('get_3d_vmob_end_corner_index', 'vmob3d_eci', { vmob: ref('vmob_3d_ref') }, {}, 'assert isinstance($result, (int, np.integer))');
+    api('get_3d_vmob_start_corner', 'vmob3d_sc', { vmob: ref('vmob_3d_ref') }, {}, 'assert len($result) == 3');
+    api('get_3d_vmob_end_corner', 'vmob3d_ec', { vmob: ref('vmob_3d_ref') }, {}, 'assert len($result) == 3');
+    api('get_3d_vmob_gradient_start_and_end_points', 'vmob3d_grad', { vmob: ref('vmob_3d_ref') }, {}, 'assert len($result) == 2');
+    api('get_3d_vmob_unit_normal', 'vmob3d_un', { vmob: ref('vmob_3d_ref'), point_index: 0 }, {}, 'assert len($result) == 3');
+    api('get_3d_vmob_start_corner_unit_normal', 'vmob3d_scun', { vmob: ref('vmob_3d_ref') }, {}, 'assert len($result) == 3');
+    api('get_3d_vmob_end_corner_unit_normal', 'vmob3d_ecun', { vmob: ref('vmob_3d_ref') }, {}, 'assert len($result) == 3');
+  },
+  matricesAndTables(f) {
+    const { api } = f;
+    api('Dot', 'mat_dot_1', {}, {}, shape);
+    api('Dot', 'mat_dot_2', {}, {}, shape);
+    api('Matrix', 'mat_main', { matrix: [[1, 2], [3, 4]] }, {}, shape);
+    api('Matrix.add_background_to_entries', 'mat_bg', {}, { receiver: 'mat_main' }, shape);
+    api('Matrix.set_column_colors', 'mat_cols', { colors: ['#FF0000', '#00FF00'] }, { receiver: 'mat_main' }, shape);
+    api('Matrix.set_row_colors', 'mat_rows', { colors: ['#FF0000', '#00FF00'] }, { receiver: 'mat_main' }, shape);
+    api('IntegerMatrix', 'int_mat', { matrix: [[1, 2], [3, 4]] }, {}, shape);
+    api('DecimalMatrix', 'dec_mat', { matrix: [[1.5, 2.5], [3.5, 4.5]] }, {}, shape);
+    api('MobjectMatrix', 'mob_mat', { matrix: [[ref('mat_dot_1'), ref('mat_dot_2')]] }, {}, shape);
+    api('get_det_text', 'det_txt', { matrix: ref('mat_main'), determinant: 2 }, {}, shape);
+    api('matrix_to_mobject', 'mat_to_mob', { matrix: [[1, 2], [3, 4]] }, {}, shape);
+    api('matrix_to_tex_string', 'mat_to_tex', { matrix: [[1, 2], [3, 4]] }, {}, 'assert "array" in $result');
+    api('Table', 'tbl_main', { table: [['a', 'b'], ['c', 'd']] }, {}, shape);
+    api('Table.create', 'tbl_created', {}, { receiver: 'tbl_main' }, 'assert $result is not None');
+    api('IntegerTable', 'int_tbl', { table: [[1, 2], [3, 4]] }, {}, shape);
+    api('DecimalTable', 'dec_tbl', { table: [[1.2, 3.4], [5.6, 7.8]] }, {}, shape);
+    api('MathTable', 'math_tbl', { table: [['x', 'y'], ['1', '2']] }, {}, shape);
+    api('MobjectTable', 'mob_tbl', { table: [[ref('mat_dot_1'), ref('mat_dot_2')]] }, {}, shape);
   },
 };
 

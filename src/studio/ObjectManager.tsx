@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import type { Action, FieldValue, Project } from './core/types';
 import { CURATED_BLOCK_CATALOG, BLOCK_CATALOG, getBlockDefinition } from './core/catalog';
-import { flattenActions, managedDefinition, managedObject, objectDependents, removeAction, updateAction } from './authoring';
+import { flattenActions, duplicateAction, managedDefinition, managedObject, objectDependents, removeAction, updateAction } from './authoring';
 import { ActionInspector } from './ActionInspector';
 import { AssetShelf } from './AssetShelf';
 import './object-manager.css';
@@ -214,6 +214,18 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
     );
   }, [addTab, curatedDefinitions, apiDefinitions, searchQuery]);
 
+  const handleDuplicate = (e: React.MouseEvent, id: string, name: string) => {
+    e.stopPropagation();
+    try {
+      const result = duplicateAction(project, id);
+      onChange(result.project);
+      onSelect(result.action.id);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : `复制对象 ${name} 失败`;
+      onError(msg);
+    }
+  };
+
   const handleDelete = (e: React.MouseEvent, id: string, name: string) => {
     e.stopPropagation();
     const dependents = objectDependents(project, id);
@@ -282,6 +294,17 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                     全部参数 ({nonAnimFields.length}) ⚙️
                   </button>
                 )}
+                <button
+                  type="button"
+                  className="om-expand-toggle-btn"
+                  onClick={e =>
+                    handleDuplicate(e, selectedObject.id, String(selectedObject.fields.name || '未命名'))
+                  }
+                  aria-label={`复制对象 ${selectedObject.fields.name || '未命名'}`}
+                  title={`复制对象 ${selectedObject.fields.name || '未命名'}`}
+                >
+                  复制 ⧉
+                </button>
                 <button
                   type="button"
                   className="om-delete-btn"

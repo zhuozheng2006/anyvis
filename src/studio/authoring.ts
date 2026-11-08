@@ -130,3 +130,53 @@ export function parallelWithNext(project: Project, id: string): Project {
   const group = createAction('parallel'); group.children = pair;
   return { ...project, workspace: undefined, actions: [...project.actions.slice(0, index), group, ...project.actions.slice(index + 2)] };
 }
+export function duplicateAction(project: Project, id: string): { project: Project; action: Action } {
+  const usedNames = new Set(
+    flattenActions(project.actions)
+      .filter(a => getBlockDefinition(a.type)?.createsObject)
+      .map(a => String(a.fields.name))
+  );
+  const cloneNode = (node: Action): Action => {
+    const fresh = createAction(node.type, { ...node.fields });
+    if (getBlockDefinition(node.type)?.createsObject && typeof fresh.fields.name === 'string') {
+      const base = fresh.fields.name.replace(/\s+\d+$/, '');
+      let candidate = `${base} 2`;
+      let suffix = 2;
+      while (usedNames.has(candidate)) {
+        suffix += 1;
+        candidate = `${base} ${suffix}`;
+      }
+      fresh.fields.name = candidate;
+      usedNames.add(candidate);
+    }
+    if (node.children) fresh.children = node.children.map(cloneNode);
+    if (node.branches) fresh.branches = node.branches.map(branch => branch.map(cloneNode));
+    return fresh;
+  };
+
+  let clonedResult: Action | null = null;
+  const insertAfter = (items: Action[]): Action[] => {
+    const out: Action[] = [];
+    for (const item of items) {
+      if (item.id === id) {
+        const copy = cloneNode(item);
+        clonedResult = copy;
+        out.push(item, copy);
+      } else {
+        out.push({
+          ...item,
+          ...(item.children ? { children: insertAfter(item.children) } : {}),
+          ...(item.branches ? { branches: item.branches.map(insertAfter) } : {}),
+        });
+      }
+    }
+    return out;
+  };
+
+  const nextActions = insertAfter(project.actions);
+  if (!clonedResult) throw Error('未找到要复制的动作或对象。');
+  return {
+    project: { ...project, workspace: undefined, actions: nextActions },
+    action: clonedResult,
+  };
+}

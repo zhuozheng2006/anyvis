@@ -5,6 +5,7 @@ import { flattenActions } from './authoring';
 import { createApiValueEditor, type ApiValueEditorElement } from './blocks/api-value-field';
 import { RateFuncPicker } from './RateFuncPicker';
 import { MathSymbolPalette } from './MathSymbolPalette';
+import { ExpressionPlotPreview } from './ExpressionPlotPreview';
 import './object-manager.css';
 
 export interface ActionInspectorProps {
@@ -121,6 +122,21 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
   const allDeclaredObjects = useMemo(() => {
     return flattenActions(actions).filter(a => getBlockDefinition(a.type)?.createsObject);
   }, [actions]);
+
+  const trackerValues = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const obj of allDeclaredObjects) {
+      const def = getBlockDefinition(obj.type);
+      if (def?.objectKind === 'tracker') {
+        const name = String(obj.fields.name || '').trim();
+        const val = Number(obj.fields.value ?? 0);
+        if (name) {
+          map[name] = Number.isFinite(val) ? val : 0;
+        }
+      }
+    }
+    return map;
+  }, [allDeclaredObjects]);
 
   if (!definition) {
     return <div className="ai-fields-empty">未找到动作定义</div>;
@@ -441,6 +457,16 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
             onChange={newVal => {
               handleDraftChange(field.name, newVal);
               onChange({ [field.name]: newVal });
+            }}
+          />
+        )}
+        {field.type === 'expression' && (
+          <ExpressionPlotPreview
+            expression={drafts[field.name] ?? ''}
+            trackerValues={trackerValues}
+            onSelectPreset={presetExpr => {
+              handleDraftChange(field.name, presetExpr);
+              onChange({ [field.name]: presetExpr });
             }}
           />
         )}

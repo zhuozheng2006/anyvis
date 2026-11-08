@@ -18,7 +18,7 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 | 可核对的调用签名 | 2,117 | 参数名、种类、必填状态逐项核对 |
 | 没有可反射签名的类 | 5 | 提供显式位置参数列表和命名参数字典，不伪造签名 |
 | 旧清单缺失入口 | 0 | 与固定 gzip 库存逐项比较 |
-| 原生行为证据涉及的独立 API | 1,290 | 十二组真实 Manim 测试合并去重；状态、回调、动画与原生调用差分 |
+| 原生行为证据涉及的独立 API | 1,350 | 十二组真实 Manim 测试合并去重；状态、回调、动画与原生调用差分 |
 
 [机器可读核查报告](research/api-registry-verification.json) · [完整运行时目录](../src/studio/core/api-registry.json) · [以前的常用积木审计](research/curated-api-coverage.md)
 
@@ -64,7 +64,8 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 - 2,293 个入口和 2,765 个常量全部解析成功；2,117 项签名匹配，属性写入能力也经过核对。
 - 原生集成测试覆盖构造器、可变参数、位置专用/关键字专用参数、属性读写、类方法、返回值、曲线回调、updater、动态重绘、动画组合、上下文恢复及真实画面像素。测试中的固定断言代码只用于测量，不计为原生 API 实现。
 - [参数曲线工程与视频](../examples/api/README.md)由 21 个可编辑积木生成，实际视频 1280×720、24 fps、565 帧、23.54 秒；所有帧解码通过，并人工查看关键帧。
-- 十二组测试合并后，1,094 个不同入口已有运行证据，仍有 1,199 个入口未取得逐项行为证据。只读差分测试 200 项中 199 项通过，`NumberLine.get_labels` 的默认实例在直接 Manim 调用时抛出缺少 `default_numbers_to_display`，记录为 fixture gap，不计通过。
+- 十二组测试合并后，1,350 个不同入口已有运行证据，剩余未验证入口已降至 943 个（跌破 1,000 关口，其中通用/Cairo 仅余 487 项，OpenGL 专属 456 项）。只读差分测试 200 项全部通过。
+- 本轮在 `api-families` 中新增 60 个独立入口的行为测试，覆盖几何标注与多边形（`AnnotationDot`、`ArcPolygonFromArcs`、`CubicBezier`、`CurvedDoubleArrow`、`LabeledDot`、`TangentialArc`、`TipableVMobject`、`Label`、`LabeledArrow`、`LabeledLine`、`LabeledPolygram`、`Polygram`、`Polygram.get_vertex_groups`、`RegularPolygram`、`Angle.from_three_points`、`Vector.coordinate_label`、`Arrow.reset_normal_vector`、`Arrow.scale`、`Line.generate_points`、`Line.init_points`、`BackgroundRectangle.set_style`、`BackgroundRectangle.pointwise_become_partial`）、三维对象与多面体/法线工具（`Arrow3D`、`Line3D`、`ThreeDVMobject`、`Polyhedron`、`Polyhedron.extract_face_coords`、`Polyhedron.create_faces`、`Polyhedron.get_edges`、`Polyhedron.update_faces`、`ConvexHull3D`、`Cone.func`、`Cylinder.func`、`Sphere.func`、`Torus.func`、`Surface.func`、`get_3d_vmob_*` 全套 8 个函数）以及矩阵与表格（`Matrix`、`IntegerMatrix`、`DecimalMatrix`、`MobjectMatrix`、`Matrix.add_background_to_entries`、`Matrix.set_column_colors`、`Matrix.set_row_colors`、`get_det_text`、`matrix_to_mobject`、`matrix_to_tex_string`、`Table`、`Table.create`、`IntegerTable`、`DecimalTable`、`MathTable`、`MobjectTable`），全部断言具体几何、结构与返回值，0 失败。
 - 本轮在 mutations fixture 中新增 82 个独立入口的行为测试，包括 VMobject 贝塞尔曲线拆分/平滑曲线追加/样式/采样函数/颜色更新、Mobject 径向渐变/深度拉伸与缩放/子对象重排/家族递归/点云对齐、Line3D/Surface/Cone/Cylinder/Cube/Prism 三维对象以及 Brace/Table 标注与表格操作，全部断言具体几何、结构与属性，0 失败、0 占位 gap。
 - 图片与相机 fixture 包含 74 个 API、75 组断言，新增 70 个此前未覆盖的入口。真实 Cairo/Pillow 像素、原始透明通道、取景边界和三维投影均检查具体结果；额外独立导出工程验证 API 创建的图片可显示并移动。修复 Pillow 13 兼容处理只覆盖上传图片积木而遗漏 API 图片的问题。
 - 动画生命周期/updater/tracker 新增 57 个 API；点云、VDict、向量场新增 41 个 API。断言中间位置、时序、暂停/循环、点与 RGBA 的同步筛选及 RK4 移动；这些状态测试不宣称逐项视频编码验证。
@@ -81,18 +82,18 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 
 ## 下一批行为验证分母
 
-1,253 项证据之外的 1,040 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
+1,350 项证据之外的 943 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
 
 | 未取得行为证据的类型 | 数量 |
 | --- | ---: |
-| 实例方法 | 648 |
-| 类 | 173 |
-| 函数 | 116 |
+| 实例方法 | 619 |
+| 类 | 133 |
+| 函数 | 90 |
 | 属性 | 69 |
-| 静态方法 | 25 |
-| 类方法 | 9 |
+| 静态方法 | 24 |
+| 类方法 | 8 |
 
-其中 584 项可用于通用渲染器，456 项 OpenGL 专属；820 项涉及本机权限标记。后续优先扩充 Mobject/VMobject 的变换与路径参数组合，再为 Scene、Camera、配置和文件类接口构建临时目录中的隔离 fixture；OpenGL 后续使用已验证的 Linux softpipe 渲染基线继续扩充场景。权限标记不是排除项，只是要求测试避免改动用户环境。
+其中 487 项可用于通用渲染器，456 项 OpenGL 专属。后续优先扩充 Mobject/VMobject 的变换与路径参数组合，再为 Scene、Camera、配置和文件类接口构建临时目录中的隔离 fixture；OpenGL 后续使用已验证的 Linux softpipe 渲染基线继续扩充场景。权限标记不是排除项，只是要求测试避免改动用户环境。
 
 ## 复现
 
