@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, Compass, Globe, Film, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -33,6 +33,9 @@ import { AudioVisualizerModal } from './AudioVisualizerModal';
 import { createAudioVisualizerActions } from './audio-visualizer';
 import { TexColorStylerModal } from './TexColorStylerModal';
 import { createColoredMathTexActions } from './tex-color';
+import { VectorFieldPlaygroundModal } from './VectorFieldPlaygroundModal';
+import { ComplexMappingModal } from './ComplexMappingModal';
+import { StoryboardModal } from './StoryboardModal';
 import './studio.css';
 import './studio-polish.css';
 
@@ -86,6 +89,9 @@ export default function StudioApp() {
   const [keyframeCurveOpen, setKeyframeCurveOpen] = useState(false);
   const [audioVisualizerOpen, setAudioVisualizerOpen] = useState(false);
   const [texColorStylerOpen, setTexColorStylerOpen] = useState(false);
+  const [vectorFieldOpen, setVectorFieldOpen] = useState(false);
+  const [complexMappingOpen, setComplexMappingOpen] = useState(false);
+  const [storyboardOpen, setStoryboardOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
   const [saveError, setSaveError] = useState('');
@@ -477,6 +483,9 @@ export default function StudioApp() {
       <button className="header-button" title="缓动曲线与关键帧检查器" aria-label="缓动曲线与关键帧检查器" onClick={() => setKeyframeCurveOpen(true)}><Sliders size={15}/><span>缓动曲线</span></button>
       <button className="header-button" title="音频响应式频谱与波形助手" aria-label="音频响应式频谱与波形助手" onClick={() => setAudioVisualizerOpen(true)}><Radio size={15}/><span>音频频谱</span></button>
       <button className="header-button" title="3B1B 公式专属配色器" aria-label="3B1B 公式专属配色器" onClick={() => setTexColorStylerOpen(true)}><Palette size={15}/><span>公式配色</span></button>
+      <button className="header-button" title="2D 向量场与流线工作台" aria-label="2D 向量场与流线工作台" onClick={() => setVectorFieldOpen(true)}><Compass size={15}/><span>向量场</span></button>
+      <button className="header-button" title="3B1B 复变函数与共形映射工作台" aria-label="3B1B 复变函数与共形映射工作台" onClick={() => setComplexMappingOpen(true)}><Globe size={15}/><span>复变共形</span></button>
+      <button className="header-button" title="分镜剧本与多章节大纲" aria-label="分镜剧本与多章节大纲" onClick={() => setStoryboardOpen(true)}><Film size={15}/><span>分镜剧本</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -703,6 +712,30 @@ export default function StudioApp() {
             run: () => setTexColorStylerOpen(true),
           },
           {
+            id: 'open-vector-field',
+            title: '2D 向量场与流线工作台 (Vector Field & Streamlines)',
+            subtitle: '散度旋度探针、Runge-Kutta 粒子流动模拟与 ArrowVectorField 生成',
+            colour: '#58c4dd',
+            keywords: 'vector field streamlines 向量场 流线 散度 旋度 粒子 3b1b 微积分',
+            run: () => setVectorFieldOpen(true),
+          },
+          {
+            id: 'open-complex-mapping',
+            title: '3B1B 复变函数与共形映射工作台 (Complex Mapping)',
+            subtitle: '复平面网格保角形变、局部导数放大率与 apply_complex_function',
+            colour: '#e2b340',
+            keywords: 'complex conformal mapping 复变函数 保角变换 共形映射 莫比乌斯 儒可夫斯基 3b1b',
+            run: () => setComplexMappingOpen(true),
+          },
+          {
+            id: 'open-storyboard',
+            title: '分镜剧本与多章节大纲 (Storyboard & Chapter Management)',
+            subtitle: '分段编排、视频章节时间戳导出与 Manim next_section()',
+            colour: '#38bdf8',
+            keywords: 'storyboard chapters section 分镜 剧本 章节 时间戳 next_section 视频制作',
+            run: () => setStoryboardOpen(true),
+          },
+          {
             id: 'export-py',
             title: '导出独立 Manim Python 脚本 (.py)',
             subtitle: '下载可直接由 manim 命令运行的源码',
@@ -852,6 +885,56 @@ export default function StudioApp() {
             setSelectedIds(actionIds);
           }
           notify(`已向动画编排插入“${name}”专属配色公式`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <VectorFieldPlaygroundModal
+      isOpen={vectorFieldOpen}
+      onClose={() => setVectorFieldOpen(false)}
+      project={project}
+      onApply={(nextProject, actionIds) => {
+        try {
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入 2D 向量场组件`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <ComplexMappingModal
+      isOpen={complexMappingOpen}
+      onClose={() => setComplexMappingOpen(false)}
+      project={project}
+      onApply={(nextProject, actionIds) => {
+        try {
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入复变共形映射组件`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <StoryboardModal
+      isOpen={storyboardOpen}
+      onClose={() => setStoryboardOpen(false)}
+      project={project}
+      onApply={(nextProject) => {
+        try {
+          setProject(nextProject);
+          notify(`已同步分镜章节到时间轴智能标记`);
         } catch (e) {
           notify((e as Error).message);
         }
