@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, Compass, Globe, Film, Box, Video, Captions, Network, AreaChart, Triangle, AlignJustify, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, Compass, Globe, Film, Box, Video, Captions, Network, AreaChart, Triangle, AlignJustify, Orbit, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -43,6 +43,7 @@ import { GraphPlaygroundModal } from './GraphPlaygroundModal';
 import { ProbabilityPlaygroundModal } from './ProbabilityPlaygroundModal';
 import { GeometryPlaygroundModal } from './GeometryPlaygroundModal';
 import { AutoLayoutModal } from './AutoLayoutModal';
+import { PolarParametricModal } from './PolarParametricModal';
 import './studio.css';
 import './studio-polish.css';
 
@@ -106,6 +107,7 @@ export default function StudioApp() {
   const [probabilityPlaygroundOpen, setProbabilityPlaygroundOpen] = useState(false);
   const [geometryPlaygroundOpen, setGeometryPlaygroundOpen] = useState(false);
   const [autoLayoutOpen, setAutoLayoutOpen] = useState(false);
+  const [polarParametricOpen, setPolarParametricOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
   const [saveError, setSaveError] = useState('');
@@ -507,6 +509,7 @@ export default function StudioApp() {
       <button className="header-button" title="概率分布与中心极限定理交互台" aria-label="概率分布与中心极限定理交互台" onClick={() => setProbabilityPlaygroundOpen(true)}><AreaChart size={15}/><span>概率分布</span></button>
       <button className="header-button" title="经典欧几里得几何与三角形四心画板" aria-label="经典欧几里得几何与三角形四心画板" onClick={() => setGeometryPlaygroundOpen(true)}><Triangle size={15}/><span>欧氏几何</span></button>
       <button className="header-button" title="智能对齐与多物体自动布局" aria-label="智能对齐与多物体自动布局" onClick={() => setAutoLayoutOpen(true)}><AlignJustify size={15}/><span>自动布局</span></button>
+      <button className="header-button" title="极坐标与参数方程曲线动画交互台" aria-label="极坐标与参数方程曲线动画交互台" onClick={() => setPolarParametricOpen(true)}><Orbit size={15}/><span>极坐标参数</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -811,6 +814,14 @@ export default function StudioApp() {
             colour: '#a855f7',
             keywords: 'align layout arrange vgroup grid radial 对齐 布局 排列 网格 环形 均分',
             run: () => setAutoLayoutOpen(true),
+          },
+          {
+            id: 'open-polar-parametric',
+            title: '极坐标与参数方程曲线动画交互台 (Polar & Parametric Curves)',
+            subtitle: '心脏线、玫瑰线、阿基米德螺线、李萨如图形与 ParametricFunction 描迹',
+            colour: '#38bdf8',
+            keywords: 'polar parametric curve cardioid rose lissajous 极坐标 参数方程 心脏线 玫瑰线 螺线 描迹 3b1b',
+            run: () => setPolarParametricOpen(true),
           },
           {
             id: 'export-py',
@@ -1138,6 +1149,24 @@ export default function StudioApp() {
             setSelectedIds(actionIds);
           }
           notify(`已更新 ${actionIds.length} 个物体的排版布局坐标`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <PolarParametricModal
+      isOpen={polarParametricOpen}
+      onClose={() => setPolarParametricOpen(false)}
+      project={project}
+      onApply={(nextProject, actionIds) => {
+        try {
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入极坐标参数曲线组件`);
         } catch (e) {
           notify((e as Error).message);
         }
