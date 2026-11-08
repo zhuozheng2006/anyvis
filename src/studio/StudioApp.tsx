@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, Compass, Globe, Film, Box, Video, Captions, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, Compass, Globe, Film, Box, Video, Captions, Network, AreaChart, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -39,6 +39,8 @@ import { StoryboardModal } from './StoryboardModal';
 import { SurfacePlaygroundModal } from './SurfacePlaygroundModal';
 import { CameraDirectorModal } from './CameraDirectorModal';
 import { SubtitleSyncModal } from './SubtitleSyncModal';
+import { GraphPlaygroundModal } from './GraphPlaygroundModal';
+import { ProbabilityPlaygroundModal } from './ProbabilityPlaygroundModal';
 import './studio.css';
 import './studio-polish.css';
 
@@ -98,6 +100,8 @@ export default function StudioApp() {
   const [surfacePlaygroundOpen, setSurfacePlaygroundOpen] = useState(false);
   const [cameraDirectorOpen, setCameraDirectorOpen] = useState(false);
   const [subtitleSyncOpen, setSubtitleSyncOpen] = useState(false);
+  const [graphPlaygroundOpen, setGraphPlaygroundOpen] = useState(false);
+  const [probabilityPlaygroundOpen, setProbabilityPlaygroundOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
   const [saveError, setSaveError] = useState('');
@@ -495,6 +499,8 @@ export default function StudioApp() {
       <button className="header-button" title="3B1B 3D 参数曲面与视角工作台" aria-label="3B1B 3D 参数曲面与视角工作台" onClick={() => setSurfacePlaygroundOpen(true)}><Box size={15}/><span>3D 曲面</span></button>
       <button className="header-button" title="运镜导演与动态取景器" aria-label="运镜导演与动态取景器" onClick={() => setCameraDirectorOpen(true)}><Video size={15}/><span>运镜导演</span></button>
       <button className="header-button" title="字幕配音同步工作台" aria-label="字幕配音同步工作台" onClick={() => setSubtitleSyncOpen(true)}><Captions size={15}/><span>字幕配音</span></button>
+      <button className="header-button" title="图论网络与拓扑交互台" aria-label="图论网络与拓扑交互台" onClick={() => setGraphPlaygroundOpen(true)}><Network size={15}/><span>图论拓扑</span></button>
+      <button className="header-button" title="概率分布与中心极限定理交互台" aria-label="概率分布与中心极限定理交互台" onClick={() => setProbabilityPlaygroundOpen(true)}><AreaChart size={15}/><span>概率分布</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -769,6 +775,22 @@ export default function StudioApp() {
             run: () => setSubtitleSyncOpen(true),
           },
           {
+            id: 'open-graph-playground',
+            title: '图论网络与拓扑交互台 (Graph Theory & Network)',
+            subtitle: '完全图、彼得森图、神经网络拓扑与力导向物理弹簧模拟',
+            colour: '#58c4dd',
+            keywords: 'graph network topology dijkstra bfs 图论 拓扑 网络 神经网络 最短路 3b1b',
+            run: () => setGraphPlaygroundOpen(true),
+          },
+          {
+            id: 'open-probability-playground',
+            title: '概率分布与中心极限定理交互台 (Probability & CLT)',
+            subtitle: '高斯正态、二项分布逼近、经验法则与统计量可视化',
+            colour: '#e2b340',
+            keywords: 'probability statistics normal clt 概率 统计 正态 高斯 二项分布 中心极限定理 3b1b',
+            run: () => setProbabilityPlaygroundOpen(true),
+          },
+          {
             id: 'export-py',
             title: '导出独立 Manim Python 脚本 (.py)',
             subtitle: '下载可直接由 manim 命令运行的源码',
@@ -1022,6 +1044,42 @@ export default function StudioApp() {
             setSelectedIds(actionIds);
           }
           notify(`已向动画编排插入解说字幕序列`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <GraphPlaygroundModal
+      isOpen={graphPlaygroundOpen}
+      onClose={() => setGraphPlaygroundOpen(false)}
+      project={project}
+      onApply={(nextProject, actionIds) => {
+        try {
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入图论网络组件`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <ProbabilityPlaygroundModal
+      isOpen={probabilityPlaygroundOpen}
+      onClose={() => setProbabilityPlaygroundOpen(false)}
+      project={project}
+      onApply={(nextProject, actionIds) => {
+        try {
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入概率分布组件`);
         } catch (e) {
           notify((e as Error).message);
         }
