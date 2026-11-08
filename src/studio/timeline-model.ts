@@ -1,7 +1,7 @@
 import { createAction, getBlockDefinition } from './core/catalog';
 import { compileProject } from './core/compiler';
 import type { Action, Project } from './core/types';
-import { actionDuration, appendAction, timelineClips, updateAction } from './authoring';
+import { actionDuration, appendAction, timelineClips, updateAction, type TimelineClip } from './authoring';
 
 export interface AudioClip {
   id: string; action: Action; start: number | null; duration: number; anchor: number | null;
@@ -72,6 +72,63 @@ export function splitAudioClip(project: Project, clip: AudioClip, time: number):
   const result = appendAction(first, 'audio_play', { ...clip.action.fields, name: `${clip.action.fields.name} 分段`, delay: cut, offset: clip.offset + left, length: right });
   const next = { ...result.project, actions: [result.action, ...result.project.actions.filter(a => a.id !== result.action.id)] };
   return { project: checkedEdit(project, next), id: result.action.id };
+}
+
+/** Split an animation or wait action clip at the playhead time into two consecutive actions. */
+export function splitActionClip(project: Project, clip: TimelineClip, time: number): { project: Project; id: string } {
+  if (clip.start === null || clip.duration === null) throw Error('动态片段请在积木中编辑。');
+  const fps = project.scene.fps;
+  const cut = frameTime(time, fps);
+  const left = frameTime(cut - clip.start, fps);
+  const right = frameTime(clip.duration - left, fps);
+  if (left < 1 / fps - 1e-8 || right < 1 / fps - 1e-8) {
+    throw Error('请把播放头放在片段内部，左右至少各保留一帧。');
+  }
+
+  const action = clip.action;
+  const idx = project.actions.findIndex(a => a.id === action.id);
+  if (idx < 0) throw Error('片段不存在或在复合动作内部，请在积木中调整。');
+
+  if (action.type === 'wait') {
+    const firstWait = { ...action, fields: { ...action.fields, duration: left } };
+    const secondWait = createAction('wait', { duration: right });
+    const nextActions = [...project.actions];
+    nextActions.splice(idx, 1, firstWait, secondWait);
+    return { project: checkedEdit(project, { ...project, workspace: undefined, actions: nextActions }), id: secondWait.id };
+  }
+
+  const proportion = left / (left + right);
+  if (action.type === 'shift' && (typeof action.fields.dx === 'number' || typeof action.fields.dy === 'number' || typeof action.fields.dz === 'number')) {
+    const origDx = Number(action.fields.dx || 0), origDy = Number(action.fields.dy || 0), origDz = Number(action.fields.dz || 0);
+    const firstDx = Number((origDx * proportion).toFixed(4)), firstDy = Number((origDy * proportion).toFixed(4)), firstDz = Number((origDz * proportion).toFixed(4));
+    const secondDx = Number((origDx - firstDx).toFixed(4)), secondDy = Number((origDy - firstDy).toFixed(4)), secondDz = Number((origDz - firstDz).toFixed(4));
+    const firstAction = { ...action, fields: { ...action.fields, duration: left, dx: firstDx, dy: firstDy, dz: firstDz } };
+    const secondAction = createAction('shift', { ...action.fields, duration: right, dx: secondDx, dy: secondDy, dz: secondDz });
+    const nextActions = [...project.actions];
+    nextActions.splice(idx, 1, firstAction, secondAction);
+    return { project: checkedEdit(project, { ...project, workspace: undefined, actions: nextActions }), id: secondAction.id };
+  }
+
+  if (action.type === 'rotate' && typeof action.fields.angle === 'number') {
+    const origAngle = Number(action.fields.angle);
+    const firstAngle = Number((origAngle * proportion).toFixed(2));
+    const secondAngle = Number((origAngle - firstAngle).toFixed(2));
+    const firstAction = { ...action, fields: { ...action.fields, duration: left, angle: firstAngle } };
+    const secondAction = createAction('rotate', { ...action.fields, duration: right, angle: secondAngle });
+    const nextActions = [...project.actions];
+    nextActions.splice(idx, 1, firstAction, secondAction);
+    return { project: checkedEdit(project, { ...project, workspace: undefined, actions: nextActions }), id: secondAction.id };
+  }
+
+  if (typeof action.fields.duration === 'number') {
+    const firstAction = { ...action, fields: { ...action.fields, duration: left } };
+    const secondAction = createAction(action.type, { ...action.fields, duration: right });
+    const nextActions = [...project.actions];
+    nextActions.splice(idx, 1, firstAction, secondAction);
+    return { project: checkedEdit(project, { ...project, workspace: undefined, actions: nextActions }), id: secondAction.id };
+  }
+
+  throw Error('该类型的片段不支持在时间轴中自动分割。');
 }
 
 /** Ripple insertion; waiting gaps can be split, animations cannot be silently overlapped. */

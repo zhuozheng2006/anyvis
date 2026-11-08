@@ -3,6 +3,7 @@ import type { Action, FieldDefinition, FieldValue, MediaAsset } from './core/typ
 import { getBlockDefinition } from './core/catalog';
 import { flattenActions } from './authoring';
 import { createApiValueEditor, type ApiValueEditorElement } from './blocks/api-value-field';
+import { RateFuncPicker } from './RateFuncPicker';
 import './object-manager.css';
 
 export interface ActionInspectorProps {
@@ -353,6 +354,14 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
 
     // 5. Select
     if (field.type === 'select') {
+      if (field.name === 'easing' || field.name === 'rate_func' || field.label.includes('节奏') || field.label.includes('缓动')) {
+        return (
+          <RateFuncPicker
+            value={String(currentVal ?? field.default ?? 'smooth')}
+            onChange={val => onChange({ [field.name]: val })}
+          />
+        );
+      }
       return (
         <select
           className="ai-fields-select"

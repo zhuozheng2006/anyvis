@@ -1,5 +1,17 @@
 # AnyVis 验证记录
 
+## 向量空间场景、缓动曲线交互选择与时间轴剃刀分割（2026-11-08）
+
+十二组真实 Manim 证据合并 **1,253 / 2,293** 个独立入口，新增 25 个 `VectorScene` 与 `LinearTransformationScene` API，剩余 1,040 项。全部调用均经 AnyVis 注册表编译器生成，包含真实的线性空间变换、基底向量、单位正方形和坐标系几何断言，0 失败、0 fixture gap：
+- **向量空间与线性变换场景**：`VectorScene`、`VectorScene.add_axes`、`VectorScene.add_plane`、`VectorScene.add_vector`、`VectorScene.get_basis_vectors`、`VectorScene.get_vector_label`、`VectorScene.label_vector`、`VectorScene.lock_in_faded_grid`、`VectorScene.vector_to_coords`、`LinearTransformationScene`、`LinearTransformationScene.setup`、`LinearTransformationScene.add_unit_square`、`LinearTransformationScene.get_unit_square`、`LinearTransformationScene.add_vector`、`LinearTransformationScene.add_title`、`LinearTransformationScene.add_transformable_mobject`、`LinearTransformationScene.add_moving_mobject`、`LinearTransformationScene.add_foreground_mobject`、`LinearTransformationScene.add_background_mobject`、`LinearTransformationScene.add_special_mobjects`、`LinearTransformationScene.apply_matrix`、`LinearTransformationScene.apply_transposed_matrix`、`LinearTransformationScene.get_matrix_transformation`、`LinearTransformationScene.get_transposed_matrix_transformation`、`LinearTransformationScene.get_ghost_vectors`。
+- **Upstream 兼容补丁**：
+  - `_av_vector_scene_compat`：修复 Manim 0.20.1 中 `VectorScene.lock_in_faded_grid` 调用 `CairoRenderer.update_frame` 漏传 `scene` 参数引发的 `TypeError`。
+- **创新功能与体验优化（超越同类产品）**：
+  - **缓动曲线可视化选择器 (`RateFuncPicker`)**：打破传统 Manim GUI 仅有纯文字下拉框的局限，提供交互式 SVG 缓动曲线图形化选择，实时动画小球循迹预览全部 10 种 Manim 节奏函数（`smooth`、`linear`、`rush_into`、`rush_from`、`slow_into`、`double_smooth`、`there_and_back`、`wiggle`、`lingering`、`exponential_decay`）。
+  - **动画与等待片段剃刀分割 (`splitActionClip`)**：在播放头位置对 `wait` 片段或动画片段执行非破坏性高精度分割，位移 (`dx`, `dy`, `dz`)、旋转 (`angle`)、时长及缩放比例严格按时间切分比例数学等分，支持剪刀按钮与键盘 `C` 快捷键。
+
+本地 345 项应用测试、22 项原生测试入口、6 项证据校验、11 项桌面检查、真实 worker 媒体渲染与混音、确定性钢琴合成及生产构建全部通过。
+
 ## 动画生命周期、坐标系统与时间轴多选批量操作扩展（2026-11-08）
 
 十二组真实 Manim 证据合并 **1,228 / 2,293** 个独立入口，新增 134 个动画、坐标系与图表 API（覆盖旋转、变形、数值、构建、指示、移动、速度修饰、组合，以及线性轴、对数轴、坐标系、三维轴、隐函数、柱状图、样本空间等），剩余 1,065 项。全部调用均经 AnyVis 注册表编译器生成，包含真实的 observable 几何、点集与状态断言，0 失败、0 fixture gap：

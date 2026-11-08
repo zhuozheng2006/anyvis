@@ -1111,6 +1111,31 @@
       "manim.scene.three_d_scene.ThreeDScene.set_to_default_angled_camera_orientation",
       "manim.scene.three_d_scene.ThreeDScene.stop_3dillusion_camera_rotation",
       "manim.scene.three_d_scene.ThreeDScene.stop_ambient_camera_rotation",
+      "manim.scene.vector_space_scene.LinearTransformationScene",
+      "manim.scene.vector_space_scene.LinearTransformationScene.add_background_mobject",
+      "manim.scene.vector_space_scene.LinearTransformationScene.add_foreground_mobject",
+      "manim.scene.vector_space_scene.LinearTransformationScene.add_moving_mobject",
+      "manim.scene.vector_space_scene.LinearTransformationScene.add_special_mobjects",
+      "manim.scene.vector_space_scene.LinearTransformationScene.add_title",
+      "manim.scene.vector_space_scene.LinearTransformationScene.add_transformable_mobject",
+      "manim.scene.vector_space_scene.LinearTransformationScene.add_unit_square",
+      "manim.scene.vector_space_scene.LinearTransformationScene.add_vector",
+      "manim.scene.vector_space_scene.LinearTransformationScene.apply_matrix",
+      "manim.scene.vector_space_scene.LinearTransformationScene.apply_transposed_matrix",
+      "manim.scene.vector_space_scene.LinearTransformationScene.get_ghost_vectors",
+      "manim.scene.vector_space_scene.LinearTransformationScene.get_matrix_transformation",
+      "manim.scene.vector_space_scene.LinearTransformationScene.get_transposed_matrix_transformation",
+      "manim.scene.vector_space_scene.LinearTransformationScene.get_unit_square",
+      "manim.scene.vector_space_scene.LinearTransformationScene.setup",
+      "manim.scene.vector_space_scene.VectorScene",
+      "manim.scene.vector_space_scene.VectorScene.add_axes",
+      "manim.scene.vector_space_scene.VectorScene.add_plane",
+      "manim.scene.vector_space_scene.VectorScene.add_vector",
+      "manim.scene.vector_space_scene.VectorScene.get_basis_vectors",
+      "manim.scene.vector_space_scene.VectorScene.get_vector_label",
+      "manim.scene.vector_space_scene.VectorScene.label_vector",
+      "manim.scene.vector_space_scene.VectorScene.lock_in_faded_grid",
+      "manim.scene.vector_space_scene.VectorScene.vector_to_coords",
       "manim.utils.bezier.bezier",
       "manim.utils.bezier.bezier_remap",
       "manim.utils.bezier.get_quadratic_approximation_of_cubic",
@@ -1283,7 +1308,7 @@
         "fixture": "src/studio/core/api.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -1336,7 +1361,7 @@
         "fixture": "src/studio/core/api-families.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -6165,7 +6190,7 @@
         "fixture": "src/studio/core/api-queries.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -7191,7 +7216,7 @@
         "fixture": "src/studio/core/api-utilities.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -7771,7 +7796,7 @@
         "fixture": "src/studio/core/api-mutations.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -8653,7 +8678,7 @@
         "fixtureId": "api-config-v1",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -8994,7 +9019,7 @@
         "fixture": "src/studio/core/api-raster.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -9394,7 +9419,7 @@
         "fixture": "src/studio/core/api-animation-state.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -10130,7 +10155,7 @@
         "fixture": "src/studio/core/api-pointcloud.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -10398,7 +10423,7 @@
         "fixture": "src/studio/core/api-scene.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -10408,7 +10433,7 @@
           "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
           "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
-          "src/studio/core/api-scene.native.spec-node.mjs": "f3b3ebafdea923da4b41aa8ec9fa8c256c52868c4780468f6731e9d3a2beb60a"
+          "src/studio/core/api-scene.native.spec-node.mjs": "8ec3fe56b517f6b8108d4586fdfe398047808299248f08610aefed3cf8f9dff8"
         },
         "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "passed": true,
@@ -10469,7 +10494,32 @@
           "manim.scene.three_d_scene.ThreeDScene.set_camera_orientation",
           "manim.scene.three_d_scene.ThreeDScene.set_to_default_angled_camera_orientation",
           "manim.scene.three_d_scene.ThreeDScene.stop_3dillusion_camera_rotation",
-          "manim.scene.three_d_scene.ThreeDScene.stop_ambient_camera_rotation"
+          "manim.scene.three_d_scene.ThreeDScene.stop_ambient_camera_rotation",
+          "manim.scene.vector_space_scene.LinearTransformationScene",
+          "manim.scene.vector_space_scene.LinearTransformationScene.add_background_mobject",
+          "manim.scene.vector_space_scene.LinearTransformationScene.add_foreground_mobject",
+          "manim.scene.vector_space_scene.LinearTransformationScene.add_moving_mobject",
+          "manim.scene.vector_space_scene.LinearTransformationScene.add_special_mobjects",
+          "manim.scene.vector_space_scene.LinearTransformationScene.add_title",
+          "manim.scene.vector_space_scene.LinearTransformationScene.add_transformable_mobject",
+          "manim.scene.vector_space_scene.LinearTransformationScene.add_unit_square",
+          "manim.scene.vector_space_scene.LinearTransformationScene.add_vector",
+          "manim.scene.vector_space_scene.LinearTransformationScene.apply_matrix",
+          "manim.scene.vector_space_scene.LinearTransformationScene.apply_transposed_matrix",
+          "manim.scene.vector_space_scene.LinearTransformationScene.get_ghost_vectors",
+          "manim.scene.vector_space_scene.LinearTransformationScene.get_matrix_transformation",
+          "manim.scene.vector_space_scene.LinearTransformationScene.get_transposed_matrix_transformation",
+          "manim.scene.vector_space_scene.LinearTransformationScene.get_unit_square",
+          "manim.scene.vector_space_scene.LinearTransformationScene.setup",
+          "manim.scene.vector_space_scene.VectorScene",
+          "manim.scene.vector_space_scene.VectorScene.add_axes",
+          "manim.scene.vector_space_scene.VectorScene.add_plane",
+          "manim.scene.vector_space_scene.VectorScene.add_vector",
+          "manim.scene.vector_space_scene.VectorScene.get_basis_vectors",
+          "manim.scene.vector_space_scene.VectorScene.get_vector_label",
+          "manim.scene.vector_space_scene.VectorScene.label_vector",
+          "manim.scene.vector_space_scene.VectorScene.lock_in_faded_grid",
+          "manim.scene.vector_space_scene.VectorScene.vector_to_coords"
         ],
         "outcomes": [
           {
@@ -10715,6 +10765,106 @@
           {
             "apiId": "manim.scene.three_d_scene.ThreeDScene.get_moving_mobjects",
             "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.VectorScene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.VectorScene.add_axes",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.VectorScene.add_plane",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.VectorScene.add_vector",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.VectorScene.get_basis_vectors",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.VectorScene.get_vector_label",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.VectorScene.label_vector",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.VectorScene.lock_in_faded_grid",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.VectorScene.vector_to_coords",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.setup",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.add_unit_square",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.get_unit_square",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.add_vector",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.add_title",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.add_transformable_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.add_moving_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.add_foreground_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.add_background_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.add_special_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.get_matrix_transformation",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.get_transposed_matrix_transformation",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.get_ghost_vectors",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.apply_matrix",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.scene.vector_space_scene.LinearTransformationScene.apply_transposed_matrix",
+            "status": "verified"
           }
         ],
         "checks": "Compiled registry calls with explicit membership/order, nested replacement, updater effects, timing, real scene rendering pixels and 2D/3D camera state assertions. Scene.render dispatches a fixed concrete construct. Setup calls, no-op abstract methods and interactive hooks are excluded."
@@ -10723,7 +10873,7 @@
         "fixture": "src/studio/core/api-coordinates.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -11239,7 +11389,7 @@
         "fixture": "src/studio/core/api-opengl-state.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
+          "src/studio/core/api-compiler.ts": "7450cc44fd186ed0b4e9c4b73d4cc987d493c6adf545abfc63d43b414d17f3fd",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -11649,7 +11799,7 @@
       }
     ]
   },
-  "entriesWithBehaviorEvidence": 1228,
+  "entriesWithBehaviorEvidence": 1253,
   "entriesWithoutBehaviorEvidence": [
     "manim._config.cli_colors.parse_cli_ctx",
     "manim._config.logger_utils.JSONFormatter",
@@ -12545,48 +12695,23 @@
     "manim.scene.three_d_scene.SpecialThreeDScene.get_default_camera_position",
     "manim.scene.three_d_scene.SpecialThreeDScene.get_sphere",
     "manim.scene.three_d_scene.SpecialThreeDScene.set_camera_to_default_position",
-    "manim.scene.vector_space_scene.LinearTransformationScene",
-    "manim.scene.vector_space_scene.LinearTransformationScene.add_background_mobject",
-    "manim.scene.vector_space_scene.LinearTransformationScene.add_foreground_mobject",
-    "manim.scene.vector_space_scene.LinearTransformationScene.add_moving_mobject",
-    "manim.scene.vector_space_scene.LinearTransformationScene.add_special_mobjects",
-    "manim.scene.vector_space_scene.LinearTransformationScene.add_title",
     "manim.scene.vector_space_scene.LinearTransformationScene.add_transformable_label",
-    "manim.scene.vector_space_scene.LinearTransformationScene.add_transformable_mobject",
-    "manim.scene.vector_space_scene.LinearTransformationScene.add_unit_square",
-    "manim.scene.vector_space_scene.LinearTransformationScene.add_vector",
     "manim.scene.vector_space_scene.LinearTransformationScene.apply_function",
     "manim.scene.vector_space_scene.LinearTransformationScene.apply_inverse",
     "manim.scene.vector_space_scene.LinearTransformationScene.apply_inverse_transpose",
-    "manim.scene.vector_space_scene.LinearTransformationScene.apply_matrix",
     "manim.scene.vector_space_scene.LinearTransformationScene.apply_nonlinear_transformation",
-    "manim.scene.vector_space_scene.LinearTransformationScene.apply_transposed_matrix",
-    "manim.scene.vector_space_scene.LinearTransformationScene.get_ghost_vectors",
-    "manim.scene.vector_space_scene.LinearTransformationScene.get_matrix_transformation",
     "manim.scene.vector_space_scene.LinearTransformationScene.get_moving_mobject_movement",
     "manim.scene.vector_space_scene.LinearTransformationScene.get_piece_movement",
     "manim.scene.vector_space_scene.LinearTransformationScene.get_transformable_label_movement",
-    "manim.scene.vector_space_scene.LinearTransformationScene.get_transposed_matrix_transformation",
-    "manim.scene.vector_space_scene.LinearTransformationScene.get_unit_square",
     "manim.scene.vector_space_scene.LinearTransformationScene.get_vector_movement",
-    "manim.scene.vector_space_scene.LinearTransformationScene.setup",
     "manim.scene.vector_space_scene.LinearTransformationScene.update_default_configs",
     "manim.scene.vector_space_scene.LinearTransformationScene.write_vector_coordinates",
-    "manim.scene.vector_space_scene.VectorScene",
-    "manim.scene.vector_space_scene.VectorScene.add_axes",
-    "manim.scene.vector_space_scene.VectorScene.add_plane",
-    "manim.scene.vector_space_scene.VectorScene.add_vector",
     "manim.scene.vector_space_scene.VectorScene.coords_to_vector",
     "manim.scene.vector_space_scene.VectorScene.get_basis_vector_labels",
-    "manim.scene.vector_space_scene.VectorScene.get_basis_vectors",
     "manim.scene.vector_space_scene.VectorScene.get_vector",
-    "manim.scene.vector_space_scene.VectorScene.get_vector_label",
-    "manim.scene.vector_space_scene.VectorScene.label_vector",
-    "manim.scene.vector_space_scene.VectorScene.lock_in_faded_grid",
     "manim.scene.vector_space_scene.VectorScene.position_x_coordinate",
     "manim.scene.vector_space_scene.VectorScene.position_y_coordinate",
     "manim.scene.vector_space_scene.VectorScene.show_ghost_movement",
-    "manim.scene.vector_space_scene.VectorScene.vector_to_coords",
     "manim.scene.vector_space_scene.VectorScene.write_vector_coordinates",
     "manim.scene.zoomed_scene.ZoomedScene",
     "manim.scene.zoomed_scene.ZoomedScene.activate_zooming",

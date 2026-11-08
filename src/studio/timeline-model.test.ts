@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 import { createAction } from './core/catalog';
 import { createEmptyProject, validateProject } from './core/project';
 import { compileProject } from './core/compiler';
-import { audioClips, editAudioClip, moveAnimationClip, moveAnimationClips, resizeAnimationClip, splitAudioClip } from './timeline-model';
+import { audioClips, editAudioClip, moveAnimationClip, moveAnimationClips, resizeAnimationClip, splitActionClip, splitAudioClip } from './timeline-model';
 import { timelineClips } from './authoring';
 const voice = { id: 'b'.repeat(64), name: 'voice.wav', kind: 'audio' as const, extension: 'wav', bytes: 100, duration: 10 };
 const audioProject = () => ({ ...createEmptyProject(), assets: [voice], actions: [createAction('wait', { duration: 2 }), createAction('audio_play', { asset: voice.id, delay: 1, offset: 2, length: 4 }), createAction('wait', { duration: 5 }), createAction('audio_stop', { target: '配音' })] });
@@ -78,4 +78,32 @@ it('cuts only the audible range and rejects endpoints or nested cues', () => {
   expect(audioClips(splitAudioClip(p, clip, 4).project).find(c => c.action.id !== clip.action.id)?.duration).toBe(3);
   for (const at of [clip.start!, clip.start! + clip.duration]) expect(() => splitAudioClip(p, clip, at)).toThrow('一帧');
   expect(() => splitAudioClip(p, { ...clip, editable: false }, 4)).toThrow('嵌套');
+});
+it('splits wait and animation clips at the playhead with proportional parameter subdivision', () => {
+  const c = createAction('circle', { name: 'c' });
+  const w = createAction('wait', { duration: 4 });
+  const s = createAction('shift', { target: 'c', duration: 2, dx: 4, dy: 2 });
+  const p = { ...createEmptyProject(), actions: [c, w, s] };
+
+  // Wait clip split: circle is 1s, wait is 1s -> 5s. Split at t = 2.5s (1.5s into wait)
+  const clips1 = timelineClips(p.actions);
+  const waitClip = clips1.find(clip => clip.action.id === w.id)!;
+  const splitWait = splitActionClip(p, waitClip, 2.5);
+  expect(splitWait.project.actions.map(a => a.type)).toEqual(['circle', 'wait', 'wait', 'shift']);
+  expect(splitWait.project.actions[1].fields.duration).toBe(1.5);
+  expect(splitWait.project.actions[2].fields.duration).toBe(2.5);
+  expect(compileProject(splitWait.project).diagnostics).toEqual([]);
+
+  // Shift clip split: shift starts at 5s, ends at 7s. Split at 5.5s (1/4 of the way)
+  const clips2 = timelineClips(p.actions);
+  const shiftClip = clips2.find(clip => clip.action.id === s.id)!;
+  const splitShift = splitActionClip(p, shiftClip, 5.5);
+  expect(splitShift.project.actions.map(a => a.type)).toEqual(['circle', 'wait', 'shift', 'shift']);
+  expect(splitShift.project.actions[2].fields).toMatchObject({ duration: 0.5, dx: 1, dy: 0.5 });
+  expect(splitShift.project.actions[3].fields).toMatchObject({ duration: 1.5, dx: 3, dy: 1.5 });
+  expect(compileProject(splitShift.project).diagnostics).toEqual([]);
+
+  // Boundary error checking: wait is from 1s to 5s
+  expect(() => splitActionClip(p, waitClip, 1)).toThrow('一帧');
+  expect(() => splitActionClip(p, waitClip, 5)).toThrow('一帧');
 });

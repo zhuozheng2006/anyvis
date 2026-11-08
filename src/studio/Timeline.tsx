@@ -5,7 +5,7 @@ import type { TimelineRow } from '@xzdarcy/timeline-engine';
 import type { Project } from './core/types';
 import { CURATED_BLOCK_CATALOG, getBlockDefinition } from './core/catalog';
 import { actionLabel, actionTrack, appendAction, flattenActions, managedDefinition, managedObject, parallelWithNext, removeAction, removeActions, reorderAction, timelineClips, updateAction } from './authoring';
-import { audioClips, checkedEdit, editAudioClip, frameTime, moveAnimationClip, moveAnimationClips, resizeAnimationClip, splitAudioClip } from './timeline-model';
+import { audioClips, checkedEdit, editAudioClip, frameTime, moveAnimationClip, moveAnimationClips, resizeAnimationClip, splitActionClip, splitAudioClip } from './timeline-model';
 import { AudioWaveform } from './AudioWaveform';
 import { ActionInspector } from './ActionInspector';
 import '@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css';
@@ -111,6 +111,25 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
     mutate(() => checkedEdit(project, reorderAction(project, selectedClip.action.id, before)));
   };
 
+  const fps = project.scene.fps;
+  const canSplitVisual = Boolean(
+    selectedClip &&
+    selectedClip.start !== null &&
+    selectedClip.duration !== null &&
+    selectedClip.duration > 2 / fps &&
+    time > selectedClip.start + 1 / fps - 1e-8 &&
+    time < selectedClip.start + selectedClip.duration - 1 / fps + 1e-8 &&
+    (selectedClip.action.type === 'wait' || typeof selectedClip.action.fields.duration === 'number')
+  );
+  const handleSplitVisual = () => {
+    if (!selectedClip || !canSplitVisual) return;
+    mutate(() => {
+      const result = splitActionClip(project, selectedClip, time);
+      handleSelectIds([result.id]);
+      return result.project;
+    });
+  };
+
   useEffect(() => {
     if (!box) return;
     const handleWindowMouseMove = (e: MouseEvent) => {
@@ -170,6 +189,19 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
     else if (event.key === 'Home') { event.preventDefault(); seek(0); }
     else if (event.key === 'End') { event.preventDefault(); seek(knownEnd); }
     else if (event.key.toLowerCase() === 's' && !event.repeat) setSnapping(v => !v);
+    else if (event.key.toLowerCase() === 'c' && !event.repeat) {
+      if (selectedAudio && selectedAudio.editable && selectedAudio.start !== null) {
+        event.preventDefault();
+        mutate(() => {
+          const result = splitAudioClip(project, selectedAudio, time);
+          handleSelectIds([result.id]);
+          return result.project;
+        });
+      } else if (canSplitVisual) {
+        event.preventDefault();
+        handleSplitVisual();
+      }
+    }
     else if (event.key === 'Escape') { event.preventDefault(); handleSelectIds([]); }
     else if ((event.key === 'Delete' || event.key === 'Backspace') && selectedIds.length > 0) {
       event.preventDefault();
@@ -260,7 +292,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       {!labels.length && <div className="tl-empty"><Layers3 size={28}/><strong>给对象安排第一段动画</strong><p>从右侧添加对象或上传配音，再安排动画。</p></div>}
     </div>
     {unknown.length > 0 && <div className="tl-dynamic"><span>动态时长 · 在积木中编排</span>{unknown.map(c => <button key={c.id} onClick={() => { handleSelectIds([c.action.id]); onShowBlocks(c.action.id); }}>{actionLabel(c.action)} · {c.track}</button>)}</div>}
-    <div className="tl-status"><span title="Home 回到开头；End 到已知结尾；Shift + 方向键移动 10 帧；Delete 删除所选片段；按住 Shift/Cmd 多选">{hint || '拖动片段 · 边缘调整 · S 吸附 · ← → 逐帧 · Shift/Cmd 多选 · 空格播放'}</span><span>{timecode(knownEnd, project.scene.fps)} {unknown.length ? '+ 动态片段' : ''}</span></div>
+    <div className="tl-status"><span title="Home 回到开头；End 到已知结尾；Shift + 方向键移动 10 帧；Delete 删除所选片段；C 分割片段；按住 Shift/Cmd 多选">{hint || '拖动片段 · 边缘调整 · C 剃刀分割 · S 吸附 · ← → 逐帧 · Shift/Cmd 多选 · 空格播放'}</span><span>{timecode(knownEnd, project.scene.fps)} {unknown.length ? '+ 动态片段' : ''}</span></div>
     <div className="tl-inspector">
       {selectedIds.length > 1 ? (
         <div className="tl-batch-bar">
@@ -275,7 +307,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
           <button onClick={() => handleSelectIds([])}><X size={14}/> 取消选择</button>
         </div>
       ) : selected ? <><div className="tl-selection-heading"><strong>{selectedAudio ? '配音' : actionLabel(selected)} <span>{selectedAudio ? String(selected.fields.name) : actionTrack(selected)}</span></strong><span>{(selectedAudio?.start ?? selectedClip?.start) == null ? '开始时间待定' : `开始 ${timecode((selectedAudio?.start ?? selectedClip?.start)!, project.scene.fps)}`}</span><div className="tl-spacer"/>
-        {selectedAudio ? <><button aria-label="在播放头处分割配音" disabled={!selectedAudio.editable || selectedAudio.start === null} onClick={() => mutate(() => { const result = splitAudioClip(project, selectedAudio, time); handleSelectIds([result.id]); return result.project; })}><Scissors size={14}/> 分割</button><button aria-label="配音静音" aria-pressed={selected.fields.muted === 'yes'} onClick={() => mutate(() => updateAction(project, selected.id, { muted: selected.fields.muted === 'yes' ? 'no' : 'yes' }))}>{selected.fields.muted === 'yes' ? <VolumeX size={14}/> : <Volume2 size={14}/>} 静音</button></> : <><button aria-label="片段前移" disabled={!selectedClip || selectedClip.index === 0} onClick={() => shiftOrder(-1)}><ArrowLeft size={14}/></button><button aria-label="片段后移" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => shiftOrder(1)}><ArrowRight size={14}/></button><button title="与后一个片段同时执行" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => mutate(() => checkedEdit(project, parallelWithNext(project, selected.id)))}><Layers3 size={14}/> 并行</button></>}
+        {selectedAudio ? <><button aria-label="在播放头处分割配音" disabled={!selectedAudio.editable || selectedAudio.start === null} onClick={() => mutate(() => { const result = splitAudioClip(project, selectedAudio, time); handleSelectIds([result.id]); return result.project; })}><Scissors size={14}/> 分割</button><button aria-label="配音静音" aria-pressed={selected.fields.muted === 'yes'} onClick={() => mutate(() => updateAction(project, selected.id, { muted: selected.fields.muted === 'yes' ? 'no' : 'yes' }))}>{selected.fields.muted === 'yes' ? <VolumeX size={14}/> : <Volume2 size={14}/>} 静音</button></> : <><button aria-label="在播放头处分割动画片段" title="在播放头处分割当前动画或等待片段（C）" disabled={!canSplitVisual} onClick={handleSplitVisual}><Scissors size={14}/> 分割</button><button aria-label="片段前移" disabled={!selectedClip || selectedClip.index === 0} onClick={() => shiftOrder(-1)}><ArrowLeft size={14}/></button><button aria-label="片段后移" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => shiftOrder(1)}><ArrowRight size={14}/></button><button title="与后一个片段同时执行" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => mutate(() => checkedEdit(project, parallelWithNext(project, selected.id)))}><Layers3 size={14}/> 并行</button></>}
         <button onClick={() => onShowBlocks(selected.id)}>积木</button><button aria-label="删除所选片段" onClick={() => mutate(() => removeAction(project, selected.id))}><Trash2 size={14}/></button></div>
         <ActionInspector key={selected.id} action={selected} actions={project.actions} assets={project.assets} fields={managedObject(selected) ? ['appear', 'duration', 'mode'].filter(name => definition?.fields.some(f => f.name === name)) : undefined} onChange={fields => mutate(() => updateAction(project, selected.id, fields))} onError={onError}/>
         {definition?.container && <p className="tl-note">复合片段包含内部动作，双击打开积木。</p>}</> : <p className="tl-note">选择片段编辑参数。动画按顺序联动，可组合并行；配音独立放置和裁剪。按住 Shift / Cmd 多选或框选。</p>}

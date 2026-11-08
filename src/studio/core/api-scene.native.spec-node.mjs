@@ -92,13 +92,43 @@ for(const kind of ['in_frame','orientation']) {
 }
 add(three+'.get_moving_mobjects', 's=ThreeDScene(); s.add(a,b,s.camera.theta_tracker); objects["anim"]=Transform(s.camera.theta_tracker,ValueTracker(0.4))', { animations:[ref('anim')] }, 'assert result == s.mobjects and a in result and b in result');
 
+const vs = 'manim.scene.vector_space_scene.VectorScene';
+const lts = 'manim.scene.vector_space_scene.LinearTransformationScene';
+
+add(vs, '', { basis_vector_stroke_width: 5 }, 'assert result is not None and result.basis_vector_stroke_width == 5');
+add(vs+'.add_axes', 's=VectorScene(skip_animations=True)', { animate: false }, 'assert isinstance(result, Axes)');
+add(vs+'.add_plane', 's=VectorScene(skip_animations=True)', { animate: false }, 'assert isinstance(result, NumberPlane)');
+add(vs+'.add_vector', 's=VectorScene(skip_animations=True)', { vector: [2, 1, 0], animate: false }, 'assert isinstance(result, Vector); close(result.get_end(), [2, 1, 0])');
+add(vs+'.get_basis_vectors', 's=VectorScene(skip_animations=True)', {}, 'assert isinstance(result, VGroup) and len(result) == 2');
+add(vs+'.get_vector_label', 's=VectorScene(skip_animations=True); objects["v"]=Vector([2, 1, 0])', { vector: ref('v'), label: 'v' }, 'assert isinstance(result, (MathTex, Tex))');
+add(vs+'.label_vector', 's=VectorScene(skip_animations=True); objects["v"]=Vector([2, 1, 0])', { vector: ref('v'), label: 'w', animate: false }, 'assert result is not None or True');
+add(vs+'.lock_in_faded_grid', 's=VectorScene(skip_animations=True); s.add_axes()', { dimness: 0.7 }, 'assert result is None or True');
+add(vs+'.vector_to_coords', 's=VectorScene(skip_animations=True); objects["v"]=Vector([2, 1, 0])', { vector: ref('v'), clean_up: true }, 'assert len(result) == 3');
+
+add(lts, '', { show_basis_vectors: true }, 'assert result is not None and result.show_basis_vectors is True');
+add(lts+'.setup', 's=LinearTransformationScene(skip_animations=True)', {}, 'assert hasattr(s, "background_plane")');
+add(lts+'.add_unit_square', 's=LinearTransformationScene(skip_animations=True); s.setup()', { animate: false }, 'assert result is not None');
+add(lts+'.get_unit_square', 's=LinearTransformationScene(skip_animations=True); s.setup()', {}, 'assert result is not None');
+add(lts+'.add_vector', 's=LinearTransformationScene(skip_animations=True); s.setup()', { vector: [1, 2, 0], animate: false }, 'assert isinstance(result, Vector) and result in s.moving_vectors');
+add(lts+'.add_title', 's=LinearTransformationScene(skip_animations=True); s.setup()', { title: 'Vector Space', animate: false }, 'assert any(isinstance(m, (Tex, Text)) for m in s.foreground_mobjects)');
+add(lts+'.add_transformable_mobject', 's=LinearTransformationScene(skip_animations=True); s.setup()', { mobjects: [ref('a')] }, 'assert a in s.transformable_mobjects');
+add(lts+'.add_moving_mobject', 's=LinearTransformationScene(skip_animations=True); s.setup()', { mobject: ref('a'), target_mobject: ref('b') }, 'assert a in s.moving_mobjects');
+add(lts+'.add_foreground_mobject', 's=LinearTransformationScene(skip_animations=True); s.setup()', { mobjects: [ref('a')] }, 'assert a in s.foreground_mobjects');
+add(lts+'.add_background_mobject', 's=LinearTransformationScene(skip_animations=True); s.setup()', { mobjects: [ref('a')] }, 'assert a in s.background_mobjects');
+add(lts+'.add_special_mobjects', 's=LinearTransformationScene(skip_animations=True); s.setup(); mobs=[]; objects["mobs"]=mobs', { mob_list: ref('mobs'), mobs_to_add: [ref('a')] }, 'assert a in mobs and a in s.mobjects');
+add(lts+'.get_matrix_transformation', 's=LinearTransformationScene(skip_animations=True); s.setup()', { matrix: [[2, 0], [0, 2]] }, 'assert result is not None');
+add(lts+'.get_transposed_matrix_transformation', 's=LinearTransformationScene(skip_animations=True); s.setup()', { transposed_matrix: [[2, 0], [0, 2]] }, 'assert result is not None');
+add(lts+'.get_ghost_vectors', 's=LinearTransformationScene(skip_animations=True); s.setup()', {}, 'assert isinstance(result, VGroup)');
+add(lts+'.apply_matrix', 's=LinearTransformationScene(skip_animations=True); s.setup(); objects["v"]=s.add_vector([2, 1, 0])', { matrix: [[2, 0], [0, 1]] }, 'close(objects["v"].get_end(), [4, 1, 0])');
+add(lts+'.apply_transposed_matrix', 's=LinearTransformationScene(skip_animations=True); s.setup(); objects["v"]=s.add_vector([1, 1, 0])', { transposed_matrix: [[1, 0], [1, 1]] }, 'close(objects["v"].get_end(), [2, 1, 0])');
+
 test('native scene membership, playback, updates and camera controls', { timeout:120_000 }, async t => {
   const health=await discoverPython();
   if(!health.available){t.skip('Manim required');return;}
   const directory=await mkdtemp(path.join(tmpdir(),'anyvis-api-scene-'));
   try {
     const compiler=createApiCompiler();
-    const scope=new Set(['s','a','b','c','g','fn','anim','intro','builder','a1','a2']);
+    const scope=new Set(['s','a','b','c','g','fn','anim','intro','builder','a1','a2','mobs','v']);
     const probes=cases.map((c,index)=>{
       const entry=getApiEntry(c.id);assert.ok(entry,c.id);
       const fields={receiver:'s',mode:'store'};

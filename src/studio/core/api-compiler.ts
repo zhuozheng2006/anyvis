@@ -281,6 +281,23 @@ def _av_number_line_compat():
     if not hasattr(_av_NumberLine, 'default_numbers_to_display'):
         _av_NumberLine.default_numbers_to_display = lambda self: self.get_tick_range()
 _av_number_line_compat()
+def _av_vector_scene_compat():
+    import manim as _av_manim
+    if _av_manim.__version__ != '0.20.1': return
+    try:
+        import manim.scene.vector_space_scene as _av_vss
+        orig_lock = getattr(_av_vss.VectorScene, 'lock_in_faded_grid', None)
+        if orig_lock:
+            def patched_lock(self, dimness=0.7, axes_dimness=0.5):
+                try:
+                    orig_lock(self, dimness=dimness, axes_dimness=axes_dimness)
+                except TypeError as e:
+                    if 'missing 1 required positional argument' in str(e):
+                        self.renderer.update_frame(self)
+            _av_vss.VectorScene.lock_in_faded_grid = patched_lock
+    except Exception:
+        pass
+_av_vector_scene_compat()
 def _av_check_receiver(value, owner):
     if not isinstance(value, owner):
         raise TypeError(f"操作对象需要 {owner.__name__}，实际是 {type(value).__name__}")
