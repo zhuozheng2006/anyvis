@@ -6,6 +6,7 @@ import { createApiValueEditor, type ApiValueEditorElement } from './blocks/api-v
 import { RateFuncPicker } from './RateFuncPicker';
 import { MathSymbolPalette } from './MathSymbolPalette';
 import { ExpressionPlotPreview } from './ExpressionPlotPreview';
+import { PositionPad } from './PositionPad';
 import './object-manager.css';
 
 export interface ActionInspectorProps {
@@ -467,6 +468,28 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
             onSelectPreset={presetExpr => {
               handleDraftChange(field.name, presetExpr);
               onChange({ [field.name]: presetExpr });
+            }}
+          />
+        )}
+        {field.name === 'y' && targetFields.some(f => f.name === 'x') && (
+          <PositionPad
+            mode="position"
+            x={Number(action.fields.x ?? 0)}
+            y={Number(action.fields.y ?? 0)}
+            onChange={({ x: nextX, y: nextY }) => {
+              setDrafts(prev => ({ ...prev, x: String(nextX), y: String(nextY) }));
+              onChange({ x: nextX, y: nextY });
+            }}
+          />
+        )}
+        {field.name === 'dy' && targetFields.some(f => f.name === 'dx') && (
+          <PositionPad
+            mode="shift"
+            x={Number(action.fields.dx ?? 0)}
+            y={Number(action.fields.dy ?? 0)}
+            onChange={({ x: nextDx, y: nextDy }) => {
+              setDrafts(prev => ({ ...prev, dx: String(nextDx), dy: String(nextDy) }));
+              onChange({ dx: nextDx, dy: nextDy });
             }}
           />
         )}

@@ -1,5 +1,17 @@
 # AnyVis 验证记录
 
+## 舞台坐标九宫格触控板、全局命令面板（⌘K）、画面帧 PNG 快照及文字/括号/流线/凸包 +104 项原生覆盖扩展（2026-11-08）
+
+十二组真实 Manim 证据合并 **1,454 / 2,293** 个独立入口，单轮新增 **104 个**原生 API，未验证入口大幅降至 **839** 项（通用/Cairo 仅余 383 项，覆盖率达 78.2%；OpenGL 专属 456 项），全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格数值、几何点集与返回值后置条件对比，0 失败、0 fixture gap：
+- **文字、数字、公式与括号标注 (`textAndBraces`)**：`DecimalNumber`、`DecimalNumber.font_size`、`DecimalNumber.get_value`、`DecimalNumber.set_value`、`DecimalNumber.increment_value`、`Integer`、`Integer.get_value`、`Variable`、`BulletedList`、`BulletedList.fade_all_but`、`MathTex`、`MathTex.get_part_by_tex`、`MathTex.index_of_part`、`MathTex.set_color_by_tex`、`MathTex.set_color_by_tex_to_color_map`、`MathTex.set_opacity_by_tex`、`MathTex.sort_alphabetically`、`MathTexPart`、`SingleStringMathTex`、`SingleStringMathTex.font_size`、`SingleStringMathTex.get_tex_string`、`SingleStringMathTex.init_colors`、`Tex`、`Title`、`MarkupText`、`MarkupText.font_size`、`MarkupText.font_list`、`Paragraph`、`Text`、`Text.font_size`、`Text.font_list`、`Text.init_colors`、`remove_invisible_chars`、`Code.get_styles_list`、`ArcBrace`、`Brace`、`BraceBetweenPoints`、`BraceLabel`、`BraceLabel.creation_anim`、`BraceLabel.change_brace_label`、`BraceLabel.shift_brace`、`BraceText`。
+- **核心基类、流线向量场、凸包与模板工具 (`coreMobjectsAndUtils`)**：`FullScreenRectangle`、`ScreenRectangle`、`ManimBanner`、`ManimBanner.create`、`ManimBanner.expand`、`ManimBanner.scale`、`Group`、`Mobject`、`Mobject.generate_points`、`Mobject.init_colors`、`Mobject.get_mobject_type_class`、`Mobject.get_pieces`、`Mobject.get_merged_array`、`Mobject.apply_over_attr_arrays`、`Mobject.set`、`Mobject.set_z_index_by_z_Point3D`、`Mobject.throw_error_if_no_points`、`VMobject.get_mobject_type_class`、`VMobject.init_colors`、`CurvesAsSubmobjects`、`VGroup.add`、`VectorizedPoint`、`get_mobject_class`、`get_point_mobject_class`、`get_vectorized_mobject_class`、`ArrowVectorField`、`VectorField.fit_to_coordinate_system`、`VectorField.get_colored_background_image`、`StreamLines`、`StreamLines.create`、`StreamLines.start_animation`、`StreamLines.end_animation`、`DictAsObject`、`flatten_iterable_parameters`、`Percent`、`not_quite_there`、`squish_rate_func`、`unit_interval`、`zero`、`manim.utils.polylabel.Polygon`、`Polygon.inside`、`Polygon.compute_distance`、`Cell`、`polylabel`、`QuickHullPoint`、`SubFacet`、`Facet`、`Facet.compute_normal`、`Horizon`、`QuickHull`、`QuickHull.initialize`、`QuickHull.build`、`QuickHull.classify`、`QuickHull.compute_horizon`、`TexTemplate`、`TexTemplate.copy`、`TexTemplate.add_to_preamble`、`TexTemplate.add_to_document`、`TexTemplate.get_texcode_for_expression`、`TexTemplate.get_texcode_for_expression_in_env`、`TexFontTemplates`、`TexTemplateLibrary`、`tex_hash`。
+- **创新功能与同类产品超越**：
+  - **交互式舞台坐标与九宫格对齐触控板 (`PositionPad`)**：在编辑带有 `(x, y)` 位置或 `(dx, dy)` 位移的对象与动作时，提供 16:9 比例微缩 Manim 舞台（支持拖拽/点击实时拾取坐标、Shift 键 0.5 步长吸附）以及 `UL / UP / UR / LEFT / ORIGIN / RIGHT / DL / DOWN / DR` 九宫格一键对齐按钮，告别手填坐标盲调。
+  - **全局命令面板 (`CommandPalette`, `⌘/Ctrl + K`)**：对标 Motion Canvas / Remotion Studio / Linear，按下 `⌘/Ctrl + K` 即可多关键词模糊搜索并一键添加任何图形/动画积木、直接跳转定位当前场景中的任意对象或动作、切换编辑器视图与背景主题、开启演播模式或触发渲染导出。
+  - **画面帧无损 PNG 快照 (`captureVideoFrame`)**：在舞台预览标题栏及命令面板支持一键截取当前播放头位置的原画分辨率 PNG 图片，方便教师与创作者直接提取高精数学插图制作讲义或封面。
+
+本地 361 项应用测试（44 个测试文件）、22 项原生测试入口、6 项证据校验、11 项桌面检查、真实 worker 媒体渲染与混音、确定性钢琴合成及生产构建全部通过。
+
 ## 函数曲线实时预览、对象与动作一键克隆、构建分包优化及矩阵/表格/三维多面体原生覆盖扩展（2026-11-08）
 
 十二组真实 Manim 证据合并 **1,350 / 2,293** 个独立入口，新增 60 个原生 API，未验证入口降至 **943** 项（通用/Cairo 仅余 487 项，OpenGL 专属 456 项），全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格数值、几何点集与返回值后置条件对比，0 失败、0 fixture gap：

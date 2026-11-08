@@ -370,6 +370,8 @@
       "manim.data_structures.MethodWithArgs.args",
       "manim.data_structures.MethodWithArgs.kwargs",
       "manim.data_structures.MethodWithArgs.method",
+      "manim.mobject.frame.FullScreenRectangle",
+      "manim.mobject.frame.ScreenRectangle",
       "manim.mobject.frame.ScreenRectangle.aspect_ratio",
       "manim.mobject.geometry.arc.AnnotationDot",
       "manim.mobject.geometry.arc.AnnularSector",
@@ -626,6 +628,10 @@
       "manim.mobject.graphing.scale.LogBase.get_custom_labels",
       "manim.mobject.graphing.scale.LogBase.inverse_function",
       "manim.mobject.graphing.scale._ScaleBase.get_custom_labels",
+      "manim.mobject.logo.ManimBanner",
+      "manim.mobject.logo.ManimBanner.create",
+      "manim.mobject.logo.ManimBanner.expand",
+      "manim.mobject.logo.ManimBanner.scale",
       "manim.mobject.matrix.DecimalMatrix",
       "manim.mobject.matrix.IntegerMatrix",
       "manim.mobject.matrix.Matrix",
@@ -641,6 +647,8 @@
       "manim.mobject.matrix.get_det_text",
       "manim.mobject.matrix.matrix_to_mobject",
       "manim.mobject.matrix.matrix_to_tex_string",
+      "manim.mobject.mobject.Group",
+      "manim.mobject.mobject.Mobject",
       "manim.mobject.mobject.Mobject.add",
       "manim.mobject.mobject.Mobject.add_background_rectangle",
       "manim.mobject.mobject.Mobject.add_background_rectangle_to_family_members_with_points",
@@ -661,6 +669,7 @@
       "manim.mobject.mobject.Mobject.apply_function_to_position",
       "manim.mobject.mobject.Mobject.apply_function_to_submobject_positions",
       "manim.mobject.mobject.Mobject.apply_matrix",
+      "manim.mobject.mobject.Mobject.apply_over_attr_arrays",
       "manim.mobject.mobject.Mobject.apply_points_function_about_point",
       "manim.mobject.mobject.Mobject.apply_to_family",
       "manim.mobject.mobject.Mobject.arrange",
@@ -675,6 +684,7 @@
       "manim.mobject.mobject.Mobject.fade_to",
       "manim.mobject.mobject.Mobject.family_members_with_points",
       "manim.mobject.mobject.Mobject.flip",
+      "manim.mobject.mobject.Mobject.generate_points",
       "manim.mobject.mobject.Mobject.generate_target",
       "manim.mobject.mobject.Mobject.get_all_points",
       "manim.mobject.mobject.Mobject.get_array_attrs",
@@ -694,9 +704,12 @@
       "manim.mobject.mobject.Mobject.get_group_class",
       "manim.mobject.mobject.Mobject.get_image",
       "manim.mobject.mobject.Mobject.get_left",
+      "manim.mobject.mobject.Mobject.get_merged_array",
       "manim.mobject.mobject.Mobject.get_midpoint",
+      "manim.mobject.mobject.Mobject.get_mobject_type_class",
       "manim.mobject.mobject.Mobject.get_nadir",
       "manim.mobject.mobject.Mobject.get_num_points",
+      "manim.mobject.mobject.Mobject.get_pieces",
       "manim.mobject.mobject.Mobject.get_point_mobject",
       "manim.mobject.mobject.Mobject.get_points_defining_boundary",
       "manim.mobject.mobject.Mobject.get_right",
@@ -714,6 +727,7 @@
       "manim.mobject.mobject.Mobject.has_points",
       "manim.mobject.mobject.Mobject.has_time_based_updater",
       "manim.mobject.mobject.Mobject.height",
+      "manim.mobject.mobject.Mobject.init_colors",
       "manim.mobject.mobject.Mobject.insert",
       "manim.mobject.mobject.Mobject.interpolate",
       "manim.mobject.mobject.Mobject.interpolate_color",
@@ -758,6 +772,7 @@
       "manim.mobject.mobject.Mobject.scale_to_fit_depth",
       "manim.mobject.mobject.Mobject.scale_to_fit_height",
       "manim.mobject.mobject.Mobject.scale_to_fit_width",
+      "manim.mobject.mobject.Mobject.set",
       "manim.mobject.mobject.Mobject.set_color",
       "manim.mobject.mobject.Mobject.set_color_by_gradient",
       "manim.mobject.mobject.Mobject.set_colors_by_radial_gradient",
@@ -768,6 +783,7 @@
       "manim.mobject.mobject.Mobject.set_y",
       "manim.mobject.mobject.Mobject.set_z",
       "manim.mobject.mobject.Mobject.set_z_index",
+      "manim.mobject.mobject.Mobject.set_z_index_by_z_Point3D",
       "manim.mobject.mobject.Mobject.shift",
       "manim.mobject.mobject.Mobject.shift_onto_screen",
       "manim.mobject.mobject.Mobject.shuffle",
@@ -783,6 +799,7 @@
       "manim.mobject.mobject.Mobject.stretch_to_fit_width",
       "manim.mobject.mobject.Mobject.surround",
       "manim.mobject.mobject.Mobject.suspend_updating",
+      "manim.mobject.mobject.Mobject.throw_error_if_no_points",
       "manim.mobject.mobject.Mobject.to_corner",
       "manim.mobject.mobject.Mobject.to_edge",
       "manim.mobject.mobject.Mobject.to_original_color",
@@ -865,12 +882,20 @@
       "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_fill",
       "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_points_as_corners",
       "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_stroke",
+      "manim.mobject.svg.brace.ArcBrace",
+      "manim.mobject.svg.brace.Brace",
       "manim.mobject.svg.brace.Brace.get_direction",
       "manim.mobject.svg.brace.Brace.get_tex",
       "manim.mobject.svg.brace.Brace.get_text",
       "manim.mobject.svg.brace.Brace.get_tip",
       "manim.mobject.svg.brace.Brace.put_at_tip",
+      "manim.mobject.svg.brace.BraceBetweenPoints",
+      "manim.mobject.svg.brace.BraceLabel",
+      "manim.mobject.svg.brace.BraceLabel.change_brace_label",
       "manim.mobject.svg.brace.BraceLabel.change_label",
+      "manim.mobject.svg.brace.BraceLabel.creation_anim",
+      "manim.mobject.svg.brace.BraceLabel.shift_brace",
+      "manim.mobject.svg.brace.BraceText",
       "manim.mobject.svg.svg_mobject.SVGMobject.hash_seed",
       "manim.mobject.table.DecimalTable",
       "manim.mobject.table.IntegerTable",
@@ -894,6 +919,40 @@
       "manim.mobject.table.Table.scale",
       "manim.mobject.table.Table.set_column_colors",
       "manim.mobject.table.Table.set_row_colors",
+      "manim.mobject.text.code_mobject.Code.get_styles_list",
+      "manim.mobject.text.numbers.DecimalNumber",
+      "manim.mobject.text.numbers.DecimalNumber.font_size",
+      "manim.mobject.text.numbers.DecimalNumber.get_value",
+      "manim.mobject.text.numbers.DecimalNumber.increment_value",
+      "manim.mobject.text.numbers.DecimalNumber.set_value",
+      "manim.mobject.text.numbers.Integer",
+      "manim.mobject.text.numbers.Integer.get_value",
+      "manim.mobject.text.numbers.Variable",
+      "manim.mobject.text.tex_mobject.BulletedList",
+      "manim.mobject.text.tex_mobject.BulletedList.fade_all_but",
+      "manim.mobject.text.tex_mobject.MathTex",
+      "manim.mobject.text.tex_mobject.MathTex.get_part_by_tex",
+      "manim.mobject.text.tex_mobject.MathTex.index_of_part",
+      "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex",
+      "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex_to_color_map",
+      "manim.mobject.text.tex_mobject.MathTex.set_opacity_by_tex",
+      "manim.mobject.text.tex_mobject.MathTex.sort_alphabetically",
+      "manim.mobject.text.tex_mobject.MathTexPart",
+      "manim.mobject.text.tex_mobject.SingleStringMathTex",
+      "manim.mobject.text.tex_mobject.SingleStringMathTex.font_size",
+      "manim.mobject.text.tex_mobject.SingleStringMathTex.get_tex_string",
+      "manim.mobject.text.tex_mobject.SingleStringMathTex.init_colors",
+      "manim.mobject.text.tex_mobject.Tex",
+      "manim.mobject.text.tex_mobject.Title",
+      "manim.mobject.text.text_mobject.MarkupText",
+      "manim.mobject.text.text_mobject.MarkupText.font_list",
+      "manim.mobject.text.text_mobject.MarkupText.font_size",
+      "manim.mobject.text.text_mobject.Paragraph",
+      "manim.mobject.text.text_mobject.Text",
+      "manim.mobject.text.text_mobject.Text.font_list",
+      "manim.mobject.text.text_mobject.Text.font_size",
+      "manim.mobject.text.text_mobject.Text.init_colors",
+      "manim.mobject.text.text_mobject.remove_invisible_chars",
       "manim.mobject.three_d.polyhedra.ConvexHull3D",
       "manim.mobject.three_d.polyhedra.Dodecahedron",
       "manim.mobject.three_d.polyhedra.Icosahedron",
@@ -995,6 +1054,7 @@
       "manim.mobject.types.point_cloud_mobject.PointCloudDot",
       "manim.mobject.types.point_cloud_mobject.PointCloudDot.generate_points",
       "manim.mobject.types.point_cloud_mobject.PointCloudDot.init_points",
+      "manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects",
       "manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects.point_from_proportion",
       "manim.mobject.types.vectorized_mobject.DashedVMobject",
       "manim.mobject.types.vectorized_mobject.VDict",
@@ -1003,6 +1063,7 @@
       "manim.mobject.types.vectorized_mobject.VDict.get_all_submobjects",
       "manim.mobject.types.vectorized_mobject.VDict.remove",
       "manim.mobject.types.vectorized_mobject.VGroup",
+      "manim.mobject.types.vectorized_mobject.VGroup.add",
       "manim.mobject.types.vectorized_mobject.VMobject",
       "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve",
       "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve_to",
@@ -1046,6 +1107,7 @@
       "manim.mobject.types.vectorized_mobject.VMobject.get_gradient_start_and_end_points",
       "manim.mobject.types.vectorized_mobject.VMobject.get_group_class",
       "manim.mobject.types.vectorized_mobject.VMobject.get_last_point",
+      "manim.mobject.types.vectorized_mobject.VMobject.get_mobject_type_class",
       "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_function",
       "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_function_with_length",
       "manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_length",
@@ -1068,6 +1130,7 @@
       "manim.mobject.types.vectorized_mobject.VMobject.get_subpaths",
       "manim.mobject.types.vectorized_mobject.VMobject.get_subpaths_from_points",
       "manim.mobject.types.vectorized_mobject.VMobject.has_new_path_started",
+      "manim.mobject.types.vectorized_mobject.VMobject.init_colors",
       "manim.mobject.types.vectorized_mobject.VMobject.insert_n_curves",
       "manim.mobject.types.vectorized_mobject.VMobject.insert_n_curves_to_point_list",
       "manim.mobject.types.vectorized_mobject.VMobject.interpolate_color",
@@ -1102,10 +1165,14 @@
       "manim.mobject.types.vectorized_mobject.VMobject.start_new_path",
       "manim.mobject.types.vectorized_mobject.VMobject.stroke_color",
       "manim.mobject.types.vectorized_mobject.VMobject.update_rgbas_array",
+      "manim.mobject.types.vectorized_mobject.VectorizedPoint",
       "manim.mobject.types.vectorized_mobject.VectorizedPoint.get_location",
       "manim.mobject.types.vectorized_mobject.VectorizedPoint.height",
       "manim.mobject.types.vectorized_mobject.VectorizedPoint.set_location",
       "manim.mobject.types.vectorized_mobject.VectorizedPoint.width",
+      "manim.mobject.utils.get_mobject_class",
+      "manim.mobject.utils.get_point_mobject_class",
+      "manim.mobject.utils.get_vectorized_mobject_class",
       "manim.mobject.value_tracker.ComplexValueTracker",
       "manim.mobject.value_tracker.ComplexValueTracker.get_value",
       "manim.mobject.value_tracker.ComplexValueTracker.set_value",
@@ -1116,7 +1183,13 @@
       "manim.mobject.value_tracker.ValueTracker.set_value",
       "manim.mobject.vector_field.ArrowVectorField",
       "manim.mobject.vector_field.ArrowVectorField.get_vector",
+      "manim.mobject.vector_field.StreamLines",
+      "manim.mobject.vector_field.StreamLines.create",
+      "manim.mobject.vector_field.StreamLines.end_animation",
+      "manim.mobject.vector_field.StreamLines.start_animation",
       "manim.mobject.vector_field.VectorField",
+      "manim.mobject.vector_field.VectorField.fit_to_coordinate_system",
+      "manim.mobject.vector_field.VectorField.get_colored_background_image",
       "manim.mobject.vector_field.VectorField.get_nudge_updater",
       "manim.mobject.vector_field.VectorField.get_vectorized_rgba_gradient_function",
       "manim.mobject.vector_field.VectorField.nudge",
@@ -1272,6 +1345,7 @@
       "manim.utils.color.core.rgb_to_color",
       "manim.utils.color.core.rgb_to_hex",
       "manim.utils.color.core.rgba_to_color",
+      "manim.utils.config_ops.DictAsObject",
       "manim.utils.config_ops.merge_dicts_recursively",
       "manim.utils.config_ops.update_dict_recursively",
       "manim.utils.file_ops.add_extension_if_not_present",
@@ -1308,12 +1382,28 @@
       "manim.utils.module_ops.get_scene_classes_from_module",
       "manim.utils.module_ops.get_scenes_to_render",
       "manim.utils.module_ops.scene_classes_from_file",
+      "manim.utils.parameter_parsing.flatten_iterable_parameters",
       "manim.utils.paths.clockwise_path",
       "manim.utils.paths.counterclockwise_path",
       "manim.utils.paths.path_along_arc",
       "manim.utils.paths.path_along_circles",
       "manim.utils.paths.spiral_path",
       "manim.utils.paths.straight_path",
+      "manim.utils.polylabel.Cell",
+      "manim.utils.polylabel.Polygon",
+      "manim.utils.polylabel.Polygon.compute_distance",
+      "manim.utils.polylabel.Polygon.inside",
+      "manim.utils.polylabel.polylabel",
+      "manim.utils.qhull.Facet",
+      "manim.utils.qhull.Facet.compute_normal",
+      "manim.utils.qhull.Horizon",
+      "manim.utils.qhull.QuickHull",
+      "manim.utils.qhull.QuickHull.build",
+      "manim.utils.qhull.QuickHull.classify",
+      "manim.utils.qhull.QuickHull.compute_horizon",
+      "manim.utils.qhull.QuickHull.initialize",
+      "manim.utils.qhull.QuickHullPoint",
+      "manim.utils.qhull.SubFacet",
       "manim.utils.rate_functions.double_smooth",
       "manim.utils.rate_functions.ease_in_back",
       "manim.utils.rate_functions.ease_in_bounce",
@@ -1348,6 +1438,7 @@
       "manim.utils.rate_functions.exponential_decay",
       "manim.utils.rate_functions.linear",
       "manim.utils.rate_functions.lingering",
+      "manim.utils.rate_functions.not_quite_there",
       "manim.utils.rate_functions.running_start",
       "manim.utils.rate_functions.rush_from",
       "manim.utils.rate_functions.rush_into",
@@ -1356,9 +1447,12 @@
       "manim.utils.rate_functions.smoothererstep",
       "manim.utils.rate_functions.smootherstep",
       "manim.utils.rate_functions.smoothstep",
+      "manim.utils.rate_functions.squish_rate_func",
       "manim.utils.rate_functions.there_and_back",
       "manim.utils.rate_functions.there_and_back_with_pause",
+      "manim.utils.rate_functions.unit_interval",
       "manim.utils.rate_functions.wiggle",
+      "manim.utils.rate_functions.zero",
       "manim.utils.simple_functions.binary_search",
       "manim.utils.simple_functions.clip",
       "manim.utils.simple_functions.sigmoid",
@@ -1398,7 +1492,17 @@
       "manim.utils.space_ops.spherical_to_cartesian",
       "manim.utils.space_ops.thick_diagonal",
       "manim.utils.space_ops.z_to_vector",
-      "manim.utils.tex.TexTemplate.body"
+      "manim.utils.tex.TexTemplate",
+      "manim.utils.tex.TexTemplate.add_to_document",
+      "manim.utils.tex.TexTemplate.add_to_preamble",
+      "manim.utils.tex.TexTemplate.body",
+      "manim.utils.tex.TexTemplate.copy",
+      "manim.utils.tex.TexTemplate.get_texcode_for_expression",
+      "manim.utils.tex.TexTemplate.get_texcode_for_expression_in_env",
+      "manim.utils.tex_file_writing.tex_hash",
+      "manim.utils.tex_templates.TexFontTemplates",
+      "manim.utils.tex_templates.TexTemplateLibrary",
+      "manim.utils.unit.Percent"
     ],
     "reports": [
       {
@@ -1468,7 +1572,7 @@
           "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
           "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
-          "src/studio/core/api-families.native.spec-node.mjs": "74081432f29130f283031354e76a9c5beb64b85edea1b886c012db2065390d50"
+          "src/studio/core/api-families.native.spec-node.mjs": "61fed8d3754606e3e2e7c22382387efee6520d40fee8a616bce0de0badcdf698"
         },
         "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "engineVersion": "0.20.1",
@@ -1513,6 +1617,8 @@
           "manim.animation.transform.TransformFromCopy",
           "manim.animation.updaters.update.UpdateFromAlphaFunc",
           "manim.animation.updaters.update.UpdateFromFunc",
+          "manim.mobject.frame.FullScreenRectangle",
+          "manim.mobject.frame.ScreenRectangle",
           "manim.mobject.geometry.arc.AnnotationDot",
           "manim.mobject.geometry.arc.AnnularSector",
           "manim.mobject.geometry.arc.Annulus",
@@ -1601,6 +1707,10 @@
           "manim.mobject.graphing.number_line.NumberLine.get_tick_marks",
           "manim.mobject.graphing.number_line.NumberLine.number_to_point",
           "manim.mobject.graphing.number_line.NumberLine.point_to_number",
+          "manim.mobject.logo.ManimBanner",
+          "manim.mobject.logo.ManimBanner.create",
+          "manim.mobject.logo.ManimBanner.expand",
+          "manim.mobject.logo.ManimBanner.scale",
           "manim.mobject.matrix.DecimalMatrix",
           "manim.mobject.matrix.IntegerMatrix",
           "manim.mobject.matrix.Matrix",
@@ -1611,13 +1721,17 @@
           "manim.mobject.matrix.get_det_text",
           "manim.mobject.matrix.matrix_to_mobject",
           "manim.mobject.matrix.matrix_to_tex_string",
+          "manim.mobject.mobject.Group",
+          "manim.mobject.mobject.Mobject",
           "manim.mobject.mobject.Mobject.add",
           "manim.mobject.mobject.Mobject.apply_complex_function",
           "manim.mobject.mobject.Mobject.apply_function",
+          "manim.mobject.mobject.Mobject.apply_over_attr_arrays",
           "manim.mobject.mobject.Mobject.arrange_in_grid",
           "manim.mobject.mobject.Mobject.copy",
           "manim.mobject.mobject.Mobject.family_members_with_points",
           "manim.mobject.mobject.Mobject.flip",
+          "manim.mobject.mobject.Mobject.generate_points",
           "manim.mobject.mobject.Mobject.generate_target",
           "manim.mobject.mobject.Mobject.get_all_points",
           "manim.mobject.mobject.Mobject.get_bottom",
@@ -1626,12 +1740,16 @@
           "manim.mobject.mobject.Mobject.get_end",
           "manim.mobject.mobject.Mobject.get_family",
           "manim.mobject.mobject.Mobject.get_left",
+          "manim.mobject.mobject.Mobject.get_merged_array",
+          "manim.mobject.mobject.Mobject.get_mobject_type_class",
+          "manim.mobject.mobject.Mobject.get_pieces",
           "manim.mobject.mobject.Mobject.get_right",
           "manim.mobject.mobject.Mobject.get_start",
           "manim.mobject.mobject.Mobject.get_top",
           "manim.mobject.mobject.Mobject.get_x",
           "manim.mobject.mobject.Mobject.get_y",
           "manim.mobject.mobject.Mobject.get_z",
+          "manim.mobject.mobject.Mobject.init_colors",
           "manim.mobject.mobject.Mobject.move_to",
           "manim.mobject.mobject.Mobject.remove",
           "manim.mobject.mobject.Mobject.restore",
@@ -1639,20 +1757,65 @@
           "manim.mobject.mobject.Mobject.save_state",
           "manim.mobject.mobject.Mobject.scale_to_fit_height",
           "manim.mobject.mobject.Mobject.scale_to_fit_width",
+          "manim.mobject.mobject.Mobject.set",
           "manim.mobject.mobject.Mobject.set_x",
           "manim.mobject.mobject.Mobject.set_y",
           "manim.mobject.mobject.Mobject.set_z",
           "manim.mobject.mobject.Mobject.set_z_index",
+          "manim.mobject.mobject.Mobject.set_z_index_by_z_Point3D",
           "manim.mobject.mobject.Mobject.shift",
           "manim.mobject.mobject.Mobject.split",
           "manim.mobject.mobject.Mobject.stretch_to_fit_height",
           "manim.mobject.mobject.Mobject.stretch_to_fit_width",
+          "manim.mobject.mobject.Mobject.throw_error_if_no_points",
+          "manim.mobject.svg.brace.ArcBrace",
+          "manim.mobject.svg.brace.Brace",
+          "manim.mobject.svg.brace.BraceBetweenPoints",
+          "manim.mobject.svg.brace.BraceLabel",
+          "manim.mobject.svg.brace.BraceLabel.change_brace_label",
+          "manim.mobject.svg.brace.BraceLabel.creation_anim",
+          "manim.mobject.svg.brace.BraceLabel.shift_brace",
+          "manim.mobject.svg.brace.BraceText",
           "manim.mobject.table.DecimalTable",
           "manim.mobject.table.IntegerTable",
           "manim.mobject.table.MathTable",
           "manim.mobject.table.MobjectTable",
           "manim.mobject.table.Table",
           "manim.mobject.table.Table.create",
+          "manim.mobject.text.code_mobject.Code.get_styles_list",
+          "manim.mobject.text.numbers.DecimalNumber",
+          "manim.mobject.text.numbers.DecimalNumber.font_size",
+          "manim.mobject.text.numbers.DecimalNumber.get_value",
+          "manim.mobject.text.numbers.DecimalNumber.increment_value",
+          "manim.mobject.text.numbers.DecimalNumber.set_value",
+          "manim.mobject.text.numbers.Integer",
+          "manim.mobject.text.numbers.Integer.get_value",
+          "manim.mobject.text.numbers.Variable",
+          "manim.mobject.text.tex_mobject.BulletedList",
+          "manim.mobject.text.tex_mobject.BulletedList.fade_all_but",
+          "manim.mobject.text.tex_mobject.MathTex",
+          "manim.mobject.text.tex_mobject.MathTex.get_part_by_tex",
+          "manim.mobject.text.tex_mobject.MathTex.index_of_part",
+          "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex",
+          "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex_to_color_map",
+          "manim.mobject.text.tex_mobject.MathTex.set_opacity_by_tex",
+          "manim.mobject.text.tex_mobject.MathTex.sort_alphabetically",
+          "manim.mobject.text.tex_mobject.MathTexPart",
+          "manim.mobject.text.tex_mobject.SingleStringMathTex",
+          "manim.mobject.text.tex_mobject.SingleStringMathTex.font_size",
+          "manim.mobject.text.tex_mobject.SingleStringMathTex.get_tex_string",
+          "manim.mobject.text.tex_mobject.SingleStringMathTex.init_colors",
+          "manim.mobject.text.tex_mobject.Tex",
+          "manim.mobject.text.tex_mobject.Title",
+          "manim.mobject.text.text_mobject.MarkupText",
+          "manim.mobject.text.text_mobject.MarkupText.font_list",
+          "manim.mobject.text.text_mobject.MarkupText.font_size",
+          "manim.mobject.text.text_mobject.Paragraph",
+          "manim.mobject.text.text_mobject.Text",
+          "manim.mobject.text.text_mobject.Text.font_list",
+          "manim.mobject.text.text_mobject.Text.font_size",
+          "manim.mobject.text.text_mobject.Text.init_colors",
+          "manim.mobject.text.text_mobject.remove_invisible_chars",
           "manim.mobject.three_d.polyhedra.ConvexHull3D",
           "manim.mobject.three_d.polyhedra.Dodecahedron",
           "manim.mobject.three_d.polyhedra.Icosahedron",
@@ -1687,8 +1850,10 @@
           "manim.mobject.three_d.three_dimensions.ThreeDVMobject",
           "manim.mobject.three_d.three_dimensions.Torus",
           "manim.mobject.three_d.three_dimensions.Torus.func",
+          "manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects",
           "manim.mobject.types.vectorized_mobject.DashedVMobject",
           "manim.mobject.types.vectorized_mobject.VGroup",
+          "manim.mobject.types.vectorized_mobject.VGroup.add",
           "manim.mobject.types.vectorized_mobject.VMobject",
           "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve_to",
           "manim.mobject.types.vectorized_mobject.VMobject.add_line_to",
@@ -1698,11 +1863,13 @@
           "manim.mobject.types.vectorized_mobject.VMobject.get_color",
           "manim.mobject.types.vectorized_mobject.VMobject.get_fill_color",
           "manim.mobject.types.vectorized_mobject.VMobject.get_fill_opacity",
+          "manim.mobject.types.vectorized_mobject.VMobject.get_mobject_type_class",
           "manim.mobject.types.vectorized_mobject.VMobject.get_num_curves",
           "manim.mobject.types.vectorized_mobject.VMobject.get_sheen_factor",
           "manim.mobject.types.vectorized_mobject.VMobject.get_stroke_color",
           "manim.mobject.types.vectorized_mobject.VMobject.get_stroke_opacity",
           "manim.mobject.types.vectorized_mobject.VMobject.get_stroke_width",
+          "manim.mobject.types.vectorized_mobject.VMobject.init_colors",
           "manim.mobject.types.vectorized_mobject.VMobject.match_style",
           "manim.mobject.types.vectorized_mobject.VMobject.point_from_proportion",
           "manim.mobject.types.vectorized_mobject.VMobject.set_fill",
@@ -1710,6 +1877,17 @@
           "manim.mobject.types.vectorized_mobject.VMobject.set_points_smoothly",
           "manim.mobject.types.vectorized_mobject.VMobject.set_sheen",
           "manim.mobject.types.vectorized_mobject.VMobject.set_stroke",
+          "manim.mobject.types.vectorized_mobject.VectorizedPoint",
+          "manim.mobject.utils.get_mobject_class",
+          "manim.mobject.utils.get_point_mobject_class",
+          "manim.mobject.utils.get_vectorized_mobject_class",
+          "manim.mobject.vector_field.ArrowVectorField",
+          "manim.mobject.vector_field.StreamLines",
+          "manim.mobject.vector_field.StreamLines.create",
+          "manim.mobject.vector_field.StreamLines.end_animation",
+          "manim.mobject.vector_field.StreamLines.start_animation",
+          "manim.mobject.vector_field.VectorField.fit_to_coordinate_system",
+          "manim.mobject.vector_field.VectorField.get_colored_background_image",
           "manim.scene.scene.Scene.clear",
           "manim.utils.bezier.interpolate",
           "manim.utils.color.core.ManimColor",
@@ -1727,6 +1905,23 @@
           "manim.utils.color.core.ManimColor.to_integer",
           "manim.utils.color.core.ManimColor.to_rgb",
           "manim.utils.color.core.ManimColor.to_rgba",
+          "manim.utils.config_ops.DictAsObject",
+          "manim.utils.parameter_parsing.flatten_iterable_parameters",
+          "manim.utils.polylabel.Cell",
+          "manim.utils.polylabel.Polygon",
+          "manim.utils.polylabel.Polygon.compute_distance",
+          "manim.utils.polylabel.Polygon.inside",
+          "manim.utils.polylabel.polylabel",
+          "manim.utils.qhull.Facet",
+          "manim.utils.qhull.Facet.compute_normal",
+          "manim.utils.qhull.Horizon",
+          "manim.utils.qhull.QuickHull",
+          "manim.utils.qhull.QuickHull.build",
+          "manim.utils.qhull.QuickHull.classify",
+          "manim.utils.qhull.QuickHull.compute_horizon",
+          "manim.utils.qhull.QuickHull.initialize",
+          "manim.utils.qhull.QuickHullPoint",
+          "manim.utils.qhull.SubFacet",
           "manim.utils.rate_functions.double_smooth",
           "manim.utils.rate_functions.ease_in_back",
           "manim.utils.rate_functions.ease_in_bounce",
@@ -1761,6 +1956,7 @@
           "manim.utils.rate_functions.exponential_decay",
           "manim.utils.rate_functions.linear",
           "manim.utils.rate_functions.lingering",
+          "manim.utils.rate_functions.not_quite_there",
           "manim.utils.rate_functions.running_start",
           "manim.utils.rate_functions.rush_from",
           "manim.utils.rate_functions.rush_into",
@@ -1769,13 +1965,26 @@
           "manim.utils.rate_functions.smoothererstep",
           "manim.utils.rate_functions.smootherstep",
           "manim.utils.rate_functions.smoothstep",
+          "manim.utils.rate_functions.squish_rate_func",
           "manim.utils.rate_functions.there_and_back",
           "manim.utils.rate_functions.there_and_back_with_pause",
+          "manim.utils.rate_functions.unit_interval",
           "manim.utils.rate_functions.wiggle",
+          "manim.utils.rate_functions.zero",
           "manim.utils.space_ops.angle_between_vectors",
           "manim.utils.space_ops.cross",
           "manim.utils.space_ops.normalize",
-          "manim.utils.space_ops.rotation_matrix"
+          "manim.utils.space_ops.rotation_matrix",
+          "manim.utils.tex.TexTemplate",
+          "manim.utils.tex.TexTemplate.add_to_document",
+          "manim.utils.tex.TexTemplate.add_to_preamble",
+          "manim.utils.tex.TexTemplate.copy",
+          "manim.utils.tex.TexTemplate.get_texcode_for_expression",
+          "manim.utils.tex.TexTemplate.get_texcode_for_expression_in_env",
+          "manim.utils.tex_file_writing.tex_hash",
+          "manim.utils.tex_templates.TexFontTemplates",
+          "manim.utils.tex_templates.TexTemplateLibrary",
+          "manim.utils.unit.Percent"
         ],
         "families": [
           {
@@ -7056,6 +7265,984 @@
                 ],
                 "mode": "store",
                 "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              }
+            ]
+          },
+          {
+            "family": "textAndBraces",
+            "passed": true,
+            "apiIds": [
+              "manim.mobject.geometry.arc.Arc",
+              "manim.mobject.geometry.arc.Circle",
+              "manim.mobject.geometry.polygram.Square",
+              "manim.mobject.svg.brace.ArcBrace",
+              "manim.mobject.svg.brace.Brace",
+              "manim.mobject.svg.brace.BraceBetweenPoints",
+              "manim.mobject.svg.brace.BraceLabel",
+              "manim.mobject.svg.brace.BraceLabel.change_brace_label",
+              "manim.mobject.svg.brace.BraceLabel.creation_anim",
+              "manim.mobject.svg.brace.BraceLabel.shift_brace",
+              "manim.mobject.svg.brace.BraceText",
+              "manim.mobject.text.code_mobject.Code.get_styles_list",
+              "manim.mobject.text.numbers.DecimalNumber",
+              "manim.mobject.text.numbers.DecimalNumber.font_size",
+              "manim.mobject.text.numbers.DecimalNumber.get_value",
+              "manim.mobject.text.numbers.DecimalNumber.increment_value",
+              "manim.mobject.text.numbers.DecimalNumber.set_value",
+              "manim.mobject.text.numbers.Integer",
+              "manim.mobject.text.numbers.Integer.get_value",
+              "manim.mobject.text.numbers.Variable",
+              "manim.mobject.text.tex_mobject.BulletedList",
+              "manim.mobject.text.tex_mobject.BulletedList.fade_all_but",
+              "manim.mobject.text.tex_mobject.MathTex",
+              "manim.mobject.text.tex_mobject.MathTex.get_part_by_tex",
+              "manim.mobject.text.tex_mobject.MathTex.index_of_part",
+              "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex",
+              "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex_to_color_map",
+              "manim.mobject.text.tex_mobject.MathTex.set_opacity_by_tex",
+              "manim.mobject.text.tex_mobject.MathTex.sort_alphabetically",
+              "manim.mobject.text.tex_mobject.MathTexPart",
+              "manim.mobject.text.tex_mobject.SingleStringMathTex",
+              "manim.mobject.text.tex_mobject.SingleStringMathTex.font_size",
+              "manim.mobject.text.tex_mobject.SingleStringMathTex.get_tex_string",
+              "manim.mobject.text.tex_mobject.SingleStringMathTex.init_colors",
+              "manim.mobject.text.tex_mobject.Tex",
+              "manim.mobject.text.tex_mobject.Title",
+              "manim.mobject.text.text_mobject.MarkupText",
+              "manim.mobject.text.text_mobject.MarkupText.font_list",
+              "manim.mobject.text.text_mobject.MarkupText.font_size",
+              "manim.mobject.text.text_mobject.Paragraph",
+              "manim.mobject.text.text_mobject.Text",
+              "manim.mobject.text.text_mobject.Text.font_list",
+              "manim.mobject.text.text_mobject.Text.font_size",
+              "manim.mobject.text.text_mobject.Text.init_colors",
+              "manim.mobject.text.text_mobject.remove_invisible_chars"
+            ],
+            "cases": [
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [
+                  "radius"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.polygram.Square",
+                "parameters": [
+                  "side_length"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Arc",
+                "parameters": [
+                  "radius",
+                  "angle"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.svg.brace.ArcBrace",
+                "parameters": [
+                  "arc"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.svg.brace.Brace",
+                "parameters": [
+                  "mobject"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.svg.brace.BraceBetweenPoints",
+                "parameters": [
+                  "point_1",
+                  "point_2"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.svg.brace.BraceLabel",
+                "parameters": [
+                  "obj",
+                  "text"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.svg.brace.BraceLabel.creation_anim",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.svg.brace.BraceLabel.change_brace_label",
+                "parameters": [
+                  "obj",
+                  "text"
+                ],
+                "mode": "store",
+                "assertion": "assert len(objects[\"brace_lbl\"].get_all_points()) > 0"
+              },
+              {
+                "apiId": "manim.mobject.svg.brace.BraceLabel.shift_brace",
+                "parameters": [
+                  "obj"
+                ],
+                "mode": "store",
+                "assertion": "assert len(objects[\"brace_lbl\"].get_all_points()) > 0"
+              },
+              {
+                "apiId": "manim.mobject.svg.brace.BraceText",
+                "parameters": [
+                  "obj",
+                  "text"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.code_mobject.Code.get_styles_list",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result) > 0"
+              },
+              {
+                "apiId": "manim.mobject.text.numbers.DecimalNumber",
+                "parameters": [
+                  "number",
+                  "num_decimal_places"
+                ],
+                "mode": "store",
+                "assertion": "assert abs($result.get_value() - 3.14) < 1e-6"
+              },
+              {
+                "apiId": "manim.mobject.text.numbers.DecimalNumber.font_size",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result > 0"
+              },
+              {
+                "apiId": "manim.mobject.text.numbers.DecimalNumber.get_value",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert abs($result - 3.14) < 1e-6"
+              },
+              {
+                "apiId": "manim.mobject.text.numbers.DecimalNumber.set_value",
+                "parameters": [
+                  "number"
+                ],
+                "mode": "store",
+                "assertion": "assert abs(objects[\"dec_num\"].get_value() - 2.5) < 1e-6"
+              },
+              {
+                "apiId": "manim.mobject.text.numbers.DecimalNumber.increment_value",
+                "parameters": [
+                  "delta_t"
+                ],
+                "mode": "store",
+                "assertion": "assert abs(objects[\"dec_num\"].get_value() - 3.0) < 1e-6"
+              },
+              {
+                "apiId": "manim.mobject.text.numbers.Integer",
+                "parameters": [
+                  "number"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.numbers.Integer.get_value",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result == 7"
+              },
+              {
+                "apiId": "manim.mobject.text.numbers.Variable",
+                "parameters": [
+                  "var",
+                  "label"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.BulletedList",
+                "parameters": [
+                  "items"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.BulletedList.fade_all_but",
+                "parameters": [
+                  "index_or_string",
+                  "opacity"
+                ],
+                "mode": "store",
+                "assertion": "assert len(objects[\"bul_list\"].get_all_points()) > 0"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.MathTex",
+                "parameters": [
+                  "tex_strings"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.MathTex.get_part_by_tex",
+                "parameters": [
+                  "tex"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.MathTex.index_of_part",
+                "parameters": [
+                  "part"
+                ],
+                "mode": "store",
+                "assertion": "assert $result == 0"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex",
+                "parameters": [
+                  "tex",
+                  "color"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex_to_color_map",
+                "parameters": [
+                  "texs_to_color_map"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.MathTex.set_opacity_by_tex",
+                "parameters": [
+                  "tex",
+                  "opacity"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.MathTex.sort_alphabetically",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len(objects[\"mtex_main\"]) == 3"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.MathTexPart",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.SingleStringMathTex",
+                "parameters": [
+                  "tex_string"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.SingleStringMathTex.font_size",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result > 0"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.SingleStringMathTex.get_tex_string",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result == \"x^2\""
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.SingleStringMathTex.init_colors",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len(objects[\"ssm_tex\"].get_all_points()) > 0"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.Tex",
+                "parameters": [
+                  "tex_strings"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.tex_mobject.Title",
+                "parameters": [
+                  "text_parts"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.MarkupText",
+                "parameters": [
+                  "text"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.MarkupText.font_size",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result > 0"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.MarkupText.font_list",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert isinstance($result, list)"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.Paragraph",
+                "parameters": [
+                  "text"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.Text",
+                "parameters": [
+                  "text"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.Text.font_size",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result > 0"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.Text.font_list",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert isinstance($result, list)"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.Text.init_colors",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len(objects[\"txt_mob\"].get_all_points()) > 0"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.remove_invisible_chars",
+                "parameters": [
+                  "mobject"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              }
+            ]
+          },
+          {
+            "family": "coreMobjectsAndUtils",
+            "passed": true,
+            "apiIds": [
+              "manim.mobject.frame.FullScreenRectangle",
+              "manim.mobject.frame.ScreenRectangle",
+              "manim.mobject.geometry.arc.Circle",
+              "manim.mobject.geometry.polygram.Square",
+              "manim.mobject.graphing.coordinate_systems.Axes",
+              "manim.mobject.logo.ManimBanner",
+              "manim.mobject.logo.ManimBanner.create",
+              "manim.mobject.logo.ManimBanner.expand",
+              "manim.mobject.logo.ManimBanner.scale",
+              "manim.mobject.mobject.Group",
+              "manim.mobject.mobject.Mobject",
+              "manim.mobject.mobject.Mobject.apply_over_attr_arrays",
+              "manim.mobject.mobject.Mobject.generate_points",
+              "manim.mobject.mobject.Mobject.get_merged_array",
+              "manim.mobject.mobject.Mobject.get_mobject_type_class",
+              "manim.mobject.mobject.Mobject.get_pieces",
+              "manim.mobject.mobject.Mobject.init_colors",
+              "manim.mobject.mobject.Mobject.set",
+              "manim.mobject.mobject.Mobject.set_z_index_by_z_Point3D",
+              "manim.mobject.mobject.Mobject.throw_error_if_no_points",
+              "manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects",
+              "manim.mobject.types.vectorized_mobject.VGroup",
+              "manim.mobject.types.vectorized_mobject.VGroup.add",
+              "manim.mobject.types.vectorized_mobject.VMobject.get_mobject_type_class",
+              "manim.mobject.types.vectorized_mobject.VMobject.init_colors",
+              "manim.mobject.types.vectorized_mobject.VectorizedPoint",
+              "manim.mobject.utils.get_mobject_class",
+              "manim.mobject.utils.get_point_mobject_class",
+              "manim.mobject.utils.get_vectorized_mobject_class",
+              "manim.mobject.vector_field.ArrowVectorField",
+              "manim.mobject.vector_field.StreamLines",
+              "manim.mobject.vector_field.StreamLines.create",
+              "manim.mobject.vector_field.StreamLines.end_animation",
+              "manim.mobject.vector_field.StreamLines.start_animation",
+              "manim.mobject.vector_field.VectorField.fit_to_coordinate_system",
+              "manim.mobject.vector_field.VectorField.get_colored_background_image",
+              "manim.utils.config_ops.DictAsObject",
+              "manim.utils.parameter_parsing.flatten_iterable_parameters",
+              "manim.utils.polylabel.Cell",
+              "manim.utils.polylabel.Polygon",
+              "manim.utils.polylabel.Polygon.compute_distance",
+              "manim.utils.polylabel.Polygon.inside",
+              "manim.utils.polylabel.polylabel",
+              "manim.utils.qhull.Facet",
+              "manim.utils.qhull.Facet.compute_normal",
+              "manim.utils.qhull.Horizon",
+              "manim.utils.qhull.QuickHull",
+              "manim.utils.qhull.QuickHull.build",
+              "manim.utils.qhull.QuickHull.classify",
+              "manim.utils.qhull.QuickHull.compute_horizon",
+              "manim.utils.qhull.QuickHull.initialize",
+              "manim.utils.qhull.QuickHullPoint",
+              "manim.utils.qhull.SubFacet",
+              "manim.utils.rate_functions.not_quite_there",
+              "manim.utils.rate_functions.squish_rate_func",
+              "manim.utils.rate_functions.unit_interval",
+              "manim.utils.rate_functions.zero",
+              "manim.utils.tex.TexTemplate",
+              "manim.utils.tex.TexTemplate.add_to_document",
+              "manim.utils.tex.TexTemplate.add_to_preamble",
+              "manim.utils.tex.TexTemplate.copy",
+              "manim.utils.tex.TexTemplate.get_texcode_for_expression",
+              "manim.utils.tex.TexTemplate.get_texcode_for_expression_in_env",
+              "manim.utils.tex_file_writing.tex_hash",
+              "manim.utils.tex_templates.TexFontTemplates",
+              "manim.utils.tex_templates.TexTemplateLibrary",
+              "manim.utils.unit.Percent"
+            ],
+            "cases": [
+              {
+                "apiId": "manim.mobject.frame.FullScreenRectangle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.frame.ScreenRectangle",
+                "parameters": [
+                  "height"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.logo.ManimBanner",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.logo.ManimBanner.create",
+                "parameters": [
+                  "run_time"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.logo.ManimBanner.expand",
+                "parameters": [
+                  "run_time"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.logo.ManimBanner.scale",
+                "parameters": [
+                  "scale_factor"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [
+                  "radius"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.polygram.Square",
+                "parameters": [
+                  "side_length"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Group",
+                "parameters": [
+                  "mobjects"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result) == 2"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject",
+                "parameters": [
+                  "color",
+                  "name"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.name == \"test_mob\""
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject.generate_points",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert objects[\"cm_raw_mob\"] is not None"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject.init_colors",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert objects[\"cm_raw_mob\"] is not None"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject.get_mobject_type_class",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is Mobject"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject.get_pieces",
+                "parameters": [
+                  "n_pieces"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result) == 4"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject.get_merged_array",
+                "parameters": [
+                  "array_attr"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result) > 0"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject.apply_over_attr_arrays",
+                "parameters": [
+                  "func"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject.set",
+                "parameters": [
+                  "kwargs"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.z_index == 3"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject.set_z_index_by_z_Point3D",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.mobject.Mobject.throw_error_if_no_points",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert objects[\"cm_circle\"] is not None"
+              },
+              {
+                "apiId": "manim.mobject.types.vectorized_mobject.VMobject.get_mobject_type_class",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is VMobject"
+              },
+              {
+                "apiId": "manim.mobject.types.vectorized_mobject.VMobject.init_colors",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len(objects[\"cm_circle\"].get_all_points()) > 0"
+              },
+              {
+                "apiId": "manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects",
+                "parameters": [
+                  "vmobject"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result) > 0"
+              },
+              {
+                "apiId": "manim.mobject.types.vectorized_mobject.VGroup",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result) == 0"
+              },
+              {
+                "apiId": "manim.mobject.types.vectorized_mobject.VGroup.add",
+                "parameters": [
+                  "vmobjects"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result) == 1"
+              },
+              {
+                "apiId": "manim.mobject.types.vectorized_mobject.VectorizedPoint",
+                "parameters": [
+                  "location"
+                ],
+                "mode": "store",
+                "assertion": "np.testing.assert_allclose($result.get_center(), [1, 2, 0])"
+              },
+              {
+                "apiId": "manim.mobject.utils.get_mobject_class",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is Mobject"
+              },
+              {
+                "apiId": "manim.mobject.utils.get_point_mobject_class",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is PMobject"
+              },
+              {
+                "apiId": "manim.mobject.utils.get_vectorized_mobject_class",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is VMobject"
+              },
+              {
+                "apiId": "manim.mobject.graphing.coordinate_systems.Axes",
+                "parameters": [
+                  "x_range",
+                  "y_range"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.vector_field.ArrowVectorField",
+                "parameters": [
+                  "func",
+                  "x_range",
+                  "y_range"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.vector_field.VectorField.fit_to_coordinate_system",
+                "parameters": [
+                  "coordinate_system"
+                ],
+                "mode": "store",
+                "assertion": "assert len(objects[\"vf_arrow\"].get_all_points()) > 0"
+              },
+              {
+                "apiId": "manim.mobject.vector_field.VectorField.get_colored_background_image",
+                "parameters": [
+                  "sampling_rate"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.size[0] > 0"
+              },
+              {
+                "apiId": "manim.mobject.vector_field.StreamLines",
+                "parameters": [
+                  "func",
+                  "x_range",
+                  "y_range",
+                  "virtual_time"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.vector_field.StreamLines.create",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.vector_field.StreamLines.start_animation",
+                "parameters": [
+                  "warm_up"
+                ],
+                "mode": "store",
+                "assertion": "assert len(objects[\"vf_sl\"].updaters) > 0"
+              },
+              {
+                "apiId": "manim.mobject.vector_field.StreamLines.end_animation",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.utils.config_ops.DictAsObject",
+                "parameters": [
+                  "dictin"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.a == 10 and $result.b == 20"
+              },
+              {
+                "apiId": "manim.utils.parameter_parsing.flatten_iterable_parameters",
+                "parameters": [
+                  "args"
+                ],
+                "mode": "store",
+                "assertion": "assert list($result) == [1, 2, 3]"
+              },
+              {
+                "apiId": "manim.utils.unit.Percent",
+                "parameters": [
+                  "axis"
+                ],
+                "mode": "store",
+                "assertion": "assert (50 * $result) > 0"
+              },
+              {
+                "apiId": "manim.utils.rate_functions.not_quite_there",
+                "parameters": [
+                  "func",
+                  "proportion"
+                ],
+                "mode": "store",
+                "assertion": "assert abs($result(1.0) - 0.7) < 1e-6"
+              },
+              {
+                "apiId": "manim.utils.rate_functions.squish_rate_func",
+                "parameters": [
+                  "func",
+                  "a",
+                  "b"
+                ],
+                "mode": "store",
+                "assertion": "assert abs($result(0.5) - 0.5) < 1e-6"
+              },
+              {
+                "apiId": "manim.utils.rate_functions.unit_interval",
+                "parameters": [
+                  "function"
+                ],
+                "mode": "store",
+                "assertion": "assert abs($result(0.5) - 0.5) < 1e-6"
+              },
+              {
+                "apiId": "manim.utils.rate_functions.zero",
+                "parameters": [
+                  "function"
+                ],
+                "mode": "store",
+                "assertion": "assert $result(0.0) == 0.0 and abs($result(0.5) - 0.5) < 1e-6"
+              },
+              {
+                "apiId": "manim.utils.polylabel.Polygon",
+                "parameters": [
+                  "rings"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.utils.polylabel.Polygon.inside",
+                "parameters": [
+                  "point"
+                ],
+                "mode": "store",
+                "assertion": "assert bool($result) is True"
+              },
+              {
+                "apiId": "manim.utils.polylabel.Polygon.compute_distance",
+                "parameters": [
+                  "point"
+                ],
+                "mode": "store",
+                "assertion": "assert $result > 0"
+              },
+              {
+                "apiId": "manim.utils.polylabel.Cell",
+                "parameters": [
+                  "c",
+                  "h",
+                  "polygon"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.d > 0"
+              },
+              {
+                "apiId": "manim.utils.polylabel.polylabel",
+                "parameters": [
+                  "rings",
+                  "precision"
+                ],
+                "mode": "store",
+                "assertion": "np.testing.assert_allclose($result.c, [2.0, 2.0], atol=1.0)"
+              },
+              {
+                "apiId": "manim.utils.qhull.QuickHullPoint",
+                "parameters": [
+                  "coordinates"
+                ],
+                "mode": "store",
+                "assertion": "np.testing.assert_allclose($result.coordinates, [0.0, 0.0])"
+              },
+              {
+                "apiId": "manim.utils.qhull.SubFacet",
+                "parameters": [
+                  "coordinates"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.points) == 2"
+              },
+              {
+                "apiId": "manim.utils.qhull.Facet",
+                "parameters": [
+                  "coordinates",
+                  "internal"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.coordinates) == 2"
+              },
+              {
+                "apiId": "manim.utils.qhull.Facet.compute_normal",
+                "parameters": [
+                  "internal"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result) == 2"
+              },
+              {
+                "apiId": "manim.utils.qhull.Horizon",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.facets) == 0"
+              },
+              {
+                "apiId": "manim.utils.qhull.QuickHull",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.utils.qhull.QuickHull.initialize",
+                "parameters": [
+                  "points"
+                ],
+                "mode": "store",
+                "assertion": "assert len(objects[\"qh_main\"].facets) >= 3"
+              },
+              {
+                "apiId": "manim.utils.qhull.QuickHull.build",
+                "parameters": [
+                  "points"
+                ],
+                "mode": "store",
+                "assertion": "assert len(objects[\"qh_main\"].facets) >= 3"
+              },
+              {
+                "apiId": "manim.utils.qhull.QuickHull.classify",
+                "parameters": [
+                  "facet"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"qh_fac\"] is not None"
+              },
+              {
+                "apiId": "manim.utils.qhull.QuickHull.compute_horizon",
+                "parameters": [
+                  "eye",
+                  "start_facet"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.utils.tex.TexTemplate",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.utils.tex.TexTemplate.copy",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not objects[\"tt_main\"]"
+              },
+              {
+                "apiId": "manim.utils.tex.TexTemplate.add_to_preamble",
+                "parameters": [
+                  "txt"
+                ],
+                "mode": "store",
+                "assertion": "assert \"% comment\" in objects[\"tt_copy\"].preamble"
+              },
+              {
+                "apiId": "manim.utils.tex.TexTemplate.add_to_document",
+                "parameters": [
+                  "txt"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.utils.tex.TexTemplate.get_texcode_for_expression",
+                "parameters": [
+                  "expression"
+                ],
+                "mode": "store",
+                "assertion": "assert \"x^2\" in $result"
+              },
+              {
+                "apiId": "manim.utils.tex.TexTemplate.get_texcode_for_expression_in_env",
+                "parameters": [
+                  "expression",
+                  "environment"
+                ],
+                "mode": "store",
+                "assertion": "assert \"align*\" in $result"
+              },
+              {
+                "apiId": "manim.utils.tex_templates.TexFontTemplates",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.utils.tex_templates.TexTemplateLibrary",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.tex_hash",
+                "parameters": [
+                  "expression"
+                ],
+                "mode": "store",
+                "assertion": "assert isinstance($result, str) and len($result) > 0"
               }
             ]
           }
@@ -12840,7 +14027,7 @@
       }
     ]
   },
-  "entriesWithBehaviorEvidence": 1350,
+  "entriesWithBehaviorEvidence": 1454,
   "entriesWithoutBehaviorEvidence": [
     "manim._config.cli_colors.parse_cli_ctx",
     "manim._config.logger_utils.JSONFormatter",
@@ -12970,33 +14157,16 @@
     "manim.constants.QualityDict",
     "manim.constants.RendererType",
     "manim.data_structures.MethodWithArgs",
-    "manim.mobject.frame.FullScreenRectangle",
-    "manim.mobject.frame.ScreenRectangle",
     "manim.mobject.geometry.tips.ArrowTip",
     "manim.mobject.graph.GenericGraph",
     "manim.mobject.graph.GenericGraph.from_networkx",
     "manim.mobject.graph.LayoutFunction",
     "manim.mobject.graphing.coordinate_systems.CoordinateSystem",
-    "manim.mobject.logo.ManimBanner",
-    "manim.mobject.logo.ManimBanner.create",
-    "manim.mobject.logo.ManimBanner.expand",
-    "manim.mobject.logo.ManimBanner.scale",
-    "manim.mobject.mobject.Group",
-    "manim.mobject.mobject.Mobject",
     "manim.mobject.mobject.Mobject.add_animation_override",
     "manim.mobject.mobject.Mobject.animation_override_for",
-    "manim.mobject.mobject.Mobject.apply_over_attr_arrays",
-    "manim.mobject.mobject.Mobject.generate_points",
-    "manim.mobject.mobject.Mobject.get_merged_array",
-    "manim.mobject.mobject.Mobject.get_mobject_type_class",
-    "manim.mobject.mobject.Mobject.get_pieces",
-    "manim.mobject.mobject.Mobject.init_colors",
     "manim.mobject.mobject.Mobject.save_image",
-    "manim.mobject.mobject.Mobject.set",
     "manim.mobject.mobject.Mobject.set_default",
-    "manim.mobject.mobject.Mobject.set_z_index_by_z_Point3D",
     "manim.mobject.mobject.Mobject.show",
-    "manim.mobject.mobject.Mobject.throw_error_if_no_points",
     "manim.mobject.mobject.override_animate",
     "manim.mobject.opengl.dot_cloud.DotCloud",
     "manim.mobject.opengl.dot_cloud.DotCloud.init_points",
@@ -13394,14 +14564,6 @@
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.update_stroke_shader_wrapper",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVectorizedPoint",
     "manim.mobject.opengl.opengl_vectorized_mobject.triggers_refreshed_triangulation",
-    "manim.mobject.svg.brace.ArcBrace",
-    "manim.mobject.svg.brace.Brace",
-    "manim.mobject.svg.brace.BraceBetweenPoints",
-    "manim.mobject.svg.brace.BraceLabel",
-    "manim.mobject.svg.brace.BraceLabel.change_brace_label",
-    "manim.mobject.svg.brace.BraceLabel.creation_anim",
-    "manim.mobject.svg.brace.BraceLabel.shift_brace",
-    "manim.mobject.svg.brace.BraceText",
     "manim.mobject.svg.svg_mobject.SVGMobject",
     "manim.mobject.svg.svg_mobject.SVGMobject.apply_style_to_mobject",
     "manim.mobject.svg.svg_mobject.SVGMobject.ellipse_to_mobject",
@@ -13425,61 +14587,13 @@
     "manim.mobject.svg.svg_mobject.VMobjectFromSVGPath.handle_commands",
     "manim.mobject.svg.svg_mobject.VMobjectFromSVGPath.init_points",
     "manim.mobject.text.code_mobject.Code",
-    "manim.mobject.text.code_mobject.Code.get_styles_list",
-    "manim.mobject.text.numbers.DecimalNumber",
-    "manim.mobject.text.numbers.DecimalNumber.font_size",
-    "manim.mobject.text.numbers.DecimalNumber.get_value",
-    "manim.mobject.text.numbers.DecimalNumber.increment_value",
-    "manim.mobject.text.numbers.DecimalNumber.set_value",
-    "manim.mobject.text.numbers.Integer",
-    "manim.mobject.text.numbers.Integer.get_value",
-    "manim.mobject.text.numbers.Variable",
-    "manim.mobject.text.tex_mobject.BulletedList",
-    "manim.mobject.text.tex_mobject.BulletedList.fade_all_but",
-    "manim.mobject.text.tex_mobject.MathTex",
-    "manim.mobject.text.tex_mobject.MathTex.get_part_by_tex",
-    "manim.mobject.text.tex_mobject.MathTex.index_of_part",
-    "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex",
-    "manim.mobject.text.tex_mobject.MathTex.set_color_by_tex_to_color_map",
-    "manim.mobject.text.tex_mobject.MathTex.set_opacity_by_tex",
-    "manim.mobject.text.tex_mobject.MathTex.sort_alphabetically",
-    "manim.mobject.text.tex_mobject.MathTexPart",
-    "manim.mobject.text.tex_mobject.SingleStringMathTex",
-    "manim.mobject.text.tex_mobject.SingleStringMathTex.font_size",
-    "manim.mobject.text.tex_mobject.SingleStringMathTex.get_tex_string",
-    "manim.mobject.text.tex_mobject.SingleStringMathTex.init_colors",
-    "manim.mobject.text.tex_mobject.Tex",
-    "manim.mobject.text.tex_mobject.Title",
-    "manim.mobject.text.text_mobject.MarkupText",
-    "manim.mobject.text.text_mobject.MarkupText.font_list",
-    "manim.mobject.text.text_mobject.MarkupText.font_size",
-    "manim.mobject.text.text_mobject.Paragraph",
-    "manim.mobject.text.text_mobject.Text",
-    "manim.mobject.text.text_mobject.Text.font_list",
-    "manim.mobject.text.text_mobject.Text.font_size",
-    "manim.mobject.text.text_mobject.Text.init_colors",
     "manim.mobject.text.text_mobject.register_font",
-    "manim.mobject.text.text_mobject.remove_invisible_chars",
     "manim.mobject.types.image_mobject.AbstractImageMobject",
     "manim.mobject.types.image_mobject.ImageMobjectFromCamera.interpolate_color",
-    "manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects",
-    "manim.mobject.types.vectorized_mobject.VGroup.add",
     "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curves",
     "manim.mobject.types.vectorized_mobject.VMobject.color_using_background_image",
     "manim.mobject.types.vectorized_mobject.VMobject.get_background_image",
-    "manim.mobject.types.vectorized_mobject.VMobject.get_mobject_type_class",
-    "manim.mobject.types.vectorized_mobject.VMobject.init_colors",
     "manim.mobject.types.vectorized_mobject.VMobject.match_background_image",
-    "manim.mobject.types.vectorized_mobject.VectorizedPoint",
-    "manim.mobject.utils.get_mobject_class",
-    "manim.mobject.utils.get_point_mobject_class",
-    "manim.mobject.utils.get_vectorized_mobject_class",
-    "manim.mobject.vector_field.StreamLines",
-    "manim.mobject.vector_field.StreamLines.create",
-    "manim.mobject.vector_field.StreamLines.end_animation",
-    "manim.mobject.vector_field.StreamLines.start_animation",
-    "manim.mobject.vector_field.VectorField.fit_to_coordinate_system",
-    "manim.mobject.vector_field.VectorField.get_colored_background_image",
     "manim.plugins.plugins_flags.get_plugins",
     "manim.plugins.plugins_flags.list_plugins",
     "manim.renderer.cairo_renderer.CairoRenderer",
@@ -13695,7 +14809,6 @@
     "manim.utils.commands.capture",
     "manim.utils.commands.get_dir_layout",
     "manim.utils.commands.get_video_metadata",
-    "manim.utils.config_ops.DictAsObject",
     "manim.utils.debug.index_labels",
     "manim.utils.debug.print_family",
     "manim.utils.deprecation.deprecated",
@@ -13733,36 +14846,10 @@
     "manim.utils.opengl.x_rotation_matrix",
     "manim.utils.opengl.y_rotation_matrix",
     "manim.utils.opengl.z_rotation_matrix",
-    "manim.utils.parameter_parsing.flatten_iterable_parameters",
-    "manim.utils.polylabel.Cell",
-    "manim.utils.polylabel.Polygon",
-    "manim.utils.polylabel.Polygon.compute_distance",
-    "manim.utils.polylabel.Polygon.inside",
-    "manim.utils.polylabel.polylabel",
-    "manim.utils.qhull.Facet",
-    "manim.utils.qhull.Facet.compute_normal",
-    "manim.utils.qhull.Horizon",
-    "manim.utils.qhull.QuickHull",
-    "manim.utils.qhull.QuickHull.build",
-    "manim.utils.qhull.QuickHull.classify",
-    "manim.utils.qhull.QuickHull.compute_horizon",
-    "manim.utils.qhull.QuickHull.initialize",
-    "manim.utils.qhull.QuickHullPoint",
-    "manim.utils.qhull.SubFacet",
     "manim.utils.rate_functions.RateFunction",
-    "manim.utils.rate_functions.not_quite_there",
-    "manim.utils.rate_functions.squish_rate_func",
-    "manim.utils.rate_functions.unit_interval",
-    "manim.utils.rate_functions.zero",
     "manim.utils.simple_functions.Comparable",
     "manim.utils.sounds.get_full_sound_file_path",
-    "manim.utils.tex.TexTemplate",
-    "manim.utils.tex.TexTemplate.add_to_document",
-    "manim.utils.tex.TexTemplate.add_to_preamble",
-    "manim.utils.tex.TexTemplate.copy",
     "manim.utils.tex.TexTemplate.from_file",
-    "manim.utils.tex.TexTemplate.get_texcode_for_expression",
-    "manim.utils.tex.TexTemplate.get_texcode_for_expression_in_env",
     "manim.utils.tex_file_writing.compile_tex",
     "manim.utils.tex_file_writing.convert_to_svg",
     "manim.utils.tex_file_writing.delete_nonsvg_files",
@@ -13772,11 +14859,7 @@
     "manim.utils.tex_file_writing.make_tex_compilation_command",
     "manim.utils.tex_file_writing.print_all_tex_errors",
     "manim.utils.tex_file_writing.print_tex_error",
-    "manim.utils.tex_file_writing.tex_hash",
     "manim.utils.tex_file_writing.tex_to_svg_file",
-    "manim.utils.tex_templates.TexFontTemplates",
-    "manim.utils.tex_templates.TexTemplateLibrary",
-    "manim.utils.unit.Percent",
     "manimpango.cmanimpango.MarkupUtils",
     "manimpango.cmanimpango.MarkupUtils.text2svg",
     "manimpango.cmanimpango.MarkupUtils.validate",

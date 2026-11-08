@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -19,6 +19,7 @@ import { appendAction, managedObject } from './authoring';
 import { projectHistory } from './project-history';
 import { COMMON_COLOURS } from './blocks/colour-field';
 import { computePresentationSteps } from './presentation';
+import { CommandPalette } from './CommandPalette';
 import './studio.css';
 import './studio-polish.css';
 
@@ -60,6 +61,7 @@ export default function StudioApp() {
   const [videoDuration, setVideoDuration] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [presenting, setPresenting] = useState(false);
+  const [cmdPaletteOpen, setCmdPaletteOpen] = useState(false);
   const [presentationStepIdx, setPresentationStepIdx] = useState(0);
   const [presentationPlaying, setPresentationPlaying] = useState(false);
   const presentationVideoRef = useRef<HTMLVideoElement>(null);
@@ -266,13 +268,37 @@ export default function StudioApp() {
   }, []);
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setCmdPaletteOpen(v => !v); return; }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') { event.preventDefault(); exportProject(); }
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') { event.preventDefault(); void renderRef.current('preview'); }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !(event.target instanceof HTMLElement && event.target.closest('input,textarea,[contenteditable="true"]'))) { event.preventDefault(); event.stopPropagation(); if (event.shiftKey) redoProject(); else undoProject(); }
-      if (event.key === 'Escape') setModal(null);
+      if (event.key === 'Escape') { setModal(null); setCmdPaletteOpen(false); }
     };
     window.addEventListener('keydown', listener, true); return () => window.removeEventListener('keydown', listener, true);
   }, [exportProject, undoProject, redoProject]);
+  const captureVideoFrame = useCallback(() => {
+    const vid = player.current;
+    if (!vid || !vid.videoWidth || !vid.videoHeight) {
+      notify('请先生成并加载视频预览，再截取画面帧。');
+      return;
+    }
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = vid.videoWidth;
+      canvas.height = vid.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('无法创建画布上下文');
+      ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      link.download = `${fileName(projectRef.current.name)}-${vid.currentTime.toFixed(2)}s.png`;
+      link.click();
+      notify(`已保存当前画面帧截图 (${canvas.width}×${canvas.height} PNG)`);
+    } catch (error) {
+      notify(`截图失败：${(error as Error).message}`);
+    }
+  }, [notify]);
   const exportSource = async () => {
     try {
       const latest = editor.current?.snapshot() || projectRef.current;
@@ -423,6 +449,7 @@ export default function StudioApp() {
       <span className="header-divider"/>
       <div className="project-title"><input aria-label="作品名称" value={project.name} maxLength={80} onBlur={() => { if (!project.name.trim()) setProject(p => ({ ...p, name: '未命名动画' })); }} onChange={e => setProject(p => ({ ...p, name: e.target.value }))}/><span className={saveError ? 'save-status error' : 'save-status'}>{saveError ? '需要备份' : saved ? <><Check size={12}/> 已自动保存</> : '保存中…'}</span></div>
       <div className="header-spacer"/>
+      <button className="header-button" title="全局命令面板 · ⌘/Ctrl K" aria-label="全局命令面板" onClick={() => setCmdPaletteOpen(true)}><Search size={15}/><span>命令 ⌘K</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -448,7 +475,7 @@ export default function StudioApp() {
 
       <aside className="stage-column">
         <section className="preview-panel" aria-label="动画预览">
-          <div className="panel-heading"><div className="panel-title"><span className="live-dot"/>舞台预览</div><div className="preview-heading-tools"><span className="dimension-badge">{project.scene.dimension.toUpperCase()}</span><button className="icon-button" aria-label="演播模式" title="演播模式 · 幻灯片放映与交互讲解 (按空格或右方向键逐步推进)" disabled={!video} onClick={() => { setPresenting(true); setPresentationStepIdx(0); seek(0); }}><Presentation size={15}/></button><button className="icon-button" aria-label="全屏预览" onClick={() => void stage.current?.requestFullscreen()}><Maximize2 size={15}/></button></div></div>
+          <div className="panel-heading"><div className="panel-title"><span className="live-dot"/>舞台预览</div><div className="preview-heading-tools"><span className="dimension-badge">{project.scene.dimension.toUpperCase()}</span><button className="icon-button" aria-label="截取当前画面帧" title="截取当前画面帧 PNG 快照" disabled={!video} onClick={captureVideoFrame}><Camera size={15}/></button><button className="icon-button" aria-label="演播模式" title="演播模式 · 幻灯片放映与交互讲解 (按空格或右方向键逐步推进)" disabled={!video} onClick={() => { setPresenting(true); setPresentationStepIdx(0); seek(0); }}><Presentation size={15}/></button><button className="icon-button" aria-label="全屏预览" onClick={() => void stage.current?.requestFullscreen()}><Maximize2 size={15}/></button></div></div>
           <div className="stage-shell" ref={stage} style={{ background: project.scene.background }}>
             {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => { setVideoDuration(player.current?.duration || 0); setTime(0); }} onTimeUpdate={() => setTime(player.current?.currentTime || 0)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
             {running && job?.posterUrl && <img className="live-render-frame" src={job.posterUrl} alt="Manim 正在生成的实际画面"/>}
@@ -527,6 +554,88 @@ export default function StudioApp() {
           </div>
         </div>
       </div>
+    )}
+
+    {cmdPaletteOpen && (
+      <CommandPalette
+        project={project}
+        onClose={() => setCmdPaletteOpen(false)}
+        onSelectAction={id => {
+          setSelected(id);
+          setSelectedIds([id]);
+          if (editorTab === 'blocks') {
+            setTimeout(() => editor.current?.highlight(id), 40);
+          }
+        }}
+        onAddBlock={type => addObject(type)}
+        studioActions={[
+          {
+            id: 'render-preview',
+            title: '更新预览画面',
+            subtitle: '立即编译并渲染 Manim 预览 (⌘/Ctrl + Enter)',
+            keywords: 'render preview 渲染 预览',
+            run: () => void render('preview'),
+          },
+          {
+            id: 'presentation',
+            title: '开启交互式演播模式',
+            subtitle: '按步骤自动驻留，空格/方向键控制讲解幻灯片',
+            keywords: 'presentation slide 演播 幻灯片 放映',
+            run: () => {
+              if (!video) {
+                notify('请先生成预览视频，再开启演播模式。');
+                return;
+              }
+              setPresenting(true);
+              setPresentationStepIdx(0);
+              seek(0);
+            },
+          },
+          {
+            id: 'snapshot-frame',
+            title: '截取当前画面帧 PNG',
+            subtitle: '保存当前播放头位置的无损 PNG 截图',
+            keywords: 'snapshot screenshot png 截图 快照 帧',
+            run: captureVideoFrame,
+          },
+          {
+            id: 'view-blocks',
+            title: '切换到积木视图',
+            subtitle: 'Scratch 风格可视化积木编排',
+            keywords: 'blocks 积木 视图',
+            run: () => switchView('blocks'),
+          },
+          {
+            id: 'view-timeline',
+            title: '切换到时间轴视图',
+            subtitle: '多轨道时间轴与配音裁剪',
+            keywords: 'timeline 时间轴 视图',
+            run: () => switchView('timeline'),
+          },
+          {
+            id: 'view-code',
+            title: '切换到 Manim Python 源码视图',
+            subtitle: '查看实时生成的只读 Manim 脚本',
+            keywords: 'code python 代码 源码',
+            run: () => switchView('code'),
+          },
+          {
+            id: 'export-py',
+            title: '导出独立 Manim Python 脚本 (.py)',
+            subtitle: '下载可直接由 manim 命令运行的源码',
+            keywords: 'export python 导出 源码',
+            run: () => void exportSource(),
+          },
+          ...MATH_THEMES.map(t => ({
+            id: `theme-${t.bg}`,
+            title: `切换画面主题：${t.name}`,
+            subtitle: `背景颜色 ${t.bg}`,
+            colour: t.bg === '#000000' ? '#64748b' : t.bg,
+            keywords: `theme background 主题 背景 ${t.name}`,
+            run: () => setProject(p => ({ ...p, scene: { ...p.scene, background: t.bg } })),
+          })),
+        ]}
+      />
     )}
   </div>;
 }
