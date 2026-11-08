@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Box, Video, Keyboard, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Crosshair, Download, FilePlus2, FolderOpen, Grid, Box, Video, Keyboard, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, StepBack, StepForward, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -44,6 +44,8 @@ import { ProbabilityPlaygroundModal } from './ProbabilityPlaygroundModal';
 import { GeometryPlaygroundModal } from './GeometryPlaygroundModal';
 import { AutoLayoutModal } from './AutoLayoutModal';
 import { PolarParametricModal } from './PolarParametricModal';
+import { Vector3DPlaygroundModal } from './Vector3DPlaygroundModal';
+import { StageGuidesOverlay } from './StageGuidesOverlay';
 import { ToolsHubDropdown } from './ToolsHubDropdown';
 import { ShortcutsHelpModal } from './ShortcutsHelpModal';
 import { QuickAddToolbar } from './QuickAddToolbar';
@@ -111,6 +113,11 @@ export default function StudioApp() {
   const [geometryPlaygroundOpen, setGeometryPlaygroundOpen] = useState(false);
   const [autoLayoutOpen, setAutoLayoutOpen] = useState(false);
   const [polarParametricOpen, setPolarParametricOpen] = useState(false);
+  const [vector3DOpen, setVector3DOpen] = useState(false);
+  const [showSafeArea, setShowSafeArea] = useState(false);
+  const [showRuleOfThirds, setShowRuleOfThirds] = useState(false);
+  const [showOriginCrosshair, setShowOriginCrosshair] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
   const [shortcutsModalOpen, setShortcutsModalOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
@@ -164,6 +171,17 @@ export default function StudioApp() {
   useEffect(() => { setTrusted(false); }, [compiled.requiresTrust ? compiled.code : '']);
 
   const notify = useCallback((message: string) => { setNotice(message); }, []);
+  const setAspectRatio = useCallback((width: number, height: number) => {
+    setProject(prev => ({
+      ...prev,
+      scene: {
+        ...prev.scene,
+        width,
+        height,
+      }
+    }));
+    notify(`已调整分辨率为 ${width}×${height}`);
+  }, [notify, setProject]);
   useEffect(() => { if (!notice) return; const timer = setTimeout(() => setNotice(''), 4200); return () => clearTimeout(timer); }, [notice]);
   useEffect(() => {
     setSaved(false);
@@ -536,6 +554,7 @@ export default function StudioApp() {
         onOpenComplexMapping={() => setComplexMappingOpen(true)}
         onOpenPolarParametric={() => setPolarParametricOpen(true)}
         onOpenGeometry={() => setGeometryPlaygroundOpen(true)}
+        onOpenVector3D={() => setVector3DOpen(true)}
         onOpenSurface={() => setSurfacePlaygroundOpen(true)}
         onOpenGraph={() => setGraphPlaygroundOpen(true)}
         onOpenProbability={() => setProbabilityPlaygroundOpen(true)}
@@ -583,14 +602,109 @@ export default function StudioApp() {
       <aside className="stage-column">
         <section className="preview-panel" aria-label="动画预览">
           <div className="panel-heading"><div className="panel-title"><span className="live-dot"/>舞台预览</div><div className="preview-heading-tools"><span className="dimension-badge">{project.scene.dimension.toUpperCase()}</span><button className="icon-button" aria-label="截取当前画面帧" title="截取当前画面帧 PNG 快照" disabled={!video} onClick={captureVideoFrame}><Camera size={15}/></button><button className="icon-button" aria-label="演播模式" title="演播模式 · 幻灯片放映与交互讲解 (按空格或右方向键逐步推进)" disabled={!video} onClick={() => { setPresenting(true); setPresentationStepIdx(0); seek(0); }}><Presentation size={15}/></button><button className="icon-button" aria-label="全屏预览" onClick={() => void stage.current?.requestFullscreen()}><Maximize2 size={15}/></button></div></div>
+          <div className="stage-hud-bar" role="toolbar" aria-label="取景与画面辅助">
+            <div className="stage-hud-group">
+              <button
+                type="button"
+                className={`hud-pill-button ${showRuleOfThirds ? 'active' : ''}`}
+                title="切换九宫格黄金分割对齐线"
+                aria-pressed={showRuleOfThirds}
+                onClick={() => setShowRuleOfThirds(v => !v)}
+              >
+                <Grid size={12} /> 九宫格
+              </button>
+              <button
+                type="button"
+                className={`hud-pill-button ${showSafeArea ? 'active' : ''}`}
+                title="切换标题与操作安全区边距 (80%/90%)"
+                aria-pressed={showSafeArea}
+                onClick={() => setShowSafeArea(v => !v)}
+              >
+                <LayoutGrid size={12} /> 安全区
+              </button>
+              <button
+                type="button"
+                className={`hud-pill-button ${showOriginCrosshair ? 'active' : ''}`}
+                title="切换 Manim 原点十字准线 (0, 0)"
+                aria-pressed={showOriginCrosshair}
+                onClick={() => setShowOriginCrosshair(v => !v)}
+              >
+                <Crosshair size={12} /> 原点
+              </button>
+            </div>
+            <div className="stage-hud-group">
+              <select
+                className="stage-hud-select"
+                value={`${project.scene.width}x${project.scene.height}`}
+                onChange={e => {
+                  const [w, h] = e.target.value.split('x').map(Number);
+                  setAspectRatio(w, h);
+                }}
+                aria-label="画幅与分辨率"
+                title="切换画幅与画面分辨率"
+              >
+                <option value="1920x1080">16:9 宽屏 (1080p)</option>
+                <option value="1080x1920">9:16 竖屏 (短视频)</option>
+                <option value="1080x1080">1:1 方形 (社交媒体)</option>
+                <option value="1440x1080">4:3 经典 (幻灯片)</option>
+              </select>
+            </div>
+            <div className="stage-hud-group theme-swatches">
+              {MATH_THEMES.map(theme => (
+                <button
+                  key={theme.bg}
+                  type="button"
+                  className={`theme-dot ${project.scene.background === theme.bg ? 'active' : ''}`}
+                  style={{ background: theme.bg }}
+                  title={`${theme.name} (${theme.bg})`}
+                  onClick={() => {
+                    setProject(prev => ({ ...prev, scene: { ...prev.scene, background: theme.bg } }));
+                  }}
+                  aria-label={`切换为${theme.name}`}
+                />
+              ))}
+            </div>
+          </div>
           <div className="stage-shell" ref={stage} style={{ background: project.scene.background }}>
+            <StageGuidesOverlay
+              showSafeArea={showSafeArea}
+              showRuleOfThirds={showRuleOfThirds}
+              showOriginCrosshair={showOriginCrosshair}
+            />
             {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => { setVideoDuration(player.current?.duration || 0); setTime(0); }} onTimeUpdate={() => setTime(player.current?.currentTime || 0)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
             {running && job?.posterUrl && <img className="live-render-frame" src={job.posterUrl} alt="Manim 正在生成的实际画面"/>}
             {running && <div className="render-overlay"><Loader2 className="spin" size={14}/><span>{job?.message || '正在渲染…'}</span><button onClick={() => void cancel()} aria-label="停止渲染"><X size={14}/></button></div>}
             {video && !currentVideo && !running && <button className="stale-preview" onClick={() => void render('preview')}>积木已修改 · 点击更新画面</button>}
             {video && currentVideo && <div className="stage-watermark">{video.builtin ? '示例预览 · Manim 预渲染' : video.quality === 'final' ? '高清成片' : '真实 Manim 预览'}</div>}
           </div>
-          <div className="player-controls"><button className="play-control" onClick={play} disabled={!video} title={playing ? '暂停播放' : currentVideo ? '播放已生成的动画' : '播放上一次生成的动画；修改后请更新预览'} aria-label={playing ? '暂停播放' : '播放动画'}>{playing ? <Pause size={16} fill="currentColor"/> : <Play size={16} fill="currentColor"/>}</button><span className="player-time">{fmt(time)}</span><input aria-label="播放进度" type="range" min={0} max={videoDuration || 1} step={0.01} value={time} disabled={!video} onChange={e => seek(Number(e.target.value))}/><span className="player-time">{fmt(videoDuration)}</span><button className="icon-button" aria-label="从头播放" disabled={!video} onClick={() => { seek(0); void player.current?.play(); }}><RefreshCw size={14}/></button></div>
+          <div className="player-controls">
+            <button className="icon-button" disabled={!video} title="退后 1 帧 (,)" aria-label="退后一帧" onClick={() => seek(Math.max(0, time - 1 / project.scene.fps))}><StepBack size={14}/></button>
+            <button className="play-control" onClick={play} disabled={!video} title={playing ? '暂停播放 (空格)' : currentVideo ? '播放已生成的动画 (空格)' : '播放上一次生成的动画；修改后请更新预览'} aria-label={playing ? '暂停播放' : '播放动画'}>{playing ? <Pause size={16} fill="currentColor"/> : <Play size={16} fill="currentColor"/>}</button>
+            <button className="icon-button" disabled={!video} title="前进 1 帧 (.)" aria-label="前进一帧" onClick={() => seek(Math.min(videoDuration, time + 1 / project.scene.fps))}><StepForward size={14}/></button>
+            <span className="player-time">{fmt(time)}</span>
+            <input aria-label="播放进度" type="range" min={0} max={videoDuration || 1} step={0.01} value={time} disabled={!video} onChange={e => seek(Number(e.target.value))}/>
+            <span className="player-time">{fmt(videoDuration)}</span>
+            <select
+              className="playback-rate-select"
+              value={playbackRate}
+              aria-label="播放倍速"
+              title="调整预览播放倍速"
+              disabled={!video}
+              onChange={e => {
+                const rate = Number(e.target.value);
+                setPlaybackRate(rate);
+                if (player.current) player.current.playbackRate = rate;
+              }}
+            >
+              <option value="0.5">0.5×</option>
+              <option value="0.75">0.75×</option>
+              <option value="1">1.0×</option>
+              <option value="1.25">1.25×</option>
+              <option value="1.5">1.5×</option>
+              <option value="2">2.0×</option>
+            </select>
+            <button className="icon-button" aria-label="从头播放" disabled={!video} onClick={() => { seek(0); void player.current?.play(); }}><RefreshCw size={14}/></button>
+          </div>
           <div className="preview-actions"><label className="auto-preview"><input type="checkbox" checked={autoPreview} onChange={e => setAutoPreview(e.target.checked)}/><span>自动预览</span></label><span className="render-quality">{project.scene.fps} fps</span><button className={`preview-button ${!currentVideo ? 'needs-update' : ''}`} disabled={running || !project.actions.length} onClick={() => void render('preview')}>{running ? <Loader2 size={14} className="spin"/> : <RefreshCw size={14}/>} {running ? '生成中' : '更新预览'}</button></div>
           {running && <div className="render-progress"><i style={{ width: `${Math.min(98, Math.max(3, (job?.progress || 0) * ((job?.progress || 0) <= 1 ? 100 : 1)))}%` }}/></div>}
         </section>
@@ -1222,6 +1336,24 @@ export default function StudioApp() {
             setSelectedIds(actionIds);
           }
           notify(`已向动画编排插入极坐标参数曲线组件`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <Vector3DPlaygroundModal
+      isOpen={vector3DOpen}
+      onClose={() => setVector3DOpen(false)}
+      project={project}
+      onApply={(nextProject, actionIds) => {
+        try {
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入 3D 向量运算与动画组件`);
         } catch (e) {
           notify((e as Error).message);
         }

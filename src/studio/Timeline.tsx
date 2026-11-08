@@ -34,6 +34,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
   const [internalSelectedIds, setInternalSelectedIds] = useState<string[]>([]);
   const [box, setBox] = useState<{ active: boolean; startX: number; startY: number; currentX: number; currentY: number } | null>(null);
   const [smartMarkerOpen, setSmartMarkerOpen] = useState(false);
+  const [hoverInfo, setHoverInfo] = useState<{ time: number; x: number } | null>(null);
 
   const editor = useRef<TimelineState>(null), trackLabels = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null);
   const clips = useMemo(() => timelineClips(project.actions), [project.actions]);
@@ -197,7 +198,13 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
     // Leave application/browser shortcuts (save, undo, history navigation) alone.
     if (event.metaKey || event.ctrlKey || event.altKey) return;
     if (event.code === 'Space') { event.preventDefault(); if (canPlay) onPlay?.(); }
-    else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); seek(time + (event.key === 'ArrowLeft' ? -1 : 1) * (event.shiftKey ? 10 : 1) / project.scene.fps); }
+    else if (event.key === ',' || (event.key === 'ArrowLeft' && !event.shiftKey)) { event.preventDefault(); seek(time - 1 / project.scene.fps); }
+    else if (event.key === '.' || (event.key === 'ArrowRight' && !event.shiftKey)) { event.preventDefault(); seek(time + 1 / project.scene.fps); }
+    else if (event.key === 'ArrowLeft' && event.shiftKey) { event.preventDefault(); seek(time - 10 / project.scene.fps); }
+    else if (event.key === 'ArrowRight' && event.shiftKey) { event.preventDefault(); seek(time + 10 / project.scene.fps); }
+    else if (event.key.toLowerCase() === 'k' && !event.repeat) { event.preventDefault(); if (canPlay) onPlay?.(); }
+    else if (event.key.toLowerCase() === 'j' && !event.repeat) { event.preventDefault(); seek(Math.max(0, time - 10 / project.scene.fps)); }
+    else if (event.key.toLowerCase() === 'l' && !event.repeat) { event.preventDefault(); seek(Math.min(knownEnd, time + 10 / project.scene.fps)); }
     else if (event.key === 'Home') { event.preventDefault(); seek(0); }
     else if (event.key === 'End') { event.preventDefault(); seek(knownEnd); }
     else if (event.key.toLowerCase() === 's' && !event.repeat) setSnapping(v => !v);
@@ -259,6 +266,19 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
     {adding && <div className="tl-library"><input aria-label="搜索动画动作" placeholder="搜索移动、变形、循环…" value={query} onChange={e => setQuery(e.target.value)}/><button onClick={() => setAdding(false)}>关闭</button><div>{options.map(d => <button key={d.type} onClick={() => add(d.type)}><i style={{ background: d.colour }}/>{d.label}</button>)}</div></div>}
     <div className="tl-body" ref={surface} tabIndex={0} aria-label="时间轴编辑区"
       onWheel={e => { if (e.ctrlKey || e.metaKey) setScale(s => Math.max(8, Math.min(240, s * (e.deltaY < 0 ? 1.15 : 1 / 1.15)))); }}
+      onMouseMove={e => {
+        if (!surface.current) return;
+        const rect = surface.current.getBoundingClientRect();
+        const labelWidth = trackLabels.current?.offsetWidth || 150;
+        const xInTracks = e.clientX - rect.left - labelWidth;
+        if (xInTracks >= 0) {
+          const t = Math.max(0, xInTracks / scale);
+          setHoverInfo({ time: t, x: e.clientX - rect.left });
+        } else {
+          setHoverInfo(null);
+        }
+      }}
+      onMouseLeave={() => setHoverInfo(null)}
       onMouseDown={e => {
         if (e.button !== 0) return;
         const target = e.target as HTMLElement;
@@ -318,6 +338,15 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
             {clip && <AudioWaveform asset={project.assets?.find(a => a.id === source.fields.asset)} offset={clip.offset} duration={item.end - item.start}/>}<span>{clip ? <Music2 size={12}/> : getBlockDefinition(source.type)?.container ? <Layers3 size={12}/> : null}{clip ? String(source.fields.name) : actionLabel(source)}</span><small>{item.effectId === 'event' ? '事件' : `${(item.end - item.start).toFixed(2)}s`}{clip ? ` · ${Number(source.fields.gain)} dB` : ''}</small>
           </div>;
         }}/>
+      {hoverInfo && (
+        <div
+          className="tl-hover-pill"
+          style={{ left: hoverInfo.x }}
+          data-testid="tl-hover-pill"
+        >
+          {timecode(hoverInfo.time, project.scene.fps)} ({Math.round(hoverInfo.time * project.scene.fps)}F)
+        </div>
+      )}
       {box && box.active && surface.current && (
         <div className="tl-selection-box" style={{
           left: Math.min(box.startX, box.currentX) - surface.current.getBoundingClientRect().left,

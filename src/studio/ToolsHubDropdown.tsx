@@ -10,6 +10,7 @@ import {
   Orbit,
   Triangle,
   Box,
+  Axis3d,
   Network,
   AreaChart,
   AlignJustify,
@@ -31,6 +32,7 @@ interface ToolsHubDropdownProps {
   onOpenComplexMapping: () => void;
   onOpenPolarParametric: () => void;
   onOpenGeometry: () => void;
+  onOpenVector3D?: () => void;
   onOpenSurface: () => void;
   onOpenGraph: () => void;
   onOpenProbability: () => void;
@@ -52,6 +54,7 @@ export const ToolsHubDropdown: React.FC<ToolsHubDropdownProps> = ({
   onOpenComplexMapping,
   onOpenPolarParametric,
   onOpenGeometry,
+  onOpenVector3D,
   onOpenSurface,
   onOpenGraph,
   onOpenProbability,
@@ -98,13 +101,13 @@ export const ToolsHubDropdown: React.FC<ToolsHubDropdownProps> = ({
         type="button"
         className={`tools-hub-trigger ${isOpen ? 'active' : ''}`}
         onClick={() => setIsOpen((prev) => !prev)}
-        title="打开 18 款 3B1B 数理动效工作台中心"
+        title="打开 19 款 3B1B 数理动效工作台中心"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
         <Wand2 size={15} />
         <span>数理动效工作台</span>
-        <span className="tools-hub-badge">18</span>
+        <span className="tools-hub-badge">19</span>
       </button>
 
       {isOpen && (
@@ -239,7 +242,7 @@ export const ToolsHubDropdown: React.FC<ToolsHubDropdownProps> = ({
           <div className="tools-menu-col">
             <div className="tools-menu-col-header">
               <span>📐 几何拓扑与空间</span>
-              <span className="col-badge">5 款</span>
+              <span className="col-badge">6 款</span>
             </div>
 
             <button
@@ -258,6 +261,25 @@ export const ToolsHubDropdown: React.FC<ToolsHubDropdownProps> = ({
                 <span className="tools-item-subtitle">欧拉线 (HG=2·GO) · 勾股弦图</span>
               </div>
             </button>
+
+            {onOpenVector3D && (
+              <button
+                className="tools-menu-item"
+                onClick={handleSelect(onOpenVector3D)}
+                role="menuitem"
+              >
+                <div
+                  className="tools-item-icon"
+                  style={{ background: 'rgba(99, 102, 241, 0.15)', color: '#a5b4fc' }}
+                >
+                  <Axis3d size={17} />
+                </div>
+                <div className="tools-item-content">
+                  <span className="tools-item-title">三维向量与空间叉乘</span>
+                  <span className="tools-item-subtitle">加法 · 点乘投影 · 叉乘张成面积</span>
+                </div>
+              </button>
+            )}
 
             <button
               className="tools-menu-item"

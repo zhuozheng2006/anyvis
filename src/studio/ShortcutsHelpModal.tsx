@@ -54,6 +54,17 @@ export const ShortcutsHelpModal: React.FC<ShortcutsHelpModalProps> = ({
               <div className="shortcut-keys">
                 <kbd className="shortcut-kbd">←</kbd>
                 <kbd className="shortcut-kbd">→</kbd>
+                <span>或</span>
+                <kbd className="shortcut-kbd">,</kbd>
+                <kbd className="shortcut-kbd">.</kbd>
+              </div>
+            </div>
+            <div className="shortcut-item">
+              <span className="shortcut-label">专业剪辑 快退 / 播放 / 快进</span>
+              <div className="shortcut-keys">
+                <kbd className="shortcut-kbd">J</kbd>
+                <kbd className="shortcut-kbd">K</kbd>
+                <kbd className="shortcut-kbd">L</kbd>
               </div>
             </div>
             <div className="shortcut-item">
