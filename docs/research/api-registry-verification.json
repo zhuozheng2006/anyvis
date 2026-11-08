@@ -31,6 +31,8 @@
     "cairoOrSharedEntries": 1760,
     "openGLSpecificEntries": 533,
     "openGLBehaviorVerified": false,
+    "openGLStateEntriesVerified": 77,
+    "openGLRenderEvidence": "Separate opengl-render-evidence.json artifact; state evidence does not imply rendered pixels.",
     "openGLLocalBlocker": "glcontext cannot import egl on this macOS Manim installation"
   },
   "unavailableModules": [
@@ -578,6 +580,83 @@
       "manim.mobject.mobject.Mobject.to_edge",
       "manim.mobject.mobject.Mobject.update",
       "manim.mobject.mobject.Mobject.width",
+      "manim.mobject.opengl.opengl_mobject.OpenGLGroup",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add_updater",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.append_points",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_function",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_matrix",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.become",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.center",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.clear_points",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.clear_updaters",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.compute_bounding_box",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.copy",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.deepcopy",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.depth",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.generate_target",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_all_points",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_bottom",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_bounding_box",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_center",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_center_of_mass",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_color",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_coord",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_corner",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_depth",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_end",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_height",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_left",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_num_points",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_opacity",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_right",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_start",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_top",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_width",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.height",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.length_over_dim",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.move_to",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.remove",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.remove_updater",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.restore",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.resume_updating",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.reverse_points",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.rotate",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.save_state",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.scale",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_color",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_coord",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_gloss",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_opacity",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_points",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_shadow",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_x",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_y",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_z",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.shift",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.stretch",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.suspend_updating",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.update",
+      "manim.mobject.opengl.opengl_mobject.OpenGLMobject.width",
+      "manim.mobject.opengl.opengl_surface.OpenGLSurface",
+      "manim.mobject.opengl.opengl_surface.OpenGLSurface.compute_triangle_indices",
+      "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_surface_points_and_nudged_points",
+      "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_triangle_indices",
+      "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_unit_normals",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.add_line_to",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_arc_length",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_function",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_length",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_points",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_subcurve",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.insert_n_curves",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.point_from_proportion",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.reverse_direction",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_fill",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_points_as_corners",
+      "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_stroke",
       "manim.mobject.svg.brace.Brace.get_direction",
       "manim.mobject.svg.brace.Brace.get_tip",
       "manim.mobject.svg.svg_mobject.SVGMobject.hash_seed",
@@ -988,7 +1067,7 @@
         "fixture": "src/studio/core/api.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -1041,7 +1120,7 @@
         "fixture": "src/studio/core/api-families.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -5870,7 +5949,7 @@
         "fixture": "src/studio/core/api-queries.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -6896,7 +6975,7 @@
         "fixture": "src/studio/core/api-utilities.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -7476,7 +7555,7 @@
         "fixture": "src/studio/core/api-mutations.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -7948,7 +8027,7 @@
         "fixtureId": "api-config-v1",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -8289,7 +8368,7 @@
         "fixture": "src/studio/core/api-raster.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -8689,7 +8768,7 @@
         "fixture": "src/studio/core/api-animation-state.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -9000,7 +9079,7 @@
         "fixture": "src/studio/core/api-pointcloud.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -9268,7 +9347,7 @@
         "fixture": "src/studio/core/api-scene.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -9593,7 +9672,7 @@
         "fixture": "src/studio/core/api-coordinates.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "fb17538054158812dc9d5d39bd7e06ebbe069d84fc19c0a6dbf230b1232968ac",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -9859,10 +9938,422 @@
           }
         ],
         "checks": "Registry-compiled calls with explicit affine coordinate maps, curve samples, line endpoints, projection and graph topology assertions. CoordinateSystem entries use concrete Axes dynamic dispatch. Setup calls are not counted; no movie-render coverage is claimed."
+      },
+      {
+        "fixture": "src/studio/core/api-opengl-state.native.spec-node.mjs",
+        "sourceFiles": {
+          "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
+          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
+          "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
+          "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
+          "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
+          "src/studio/core/catalog.ts": "9bf3c574559ec58e5b1f2e82a5045a36f5ee7a395a704641fffa5ffa141983b6",
+          "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
+          "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
+          "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
+          "src/studio/core/api-opengl-state.native.spec-node.mjs": "3ea828679e123d0641cb9e982ea59fc74e8504db969b060ece81c0b37de18447"
+        },
+        "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
+        "passed": true,
+        "engineVersion": "0.20.1",
+        "renderer": "opengl",
+        "renderValidated": false,
+        "apiIds": [
+          "manim.mobject.opengl.opengl_mobject.OpenGLGroup",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add_updater",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.append_points",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_function",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_matrix",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.become",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.center",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.clear_points",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.clear_updaters",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.compute_bounding_box",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.copy",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.deepcopy",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.depth",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.generate_target",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_all_points",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_bottom",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_bounding_box",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_center",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_center_of_mass",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_color",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_coord",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_corner",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_depth",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_end",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_height",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_left",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_num_points",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_opacity",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_right",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_start",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_top",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_width",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.height",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.length_over_dim",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.move_to",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.remove",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.remove_updater",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.restore",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.resume_updating",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.reverse_points",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.rotate",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.save_state",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.scale",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_color",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_coord",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_gloss",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_opacity",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_points",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_shadow",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_x",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_y",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_z",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.shift",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.stretch",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.suspend_updating",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.update",
+          "manim.mobject.opengl.opengl_mobject.OpenGLMobject.width",
+          "manim.mobject.opengl.opengl_surface.OpenGLSurface",
+          "manim.mobject.opengl.opengl_surface.OpenGLSurface.compute_triangle_indices",
+          "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_surface_points_and_nudged_points",
+          "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_triangle_indices",
+          "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_unit_normals",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.add_line_to",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_arc_length",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_function",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_length",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_points",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_subcurve",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.insert_n_curves",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.point_from_proportion",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.reverse_direction",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_fill",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_points_as_corners",
+          "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_stroke"
+        ],
+        "outcomes": [
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.append_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.clear_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.reverse_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.shift",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.scale",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.rotate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.stretch",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_matrix",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_function",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.center",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.move_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_coord",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_x",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_y",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_z",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_bounding_box",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.compute_bounding_box",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_center",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_center_of_mass",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_top",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_bottom",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_left",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_right",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_start",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_end",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_width",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_height",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_depth",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_num_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_all_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_corner",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_coord",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.length_over_dim",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.width",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.height",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.depth",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.copy",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.deepcopy",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.save_state",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.restore",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.generate_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.become",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_opacity",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_opacity",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_gloss",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_shadow",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLGroup",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.remove",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add_updater",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.update",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.remove_updater",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.clear_updaters",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.suspend_updating",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_mobject.OpenGLMobject.resume_updating",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_points_as_corners",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_fill",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_stroke",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.point_from_proportion",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_arc_length",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_function",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_length",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_subcurve",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.insert_n_curves",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.reverse_direction",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.add_line_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_surface.OpenGLSurface",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_unit_normals",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_surface_points_and_nudged_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_surface.OpenGLSurface.compute_triangle_indices",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_triangle_indices",
+            "status": "verified"
+          }
+        ],
+        "checks": "Registry-compiled OpenGL object state calls with concrete points, bounding boxes, copy isolation, style, updater and surface-array assertions. No GL context, renderer, framebuffer or movie is created. renderValidated=false; these are not OpenGL rendering evidence. Setup calls and abstract no-op methods are not counted."
       }
     ]
   },
-  "entriesWithBehaviorEvidence": 935,
+  "entriesWithBehaviorEvidence": 1012,
   "entriesWithoutBehaviorEvidence": [
     "manim._config.cli_colors.parse_cli_ctx",
     "manim._config.logger_utils.JSONFormatter",
@@ -10323,15 +10814,11 @@
     "manim.mobject.opengl.opengl_geometry.OpenGLVector",
     "manim.mobject.opengl.opengl_image_mobject.OpenGLImageMobject",
     "manim.mobject.opengl.opengl_image_mobject.OpenGLImageMobject.get_image_from_file",
-    "manim.mobject.opengl.opengl_mobject.OpenGLGroup",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add_background_rectangle",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add_background_rectangle_to_family_members_with_points",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add_background_rectangle_to_submobjects",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add_n_more_submobjects",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add_to_back",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.add_updater",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.align_data",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.align_data_and_family",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.align_family",
@@ -10339,29 +10826,18 @@
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.align_points",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.align_to",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.animate",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.append_points",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_complex_function",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_depth_test",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_function",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_function_to_position",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_function_to_submobject_positions",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_matrix",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_over_attr_arrays",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.apply_points_function",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.arrange",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.arrange_in_grid",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.assemble_family",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.become",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.bounding_box",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.center",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.check_data_alignment",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.clear_points",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.clear_updaters",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.compute_bounding_box",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.copy",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.deactivate_depth_test",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.deepcopy",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.depth",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.duplicate",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.fade",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.family_members_with_points",
@@ -10369,49 +10845,30 @@
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.fix_orientation",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.fixed_orientation_center",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.flip",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.generate_target",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_all_points",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_array_attrs",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_bottom",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_boundary_point",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_bounding_box",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_bounding_box_point",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_center",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_center_of_mass",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_color",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_continuous_bounding_box_point",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_coord",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_corner",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_depth",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_edge_center",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_end",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_family",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_family_updaters",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_gloss",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_grid",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_group_class",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_height",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_left",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_midpoint",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_mobject_type_class",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_nadir",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_num_points",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_opacity",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_pieces",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_resized_shader_data_array",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_right",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_shader_data",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_shader_uniforms",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_shader_vert_indices",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_shader_wrapper",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_shader_wrapper_list",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_shadow",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_start",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_start_and_end",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_time_based_updaters",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_top",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_updaters",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_width",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_x",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_y",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.get_z",
@@ -10420,7 +10877,6 @@
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.gloss",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.has_points",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.has_time_based_updater",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.height",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.hierarchical_model_matrix",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.init_colors",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.init_data",
@@ -10433,7 +10889,6 @@
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.is_fixed_orientation",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.is_off_screen",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.is_point_touching",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.length_over_dim",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.lock_data",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.lock_matching_data",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.match_color",
@@ -10447,7 +10902,6 @@
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.match_x",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.match_y",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.match_z",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.move_to",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.next_to",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.pfp",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.point_from_proportion",
@@ -10460,70 +10914,48 @@
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.refresh_has_updater_status",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.refresh_shader_data",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.refresh_shader_wrapper_id",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.remove",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.remove_updater",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.replace",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.replace_shader_code",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.replace_submobject",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.rescale_to_fit",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.resize_points",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.restore",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.resume_updating",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.reverse_points",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.rgbas",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.rotate",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.rotate_about_origin",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.save_state",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.scale",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.scale_to_fit_depth",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.scale_to_fit_height",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.scale_to_fit_width",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_color",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_color_by_code",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_color_by_gradient",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_color_by_xyz_func",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_coord",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_data",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_default",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_depth",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_gloss",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_height",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_opacity",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_points",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_rgba_array",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_rgba_array_direct",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_shadow",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_submobject_colors_by_gradient",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_uniforms",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_width",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_x",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_y",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.set_z",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.shadow",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.shift",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.shift_onto_screen",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.shuffle",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.sort",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.space_out_submobjects",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.split",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.stretch",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.stretch_about_point",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.stretch_to_fit_depth",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.stretch_to_fit_height",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.stretch_to_fit_width",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.submobjects",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.surround",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.suspend_updating",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.throw_error_if_no_points",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.to_corner",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.to_edge",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.unfix_from_frame",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.unfix_orientation",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.unlock_data",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.update",
     "manim.mobject.opengl.opengl_mobject.OpenGLMobject.wag",
-    "manim.mobject.opengl.opengl_mobject.OpenGLMobject.width",
     "manim.mobject.opengl.opengl_mobject.OpenGLPoint",
     "manim.mobject.opengl.opengl_mobject.OpenGLPoint.get_bounding_box_point",
     "manim.mobject.opengl.opengl_mobject.OpenGLPoint.get_height",
@@ -10553,15 +10985,10 @@
     "manim.mobject.opengl.opengl_point_cloud_mobject.OpenGLPMobject.set_colors_by_radial_gradient",
     "manim.mobject.opengl.opengl_point_cloud_mobject.OpenGLPMobject.sort_points",
     "manim.mobject.opengl.opengl_point_cloud_mobject.OpenGLPMobject.thin_out",
-    "manim.mobject.opengl.opengl_surface.OpenGLSurface",
-    "manim.mobject.opengl.opengl_surface.OpenGLSurface.compute_triangle_indices",
     "manim.mobject.opengl.opengl_surface.OpenGLSurface.fill_in_shader_color_info",
     "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_partial_points_array",
     "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_shader_data",
     "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_shader_vert_indices",
-    "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_surface_points_and_nudged_points",
-    "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_triangle_indices",
-    "manim.mobject.opengl.opengl_surface.OpenGLSurface.get_unit_normals",
     "manim.mobject.opengl.opengl_surface.OpenGLSurface.init_points",
     "manim.mobject.opengl.opengl_surface.OpenGLSurface.pointwise_become_partial",
     "manim.mobject.opengl.opengl_surface.OpenGLSurface.sort_faces_back_to_front",
@@ -10585,10 +11012,8 @@
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLDashedVMobject",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVGroup",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVGroup.add",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.add_cubic_bezier_curve",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.add_cubic_bezier_curve_to",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.add_line_to",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.add_points_as_corners",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.add_quadratic_bezier_curve_to",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.add_smooth_cubic_curve_to",
@@ -10609,7 +11034,6 @@
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.force_direction",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_anchors",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_anchors_and_handles",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_arc_length",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_area_vector",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_bezier_tuples",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_bezier_tuples_from_points",
@@ -10631,11 +11055,8 @@
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_group_class",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_last_point",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_mobject_type_class",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_function",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_function_with_length",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_length",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_length_pieces",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_nth_curve_points",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_num_curves",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_opacity",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_points_without_null_curves",
@@ -10652,7 +11073,6 @@
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_stroke_width",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_stroke_widths",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_style",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_subcurve",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_subpaths",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_subpaths_from_points",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.get_triangulation",
@@ -10663,7 +11083,6 @@
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.init_colors",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.init_data",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.init_shader_data",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.insert_n_curves",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.insert_n_curves_to_point_list",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.interpolate",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.is_closed",
@@ -10671,24 +11090,19 @@
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.make_jagged",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.make_smooth",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.match_style",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.point_from_proportion",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.pointwise_become_partial",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.proportion_from_point",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.refresh_shader_data",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.refresh_shader_wrapper_id",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.refresh_triangulation",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.refresh_unit_normal",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.reverse_direction",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_anchors_and_handles",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_color",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_data",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_fill",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_flat_stroke",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_opacity",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_points",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_points_as_corners",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_points_smoothly",
-    "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_stroke",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.set_style",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.start_new_path",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.stroke_color",
