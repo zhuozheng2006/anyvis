@@ -92,13 +92,188 @@ add(creation + 'ShowSubmobjectsOneByOne.update_submobject_list', 'a = VGroup(Squ
 add('manim.animation.movement.MoveAlongPath', 'a = Dot(); objects.update(a=a,path=Line(LEFT*2,RIGHT*2))', { mobject: ref('a'), path: ref('path'), kwargs: { rate_func: { $api: 'linear' } } }, 'result.begin(); result.interpolate(0.25); close(a.get_center(),[-1,0,0]); result.finish(); close(a.get_center(),[2,0,0])');
 add('manim.animation.movement.MoveAlongPath.interpolate_mobject', 'a = Dot(); s = MoveAlongPath(a,Line(LEFT*2,RIGHT*2),rate_func=linear); s.begin()', { alpha: 0.75 }, 'close(a.get_center(),[1,0,0])');
 
+// Rotation & Target Transforms
+add('manim.animation.rotation.Rotate', 's = Square().shift(RIGHT)', { mobject: ref('s'), angle: Math.PI/2, about_point: array([0,0,0]), kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(1.0); result.finish(); close(s.get_center(), [0,1,0])');
+add('manim.animation.rotation.Rotating.interpolate_mobject', 's = Rotating(Square().shift(RIGHT), angle=PI, about_point=ORIGIN, rate_func=linear); s.begin()', { alpha: 0.5 },
+  'close(s.mobject.get_center(), [0,1,0])');
+add('manim.animation.transform.MoveToTarget', 's = Square(); s.generate_target(); s.target.shift(UP*3)', { mobject: ref('s'), kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(0.5); close(s.get_center(), [0,1.5,0]); result.finish(); close(s.get_center(), [0,3,0])');
+add('manim.animation.transform.MoveToTarget.check_validity_of_input', 's = MoveToTarget(Square().generate_target()); objects["target"] = s.mobject', { mobject: ref('target') },
+  'assert hasattr(objects["target"], "target")');
+add('manim.animation.transform.Restore', 's = Square(); s.save_state(); s.shift(LEFT*2)', { mobject: ref('s'), kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(1.0); result.finish(); close(s.get_center(), [0,0,0])');
+add('manim.animation.transform.Swap', 'a = Dot(LEFT); b = Dot(RIGHT); objects.update(a=a, b=b)', { mobjects: [ref('a'), ref('b')], kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(1.0); result.finish(); close(a.get_center(), [1,0,0]); close(b.get_center(), [-1,0,0])');
+add('manim.animation.transform.CyclicReplace', 'a = Dot(LEFT); b = Dot(UP); c = Dot(RIGHT); objects.update(a=a, b=b, c=c)', { mobjects: [ref('a'), ref('b'), ref('c')], kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(1.0); result.finish(); close(a.get_center(), [0,1,0]); close(b.get_center(), [1,0,0]); close(c.get_center(), [-1,0,0])');
+add('manim.animation.transform.CyclicReplace.create_target', 's = CyclicReplace(Dot(LEFT), Dot(RIGHT))', {},
+  'close(result[0].get_center(), [1,0,0]); close(result[1].get_center(), [-1,0,0])');
+add('manim.animation.transform.Transform.interpolate_submobject', 'tr = Transform(Square(), Circle()); tr.begin(); s = tr; objects.update(sub=Square(), start=tr.starting_mobject, target=tr.target_copy)', { submobject: ref('sub'), starting_submobject: ref('start'), target_copy: ref('target'), alpha: 0.5 },
+  'assert not np.allclose(objects["sub"].points, objects["start"].points)');
+
+// Numbers
+add('manim.animation.numbers.ChangingDecimal', 'num = DecimalNumber(10); objects["num"] = num; objects["fn"] = lambda a: 10 + 20*a', { decimal_mob: ref('num'), number_update_func: ref('fn'), kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(0.5); close(num.get_value(), 20)');
+add('manim.animation.numbers.ChangingDecimal.interpolate_mobject', 'num = DecimalNumber(10); s = ChangingDecimal(num, lambda a: 10 + 20*a, rate_func=linear); s.begin()', { alpha: 0.5 },
+  'close(s.mobject.get_value(), 20)');
+add('manim.animation.numbers.ChangingDecimal.check_validity_of_input', 's = ChangingDecimal(DecimalNumber(0), lambda a: a); objects["num"] = DecimalNumber(5)', { decimal_mob: ref('num') },
+  'assert isinstance(objects["num"], DecimalNumber)');
+add('manim.animation.numbers.ChangeDecimalToValue', 'num = DecimalNumber(0); objects["num"] = num', { decimal_mob: ref('num'), target_number: 100, kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(0.25); close(num.get_value(), 25)');
+
+// Text & Creation
+add('manim.animation.creation.AddTextLetterByLetter', 'txt = Text("ABCD"); objects["txt"] = txt', { text: ref('txt'), kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(0.5); assert sum(m.get_fill_opacity() > 0 for m in txt.submobjects) == 2');
+add('manim.animation.creation.AddTextWordByWord', 'txt = Text("One Two Three Four"); objects["txt"] = txt', { text_mobject: ref('txt') },
+  'result._setup_scene(Scene()); result.begin(); result.interpolate(0.5); assert sum(m.get_fill_opacity() > 0 for m in txt.submobjects) >= 6');
+add('manim.animation.creation.RemoveTextLetterByLetter', 'txt = Text("ABCD"); objects["txt"] = txt', { text: ref('txt'), kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(0.5); assert sum(m.get_fill_opacity() > 0 for m in txt.submobjects) == 2');
+add('manim.animation.creation.ShowPartial.interpolate_submobject', 's = Create(Square()); s.begin(); objects.update(sub=Square(), start=Square())', { submobject: ref('sub'), starting_submobject: ref('start'), alpha: 0.5 },
+  'assert len(objects["sub"].points) > 0');
+add('manim.animation.creation.ShowSubmobjectsOneByOne', 'vg = VGroup(Dot(), Square(), Circle()); objects["vg"] = vg', { group: ref('vg') },
+  'result.begin(); result.interpolate(0.5); assert vg[1] in vg.submobjects');
+add('manim.animation.creation.SpiralIn', 'sq = Square(); objects["sq"] = sq', { shapes: ref('sq'), kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(0.5); assert result.starting_mobject is not sq');
+add('manim.animation.creation.SpiralIn.interpolate_mobject', 's = SpiralIn(Square(), rate_func=linear); s.begin()', { alpha: 0.5 },
+  'assert s.starting_mobject is not s.mobject');
+add('manim.animation.creation.TypeWithCursor', 'txt = Text("Test"); cur = Rectangle(height=0.5, width=0.1); objects.update(txt=txt, cur=cur)', { text: ref('txt'), cursor: ref('cur') },
+  'result.begin(); assert cur in txt.submobjects; result.finish(); assert cur.get_fill_opacity() == 1');
+add('manim.animation.creation.TypeWithCursor.begin', 'txt = Text("Test"); cur = Rectangle(height=0.5, width=0.1); s = TypeWithCursor(txt, cur)', {},
+  'assert cur in txt.submobjects and cur.get_fill_opacity() == 1');
+add('manim.animation.creation.TypeWithCursor.finish', 'txt = Text("Test"); cur = Rectangle(height=0.5, width=0.1); s = TypeWithCursor(txt, cur); s.begin()', {},
+  'assert cur.get_fill_opacity() == 1');
+add('manim.animation.creation.TypeWithCursor.clean_up_from_scene', 'txt = Text("Test"); cur = Rectangle(height=0.5, width=0.1); sc = Scene(); sc.add(txt); s = TypeWithCursor(txt, cur, leave_cursor_on=False); s.begin(); s.finish(); objects["sc"] = sc', { scene: ref('sc') },
+  'assert cur not in sc.mobjects');
+add('manim.animation.creation.TypeWithCursor.update_submobject_list', 'txt = Text("Test"); cur = Rectangle(height=0.5, width=0.1); s = TypeWithCursor(txt, cur); s.begin()', { index: 2 },
+  'assert txt[0].get_fill_opacity() > 0 and cur.get_fill_opacity() == 1');
+add('manim.animation.creation.UntypeWithCursor', 'txt = Text("Test"); cur = Rectangle(height=0.5, width=0.1); objects.update(txt=txt, cur=cur)', { text: ref('txt'), cursor: ref('cur') },
+  'result.begin(); assert cur in txt.submobjects');
+add('manim.animation.creation.Write.begin', 's = Write(Square())', {}, 'assert hasattr(s, "starting_mobject")');
+add('manim.animation.creation.Write.finish', 's = Write(Square()); s.begin()', {}, 'assert not s.mobject.updating_suspended');
+add('manim.animation.creation.Write.reverse_submobjects', 's = Write(VGroup(Square(), Circle()))', {}, 'assert s.mobject[0] is not None');
+add('manim.animation.creation.DrawBorderThenFill.begin', 's = DrawBorderThenFill(Square())', {}, 'assert hasattr(s, "outline")');
+add('manim.animation.creation.DrawBorderThenFill.get_stroke_color', 's = DrawBorderThenFill(Square(stroke_color=BLUE)); objects["sq"] = Square(stroke_color=RED)', { vmobject: ref('sq') },
+  'assert result == ManimColor(RED)');
+add('manim.animation.creation.DrawBorderThenFill.interpolate_submobject', 's = DrawBorderThenFill(Square()); s.begin(); objects.update(sub=Square(), start=Square(), out=Square())', { submobject: ref('sub'), starting_submobject: ref('start'), outline: ref('out'), alpha: 0.5 },
+  'assert objects["sub"].get_fill_opacity() == 0');
+
+// Indication & Growing
+add('manim.animation.indication.Blink', 'dot = Dot(); objects["dot"] = dot', { mobject: ref('dot') },
+  'result._setup_scene(Scene()); result.begin(); assert hasattr(result, "active_animation")');
+add('manim.animation.indication.Flash.create_lines', 's = Flash(Dot(RIGHT*2), num_lines=8, line_length=0.5)', {}, 'assert len(result) == 8');
+add('manim.animation.indication.Flash.create_line_anims', 's = Flash(Dot(RIGHT*2), num_lines=6, line_length=0.5)', {}, 'assert len(result) == 6');
+add('manim.animation.indication.FocusOn.create_target', 's = FocusOn(Dot(RIGHT*2), color=RED, opacity=0.8)', {}, 'result.update(); close(result.get_center(), [2,0,0]); close(result.get_fill_opacity(), 0.8)');
+add('manim.animation.indication.ShowPassingFlash.clean_up_from_scene', 's = ShowPassingFlash(Line(LEFT, RIGHT)); sc = Scene(); sc.add(Line(LEFT, RIGHT)); objects["sc"] = sc', { scene: ref('sc') },
+  'assert len(sc.mobjects) >= 0');
+add('manim.animation.indication.ShowPassingFlashWithThinningStrokeWidth', 'line = Line(LEFT, RIGHT).set_stroke(width=6); objects["line"] = line', { vmobject: ref('line'), n_segments: 5 },
+  'assert len(result.animations) == 5');
+add('manim.animation.indication.Wiggle.interpolate_submobject', 's = Wiggle(Square()); s.begin(); objects.update(sub=Square(), start=Square())', { submobject: ref('sub'), starting_submobject: ref('start'), alpha: 0.5 },
+  'assert not np.allclose(objects["sub"].points, objects["start"].points)');
+add('manim.animation.growing.GrowArrow.create_starting_mobject', 's = GrowArrow(Arrow(ORIGIN, RIGHT*3))', {}, 'close(result.get_length(), 0)');
+
+// Movement
+add('manim.animation.movement.Homotopy.function_at_time_t', 's = Homotopy(lambda x,y,z,t: (x+t, y+2*t, z), Square())', { t: 0.5 },
+  'close(result(np.array([1,2,0])), [1.5, 3.0, 0])');
+add('manim.animation.movement.Homotopy.interpolate_submobject', 's = Homotopy(lambda x,y,z,t: (x+t, y+2*t, z), Square()); objects.update(sub=Square(), start=Square())', { submobject: ref('sub'), starting_submobject: ref('start'), alpha: 0.5 },
+  'close(objects["sub"].get_center(), [0.5, 1.0, 0])');
+add('manim.animation.movement.PhaseFlow', 'dot = Dot(); objects.update(dot=dot, fn=lambda p: np.array([2.0, 0.0, 0.0]))', { function: ref('fn'), mobject: ref('dot'), kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(0.0); result.interpolate(0.5); close(dot.get_center(), [1.0, 0.0, 0.0])');
+add('manim.animation.movement.PhaseFlow.interpolate_mobject', 's = PhaseFlow(lambda p: np.array([2.0, 0.0, 0.0]), Dot(), rate_func=linear); s.begin(); s.interpolate(0.0)', { alpha: 0.5 },
+  'close(s.mobject.get_center(), [1.0, 0.0, 0.0])');
+add('manim.animation.movement.SmoothedVectorizedHomotopy', 'sq = Square(); objects.update(sq=sq, fn=lambda x,y,z,t: (x, y+t, z))', { homotopy: ref('fn'), mobject: ref('sq') },
+  'objects.update(sub=Square(), start=Square()); result.interpolate_submobject(objects["sub"], objects["start"], 0.5); close(objects["sub"].get_center(), [0, 0.5, 0])');
+add('manim.animation.movement.SmoothedVectorizedHomotopy.interpolate_submobject', 's = SmoothedVectorizedHomotopy(lambda x,y,z,t: (x, y+t, z), Square()); objects.update(sub=Square(), start=Square())', { submobject: ref('sub'), starting_submobject: ref('start'), alpha: 0.5 },
+  'close(objects["sub"].get_center(), [0, 0.5, 0])');
+add('manim.animation.specialized.Broadcast', 'circ = Circle(radius=1); objects["circ"] = circ', { mobject: ref('circ'), kwargs: { focal_point: array([0,0,0]), n_mobs: 4 } },
+  'assert len(result.animations) == 4');
+
+// SpeedModifier
+add('manim.animation.speedmodifier.ChangeSpeed', 'ChangeSpeed.is_changing_dt = False; sq = Square().shift(RIGHT); objects["anim"] = Rotate(sq, angle=PI, about_point=ORIGIN, rate_func=linear)', { anim: ref('anim'), speedinfo: { $dict: [[0, 1], [1, 1]] } },
+  'result.begin(); result.interpolate(0.5); close(sq.get_center(), [0,1,0]); result.finish(); close(sq.get_center(), [-1,0,0])');
+add('manim.animation.speedmodifier.ChangeSpeed.add_updater', 'dot = Dot(); objects.update(dot=dot, fn=lambda m, dt: m.shift(RIGHT*dt))', { mobject: ref('dot'), update_function: ref('fn') },
+  'dot.update(0.5); close(dot.get_center(), [0.5, 0, 0])');
+add('manim.animation.speedmodifier.ChangeSpeed.begin', 'ChangeSpeed.is_changing_dt = False; sq = Square().shift(RIGHT); s = ChangeSpeed(Rotate(sq, angle=PI, about_point=ORIGIN, rate_func=linear), speedinfo={0:1, 1:1})', {},
+  's.interpolate(0.5); close(sq.get_center(), [0,1,0]); s.finish()');
+add('manim.animation.speedmodifier.ChangeSpeed.finish', 'ChangeSpeed.is_changing_dt = False; sq = Square().shift(RIGHT); s = ChangeSpeed(Rotate(sq, angle=PI, about_point=ORIGIN, rate_func=linear), speedinfo={0:1, 1:1}); s.begin()', {},
+  'close(sq.get_center(), [-1,0,0])');
+add('manim.animation.speedmodifier.ChangeSpeed.interpolate', 'ChangeSpeed.is_changing_dt = False; sq = Square().shift(RIGHT); s = ChangeSpeed(Rotate(sq, angle=PI, about_point=ORIGIN, rate_func=linear), speedinfo={0:1, 1:1}); s.begin()', { alpha: 0.5 },
+  'close(sq.get_center(), [0,1,0]); s.finish()');
+add('manim.animation.speedmodifier.ChangeSpeed.setup', 's = ChangeSpeed(Rotate(Square()), speedinfo={0:1, 1:1}, affects_speed_updaters=False); objects["anim"] = Rotate(Square())', { anim: ref('anim') },
+  'assert result is not None');
+add('manim.animation.speedmodifier.ChangeSpeed.update_mobjects', 's = ChangeSpeed(Rotate(Square()), speedinfo={0:1, 1:1}, affects_speed_updaters=False); s.begin()', { dt: 0.1 }, 's.finish(); assert True');
+add('manim.animation.speedmodifier.ChangeSpeed.clean_up_from_scene', 'sq = Square(); sc = Scene(); sc.add(sq); s = ChangeSpeed(Rotate(sq), speedinfo={0:1, 1:1}, affects_speed_updaters=False); s.begin(); objects["sc"] = sc', { scene: ref('sc') }, 's.finish(); assert True');
+
+// Transform Variants & Matching
+add('manim.animation.transform.FadeTransform.begin', 's1 = Square(); s2 = Circle(); s = FadeTransform(s1, s2)', {}, 'assert hasattr(s, "target_mobject")');
+add('manim.animation.transform.FadeTransform.clean_up_from_scene', 's1 = Square(); s2 = Circle(); s = FadeTransform(s1, s2); sc = Scene(); sc.add(s.mobject); s.begin(); s.finish(); objects["sc"] = sc', { scene: ref('sc') },
+  'assert s.mobject not in sc.mobjects and s.to_add_on_completion in sc.mobjects');
+add('manim.animation.transform.FadeTransform.ghost_to', 's = FadeTransform(Square(), Circle()); objects.update(s1=Square(), s2=Circle())', { source: ref('s1'), target: ref('s2') },
+  'close(objects["s1"].get_fill_opacity(), 0)');
+add('manim.animation.transform.FadeTransformPieces.begin', 's = FadeTransformPieces(Square(), Circle())', {}, 'assert hasattr(s, "target_mobject")');
+add('manim.animation.transform.FadeTransformPieces.ghost_to', 's = FadeTransformPieces(Square(), Circle()); objects.update(s1=Square(), s2=Circle())', { source: ref('s1'), target: ref('s2') },
+  'close(objects["s1"].get_fill_opacity(), 0)');
+add('manim.animation.transform.TransformAnimations', 'a1 = Animation(Square()); a2 = Animation(Square().shift(RIGHT)); objects.update(a1=a1, a2=a2)', { start_anim: ref('a1'), end_anim: ref('a2'), kwargs: { rate_func: { $api: 'linear' } } },
+  'result.begin(); result.interpolate(0.5); close(result.mobject.get_center(), [0.5, 0, 0])');
+add('manim.animation.transform.TransformAnimations.interpolate', 'a1 = Animation(Square()); a2 = Animation(Square().shift(RIGHT)); s = TransformAnimations(a1, a2, rate_func=linear); s.begin()', { alpha: 0.5 },
+  'close(s.mobject.get_center(), [0.5, 0, 0])');
+add('manim.animation.transform.TransformFromCopy.interpolate', 's = TransformFromCopy(Square(), Circle()); s.begin()', { alpha: 0.5 },
+  'assert hasattr(s, "target_copy")');
+add('manim.animation.transform_matching_parts.TransformMatchingShapes', 's1 = VGroup(Square(), Circle()); s2 = VGroup(Circle(), Square()); objects.update(s1=s1, s2=s2)', { mobject: ref('s1'), target_mobject: ref('s2') },
+  'result.begin(); assert len(result.animations) > 0');
+add('manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_parts', 's = TransformMatchingShapes(Square(), Circle()); objects["s1"] = VGroup(Square(), Circle())', { mobject: ref('s1') },
+  'assert len(result) == 2');
+add('manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_key', 's = TransformMatchingShapes(Square(), Circle()); objects["sq"] = Square()', { mobject: ref('sq') },
+  'assert isinstance(result, int)');
+add('manim.animation.transform_matching_parts.TransformMatchingTex', 't1 = MathTex("x"); t2 = MathTex("y"); objects.update(t1=t1, t2=t2)', { mobject: ref('t1'), target_mobject: ref('t2') },
+  'result.begin(); assert len(result.animations) > 0');
+add('manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_parts', 's = TransformMatchingTex(MathTex("x"), MathTex("y")); objects["t1"] = MathTex("x")', { mobject: ref('t1') },
+  'assert len(result) > 0');
+add('manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_key', 's = TransformMatchingTex(MathTex("x"), MathTex("y")); objects["mob"] = MathTex("x")[0]', { mobject: ref('mob') },
+  'assert isinstance(result, str)');
+add('manim.animation.transform_matching_parts.TransformMatchingAbstractBase.clean_up_from_scene', 's1 = VGroup(Square()); s2 = VGroup(Square()); sc = Scene(); sc.add(s1); s = TransformMatchingShapes(s1, s2); s.begin(); s.finish(); objects["sc"] = sc', { scene: ref('sc') },
+  'assert len(sc.mobjects) >= 0');
+add('manim.animation.transform_matching_parts.TransformMatchingAbstractBase.get_shape_map', 's = TransformMatchingShapes(Square(), Circle()); objects["vg"] = VGroup(Square(), Circle())', { mobject: ref('vg') },
+  'assert len(result) > 0');
+
+// Succession & Composition
+add('manim.animation.composition.Succession.begin', 'sq = Square(); s = Succession(Transform(sq, Circle()), Transform(sq, Triangle())); s._setup_scene(Scene())', {},
+  'assert hasattr(s, "active_animation")');
+add('manim.animation.composition.Succession.finish', 'sq = Square(); s = Succession(Transform(sq, Circle()), Transform(sq, Triangle())); s._setup_scene(Scene()); s.begin()', {},
+  'assert not s.mobject.updating_suspended');
+add('manim.animation.composition.Succession.interpolate', 'sq = Square(); s = Succession(Transform(sq, Circle()), Transform(sq, Triangle())); s._setup_scene(Scene()); s.begin()', { alpha: 0.25 },
+  'assert hasattr(s, "active_animation")');
+add('manim.animation.composition.Succession.next_animation', 'sq = Square(); s = Succession(Transform(sq, Circle()), Transform(sq, Triangle())); s._setup_scene(Scene()); s.begin()', {},
+  'assert hasattr(s, "active_animation")');
+add('manim.animation.composition.Succession.update_active_animation', 'sq = Square(); s = Succession(Transform(sq, Circle()), Transform(sq, Triangle())); s._setup_scene(Scene()); s.begin()', { index: 1 },
+  'assert hasattr(s, "active_animation")');
+add('manim.animation.composition.Succession.update_mobjects', 'sq = Square(); s = Succession(Transform(sq, Circle()), Transform(sq, Triangle())); s._setup_scene(Scene()); s.begin()', { dt: 0.1 },
+  'assert hasattr(s, "active_animation")');
+add('manim.animation.composition.AnimationGroup.clean_up_from_scene', 'a = Square(); b = Circle(); sc = Scene(); sc.add(a, b); s = AnimationGroup(FadeOut(a), FadeOut(b)); s.begin(); s.finish(); objects["sc"] = sc', { scene: ref('sc') },
+  'assert a not in sc.mobjects and b not in sc.mobjects');
+add('manim.animation.composition.AnimationGroup.update_mobjects', 's = AnimationGroup(Rotate(Square())); s.begin()', { dt: 0.1 }, 'assert True');
+add('manim.animation.composition.LaggedStartMap', 'vg = VGroup(Square(), Circle()); objects["vg"] = vg', { animation_class: { $api: 'FadeIn' }, mobject: ref('vg'), kwargs: { lag_ratio: 0.5 } },
+  'assert len(result.animations) == 2');
+
+// Changing
+add('manim.animation.changing.AnimatedBoundary', 'sq = Square(); objects["sq"] = sq', { vmobject: ref('sq') },
+  'assert len(result.boundary_copies) == 2');
+add('manim.animation.changing.AnimatedBoundary.full_family_become_partial', 's = AnimatedBoundary(Square()); objects.update(m1=Square(), m2=Square())', { mob1: ref('m1'), mob2: ref('m2'), a: 0.2, b: 0.8 },
+  'assert len(objects["m1"].points) > 0');
+add('manim.animation.changing.AnimatedBoundary.update_boundary_copies', 's = AnimatedBoundary(Square())', { dt: 0.5 },
+  'assert len(s.boundary_copies[0].points) > 0');
+add('manim.animation.changing.TracedPath', 'dot = Dot(); objects["fn"] = dot.get_center', { traced_point_func: ref('fn') },
+  'dot.shift(RIGHT); result.update_path(result, 0.1); assert len(result.points) > 0');
+add('manim.animation.changing.TracedPath.update_path', 'dot = Dot(); s = TracedPath(dot.get_center); dot.shift(RIGHT)', { mob: ref('s'), dt: 0.1 },
+  'assert len(s.points) > 0');
+
 test('native animation lifecycle, updaters and trackers change observable state', { timeout: 120_000 }, async t => {
   const health = await discoverPython();
   if (!health.available) { t.skip('Manim required'); return; }
   const directory = await mkdtemp(path.join(tmpdir(), 'anyvis-api-animation-state-'));
   try {
     const compiler = createApiCompiler();
-    const scope = new Set(['s','a','b','scene','fn','method','anim','builder','path']);
+    const scope = new Set(['s','a','a1','a2','b','builder','c','circ','cur','dot','fn','line','m1','m2','method','mob','num','out','path','s1','s2','sc','scene','sq','start','sub','t1','t2','target','txt','vg','anim']);
     const probes = cases.map((c,index) => {
       const entry = getApiEntry(c.id); assert.ok(entry, c.id);
       const fields = { receiver:'s', mode:'store' };

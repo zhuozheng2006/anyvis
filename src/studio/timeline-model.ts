@@ -76,11 +76,56 @@ export function splitAudioClip(project: Project, clip: AudioClip, time: number):
 
 /** Ripple insertion; waiting gaps can be split, animations cannot be silently overlapped. */
 export function moveAnimationClip(project: Project, id: string, requested: number): Project {
-  const selected = timelineClips(project.actions).find(c => c.action.id === id);
-  if (!selected || selected.start === null || selected.duration === null) throw Error('动态片段请在积木中调整顺序。');
-  const start = frameTime(Math.max(0, requested), project.scene.fps);
-  if (Math.abs(start - selected.start) < 1e-8) return project;
-  const rest = project.actions.filter(a => a.id !== id), clips = timelineClips(rest);
+  return moveAnimationClips(project, [id], requested, id);
+}
+
+/** Batch ripple insertion for multiple selected animation clips; preserves relative order. */
+export function moveAnimationClips(project: Project, ids: string[], requestedStart: number, anchorId: string): Project {
+  if (ids.length <= 1) {
+    const id = ids[0] ?? anchorId;
+    const selected = timelineClips(project.actions).find(c => c.action.id === id);
+    if (!selected || selected.start === null || selected.duration === null) throw Error('动态片段请在积木中调整顺序。');
+    const start = frameTime(Math.max(0, requestedStart), project.scene.fps);
+    if (Math.abs(start - selected.start) < 1e-8) return project;
+    const rest = project.actions.filter(a => a.id !== id), clips = timelineClips(rest);
+    let index = rest.length, gap = 0, split: { index: number; before: number; after: number } | undefined;
+    for (const clip of clips) {
+      if (clip.start === null || clip.duration === null) { index = clip.index; break; }
+      const end = clip.start + clip.duration;
+      if (clip.action.type === 'wait' && start > clip.start && start < end) {
+        split = { index: clip.index, before: start - clip.start, after: end - start }; break;
+      }
+      if (start < clip.start + clip.duration / 2) { index = clip.index; break; }
+    }
+    if (split) {
+      rest.splice(split.index, 1, createAction('wait', { duration: split.before }), selected.action, createAction('wait', { duration: split.after }));
+    } else {
+      if (index === rest.length) {
+        const last = clips[clips.length - 1]; const end = last ? (last.start ?? 0) + (last.duration ?? 0) : 0;
+        gap = Math.max(0, start - end);
+      }
+      rest.splice(index, 0, ...(gap ? [createAction('wait', { duration: gap })] : []), selected.action);
+    }
+    return checkedEdit(project, { ...project, workspace: undefined, actions: rest });
+  }
+
+  const idSet = new Set(ids);
+  const allClips = timelineClips(project.actions);
+  const selectedClips = allClips.filter(c => idSet.has(c.action.id));
+  const anchorClip = selectedClips.find(c => c.action.id === anchorId) || selectedClips[0];
+  if (!anchorClip || anchorClip.start === null || anchorClip.duration === null) throw Error('动态片段请在积木中调整顺序。');
+  if (selectedClips.some(c => c.start === null || c.duration === null)) throw Error('动态片段请在积木中调整顺序。');
+
+  const delta = frameTime(requestedStart - anchorClip.start, project.scene.fps);
+  if (Math.abs(delta) < 1e-8) return project;
+
+  const selectedActions = project.actions.filter(a => idSet.has(a.id));
+  const rest = project.actions.filter(a => !idSet.has(a.id));
+  const clips = timelineClips(rest);
+
+  const minSelectedStart = Math.min(...selectedClips.map(c => c.start!));
+  const start = frameTime(Math.max(0, minSelectedStart + delta), project.scene.fps);
+
   let index = rest.length, gap = 0, split: { index: number; before: number; after: number } | undefined;
   for (const clip of clips) {
     if (clip.start === null || clip.duration === null) { index = clip.index; break; }
@@ -90,14 +135,15 @@ export function moveAnimationClip(project: Project, id: string, requested: numbe
     }
     if (start < clip.start + clip.duration / 2) { index = clip.index; break; }
   }
+
   if (split) {
-    rest.splice(split.index, 1, createAction('wait', { duration: split.before }), selected.action, createAction('wait', { duration: split.after }));
+    rest.splice(split.index, 1, createAction('wait', { duration: split.before }), ...selectedActions, createAction('wait', { duration: split.after }));
   } else {
     if (index === rest.length) {
       const last = clips[clips.length - 1]; const end = last ? (last.start ?? 0) + (last.duration ?? 0) : 0;
       gap = Math.max(0, start - end);
     }
-    rest.splice(index, 0, ...(gap ? [createAction('wait', { duration: gap })] : []), selected.action);
+    rest.splice(index, 0, ...(gap ? [createAction('wait', { duration: gap })] : []), ...selectedActions);
   }
   return checkedEdit(project, { ...project, workspace: undefined, actions: rest });
 }

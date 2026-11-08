@@ -2,7 +2,7 @@ import { expect, it } from 'vitest';
 import { createAction } from './core/catalog';
 import { createEmptyProject, validateProject } from './core/project';
 import { compileProject } from './core/compiler';
-import { audioClips, editAudioClip, moveAnimationClip, resizeAnimationClip, splitAudioClip } from './timeline-model';
+import { audioClips, editAudioClip, moveAnimationClip, moveAnimationClips, resizeAnimationClip, splitAudioClip } from './timeline-model';
 import { timelineClips } from './authoring';
 const voice = { id: 'b'.repeat(64), name: 'voice.wav', kind: 'audio' as const, extension: 'wav', bytes: 100, duration: 10 };
 const audioProject = () => ({ ...createEmptyProject(), assets: [voice], actions: [createAction('wait', { duration: 2 }), createAction('audio_play', { asset: voice.id, delay: 1, offset: 2, length: 4 }), createAction('wait', { duration: 5 }), createAction('audio_stop', { target: '配音' })] });
@@ -37,6 +37,20 @@ it('ripple-inserts an animation into a wait and rejects moves before object cons
   const resized = resizeAnimationClip(next, move.id, 2.5);
   expect(compileProject(resized).duration).toBe(6.5);
   expect(() => moveAnimationClip({ ...p, actions: [createAction('wait', { duration: 1 }), circle, move] }, move.id, 0)).toThrow();
+});
+it('batch ripple-moves multiple selected animations together preserving relative order', () => {
+  const circle = createAction('circle', { appear: 'none' });
+  const move1 = createAction('shift', { target: '圆', duration: 1 });
+  const move2 = createAction('rotate', { target: '圆', duration: 1.5 });
+  const p = { ...createEmptyProject(), actions: [circle, createAction('wait', { duration: 4 }), move1, move2] };
+  const next = moveAnimationClips(p, [move1.id, move2.id], 1, move1.id);
+  const clips = timelineClips(next.actions);
+  const c1 = clips.find(c => c.action.id === move1.id);
+  const c2 = clips.find(c => c.action.id === move2.id);
+  expect(c1?.start).toBe(1);
+  expect(c2?.start).toBe(2);
+  expect(compileProject(next).duration).toBe(6.5);
+  expect(compileProject(next).diagnostics).toEqual([]);
 });
 it('muted audio retains timeline length but is excluded from the exported mix', () => {
   const p = audioProject(); p.actions[1].fields.muted = 'yes';

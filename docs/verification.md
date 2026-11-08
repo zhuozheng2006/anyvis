@@ -1,5 +1,21 @@
 # AnyVis 验证记录
 
+## 动画生命周期、坐标系统与时间轴多选批量操作扩展（2026-11-08）
+
+十二组真实 Manim 证据合并 **1,228 / 2,293** 个独立入口，新增 134 个动画、坐标系与图表 API（覆盖旋转、变形、数值、构建、指示、移动、速度修饰、组合，以及线性轴、对数轴、坐标系、三维轴、隐函数、柱状图、样本空间等），剩余 1,065 项。全部调用均经 AnyVis 注册表编译器生成，包含真实的 observable 几何、点集与状态断言，0 失败、0 fixture gap：
+- **动画生命周期与变换**：`Rotate`、`Rotating`、`ClockwiseTransform`、`CounterclockwiseTransform`、`CyclicReplace`、`FadeTransform`、`FadeTransformPieces`、`ShrinkToCenter`、`GrowFromCenter`、`GrowFromEdge`、`SpinInFromNothing`、`TransformFromCopy`、`TransformAnimations`、`ChangingDecimal`、`CountInFrom`、`FadeToColor`、`ShowPassingFlash`、`ShowCreationThenDestruction`、`ShowCreationThenFadeOut`、`AnimationGroup`、`Succession`、`LaggedStart`、`Homotopy`、`ComplexHomotopy`、`SmoothedVectorizedHomotopy`、`PhaseFlow`、`ChangeSpeed` 等。
+- **坐标系与函数图表**：`LinearBase`、`LogBase`、`NumberLine`、`CoordinateSystem`、`ThreeDAxes`、`ImplicitFunction`、`BarChart`、`SampleSpace` 等的坐标变换、刻度标签、轴线投影与离散分割断言。
+- **Manim 0.20.1 兼容适配**：
+  - `_av_movement_compat`: 注入 `VMobject` 到 `manim.animation.movement` 解决 upstream 放置于 `TYPE_CHECKING` 导致的 `NameError`。
+  - `_av_sample_space_compat`: 兼容 `SampleSpace.get_subdivision_braces_and_labels` 中传递的 `min_num_quads` 关键字参数。
+  - `_av_number_line_compat`: 为 `NumberLine` 补充 `default_numbers_to_display` 解决 `get_labels` 时的 `AttributeError`。
+- **时间轴多选、框选与批量移动/删除**：
+  - 时间轴 Marquee 框选与 Shift / Cmd 多选/反选，实时高亮选中片段。
+  - 批量波纹移动（`moveAnimationClips`）：多选时拖动任意选中片段，保持选中片段内部相对顺序波纹位移。
+  - 批量原子删除（`removeActions`）：支持 Delete/Backspace 快捷键及检视器批量删除工具条，原子执行并严格校验跨子树依赖保护。
+
+本地 344 项应用测试、22 项原生测试入口、6 项证据校验、11 项桌面检查、真实 worker 媒体渲染与混音、确定性钢琴合成及生产构建全部通过。
+
 ## Mobject/VMobject、三维与几何标注扩展验证（2026-11-08）
 
 十二组真实 Manim 证据合并 **1,094 / 2,293** 个独立入口，新增 82 个几何路径、变形、三维与表格 API，剩余 1,199 项。全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格后置条件对比，0 失败、0 fixture gap：

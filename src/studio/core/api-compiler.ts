@@ -257,6 +257,30 @@ def _av_foreground_compat():
         return result
     _av_Scene.add = add
 _av_foreground_compat()
+def _av_movement_compat():
+    import manim as _av_manim
+    import manim.animation.movement as _av_movement
+    if _av_manim.__version__ != '0.20.1': return
+    if not hasattr(_av_movement, 'VMobject'):
+        _av_movement.VMobject = _av_manim.VMobject
+_av_movement_compat()
+def _av_sample_space_compat():
+    import manim as _av_manim
+    from manim.mobject.svg.brace import Brace as _av_Brace
+    if _av_manim.__version__ != '0.20.1': return
+    original_init = _av_Brace.__init__
+    if 'min_num_quads' not in _av_inspect.signature(original_init).parameters:
+        def brace_init(self, *args, min_num_quads=None, **kwargs):
+            return original_init(self, *args, **kwargs)
+        _av_Brace.__init__ = brace_init
+_av_sample_space_compat()
+def _av_number_line_compat():
+    import manim as _av_manim
+    from manim.mobject.graphing.number_line import NumberLine as _av_NumberLine
+    if _av_manim.__version__ != '0.20.1': return
+    if not hasattr(_av_NumberLine, 'default_numbers_to_display'):
+        _av_NumberLine.default_numbers_to_display = lambda self: self.get_tick_range()
+_av_number_line_compat()
 def _av_check_receiver(value, owner):
     if not isinstance(value, owner):
         raise TypeError(f"操作对象需要 {owner.__name__}，实际是 {type(value).__name__}")

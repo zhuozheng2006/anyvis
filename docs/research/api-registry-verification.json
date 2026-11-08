@@ -133,25 +133,58 @@
       "manim.animation.animation.Animation.update_mobjects",
       "manim.animation.animation.Wait",
       "manim.animation.animation.prepare_animation",
+      "manim.animation.changing.AnimatedBoundary",
+      "manim.animation.changing.AnimatedBoundary.full_family_become_partial",
+      "manim.animation.changing.AnimatedBoundary.update_boundary_copies",
+      "manim.animation.changing.TracedPath",
+      "manim.animation.changing.TracedPath.update_path",
       "manim.animation.composition.AnimationGroup.begin",
       "manim.animation.composition.AnimationGroup.build_animations_with_timings",
+      "manim.animation.composition.AnimationGroup.clean_up_from_scene",
       "manim.animation.composition.AnimationGroup.finish",
       "manim.animation.composition.AnimationGroup.get_all_mobjects",
       "manim.animation.composition.AnimationGroup.init_run_time",
       "manim.animation.composition.AnimationGroup.interpolate",
+      "manim.animation.composition.AnimationGroup.update_mobjects",
       "manim.animation.composition.LaggedStart",
+      "manim.animation.composition.LaggedStartMap",
       "manim.animation.composition.Succession",
+      "manim.animation.composition.Succession.begin",
+      "manim.animation.composition.Succession.finish",
+      "manim.animation.composition.Succession.interpolate",
+      "manim.animation.composition.Succession.next_animation",
+      "manim.animation.composition.Succession.update_active_animation",
+      "manim.animation.composition.Succession.update_mobjects",
+      "manim.animation.creation.AddTextLetterByLetter",
+      "manim.animation.creation.AddTextWordByWord",
       "manim.animation.creation.Create",
       "manim.animation.creation.DrawBorderThenFill",
+      "manim.animation.creation.DrawBorderThenFill.begin",
       "manim.animation.creation.DrawBorderThenFill.get_all_mobjects",
       "manim.animation.creation.DrawBorderThenFill.get_outline",
+      "manim.animation.creation.DrawBorderThenFill.get_stroke_color",
+      "manim.animation.creation.DrawBorderThenFill.interpolate_submobject",
+      "manim.animation.creation.RemoveTextLetterByLetter",
       "manim.animation.creation.ShowIncreasingSubsets",
       "manim.animation.creation.ShowIncreasingSubsets.interpolate_mobject",
       "manim.animation.creation.ShowIncreasingSubsets.update_submobject_list",
+      "manim.animation.creation.ShowPartial.interpolate_submobject",
+      "manim.animation.creation.ShowSubmobjectsOneByOne",
       "manim.animation.creation.ShowSubmobjectsOneByOne.update_submobject_list",
+      "manim.animation.creation.SpiralIn",
+      "manim.animation.creation.SpiralIn.interpolate_mobject",
+      "manim.animation.creation.TypeWithCursor",
+      "manim.animation.creation.TypeWithCursor.begin",
+      "manim.animation.creation.TypeWithCursor.clean_up_from_scene",
+      "manim.animation.creation.TypeWithCursor.finish",
+      "manim.animation.creation.TypeWithCursor.update_submobject_list",
       "manim.animation.creation.Uncreate",
+      "manim.animation.creation.UntypeWithCursor",
       "manim.animation.creation.Unwrite",
       "manim.animation.creation.Write",
+      "manim.animation.creation.Write.begin",
+      "manim.animation.creation.Write.finish",
+      "manim.animation.creation.Write.reverse_submobjects",
       "manim.animation.fading.FadeIn",
       "manim.animation.fading.FadeIn.create_starting_mobject",
       "manim.animation.fading.FadeIn.create_target",
@@ -159,6 +192,7 @@
       "manim.animation.fading.FadeOut.clean_up_from_scene",
       "manim.animation.fading.FadeOut.create_target",
       "manim.animation.growing.GrowArrow",
+      "manim.animation.growing.GrowArrow.create_starting_mobject",
       "manim.animation.growing.GrowFromCenter",
       "manim.animation.growing.GrowFromEdge",
       "manim.animation.growing.GrowFromPoint",
@@ -166,22 +200,50 @@
       "manim.animation.growing.GrowFromPoint.create_target",
       "manim.animation.growing.SpinInFromNothing",
       "manim.animation.indication.ApplyWave",
+      "manim.animation.indication.Blink",
       "manim.animation.indication.Circumscribe",
       "manim.animation.indication.Flash",
+      "manim.animation.indication.Flash.create_line_anims",
+      "manim.animation.indication.Flash.create_lines",
       "manim.animation.indication.FocusOn",
+      "manim.animation.indication.FocusOn.create_target",
       "manim.animation.indication.Indicate",
       "manim.animation.indication.Indicate.create_target",
       "manim.animation.indication.ShowPassingFlash",
+      "manim.animation.indication.ShowPassingFlash.clean_up_from_scene",
+      "manim.animation.indication.ShowPassingFlashWithThinningStrokeWidth",
       "manim.animation.indication.Wiggle",
       "manim.animation.indication.Wiggle.get_rotate_about_point",
       "manim.animation.indication.Wiggle.get_scale_about_point",
+      "manim.animation.indication.Wiggle.interpolate_submobject",
       "manim.animation.movement.ComplexHomotopy",
       "manim.animation.movement.Homotopy",
+      "manim.animation.movement.Homotopy.function_at_time_t",
+      "manim.animation.movement.Homotopy.interpolate_submobject",
       "manim.animation.movement.MoveAlongPath",
       "manim.animation.movement.MoveAlongPath.interpolate_mobject",
+      "manim.animation.movement.PhaseFlow",
+      "manim.animation.movement.PhaseFlow.interpolate_mobject",
+      "manim.animation.movement.SmoothedVectorizedHomotopy",
+      "manim.animation.movement.SmoothedVectorizedHomotopy.interpolate_submobject",
+      "manim.animation.numbers.ChangeDecimalToValue",
+      "manim.animation.numbers.ChangingDecimal",
+      "manim.animation.numbers.ChangingDecimal.check_validity_of_input",
+      "manim.animation.numbers.ChangingDecimal.interpolate_mobject",
+      "manim.animation.rotation.Rotate",
       "manim.animation.rotation.Rotate.create_target",
       "manim.animation.rotation.Rotating",
+      "manim.animation.rotation.Rotating.interpolate_mobject",
+      "manim.animation.specialized.Broadcast",
+      "manim.animation.speedmodifier.ChangeSpeed",
+      "manim.animation.speedmodifier.ChangeSpeed.add_updater",
+      "manim.animation.speedmodifier.ChangeSpeed.begin",
+      "manim.animation.speedmodifier.ChangeSpeed.clean_up_from_scene",
+      "manim.animation.speedmodifier.ChangeSpeed.finish",
       "manim.animation.speedmodifier.ChangeSpeed.get_scaled_total_time",
+      "manim.animation.speedmodifier.ChangeSpeed.interpolate",
+      "manim.animation.speedmodifier.ChangeSpeed.setup",
+      "manim.animation.speedmodifier.ChangeSpeed.update_mobjects",
       "manim.animation.transform.ApplyComplexFunction",
       "manim.animation.transform.ApplyFunction",
       "manim.animation.transform.ApplyFunction.create_target",
@@ -192,23 +254,46 @@
       "manim.animation.transform.ApplyPointwiseFunction",
       "manim.animation.transform.ClockwiseTransform",
       "manim.animation.transform.CounterclockwiseTransform",
+      "manim.animation.transform.CyclicReplace",
+      "manim.animation.transform.CyclicReplace.create_target",
       "manim.animation.transform.FadeToColor",
       "manim.animation.transform.FadeTransform",
+      "manim.animation.transform.FadeTransform.begin",
+      "manim.animation.transform.FadeTransform.clean_up_from_scene",
       "manim.animation.transform.FadeTransform.get_all_families_zipped",
       "manim.animation.transform.FadeTransform.get_all_mobjects",
+      "manim.animation.transform.FadeTransform.ghost_to",
       "manim.animation.transform.FadeTransformPieces",
+      "manim.animation.transform.FadeTransformPieces.begin",
+      "manim.animation.transform.FadeTransformPieces.ghost_to",
+      "manim.animation.transform.MoveToTarget",
+      "manim.animation.transform.MoveToTarget.check_validity_of_input",
       "manim.animation.transform.ReplacementTransform",
+      "manim.animation.transform.Restore",
       "manim.animation.transform.ScaleInPlace",
       "manim.animation.transform.ShrinkToCenter",
+      "manim.animation.transform.Swap",
       "manim.animation.transform.Transform",
       "manim.animation.transform.Transform.begin",
       "manim.animation.transform.Transform.clean_up_from_scene",
       "manim.animation.transform.Transform.create_target",
       "manim.animation.transform.Transform.get_all_families_zipped",
       "manim.animation.transform.Transform.get_all_mobjects",
+      "manim.animation.transform.Transform.interpolate_submobject",
       "manim.animation.transform.Transform.path_arc",
       "manim.animation.transform.Transform.path_func",
+      "manim.animation.transform.TransformAnimations",
+      "manim.animation.transform.TransformAnimations.interpolate",
       "manim.animation.transform.TransformFromCopy",
+      "manim.animation.transform.TransformFromCopy.interpolate",
+      "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.clean_up_from_scene",
+      "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.get_shape_map",
+      "manim.animation.transform_matching_parts.TransformMatchingShapes",
+      "manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_key",
+      "manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_parts",
+      "manim.animation.transform_matching_parts.TransformMatchingTex",
+      "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_key",
+      "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_parts",
       "manim.animation.updaters.mobject_update_utils.always",
       "manim.animation.updaters.mobject_update_utils.always_redraw",
       "manim.animation.updaters.mobject_update_utils.always_rotate",
@@ -390,17 +475,22 @@
       "manim.mobject.graphing.coordinate_systems.Axes.plot_line_graph",
       "manim.mobject.graphing.coordinate_systems.Axes.point_to_coords",
       "manim.mobject.graphing.coordinate_systems.ComplexPlane",
+      "manim.mobject.graphing.coordinate_systems.ComplexPlane.add_coordinates",
+      "manim.mobject.graphing.coordinate_systems.ComplexPlane.get_coordinate_labels",
       "manim.mobject.graphing.coordinate_systems.ComplexPlane.n2p",
       "manim.mobject.graphing.coordinate_systems.ComplexPlane.number_to_point",
       "manim.mobject.graphing.coordinate_systems.ComplexPlane.p2n",
       "manim.mobject.graphing.coordinate_systems.ComplexPlane.point_to_number",
+      "manim.mobject.graphing.coordinate_systems.CoordinateSystem.add_coordinates",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.angle_of_tangent",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.c2p",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.coords_to_point",
+      "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_T_label",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_area",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_axes",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_axis",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_axis_labels",
+      "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_graph_label",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_horizontal_line",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_line_from_axis_to_point",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_lines_to_point",
@@ -410,8 +500,10 @@
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_vertical_line",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_vertical_lines_to_graph",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_x_axis",
+      "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_x_axis_label",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_x_unit_size",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_y_axis",
+      "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_y_axis_label",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_y_unit_size",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_z_axis",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.i2gc",
@@ -422,8 +514,10 @@
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_antiderivative_graph",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_derivative_graph",
+      "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_implicit_curve",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_parametric_curve",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_polar_graph",
+      "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_surface",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.point_to_coords",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.point_to_polar",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.polar_to_point",
@@ -434,18 +528,34 @@
       "manim.mobject.graphing.coordinate_systems.NumberPlane.get_vector",
       "manim.mobject.graphing.coordinate_systems.NumberPlane.prepare_for_nonlinear_transform",
       "manim.mobject.graphing.coordinate_systems.PolarPlane",
+      "manim.mobject.graphing.coordinate_systems.PolarPlane.add_coordinates",
       "manim.mobject.graphing.coordinate_systems.PolarPlane.get_axes",
+      "manim.mobject.graphing.coordinate_systems.PolarPlane.get_coordinate_labels",
+      "manim.mobject.graphing.coordinate_systems.PolarPlane.get_radian_label",
+      "manim.mobject.graphing.coordinate_systems.PolarPlane.get_vector",
+      "manim.mobject.graphing.coordinate_systems.PolarPlane.prepare_for_nonlinear_transform",
+      "manim.mobject.graphing.coordinate_systems.ThreeDAxes",
       "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_axis_labels",
+      "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_y_axis_label",
+      "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_z_axis_label",
       "manim.mobject.graphing.functions.FunctionGraph",
       "manim.mobject.graphing.functions.FunctionGraph.get_function",
       "manim.mobject.graphing.functions.FunctionGraph.get_point_from_function",
+      "manim.mobject.graphing.functions.ImplicitFunction",
+      "manim.mobject.graphing.functions.ImplicitFunction.generate_points",
+      "manim.mobject.graphing.functions.ImplicitFunction.init_points",
       "manim.mobject.graphing.functions.ParametricFunction",
       "manim.mobject.graphing.functions.ParametricFunction.generate_points",
       "manim.mobject.graphing.functions.ParametricFunction.get_function",
       "manim.mobject.graphing.functions.ParametricFunction.get_point_from_function",
       "manim.mobject.graphing.functions.ParametricFunction.init_points",
       "manim.mobject.graphing.number_line.NumberLine",
+      "manim.mobject.graphing.number_line.NumberLine.add_labels",
+      "manim.mobject.graphing.number_line.NumberLine.add_numbers",
       "manim.mobject.graphing.number_line.NumberLine.add_ticks",
+      "manim.mobject.graphing.number_line.NumberLine.get_labels",
+      "manim.mobject.graphing.number_line.NumberLine.get_number_mobject",
+      "manim.mobject.graphing.number_line.NumberLine.get_number_mobjects",
       "manim.mobject.graphing.number_line.NumberLine.get_tick",
       "manim.mobject.graphing.number_line.NumberLine.get_tick_marks",
       "manim.mobject.graphing.number_line.NumberLine.get_tick_range",
@@ -458,7 +568,31 @@
       "manim.mobject.graphing.number_line.NumberLine.rotate_about_number",
       "manim.mobject.graphing.number_line.NumberLine.rotate_about_zero",
       "manim.mobject.graphing.number_line.UnitInterval",
+      "manim.mobject.graphing.probability.BarChart",
+      "manim.mobject.graphing.probability.BarChart.change_bar_values",
       "manim.mobject.graphing.probability.BarChart.get_bar_labels",
+      "manim.mobject.graphing.probability.SampleSpace",
+      "manim.mobject.graphing.probability.SampleSpace.add_braces_and_labels",
+      "manim.mobject.graphing.probability.SampleSpace.add_label",
+      "manim.mobject.graphing.probability.SampleSpace.add_title",
+      "manim.mobject.graphing.probability.SampleSpace.complete_p_list",
+      "manim.mobject.graphing.probability.SampleSpace.divide_horizontally",
+      "manim.mobject.graphing.probability.SampleSpace.divide_vertically",
+      "manim.mobject.graphing.probability.SampleSpace.get_bottom_braces_and_labels",
+      "manim.mobject.graphing.probability.SampleSpace.get_division_along_dimension",
+      "manim.mobject.graphing.probability.SampleSpace.get_horizontal_division",
+      "manim.mobject.graphing.probability.SampleSpace.get_side_braces_and_labels",
+      "manim.mobject.graphing.probability.SampleSpace.get_subdivision_braces_and_labels",
+      "manim.mobject.graphing.probability.SampleSpace.get_top_braces_and_labels",
+      "manim.mobject.graphing.probability.SampleSpace.get_vertical_division",
+      "manim.mobject.graphing.scale.LinearBase",
+      "manim.mobject.graphing.scale.LinearBase.function",
+      "manim.mobject.graphing.scale.LinearBase.inverse_function",
+      "manim.mobject.graphing.scale.LogBase",
+      "manim.mobject.graphing.scale.LogBase.function",
+      "manim.mobject.graphing.scale.LogBase.get_custom_labels",
+      "manim.mobject.graphing.scale.LogBase.inverse_function",
+      "manim.mobject.graphing.scale._ScaleBase.get_custom_labels",
       "manim.mobject.matrix.Matrix.get_brackets",
       "manim.mobject.matrix.Matrix.get_columns",
       "manim.mobject.matrix.Matrix.get_entries",
@@ -1149,7 +1283,7 @@
         "fixture": "src/studio/core/api.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -1202,7 +1336,7 @@
         "fixture": "src/studio/core/api-families.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -6031,7 +6165,7 @@
         "fixture": "src/studio/core/api-queries.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -6118,6 +6252,7 @@
           "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_axis_labels",
           "manim.mobject.graphing.functions.FunctionGraph.get_function",
           "manim.mobject.graphing.functions.ParametricFunction.get_function",
+          "manim.mobject.graphing.number_line.NumberLine.get_labels",
           "manim.mobject.graphing.number_line.NumberLine.get_tick_marks",
           "manim.mobject.graphing.number_line.NumberLine.get_tick_range",
           "manim.mobject.graphing.number_line.NumberLine.get_unit_size",
@@ -6531,8 +6666,7 @@
           },
           {
             "apiId": "manim.mobject.graphing.number_line.NumberLine.get_labels",
-            "status": "fixture_gap",
-            "reason": "AttributeError: NumberLine object has no attribute 'default_numbers_to_display'"
+            "status": "verified"
           },
           {
             "apiId": "manim.mobject.graphing.number_line.NumberLine.get_tick_marks",
@@ -7057,7 +7191,7 @@
         "fixture": "src/studio/core/api-utilities.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -7637,7 +7771,7 @@
         "fixture": "src/studio/core/api-mutations.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -8519,7 +8653,7 @@
         "fixtureId": "api-config-v1",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -8860,7 +8994,7 @@
         "fixture": "src/studio/core/api-raster.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -9260,7 +9394,7 @@
         "fixture": "src/studio/core/api-animation-state.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -9270,7 +9404,7 @@
           "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
           "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
-          "src/studio/core/api-animation-state.native.spec-node.mjs": "c4c4e2b6ee274a295abf9d3602fda18ba756b471c9ecae4256f224785a7a141f"
+          "src/studio/core/api-animation-state.native.spec-node.mjs": "10bfd2ef92d6b2e585e8764d23ba1e22b3513ed1aa6beaad60c8406140bebab6"
         },
         "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "passed": true,
@@ -9289,32 +9423,117 @@
           "manim.animation.animation.Animation.set_run_time",
           "manim.animation.animation.Animation.update_mobjects",
           "manim.animation.animation.prepare_animation",
+          "manim.animation.changing.AnimatedBoundary",
+          "manim.animation.changing.AnimatedBoundary.full_family_become_partial",
+          "manim.animation.changing.AnimatedBoundary.update_boundary_copies",
+          "manim.animation.changing.TracedPath",
+          "manim.animation.changing.TracedPath.update_path",
           "manim.animation.composition.AnimationGroup.begin",
           "manim.animation.composition.AnimationGroup.build_animations_with_timings",
+          "manim.animation.composition.AnimationGroup.clean_up_from_scene",
           "manim.animation.composition.AnimationGroup.finish",
           "manim.animation.composition.AnimationGroup.init_run_time",
           "manim.animation.composition.AnimationGroup.interpolate",
+          "manim.animation.composition.AnimationGroup.update_mobjects",
           "manim.animation.composition.LaggedStart",
+          "manim.animation.composition.LaggedStartMap",
+          "manim.animation.composition.Succession.begin",
+          "manim.animation.composition.Succession.finish",
+          "manim.animation.composition.Succession.interpolate",
+          "manim.animation.composition.Succession.next_animation",
+          "manim.animation.composition.Succession.update_active_animation",
+          "manim.animation.composition.Succession.update_mobjects",
+          "manim.animation.creation.AddTextLetterByLetter",
+          "manim.animation.creation.AddTextWordByWord",
+          "manim.animation.creation.DrawBorderThenFill.begin",
+          "manim.animation.creation.DrawBorderThenFill.get_stroke_color",
+          "manim.animation.creation.DrawBorderThenFill.interpolate_submobject",
+          "manim.animation.creation.RemoveTextLetterByLetter",
           "manim.animation.creation.ShowIncreasingSubsets",
           "manim.animation.creation.ShowIncreasingSubsets.interpolate_mobject",
           "manim.animation.creation.ShowIncreasingSubsets.update_submobject_list",
+          "manim.animation.creation.ShowPartial.interpolate_submobject",
+          "manim.animation.creation.ShowSubmobjectsOneByOne",
           "manim.animation.creation.ShowSubmobjectsOneByOne.update_submobject_list",
+          "manim.animation.creation.SpiralIn",
+          "manim.animation.creation.SpiralIn.interpolate_mobject",
+          "manim.animation.creation.TypeWithCursor",
+          "manim.animation.creation.TypeWithCursor.begin",
+          "manim.animation.creation.TypeWithCursor.clean_up_from_scene",
+          "manim.animation.creation.TypeWithCursor.finish",
+          "manim.animation.creation.TypeWithCursor.update_submobject_list",
+          "manim.animation.creation.UntypeWithCursor",
+          "manim.animation.creation.Write.begin",
+          "manim.animation.creation.Write.finish",
+          "manim.animation.creation.Write.reverse_submobjects",
           "manim.animation.fading.FadeIn.create_starting_mobject",
           "manim.animation.fading.FadeIn.create_target",
           "manim.animation.fading.FadeOut.clean_up_from_scene",
           "manim.animation.fading.FadeOut.create_target",
+          "manim.animation.growing.GrowArrow.create_starting_mobject",
           "manim.animation.growing.GrowFromPoint.create_starting_mobject",
           "manim.animation.growing.GrowFromPoint.create_target",
+          "manim.animation.indication.Blink",
+          "manim.animation.indication.Flash.create_line_anims",
+          "manim.animation.indication.Flash.create_lines",
+          "manim.animation.indication.FocusOn.create_target",
           "manim.animation.indication.Indicate.create_target",
+          "manim.animation.indication.ShowPassingFlash.clean_up_from_scene",
+          "manim.animation.indication.ShowPassingFlashWithThinningStrokeWidth",
+          "manim.animation.indication.Wiggle.interpolate_submobject",
+          "manim.animation.movement.Homotopy.function_at_time_t",
+          "manim.animation.movement.Homotopy.interpolate_submobject",
           "manim.animation.movement.MoveAlongPath",
           "manim.animation.movement.MoveAlongPath.interpolate_mobject",
+          "manim.animation.movement.PhaseFlow",
+          "manim.animation.movement.PhaseFlow.interpolate_mobject",
+          "manim.animation.movement.SmoothedVectorizedHomotopy",
+          "manim.animation.movement.SmoothedVectorizedHomotopy.interpolate_submobject",
+          "manim.animation.numbers.ChangeDecimalToValue",
+          "manim.animation.numbers.ChangingDecimal",
+          "manim.animation.numbers.ChangingDecimal.check_validity_of_input",
+          "manim.animation.numbers.ChangingDecimal.interpolate_mobject",
+          "manim.animation.rotation.Rotate",
           "manim.animation.rotation.Rotate.create_target",
+          "manim.animation.rotation.Rotating.interpolate_mobject",
+          "manim.animation.specialized.Broadcast",
+          "manim.animation.speedmodifier.ChangeSpeed",
+          "manim.animation.speedmodifier.ChangeSpeed.add_updater",
+          "manim.animation.speedmodifier.ChangeSpeed.begin",
+          "manim.animation.speedmodifier.ChangeSpeed.clean_up_from_scene",
+          "manim.animation.speedmodifier.ChangeSpeed.finish",
+          "manim.animation.speedmodifier.ChangeSpeed.interpolate",
+          "manim.animation.speedmodifier.ChangeSpeed.setup",
+          "manim.animation.speedmodifier.ChangeSpeed.update_mobjects",
           "manim.animation.transform.ApplyFunction.create_target",
           "manim.animation.transform.ApplyMatrix.initialize_matrix",
           "manim.animation.transform.ApplyMethod.create_target",
+          "manim.animation.transform.CyclicReplace",
+          "manim.animation.transform.CyclicReplace.create_target",
+          "manim.animation.transform.FadeTransform.begin",
+          "manim.animation.transform.FadeTransform.clean_up_from_scene",
+          "manim.animation.transform.FadeTransform.ghost_to",
+          "manim.animation.transform.FadeTransformPieces.begin",
+          "manim.animation.transform.FadeTransformPieces.ghost_to",
+          "manim.animation.transform.MoveToTarget",
+          "manim.animation.transform.MoveToTarget.check_validity_of_input",
+          "manim.animation.transform.Restore",
+          "manim.animation.transform.Swap",
           "manim.animation.transform.Transform.begin",
           "manim.animation.transform.Transform.clean_up_from_scene",
           "manim.animation.transform.Transform.create_target",
+          "manim.animation.transform.Transform.interpolate_submobject",
+          "manim.animation.transform.TransformAnimations",
+          "manim.animation.transform.TransformAnimations.interpolate",
+          "manim.animation.transform.TransformFromCopy.interpolate",
+          "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.clean_up_from_scene",
+          "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.get_shape_map",
+          "manim.animation.transform_matching_parts.TransformMatchingShapes",
+          "manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_key",
+          "manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_parts",
+          "manim.animation.transform_matching_parts.TransformMatchingTex",
+          "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_key",
+          "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_parts",
           "manim.animation.updaters.mobject_update_utils.always",
           "manim.animation.updaters.mobject_update_utils.always_rotate",
           "manim.animation.updaters.mobject_update_utils.always_shift",
@@ -9563,6 +9782,346 @@
           {
             "apiId": "manim.animation.movement.MoveAlongPath.interpolate_mobject",
             "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.rotation.Rotate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.rotation.Rotating.interpolate_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.MoveToTarget",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.MoveToTarget.check_validity_of_input",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.Restore",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.Swap",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.CyclicReplace",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.CyclicReplace.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.Transform.interpolate_submobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.numbers.ChangingDecimal",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.numbers.ChangingDecimal.interpolate_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.numbers.ChangingDecimal.check_validity_of_input",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.numbers.ChangeDecimalToValue",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.AddTextLetterByLetter",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.AddTextWordByWord",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.RemoveTextLetterByLetter",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.ShowPartial.interpolate_submobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.ShowSubmobjectsOneByOne",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.SpiralIn",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.SpiralIn.interpolate_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.TypeWithCursor",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.TypeWithCursor.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.TypeWithCursor.finish",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.TypeWithCursor.clean_up_from_scene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.TypeWithCursor.update_submobject_list",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.UntypeWithCursor",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.Write.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.Write.finish",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.Write.reverse_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.DrawBorderThenFill.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.DrawBorderThenFill.get_stroke_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.DrawBorderThenFill.interpolate_submobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.indication.Blink",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.indication.Flash.create_lines",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.indication.Flash.create_line_anims",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.indication.FocusOn.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.indication.ShowPassingFlash.clean_up_from_scene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.indication.ShowPassingFlashWithThinningStrokeWidth",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.indication.Wiggle.interpolate_submobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.growing.GrowArrow.create_starting_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.movement.Homotopy.function_at_time_t",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.movement.Homotopy.interpolate_submobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.movement.PhaseFlow",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.movement.PhaseFlow.interpolate_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.movement.SmoothedVectorizedHomotopy",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.movement.SmoothedVectorizedHomotopy.interpolate_submobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.specialized.Broadcast",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.speedmodifier.ChangeSpeed",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.speedmodifier.ChangeSpeed.add_updater",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.speedmodifier.ChangeSpeed.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.speedmodifier.ChangeSpeed.finish",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.speedmodifier.ChangeSpeed.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.speedmodifier.ChangeSpeed.setup",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.speedmodifier.ChangeSpeed.update_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.speedmodifier.ChangeSpeed.clean_up_from_scene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.FadeTransform.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.FadeTransform.clean_up_from_scene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.FadeTransform.ghost_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.FadeTransformPieces.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.FadeTransformPieces.ghost_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.TransformAnimations",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.TransformAnimations.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.TransformFromCopy.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform_matching_parts.TransformMatchingShapes",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_parts",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_key",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform_matching_parts.TransformMatchingTex",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_parts",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_key",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.clean_up_from_scene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.get_shape_map",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.Succession.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.Succession.finish",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.Succession.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.Succession.next_animation",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.Succession.update_active_animation",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.Succession.update_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.AnimationGroup.clean_up_from_scene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.AnimationGroup.update_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.LaggedStartMap",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.changing.AnimatedBoundary",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.changing.AnimatedBoundary.full_family_become_partial",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.changing.AnimatedBoundary.update_boundary_copies",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.changing.TracedPath",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.changing.TracedPath.update_path",
+            "status": "verified"
           }
         ],
         "checks": "Compiled registry calls checked against explicit intermediate/final geometry, opacity, identity, timing, updater suspension/removal and tracker values. Animation.interpolate deliberately uses dynamic dispatch on Rotate. Setup calls and abstract no-op interpolators are not counted."
@@ -9571,7 +10130,7 @@
         "fixture": "src/studio/core/api-pointcloud.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -9839,7 +10398,7 @@
         "fixture": "src/studio/core/api-scene.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -10164,7 +10723,7 @@
         "fixture": "src/studio/core/api-coordinates.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -10174,7 +10733,7 @@
           "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
           "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
-          "src/studio/core/api-coordinates.native.spec-node.mjs": "d5892fea13754217bcd8b35a5c86e3fbfbbfa42fb8f224558a056c3c29e88a5c"
+          "src/studio/core/api-coordinates.native.spec-node.mjs": "0f303a0c31a753980f5ea8b4e99a905270ad513ac6ff44dcb8633be61e8cd72d"
         },
         "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "passed": true,
@@ -10191,17 +10750,24 @@
           "manim.mobject.graph.Graph",
           "manim.mobject.graph.Graph.update_edges",
           "manim.mobject.graphing.coordinate_systems.Axes.plot_line_graph",
+          "manim.mobject.graphing.coordinate_systems.ComplexPlane.add_coordinates",
+          "manim.mobject.graphing.coordinate_systems.ComplexPlane.get_coordinate_labels",
           "manim.mobject.graphing.coordinate_systems.ComplexPlane.n2p",
           "manim.mobject.graphing.coordinate_systems.ComplexPlane.number_to_point",
           "manim.mobject.graphing.coordinate_systems.ComplexPlane.p2n",
           "manim.mobject.graphing.coordinate_systems.ComplexPlane.point_to_number",
+          "manim.mobject.graphing.coordinate_systems.CoordinateSystem.add_coordinates",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.angle_of_tangent",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.c2p",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.coords_to_point",
+          "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_T_label",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_axis",
+          "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_graph_label",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_line_from_axis_to_point",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_secant_slope_group",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_vertical_lines_to_graph",
+          "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_x_axis_label",
+          "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_y_axis_label",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.i2gc",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.i2gp",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.input_to_graph_coords",
@@ -10209,7 +10775,9 @@
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.p2c",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_antiderivative_graph",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_derivative_graph",
+          "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_implicit_curve",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_polar_graph",
+          "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_surface",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.point_to_coords",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.point_to_polar",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.polar_to_point",
@@ -10218,18 +10786,58 @@
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.slope_of_tangent",
           "manim.mobject.graphing.coordinate_systems.NumberPlane.get_vector",
           "manim.mobject.graphing.coordinate_systems.NumberPlane.prepare_for_nonlinear_transform",
+          "manim.mobject.graphing.coordinate_systems.PolarPlane.add_coordinates",
+          "manim.mobject.graphing.coordinate_systems.PolarPlane.get_coordinate_labels",
+          "manim.mobject.graphing.coordinate_systems.PolarPlane.get_radian_label",
+          "manim.mobject.graphing.coordinate_systems.PolarPlane.get_vector",
+          "manim.mobject.graphing.coordinate_systems.PolarPlane.prepare_for_nonlinear_transform",
+          "manim.mobject.graphing.coordinate_systems.ThreeDAxes",
+          "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_y_axis_label",
+          "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_z_axis_label",
           "manim.mobject.graphing.functions.FunctionGraph",
           "manim.mobject.graphing.functions.FunctionGraph.get_point_from_function",
+          "manim.mobject.graphing.functions.ImplicitFunction",
+          "manim.mobject.graphing.functions.ImplicitFunction.generate_points",
+          "manim.mobject.graphing.functions.ImplicitFunction.init_points",
           "manim.mobject.graphing.functions.ParametricFunction",
           "manim.mobject.graphing.functions.ParametricFunction.generate_points",
           "manim.mobject.graphing.functions.ParametricFunction.get_point_from_function",
           "manim.mobject.graphing.functions.ParametricFunction.init_points",
+          "manim.mobject.graphing.number_line.NumberLine.add_labels",
+          "manim.mobject.graphing.number_line.NumberLine.add_numbers",
           "manim.mobject.graphing.number_line.NumberLine.add_ticks",
+          "manim.mobject.graphing.number_line.NumberLine.get_labels",
+          "manim.mobject.graphing.number_line.NumberLine.get_number_mobject",
+          "manim.mobject.graphing.number_line.NumberLine.get_number_mobjects",
           "manim.mobject.graphing.number_line.NumberLine.n2p",
           "manim.mobject.graphing.number_line.NumberLine.p2n",
           "manim.mobject.graphing.number_line.NumberLine.rotate_about_number",
           "manim.mobject.graphing.number_line.NumberLine.rotate_about_zero",
-          "manim.mobject.graphing.number_line.UnitInterval"
+          "manim.mobject.graphing.number_line.UnitInterval",
+          "manim.mobject.graphing.probability.BarChart",
+          "manim.mobject.graphing.probability.BarChart.change_bar_values",
+          "manim.mobject.graphing.probability.SampleSpace",
+          "manim.mobject.graphing.probability.SampleSpace.add_braces_and_labels",
+          "manim.mobject.graphing.probability.SampleSpace.add_label",
+          "manim.mobject.graphing.probability.SampleSpace.add_title",
+          "manim.mobject.graphing.probability.SampleSpace.complete_p_list",
+          "manim.mobject.graphing.probability.SampleSpace.divide_horizontally",
+          "manim.mobject.graphing.probability.SampleSpace.divide_vertically",
+          "manim.mobject.graphing.probability.SampleSpace.get_bottom_braces_and_labels",
+          "manim.mobject.graphing.probability.SampleSpace.get_division_along_dimension",
+          "manim.mobject.graphing.probability.SampleSpace.get_horizontal_division",
+          "manim.mobject.graphing.probability.SampleSpace.get_side_braces_and_labels",
+          "manim.mobject.graphing.probability.SampleSpace.get_subdivision_braces_and_labels",
+          "manim.mobject.graphing.probability.SampleSpace.get_top_braces_and_labels",
+          "manim.mobject.graphing.probability.SampleSpace.get_vertical_division",
+          "manim.mobject.graphing.scale.LinearBase",
+          "manim.mobject.graphing.scale.LinearBase.function",
+          "manim.mobject.graphing.scale.LinearBase.inverse_function",
+          "manim.mobject.graphing.scale.LogBase",
+          "manim.mobject.graphing.scale.LogBase.function",
+          "manim.mobject.graphing.scale.LogBase.get_custom_labels",
+          "manim.mobject.graphing.scale.LogBase.inverse_function",
+          "manim.mobject.graphing.scale._ScaleBase.get_custom_labels"
         ],
         "outcomes": [
           {
@@ -10427,6 +11035,202 @@
           {
             "apiId": "manim.mobject.graph.DiGraph.update_edges",
             "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.scale.LinearBase",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.scale.LinearBase.function",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.scale.LinearBase.inverse_function",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.scale.LogBase",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.scale.LogBase.function",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.scale.LogBase.inverse_function",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.scale.LogBase.get_custom_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.scale._ScaleBase.get_custom_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.number_line.NumberLine.add_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.number_line.NumberLine.add_numbers",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.number_line.NumberLine.get_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.number_line.NumberLine.get_number_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.number_line.NumberLine.get_number_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.CoordinateSystem.add_coordinates",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_T_label",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_graph_label",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_x_axis_label",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_y_axis_label",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_implicit_curve",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_surface",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.ComplexPlane.add_coordinates",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.ComplexPlane.get_coordinate_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.PolarPlane.add_coordinates",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.PolarPlane.get_coordinate_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.PolarPlane.get_radian_label",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.PolarPlane.get_vector",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.PolarPlane.prepare_for_nonlinear_transform",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.ThreeDAxes",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_y_axis_label",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_z_axis_label",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.functions.ImplicitFunction",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.functions.ImplicitFunction.generate_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.functions.ImplicitFunction.init_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.BarChart",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.BarChart.change_bar_values",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.complete_p_list",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.get_division_along_dimension",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.get_horizontal_division",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.divide_horizontally",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.get_vertical_division",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.divide_vertically",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.get_subdivision_braces_and_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.get_side_braces_and_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.get_top_braces_and_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.get_bottom_braces_and_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.add_braces_and_labels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.add_title",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.graphing.probability.SampleSpace.add_label",
+            "status": "verified"
           }
         ],
         "checks": "Registry-compiled calls with explicit affine coordinate maps, curve samples, line endpoints, projection and graph topology assertions. CoordinateSystem entries use concrete Axes dynamic dispatch. Setup calls are not counted; no movie-render coverage is claimed."
@@ -10435,7 +11239,7 @@
         "fixture": "src/studio/core/api-opengl-state.native.spec-node.mjs",
         "sourceFiles": {
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
-          "src/studio/core/api-compiler.ts": "77740936d31fd000891cec4ad36aed2b31c81fae172a6e92e3f825ae82f93cc2",
+          "src/studio/core/api-compiler.ts": "584704e459ac5b134387b6b3fbed0bbbf1d5d1702b8f2fcc8c74833dfc34d465",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
           "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
@@ -10845,7 +11649,7 @@
       }
     ]
   },
-  "entriesWithBehaviorEvidence": 1094,
+  "entriesWithBehaviorEvidence": 1228,
   "entriesWithoutBehaviorEvidence": [
     "manim._config.cli_colors.parse_cli_ctx",
     "manim._config.logger_utils.JSONFormatter",
@@ -10915,99 +11719,14 @@
     "manim.animation.animation.Wait.interpolate",
     "manim.animation.animation.Wait.update_mobjects",
     "manim.animation.animation.override_animation",
-    "manim.animation.changing.AnimatedBoundary",
-    "manim.animation.changing.AnimatedBoundary.full_family_become_partial",
-    "manim.animation.changing.AnimatedBoundary.update_boundary_copies",
-    "manim.animation.changing.TracedPath",
-    "manim.animation.changing.TracedPath.update_path",
     "manim.animation.composition.AnimationGroup",
-    "manim.animation.composition.AnimationGroup.clean_up_from_scene",
-    "manim.animation.composition.AnimationGroup.update_mobjects",
-    "manim.animation.composition.LaggedStartMap",
-    "manim.animation.composition.Succession.begin",
-    "manim.animation.composition.Succession.finish",
-    "manim.animation.composition.Succession.interpolate",
-    "manim.animation.composition.Succession.next_animation",
-    "manim.animation.composition.Succession.update_active_animation",
-    "manim.animation.composition.Succession.update_mobjects",
-    "manim.animation.creation.AddTextLetterByLetter",
-    "manim.animation.creation.AddTextWordByWord",
-    "manim.animation.creation.DrawBorderThenFill.begin",
-    "manim.animation.creation.DrawBorderThenFill.get_stroke_color",
-    "manim.animation.creation.DrawBorderThenFill.interpolate_submobject",
-    "manim.animation.creation.RemoveTextLetterByLetter",
     "manim.animation.creation.ShowPartial",
-    "manim.animation.creation.ShowPartial.interpolate_submobject",
-    "manim.animation.creation.ShowSubmobjectsOneByOne",
-    "manim.animation.creation.SpiralIn",
-    "manim.animation.creation.SpiralIn.interpolate_mobject",
-    "manim.animation.creation.TypeWithCursor",
-    "manim.animation.creation.TypeWithCursor.begin",
-    "manim.animation.creation.TypeWithCursor.clean_up_from_scene",
-    "manim.animation.creation.TypeWithCursor.finish",
-    "manim.animation.creation.TypeWithCursor.update_submobject_list",
-    "manim.animation.creation.UntypeWithCursor",
-    "manim.animation.creation.Write.begin",
-    "manim.animation.creation.Write.finish",
-    "manim.animation.creation.Write.reverse_submobjects",
-    "manim.animation.growing.GrowArrow.create_starting_mobject",
-    "manim.animation.indication.Blink",
-    "manim.animation.indication.Flash.create_line_anims",
-    "manim.animation.indication.Flash.create_lines",
-    "manim.animation.indication.FocusOn.create_target",
-    "manim.animation.indication.ShowPassingFlash.clean_up_from_scene",
-    "manim.animation.indication.ShowPassingFlashWithThinningStrokeWidth",
-    "manim.animation.indication.Wiggle.interpolate_submobject",
-    "manim.animation.movement.Homotopy.function_at_time_t",
-    "manim.animation.movement.Homotopy.interpolate_submobject",
-    "manim.animation.movement.PhaseFlow",
-    "manim.animation.movement.PhaseFlow.interpolate_mobject",
-    "manim.animation.movement.SmoothedVectorizedHomotopy",
-    "manim.animation.movement.SmoothedVectorizedHomotopy.interpolate_submobject",
-    "manim.animation.numbers.ChangeDecimalToValue",
-    "manim.animation.numbers.ChangingDecimal",
-    "manim.animation.numbers.ChangingDecimal.check_validity_of_input",
-    "manim.animation.numbers.ChangingDecimal.interpolate_mobject",
-    "manim.animation.rotation.Rotate",
-    "manim.animation.rotation.Rotating.interpolate_mobject",
-    "manim.animation.specialized.Broadcast",
-    "manim.animation.speedmodifier.ChangeSpeed",
-    "manim.animation.speedmodifier.ChangeSpeed.add_updater",
-    "manim.animation.speedmodifier.ChangeSpeed.begin",
-    "manim.animation.speedmodifier.ChangeSpeed.clean_up_from_scene",
-    "manim.animation.speedmodifier.ChangeSpeed.finish",
-    "manim.animation.speedmodifier.ChangeSpeed.interpolate",
-    "manim.animation.speedmodifier.ChangeSpeed.setup",
-    "manim.animation.speedmodifier.ChangeSpeed.update_mobjects",
     "manim.animation.transform.ApplyMethod.check_validity_of_input",
     "manim.animation.transform.ApplyPointwiseFunctionToCenter",
     "manim.animation.transform.ApplyPointwiseFunctionToCenter.begin",
-    "manim.animation.transform.CyclicReplace",
-    "manim.animation.transform.CyclicReplace.create_target",
-    "manim.animation.transform.FadeTransform.begin",
-    "manim.animation.transform.FadeTransform.clean_up_from_scene",
-    "manim.animation.transform.FadeTransform.ghost_to",
-    "manim.animation.transform.FadeTransformPieces.begin",
-    "manim.animation.transform.FadeTransformPieces.ghost_to",
-    "manim.animation.transform.MoveToTarget",
-    "manim.animation.transform.MoveToTarget.check_validity_of_input",
-    "manim.animation.transform.Restore",
-    "manim.animation.transform.Swap",
-    "manim.animation.transform.Transform.interpolate_submobject",
-    "manim.animation.transform.TransformAnimations",
-    "manim.animation.transform.TransformAnimations.interpolate",
-    "manim.animation.transform.TransformFromCopy.interpolate",
     "manim.animation.transform_matching_parts.TransformMatchingAbstractBase",
-    "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.clean_up_from_scene",
     "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.get_mobject_key",
     "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.get_mobject_parts",
-    "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.get_shape_map",
-    "manim.animation.transform_matching_parts.TransformMatchingShapes",
-    "manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_key",
-    "manim.animation.transform_matching_parts.TransformMatchingShapes.get_mobject_parts",
-    "manim.animation.transform_matching_parts.TransformMatchingTex",
-    "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_key",
-    "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_parts",
     "manim.animation.updaters.mobject_update_utils.assert_is_mobject_method",
     "manim.camera.camera.BackgroundColoredVMobjectDisplayer",
     "manim.camera.camera.BackgroundColoredVMobjectDisplayer.display",
@@ -11099,56 +11818,7 @@
     "manim.mobject.graph.GenericGraph",
     "manim.mobject.graph.GenericGraph.from_networkx",
     "manim.mobject.graph.LayoutFunction",
-    "manim.mobject.graphing.coordinate_systems.ComplexPlane.add_coordinates",
-    "manim.mobject.graphing.coordinate_systems.ComplexPlane.get_coordinate_labels",
     "manim.mobject.graphing.coordinate_systems.CoordinateSystem",
-    "manim.mobject.graphing.coordinate_systems.CoordinateSystem.add_coordinates",
-    "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_T_label",
-    "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_graph_label",
-    "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_x_axis_label",
-    "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_y_axis_label",
-    "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_implicit_curve",
-    "manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_surface",
-    "manim.mobject.graphing.coordinate_systems.PolarPlane.add_coordinates",
-    "manim.mobject.graphing.coordinate_systems.PolarPlane.get_coordinate_labels",
-    "manim.mobject.graphing.coordinate_systems.PolarPlane.get_radian_label",
-    "manim.mobject.graphing.coordinate_systems.PolarPlane.get_vector",
-    "manim.mobject.graphing.coordinate_systems.PolarPlane.prepare_for_nonlinear_transform",
-    "manim.mobject.graphing.coordinate_systems.ThreeDAxes",
-    "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_y_axis_label",
-    "manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_z_axis_label",
-    "manim.mobject.graphing.functions.ImplicitFunction",
-    "manim.mobject.graphing.functions.ImplicitFunction.generate_points",
-    "manim.mobject.graphing.functions.ImplicitFunction.init_points",
-    "manim.mobject.graphing.number_line.NumberLine.add_labels",
-    "manim.mobject.graphing.number_line.NumberLine.add_numbers",
-    "manim.mobject.graphing.number_line.NumberLine.get_labels",
-    "manim.mobject.graphing.number_line.NumberLine.get_number_mobject",
-    "manim.mobject.graphing.number_line.NumberLine.get_number_mobjects",
-    "manim.mobject.graphing.probability.BarChart",
-    "manim.mobject.graphing.probability.BarChart.change_bar_values",
-    "manim.mobject.graphing.probability.SampleSpace",
-    "manim.mobject.graphing.probability.SampleSpace.add_braces_and_labels",
-    "manim.mobject.graphing.probability.SampleSpace.add_label",
-    "manim.mobject.graphing.probability.SampleSpace.add_title",
-    "manim.mobject.graphing.probability.SampleSpace.complete_p_list",
-    "manim.mobject.graphing.probability.SampleSpace.divide_horizontally",
-    "manim.mobject.graphing.probability.SampleSpace.divide_vertically",
-    "manim.mobject.graphing.probability.SampleSpace.get_bottom_braces_and_labels",
-    "manim.mobject.graphing.probability.SampleSpace.get_division_along_dimension",
-    "manim.mobject.graphing.probability.SampleSpace.get_horizontal_division",
-    "manim.mobject.graphing.probability.SampleSpace.get_side_braces_and_labels",
-    "manim.mobject.graphing.probability.SampleSpace.get_subdivision_braces_and_labels",
-    "manim.mobject.graphing.probability.SampleSpace.get_top_braces_and_labels",
-    "manim.mobject.graphing.probability.SampleSpace.get_vertical_division",
-    "manim.mobject.graphing.scale.LinearBase",
-    "manim.mobject.graphing.scale.LinearBase.function",
-    "manim.mobject.graphing.scale.LinearBase.inverse_function",
-    "manim.mobject.graphing.scale.LogBase",
-    "manim.mobject.graphing.scale.LogBase.function",
-    "manim.mobject.graphing.scale.LogBase.get_custom_labels",
-    "manim.mobject.graphing.scale.LogBase.inverse_function",
-    "manim.mobject.graphing.scale._ScaleBase.get_custom_labels",
     "manim.mobject.logo.ManimBanner",
     "manim.mobject.logo.ManimBanner.create",
     "manim.mobject.logo.ManimBanner.expand",

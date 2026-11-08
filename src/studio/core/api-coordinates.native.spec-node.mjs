@@ -114,6 +114,120 @@ for (const cls of ['Graph','DiGraph']) {
     'check_edges(s); assert np.linalg.norm(s.edges[("a","b")].get_end()-np.array([1,3,0])) < 0.12; assert np.linalg.norm(s.edges[("b","c")].get_start()-np.array([1,3,0])) < 0.12');
 }
 
+// LinearBase & LogBase
+add('manim.mobject.graphing.scale.LinearBase', '', { scale_factor: 2.5 },
+  'close(result.function(4), 10); close(result.inverse_function(10), 4)');
+add('manim.mobject.graphing.scale.LinearBase.function', 's = LinearBase(3)', { value: 4 },
+  'close(result, 12)');
+add('manim.mobject.graphing.scale.LinearBase.inverse_function', 's = LinearBase(4)', { value: 20 },
+  'close(result, 5)');
+add('manim.mobject.graphing.scale.LogBase', '', { base: 10 },
+  'close(result.function(2), 100); close(result.inverse_function(100), 2)');
+add('manim.mobject.graphing.scale.LogBase.function', 's = LogBase(2)', { value: 3 },
+  'close(result, 8)');
+add('manim.mobject.graphing.scale.LogBase.inverse_function', 's = LogBase(2)', { value: 8 },
+  'close(result, 3)');
+add('manim.mobject.graphing.scale.LogBase.get_custom_labels', 's = LogBase(10)', { val_range: [1, 10, 100] },
+  'assert len(result) == 3');
+add('manim.mobject.graphing.scale._ScaleBase.get_custom_labels', 's = LogBase(10)', { val_range: [1, 10, 100] },
+  'assert len(result) == 3');
+
+// NumberLine
+add('manim.mobject.graphing.number_line.NumberLine.add_labels', 's = line()', { dict_values: { $dict: [[1, 'Mon'], [2, 'Tue']] } },
+  'assert len(s.labels) == 2; close(s.labels[0].get_center(), [1, -2.4, 0], atol=0.2)');
+add('manim.mobject.graphing.number_line.NumberLine.add_numbers', 's = line()', { x_values: [0, 1, 2] },
+  'assert len(s.numbers) == 3; close(s.numbers[0].get_center(), [-1, -2.4, 0], atol=0.2)');
+add('manim.mobject.graphing.number_line.NumberLine.get_labels', 's = line()', {},
+  'assert len(result) == 7');
+add('manim.mobject.graphing.number_line.NumberLine.get_number_mobject', 's = line()', { x: 2 },
+  'close(result.get_center(), [3, -2.4, 0], atol=0.2)');
+add('manim.mobject.graphing.number_line.NumberLine.get_number_mobjects', 's = line()', { numbers: [0, 2] },
+  'assert len(result) == 2; close(result[0].get_center(), [-1, -2.4, 0], atol=0.2)');
+
+// CoordinateSystem methods
+add('manim.mobject.graphing.coordinate_systems.CoordinateSystem.add_coordinates', 's = axes()', {},
+  'assert len(s.submobjects) >= 2');
+add('manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_T_label', parabola, { x_val: 1, graph: ref('graph'), label: 'T' },
+  'close(result.get_center(), [3, -1.92, 0], atol=0.2)');
+add('manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_graph_label', parabola, { graph: ref('graph'), label: 'f' },
+  'assert result is not None');
+add('manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_x_axis_label', 's = axes()', { label: 'x' },
+  'assert result is not None');
+add('manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_y_axis_label', 's = axes()', { label: 'y' },
+  'assert result is not None');
+add('manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_implicit_curve', 's = axes()', { func: fn(['x', 'y'], { $op: ['-', { $op: ['+', { $op: ['*', { $local: 'x' }, { $local: 'x' }] }, { $op: ['*', { $local: 'y' }, { $local: 'y' }] }] }, 4] }) },
+  'assert len(result.points) > 100');
+add('manim.mobject.graphing.coordinate_systems.CoordinateSystem.plot_surface', 's = ThreeDAxes()', { function: fn(['u', 'v'], { $op: ['*', { $local: 'u' }, { $local: 'v' }] }), kwargs: { u_range: [-1, 1], v_range: [-1, 1] } },
+  'assert len(result.get_all_points()) > 1000');
+
+// ComplexPlane & PolarPlane
+add('manim.mobject.graphing.coordinate_systems.ComplexPlane.add_coordinates', 's = ComplexPlane(x_range=[-2,2,1], y_range=[-2,2,1])', { numbers: [1, 2] },
+  'assert len(s.submobjects) >= 2');
+add('manim.mobject.graphing.coordinate_systems.ComplexPlane.get_coordinate_labels', 's = ComplexPlane(x_range=[-2,2,1], y_range=[-2,2,1])', { numbers: [1, 2] },
+  'assert len(result) == 2');
+add('manim.mobject.graphing.coordinate_systems.PolarPlane.add_coordinates', 's = PolarPlane(radius_max=2, size=4)', { r_values: [1, 2], a_values: [0, Math.PI/2] },
+  'assert len(s.submobjects) >= 2');
+add('manim.mobject.graphing.coordinate_systems.PolarPlane.get_coordinate_labels', 's = PolarPlane(radius_max=2, size=4)', { r_values: [1, 2], a_values: [0, Math.PI/2] },
+  'assert len(result) == 2');
+add('manim.mobject.graphing.coordinate_systems.PolarPlane.get_radian_label', 's = PolarPlane(radius_max=2, size=4)', { number: Math.PI/2 },
+  'assert result is not None');
+add('manim.mobject.graphing.coordinate_systems.PolarPlane.get_vector', 's = PolarPlane(radius_max=2, size=4)', { coords: [1.5, Math.PI/4] },
+  'close(result.get_start(), [0,0,0]); close(result.get_end(), [1.5, np.pi/4, 0])');
+add('manim.mobject.graphing.coordinate_systems.PolarPlane.prepare_for_nonlinear_transform', 's = PolarPlane(radius_max=2, size=4)', { num_inserted_curves: 10 },
+  'assert result is s');
+
+// ThreeDAxes
+add('manim.mobject.graphing.coordinate_systems.ThreeDAxes', '', { x_range: [-3,3,1], y_range: [-3,3,1], z_range: [-3,3,1] },
+  'close(result.get_center(), [0,0,0])');
+add('manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_y_axis_label', 's = ThreeDAxes()', { label: 'Y' },
+  'assert result is not None');
+add('manim.mobject.graphing.coordinate_systems.ThreeDAxes.get_z_axis_label', 's = ThreeDAxes()', { label: 'Z' },
+  'assert result is not None');
+
+// ImplicitFunction
+add('manim.mobject.graphing.functions.ImplicitFunction', '', { func: fn(['x', 'y'], { $op: ['-', { $op: ['+', { $op: ['*', { $local: 'x' }, { $local: 'x' }] }, { $op: ['*', { $local: 'y' }, { $local: 'y' }] }] }, 4] }), min_depth: 3, max_quads: 100 },
+  'assert len(result.points) > 100');
+add('manim.mobject.graphing.functions.ImplicitFunction.generate_points', 's = ImplicitFunction(lambda x,y: x**2+y**2-4, min_depth=3, max_quads=100); s.clear_points()', {},
+  'assert len(s.points) > 100');
+add('manim.mobject.graphing.functions.ImplicitFunction.init_points', 's = ImplicitFunction(lambda x,y: x**2+y**2-4, min_depth=3, max_quads=100); s.clear_points()', {},
+  'assert len(s.points) > 100');
+
+// BarChart
+add('manim.mobject.graphing.probability.BarChart', '', { values: [1, 2, 3], y_range: [0, 5, 1] },
+  'assert len(result.bars) == 3');
+add('manim.mobject.graphing.probability.BarChart.change_bar_values', 's = BarChart(values=[1, 2, 3], y_range=[0, 5, 1])', { values: [2, 4, 1] },
+  'assert len(s.bars) == 3; close(s.values[:3], [2, 4, 1])');
+
+// SampleSpace
+add('manim.mobject.graphing.probability.SampleSpace', '', { height: 4, width: 6 },
+  'close(result.height, 4); close(result.width, 6)');
+add('manim.mobject.graphing.probability.SampleSpace.complete_p_list', 's = SampleSpace()', { p_list: [0.3, 0.5] },
+  'close(result, [0.3, 0.5, 0.2])');
+add('manim.mobject.graphing.probability.SampleSpace.get_division_along_dimension', 's = SampleSpace(height=4, width=6)', { p_list: [0.25, 0.75], dim: 0, colors: ['#FF0000', '#0000FF'], vect: array([1, 0, 0]) },
+  'assert len(result) == 2');
+add('manim.mobject.graphing.probability.SampleSpace.get_horizontal_division', 's = SampleSpace(height=4, width=6)', { p_list: [0.3, 0.7], colors: ['#00FF00', '#FFFF00'] },
+  'assert len(result) == 2');
+add('manim.mobject.graphing.probability.SampleSpace.divide_horizontally', 's = SampleSpace(height=4, width=6)', { args: [[0.4, 0.6]], kwargs: { colors: ['#FF0000', '#0000FF'] } },
+  'assert len(s.horizontal_parts) == 2');
+add('manim.mobject.graphing.probability.SampleSpace.get_vertical_division', 's = SampleSpace(height=4, width=6)', { p_list: [0.5, 0.5], colors: ['#FFC0CB', '#008080'] },
+  'assert len(result) == 2');
+add('manim.mobject.graphing.probability.SampleSpace.divide_vertically', 's = SampleSpace(height=4, width=6)', { args: [[0.5, 0.5]], kwargs: { colors: ['#FFC0CB', '#008080'] } },
+  'assert len(s.vertical_parts) == 2');
+add('manim.mobject.graphing.probability.SampleSpace.get_subdivision_braces_and_labels', 's = SampleSpace(height=4, width=6); s.divide_horizontally([0.4, 0.6], colors=[GREEN, YELLOW]); objects["parts"] = s.horizontal_parts', { parts: ref('parts'), labels: ['P1', 'P2'], direction: array([-1, 0, 0]) },
+  'assert len(result) == 2');
+add('manim.mobject.graphing.probability.SampleSpace.get_side_braces_and_labels', 's = SampleSpace(height=4, width=6); s.divide_horizontally([0.4, 0.6], colors=[GREEN, YELLOW])', { labels: ['Left 1', 'Left 2'] },
+  'assert len(result) == 2');
+add('manim.mobject.graphing.probability.SampleSpace.get_top_braces_and_labels', 's = SampleSpace(height=4, width=6); s.divide_vertically([0.5, 0.5], colors=[PINK, TEAL])', { labels: ['Top 1', 'Top 2'] },
+  'assert len(result) == 2');
+add('manim.mobject.graphing.probability.SampleSpace.get_bottom_braces_and_labels', 's = SampleSpace(height=4, width=6); s.divide_vertically([0.5, 0.5], colors=[PINK, TEAL])', { labels: ['Bottom 1', 'Bottom 2'] },
+  'assert len(result) == 2');
+add('manim.mobject.graphing.probability.SampleSpace.add_braces_and_labels', 's = SampleSpace(height=4, width=6); s.divide_horizontally([0.4, 0.6], colors=[GREEN, YELLOW]); s.get_side_braces_and_labels(["Left 1", "Left 2"])', {},
+  'assert len(s.submobjects) >= 3');
+add('manim.mobject.graphing.probability.SampleSpace.add_title', 's = SampleSpace(height=4, width=6)', { title: 'Test Space' },
+  'assert hasattr(s, "title"); close(s.title.get_center(), [0, 2.47, 0], atol=0.2)');
+add('manim.mobject.graphing.probability.SampleSpace.add_label', 's = SampleSpace(height=4, width=6)', { label: 'Center' },
+  'assert hasattr(s, "label")');
+
 test('native coordinate, curve and graph APIs preserve geometry', { timeout: 120_000 }, async t => {
   const health = await discoverPython();
   if (!health.available) { t.skip('Manim required'); return; }
@@ -125,7 +239,7 @@ test('native coordinate, curve and graph APIs preserve geometry', { timeout: 120
       assert.ok(entry, `Unknown API: ${c.id}`);
       const fields = { receiver: 's', mode: 'store' };
       for (const [key, value] of Object.entries(c.params)) fields[`p_${key}`] = JSON.stringify(value);
-      const compiled = compiler.compile(createAction(entry.type, fields), entry, new Set(['s','a','b','graph']), {});
+      const compiled = compiler.compile(createAction(entry.type, fields), entry, new Set(['s','a','b','graph','parts']), {});
       return `def probe_${index}():
     objects = {}
     s = None

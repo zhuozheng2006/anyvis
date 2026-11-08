@@ -42,6 +42,7 @@ export default function StudioApp() {
   const [job, setJob] = useState<RenderJob | null>(null);
   const [video, setVideo] = useState<VideoPreview | null>(() => builtinPreview(project, revisionOf(project)));
   const [selected, setSelected] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [modal, setModal] = useState<Modal>(null);
   const [editorTab, setEditorTab] = useState<'blocks' | 'timeline' | 'code'>('blocks');
   const [autoPreview, setAutoPreview] = useState(true);
@@ -150,7 +151,7 @@ export default function StudioApp() {
     } else if (next.status === 'error') {
       pendingFinal.current = false;
       setRenderError(next.error || next.message || '渲染未完成，请检查积木和环境。');
-      if (next.blockId) { setSelected(next.blockId); editor.current?.highlight(next.blockId); }
+      if (next.blockId) { setSelected(next.blockId); setSelectedIds([next.blockId]); editor.current?.highlight(next.blockId); }
     }
   }, []);
 
@@ -227,7 +228,7 @@ export default function StudioApp() {
     requestCounter.current++; pendingFinal.current = false;
     if (previous?.id && ['running', 'queued'].includes(previous.status)) void api(`/api/jobs/${previous.id}`, { method: 'DELETE' }).catch(() => {});
     aiAbort.current?.abort(); aiAbort.current = null; setAiLoading(false); setAiCandidate(null);
-    setProject(next); setSelected(null); setTrusted(false); setVideo(builtinPreview(next, revisionOf(next))); setJob(null); setRenderError('');
+    setProject(next); setSelected(null); setSelectedIds([]); setTrusted(false); setVideo(builtinPreview(next, revisionOf(next))); setJob(null); setRenderError('');
     setTime(0); setVideoDuration(0); setPlaying(false); setModal(null); setEditorTab('blocks');
     return true;
   }, [notify]);
@@ -280,13 +281,13 @@ export default function StudioApp() {
     } catch (error) { notify(`打开失败：${(error as Error).message}`); }
     finally { if (input.current) input.current.value = ''; }
   };
-  const chooseStep = (id: string) => { setSelected(id); setEditorTab('blocks'); setTimeout(() => editor.current?.highlight(id), 40); };
+  const chooseStep = (id: string) => { setSelected(id); setSelectedIds(id ? [id] : []); setEditorTab('blocks'); setTimeout(() => editor.current?.highlight(id), 40); };
   const switchView = (tab: 'blocks' | 'timeline' | 'code') => {
     try { const latest = editor.current?.snapshot(); if (latest) setProject(latest); } catch (error) { notify((error as Error).message); }
     setEditorTab(tab);
   };
   const addObject = (type: string) => {
-    try { const result = appendAction(editor.current?.snapshot() || projectRef.current, type); setProject(result.project); setSelected(result.action.id); }
+    try { const result = appendAction(editor.current?.snapshot() || projectRef.current, type); setProject(result.project); setSelected(result.action.id); setSelectedIds([result.action.id]); }
     catch (error) { notify((error as Error).message); }
   };
   const play = () => { if (!player.current || !video) return; if (player.current.paused) void player.current.play().catch(() => notify('请点击播放重试。')); else player.current.pause(); };
@@ -353,9 +354,9 @@ export default function StudioApp() {
         </div>
         <div className="workspace-intro"><span className="tiny-dot"/><span>在右侧管理对象，在这里编排动作。</span><button onClick={() => setModal('templates')}>从示例开始 <ArrowRight size={12}/></button></div>
         <div className="workspace-content" style={{ display: editorTab === 'blocks' ? 'flex' : 'none' }}>
-          <StudioBlocks animationOnly onUndo={undoProject} onRedo={redoProject} ref={editor} project={project} onChange={setProject} onSelect={setSelected} selectedBlockId={selected || undefined} highlightedBlockId={job?.blockId} onWorkspaceError={message => setRenderError(message || '')}/>
+          <StudioBlocks animationOnly onUndo={undoProject} onRedo={redoProject} ref={editor} project={project} onChange={setProject} onSelect={id => { setSelected(id); setSelectedIds(id ? [id] : []); }} selectedBlockId={selected || undefined} highlightedBlockId={job?.blockId} onWorkspaceError={message => setRenderError(message || '')}/>
         </div>
-        {editorTab === 'timeline' && <Timeline onMusicSettings={() => setModal('settings')} project={project} selectedId={selected} time={time} playing={playing} canPlay={!!video} onPlay={play} onChange={setProject} onSelect={setSelected} onShowBlocks={chooseStep} onSeek={seek} onError={notify}/>}
+        {editorTab === 'timeline' && <Timeline onMusicSettings={() => setModal('settings')} project={project} selectedId={selected} selectedIds={selectedIds} onSelectIds={setSelectedIds} time={time} playing={playing} canPlay={!!video} onPlay={play} onChange={setProject} onSelect={id => { setSelected(id); setSelectedIds(id ? [id] : []); }} onShowBlocks={chooseStep} onSeek={seek} onError={notify}/>}
         {editorTab === 'code' && <div className="python-view"><div className="code-intro"><div><strong>生成的 Manim 源码 · 只读</strong><p>在对象管理器、积木或时间轴中修改，代码会同步更新。</p></div><button className="small-button" disabled={!!errors.length} onClick={() => void exportSource()}><Download size={14}/> {project.assets?.length ? '导出源码与素材' : '导出 .py'}</button></div><CodeMirror className="generated-code" value={compiled.code} editable={false} readOnly height="100%" basicSetup={{ lineNumbers: true, foldGutter: true }} theme="light"/>{compiled.requiresTrust && <label className="trust-code"><input type="checkbox" checked={trusted} onChange={e => setTrusted(e.target.checked)}/> 我已检查此作品的 Python 扩展及 API 调用，允许它在本机运行。</label>}</div>}
         <div className="workspace-footer"><span>{flattened.length} 个积木<span className="footer-separator">·</span>{project.scene.dimension === '3d' ? '三维场景' : '二维场景'}</span><span>{compiled.duration === null ? '动态时长' : `约 ${compiled.duration.toFixed(1)} 秒`}<span className="footer-separator">·</span>Manim 原生动画</span></div>
       </section>
@@ -380,7 +381,7 @@ export default function StudioApp() {
           if (latest && JSON.stringify(latest.actions) !== JSON.stringify(projectRef.current.actions)) setProject(latest);
         }}>
           {errors.length > 0 || renderError ? <div className="diagnostic-list" role="alert">{renderError && <div className="diagnostic"><strong>需要检查</strong><p>{renderError}</p></div>}{errors.map((error, i) => <button key={i} className="diagnostic" onClick={() => error.blockId && chooseStep(error.blockId)}><strong>动作或参数需要调整</strong><p>{error.message}</p>{error.blockId && <span>定位动作 <ArrowRight size={12}/></span>}</button>)}</div> : null}
-          <ObjectManager onMusicSettings={() => setModal('settings')} project={project} selectedId={selectedObjectId} onSelect={setSelected} onChange={setProject} onAdd={addObject} onError={notify}/>
+          <ObjectManager onMusicSettings={() => setModal('settings')} project={project} selectedId={selectedObjectId} onSelect={id => { setSelected(id); setSelectedIds(id ? [id] : []); }} onChange={setProject} onAdd={addObject} onError={notify}/>
         </section>
         <div className="engine-status"><span className={health?.available ? 'engine-indicator ready' : 'engine-indicator'}/><span>{health?.available ? `Manim ${health.version || ''} 已连接` : healthError ? '渲染服务未连接' : health?.checking ? '正在检测 Manim 环境…' : health ? 'Manim 环境需要配置' : '连接渲染引擎…'}</span><button onClick={() => void checkHealth()} title={healthError || String(health?.error || health?.message || '')}>重新检查</button></div>
       </aside>

@@ -3,7 +3,7 @@ import { createAction } from './core/catalog';
 import { createEmptyProject } from './core/project';
 import { compileProject } from './core/compiler';
 import { getApiEntry } from './core/api-registry';
-import { actionDuration, appendAction, managedObject, objectDependents, parallelWithNext, removeAction, reorderAction, timelineClips, updateAction } from './authoring';
+import { actionDuration, appendAction, managedObject, objectDependents, parallelWithNext, removeAction, removeActions, reorderAction, timelineClips, updateAction } from './authoring';
 describe('shared authoring projections', () => {
   it('keeps visual API constructors distinct from named method results', () => {
     expect(managedObject(createAction('circle'))).toBe(true);
@@ -70,5 +70,29 @@ describe('shared authoring projections', () => {
     expect(next.actions).toEqual([wait]);
     expect(compileProject(next).diagnostics).toEqual([]);
     expect(p.actions[0].children).toEqual([circle, shift]);
+  });
+  it('supports atomic batch removal of multiple actions while validating external dependencies', () => {
+    const c1 = createAction('circle', { name: 'c1' });
+    const s1 = createAction('shift', { target: 'c1', duration: 1 });
+    const c2 = createAction('square', { name: 'c2' });
+    const s2 = createAction('shift', { target: 'c2', duration: 1 });
+    const wait = createAction('wait', { duration: 1 });
+    const p = { ...createEmptyProject(), actions: [c1, s1, c2, s2, wait] };
+
+    // Empty list returns project unchanged
+    expect(removeActions(p, [])).toBe(p);
+
+    // Deleting c1 without s1 throws because s1 depends on c1
+    expect(() => removeActions(p, [c1.id, c2.id])).toThrow('仍被');
+
+    // Deleting c1 along with its dependent s1 succeeds atomically
+    const cleaned = removeActions(p, [c1.id, s1.id]);
+    expect(cleaned.actions.map(a => a.id)).toEqual([c2.id, s2.id, wait.id]);
+    expect(compileProject(cleaned).diagnostics).toEqual([]);
+
+    // Deleting multiple unrelated actions and co-dependent actions in a batch
+    const allRemoved = removeActions(p, [c1.id, s1.id, c2.id, s2.id]);
+    expect(allRemoved.actions.map(a => a.id)).toEqual([wait.id]);
+    expect(compileProject(allRemoved).diagnostics).toEqual([]);
   });
 });
