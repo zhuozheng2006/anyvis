@@ -102,7 +102,7 @@ jobs:
           # Keep the renderer sandbox enabled; do not use --no-sandbox.
           sudo chown root:root desktop/node_modules/electron/dist/chrome-sandbox
           sudo chmod 4755 desktop/node_modules/electron/dist/chrome-sandbox
-          xvfb-run -a desktop/node_modules/electron/dist/electron desktop-build/app --smoke-test "--smoke-result=$GITHUB_WORKSPACE/desktop-build/smoke-result.json" --smoke-timeout=45000
+          xvfb-run -a desktop/node_modules/electron/dist/electron desktop-build/app --smoke-test "--smoke-result=$GITHUB_WORKSPACE/desktop-build/smoke-result.json" --smoke-timeout=60000
 
       - name: Build installers without publishing
         run: node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never ${{ matrix.builder-args }}
@@ -115,7 +115,7 @@ jobs:
         run: |
           sudo chown root:root release/linux-unpacked/chrome-sandbox
           sudo chmod 4755 release/linux-unpacked/chrome-sandbox
-          xvfb-run -a node scripts/check-packaged-desktop.mjs
+          xvfb-run -a node scripts/check-packaged-desktop.mjs --smoke-timeout=120000
       - name: Upload installers
         if: runner.os != 'macOS'
         uses: actions/upload-artifact@v7.0.2

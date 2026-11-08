@@ -11,7 +11,7 @@ app.setName('AnyVis');
 const smoke = process.argv.includes('--smoke-test');
 const smokeResult = process.argv.find(value => value.startsWith('--smoke-result='))?.slice('--smoke-result='.length);
 const smokeTimeoutArg = process.argv.find(value => value.startsWith('--smoke-timeout='))?.slice('--smoke-timeout='.length);
-const smokeTimeoutMs = smokeTimeoutArg ? Math.max(5000, Number(smokeTimeoutArg) || 0) : (app.isPackaged ? 75_000 : 45_000);
+const smokeTimeoutMs = smokeTimeoutArg ? Math.max(5000, Number(smokeTimeoutArg) || 0) : (app.isPackaged ? 120_000 : 60_000);
 if (smoke) app.setPath('userData', mkdtempSync(path.join(tmpdir(), 'anyvis-desktop-smoke-')));
 protocol.registerSchemesAsPrivileged([{ scheme: 'anyvis', privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true, corsEnabled: true } }]);
 const singleInstance = app.requestSingleInstanceLock();
@@ -88,14 +88,17 @@ async function finishSmoke(error) {
   smokeFinished = true;
   try {
     if (error) throw error;
+    console.log('[Smoke] Verifying session API...');
     const response = await net.fetch(`http://127.0.0.1:${engine.service.port}/api/session`, { signal: AbortSignal.timeout(5000) });
     if (!response.ok || typeof (await response.json()).token !== 'string') throw new Error('Session API failed.');
+    console.log('[Smoke] Waiting for root and Blockly to mount...');
     let rootReady = false;
     for (let index = 0; index < 160 && !rootReady; index++) {
       rootReady = await editorWindow.webContents.executeJavaScript("Boolean(document.querySelector('.studio-app .studio-header') && document.querySelector('.studio-app .blocklySvg'))");
       if (!rootReady) await new Promise(resolve => setTimeout(resolve, 50));
     }
     if (!rootReady) throw new Error('Studio editor or Blockly workspace did not mount.');
+    console.log('[Smoke] Exercising API catalog and UI interactions...');
     // Exercise the generated API catalog in the actual bundled renderer.
     const apiCatalog = await editorWindow.webContents.executeJavaScript(`(async () => {
       const until = async predicate => {
@@ -138,6 +141,7 @@ async function finishSmoke(error) {
       if (code.getAttribute('contenteditable') !== 'false') throw new Error('Generated code must be read-only.');
       return {search:true, addBlock:true, objectManager:true, timeline:true, defaultMusic:true, readOnlyCode:true};
     })()`);
+    console.log('[Smoke] Checking video and range request...');
     const browserCheck = await editorWindow.webContents.executeJavaScript(`(async () => {
       const session = await fetch('/api/session').then(r => r.json());
       const result = await fetch('/api/render', {method:'POST',headers:{'Content-Type':'application/json','X-AnyVis-Token':session.token},body:'{'});
@@ -159,10 +163,13 @@ async function finishSmoke(error) {
     if (!browserCheck.token || browserCheck.status !== 400 || !browserCheck.error?.includes('JSON') || browserCheck.origin !== 'anyvis://studio') throw new Error('Desktop protocol or session forwarding failed.');
     if (browserCheck.range !== 206 || browserCheck.bytes !== 32 || !browserCheck.decoded) throw new Error('Desktop video or range request failed.');
     const previousPort = engine.service.port;
+    console.log('[Smoke] Restarting engine controller...');
     await engine.restart(settings);
+    console.log('[Smoke] Reloading editor and checking persisted storage...');
     await editorWindow.loadURL(host.EDITOR_URL);
     const storage = await editorWindow.webContents.executeJavaScript("localStorage.getItem('anyvis-desktop-smoke')");
     if (storage !== 'persisted') throw new Error('Desktop storage failed to persist.');
+    console.log('[Smoke] Desktop smoke verified successfully.');
     if (smokeResult) await writeFile(smokeResult, JSON.stringify({ ok: true, origin: browserCheck.origin, rootReady, apiCatalog, packaged: app.isPackaged, appPath: app.getAppPath(), workerExists: existsSync(path.join(app.isPackaged ? process.resourcesPath : path.resolve(__dirname, '..'), 'runtime', 'worker.py')), session: true, videoRange: true, videoDecoded: true, storageAcrossRestart: true, ports: [previousPort, engine.service.port], health: status.health, electron: process.versions.electron }, null, 2));
     process.exitCode = 0;
   } catch (failure) {

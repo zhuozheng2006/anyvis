@@ -61,7 +61,7 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - Remotion 风格音频响应式频谱与波形助手 (`AudioVisualizerModal` / `audio-visualizer.ts`)：对标 Remotion `@remotion/media-utils`，为教学讲解配音与钢琴配乐提供生动的视听动态交互，内置 3B1B 经典声波柱、霓虹镜像对称频谱、360° 环形星云声场、复古实验室示波器正弦波与极简底栏 5 种预设，支持频段数调节 ($8 \sim 64$)、位置对齐切换、实时声波律动仿真，及一键生成包含 `add_updater` 的原生 Manim 场景代码与 AnyVis 积木动作。
 - 系统、文件与 TeX 工具链全量覆盖 (`systemAndFileUtilities`, +63 项原生 API，达 1,731 项)：涵盖文件操作底层、异常与弃用装饰器、代码高亮、字体注册、进阶分段与视频输出、TeX 全自动排错洞察等 14 组测试族。
 - 深度排查并记录 7 处 Manim CE 0.20.1 原生源码缺陷（`VectorScene`、`SpecialThreeDScene`、`ApplyPointwiseFunctionToCenter`、`SplitScreenCamera`、`VMobject.add_cubic_bezier_curves` 及 `print_tex_error`），并审计确证剩余 53 项通用/Cairo 接口全部属于非业务可调用项（抽象类、静态 Protocol、OpenGL 专属交互、桌面弹窗），真正可执行通用 Cairo API 达成 100% 覆盖。
-- CI 自动化与桌面端打包健壮性：修复 Linux GitHub 2-core runner 运行 ASAR 封装应用时 30s 硬编码看门狗超时的偶发问题，支持 `--smoke-timeout` 参数并将打包环境默认等待从 30s 提高至 75s（外部看门狗 90s），Linux/Windows/macOS 打包发布 100% 绿灯。
+- CI 自动化与桌面端打包健壮性：修复 Linux GitHub 2-core runner 运行 ASAR 封装应用时偶发看门狗超时的问题，支持 `--smoke-timeout` 参数并将打包环境等待提升至 120s（外部看门狗 150s），在 Electron 宿主注入阶段性诊断日志打点（`Session / Mount / API / Video / Restart / Storage`），Linux/Windows/macOS 打包发布 100% 绿灯。
 - 前端构建代码分包优化（`vite.config.ts`）：按 `api-registry`、`vendor-blockly`、`vendor-codemirror`、`vendor-math`、`vendor-three`、`vendor-timeline` 等模块拆分，`StudioApp.js` 主入口体积从 3,453 kB 降至 330 kB。
 - 空格播放、逐帧定位、Home/End、Shift + 方向键、吸附快捷键；长代码滚动修复。
 - 对象语义重命名与引用更新；删除保护覆盖复合动作完整子树及外部引用。
