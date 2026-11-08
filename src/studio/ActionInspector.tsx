@@ -4,6 +4,7 @@ import { getBlockDefinition } from './core/catalog';
 import { flattenActions } from './authoring';
 import { createApiValueEditor, type ApiValueEditorElement } from './blocks/api-value-field';
 import { RateFuncPicker } from './RateFuncPicker';
+import { MathSymbolPalette } from './MathSymbolPalette';
 import './object-manager.css';
 
 export interface ActionInspectorProps {
@@ -56,6 +57,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
   const [activeApiField, setActiveApiField] = useState<FieldDefinition | null>(null);
   const activeEditorRef = useRef<ApiValueEditorElement | null>(null);
   const editorMountedRef = useRef(false);
+  const mathInputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
 
   const closeApiEditor = useCallback(() => {
     if (activeEditorRef.current) {
@@ -378,38 +380,70 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
       );
     }
 
+    const isMathTex =
+      field.name === 'tex' ||
+      (field.name === 'text' && (action.type === 'formula' || action.type === 'matching_tex')) ||
+      action.type === 'formula' ||
+      action.type === 'matching_tex';
+
     // 6. Multiline
     if (field.type === 'multiline') {
       return (
-        <textarea
-          className="ai-fields-textarea"
-          value={drafts[field.name] ?? ''}
-          onChange={e => handleDraftChange(field.name, e.target.value)}
-          onBlur={() => commitDraft(field)}
-          aria-label={field.label}
-        />
+        <div className="ai-fields-multiline-wrapper">
+          <textarea
+            ref={isMathTex ? (mathInputRef as React.RefObject<HTMLTextAreaElement>) : undefined}
+            className="ai-fields-textarea"
+            value={drafts[field.name] ?? ''}
+            onChange={e => handleDraftChange(field.name, e.target.value)}
+            onBlur={() => commitDraft(field)}
+            aria-label={field.label}
+          />
+          {isMathTex && (
+            <MathSymbolPalette
+              inputRef={mathInputRef}
+              value={drafts[field.name] ?? ''}
+              onChange={newVal => {
+                handleDraftChange(field.name, newVal);
+                onChange({ [field.name]: newVal });
+              }}
+            />
+          )}
+        </div>
       );
     }
 
     // 7. Number, Text, Expression (single-line draft inputs)
     return (
-      <div className="ai-fields-control">
-        <input
-          type="text"
-          inputMode={field.type === 'number' ? 'decimal' : undefined}
-          className="ai-fields-input"
-          value={drafts[field.name] ?? ''}
-          onChange={e => handleDraftChange(field.name, e.target.value)}
-          onBlur={() => commitDraft(field)}
-          onKeyDown={e => {
-            if (e.key === 'Enter') {
-              commitDraft(field);
-              e.currentTarget.blur();
-            }
-          }}
-          aria-label={field.label}
-        />
-        {field.suffix && <span className="ai-fields-suffix">{field.suffix}</span>}
+      <div className="ai-fields-text-wrapper">
+        <div className="ai-fields-control">
+          <input
+            ref={isMathTex ? (mathInputRef as React.RefObject<HTMLInputElement>) : undefined}
+            type="text"
+            inputMode={field.type === 'number' ? 'decimal' : undefined}
+            className="ai-fields-input"
+            value={drafts[field.name] ?? ''}
+            onChange={e => handleDraftChange(field.name, e.target.value)}
+            onBlur={() => commitDraft(field)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                commitDraft(field);
+                e.currentTarget.blur();
+              }
+            }}
+            aria-label={field.label}
+          />
+          {field.suffix && <span className="ai-fields-suffix">{field.suffix}</span>}
+        </div>
+        {isMathTex && (
+          <MathSymbolPalette
+            inputRef={mathInputRef}
+            value={drafts[field.name] ?? ''}
+            onChange={newVal => {
+              handleDraftChange(field.name, newVal);
+              onChange({ [field.name]: newVal });
+            }}
+          />
+        )}
       </div>
     );
   };

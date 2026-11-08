@@ -21,8 +21,8 @@ const op = (operator, ...args) => ({ $op: [operator, ...args] });
 const cases = [];
 // Oracle expressions are independently written native calls. Structured values
 // below are passed to the production compiler; no observed call is handwritten.
-function add(module, name, params, expected, probe = 'value', setup = '') {
-  cases.push({ id: `manim.utils.${module}.${name}`, params, expected, probe, setup });
+function add(module, name, params, expected, probe = 'value', setup = '', receiver = '') {
+  cases.push({ id: `manim.utils.${module}.${name}`, params, expected, probe, setup, receiver });
 }
 const curve = [[0, 0, 0], [1, 2, 0], [2, -1, 0], [3, 0, 0]];
 const points = arr(curve), p = 'np.array([[0.,0,0],[1,2,0],[2,-1,0],[3,0,0]])';
@@ -103,6 +103,45 @@ for (const name of ['rotation_matrix_from_quaternion', 'rotation_matrix_transpos
 for (const name of ['shoelace', 'shoelace_direction']) add('space_ops', name, { x_y: arr([[0, 0], [2, 0], [2, 1], [0, 1]]) }, `sp.${name}(np.array([[0.,0],[2,0],[2,1],[0,1]]))`);
 add('space_ops', 'thick_diagonal', { dim: 5, thickness: 3 }, 'sp.thick_diagonal(5,3)');
 
+// Color utilities and HSV/ManimColor methods
+add('color.core', 'color_to_rgb', { color: '#FF0000' }, 'cc.color_to_rgb("#FF0000")');
+add('color.core', 'color_to_rgba', { color: '#FF0000', alpha: 0.5 }, 'cc.color_to_rgba("#FF0000",0.5)');
+add('color.core', 'color_to_int_rgb', { color: '#FF0000' }, 'cc.color_to_int_rgb("#FF0000")');
+add('color.core', 'color_to_int_rgba', { color: '#FF0000', alpha: 0.5 }, 'cc.color_to_int_rgba("#FF0000",0.5)');
+add('color.core', 'hex_to_rgb', { hex_code: '#FF0000' }, 'cc.hex_to_rgb("#FF0000")');
+add('color.core', 'rgb_to_hex', { rgb: arr([255, 0, 0]) }, 'cc.rgb_to_hex(np.array([255,0,0]))');
+add('color.core', 'rgb_to_color', { rgb: arr([255, 0, 0]) }, 'cc.rgb_to_color(np.array([255,0,0]))');
+add('color.core', 'rgba_to_color', { rgba: arr([1, 0, 0, 0.5]) }, 'cc.rgba_to_color(np.array([1.,0,0,0.5]))');
+add('color.core', 'interpolate_color', { color1: ref('red'), color2: ref('green'), alpha: 0.5 }, 'cc.interpolate_color(objects["red"],objects["green"],0.5)', 'value', 'objects={"red":cc.ManimColor("#FF0000"),"green":cc.ManimColor("#00FF00")}');
+add('color.core', 'invert_color', { color: ref('red') }, 'cc.invert_color(objects["red"])', 'value', 'objects={"red":cc.ManimColor("#FF0000")}');
+add('color.core', 'average_color', { colors: ['#FF0000', '#00FF00'] }, 'cc.average_color("#FF0000","#00FF00")');
+add('color.core', 'color_gradient', { reference_colors: ['#FF0000', '#00FF00'], length_of_output: 3 }, 'cc.color_gradient(["#FF0000","#00FF00"],3)');
+add('color.core', 'get_shaded_rgb', { rgb: arr([1, 0, 0]), point: arr([0, 0, 0]), unit_normal_vect: arr([0, 0, 1]), light_source: arr([0, 0, 10]) }, 'cc.get_shaded_rgb(np.array([1.,0,0]),np.array([0.,0,0]),np.array([0.,0,1.]),np.array([0.,0,10.]))');
+add('color.core', 'random_color', {}, 'cc.random_color()');
+add('color.core', 'random_bright_color', {}, 'cc.random_bright_color()');
+add('color.core', 'RandomColorGenerator', { seed: 42 }, 'cc.RandomColorGenerator(seed=42)', 'color_gen');
+add('color.core', 'RandomColorGenerator.next', {}, 'objects["gen"].next()', 'value', 'objects={"gen":cc.RandomColorGenerator(seed=42)}', 'gen');
+
+// ManimColor class and methods
+add('color.core', 'ManimColor', { value: '#FF0000', alpha: 1.0 }, 'cc.ManimColor("#FF0000",1.0)');
+add('color.core', 'ManimColor.contrasting', {}, 'objects["red"].contrasting()', 'value', 'objects={"red":cc.ManimColor("#FF0000")}', 'red');
+add('color.core', 'ManimColor.to_int_rgb', {}, 'objects["red"].to_int_rgb()', 'value', 'objects={"red":cc.ManimColor("#FF0000")}', 'red');
+add('color.core', 'ManimColor.to_int_rgba', {}, 'objects["red"].to_int_rgba()', 'value', 'objects={"red":cc.ManimColor("#FF0000")}', 'red');
+add('color.core', 'ManimColor.to_int_rgba_with_alpha', { alpha: 0.6 }, 'objects["red"].to_int_rgba_with_alpha(0.6)', 'value', 'objects={"red":cc.ManimColor("#FF0000")}', 'red');
+add('color.core', 'ManimColor.to_rgba_with_alpha', { alpha: 0.6 }, 'objects["red"].to_rgba_with_alpha(0.6)', 'value', 'objects={"red":cc.ManimColor("#FF0000")}', 'red');
+add('color.core', 'ManimColor.opacity', { opacity: 0.4 }, 'objects["red"].opacity(0.4)', 'value', 'objects={"red":cc.ManimColor("#FF0000")}', 'red');
+add('color.core', 'ManimColor.into', { class_type: { $api: 'manim.utils.color.core.HSV' } }, 'objects["red"].into(cc.HSV)', 'value', 'objects={"red":cc.ManimColor("#FF0000")}', 'red');
+add('color.core', 'ManimColor.parse', { color: '#123456', alpha: 0.8 }, 'cc.ManimColor.parse("#123456",0.8)');
+
+// HSV class and properties
+add('color.core', 'HSV', { hsv: arr([0.5, 0.8, 0.9]), alpha: 1.0 }, 'cc.HSV(np.array([0.5,0.8,0.9]),1.0)');
+add('color.core', 'HSV.h', {}, 'objects["hsv_obj"].h', 'value', 'objects={"hsv_obj":cc.HSV(np.array([0.5,0.8,0.9]),1.0)}', 'hsv_obj');
+add('color.core', 'HSV.hue', {}, 'objects["hsv_obj"].hue', 'value', 'objects={"hsv_obj":cc.HSV(np.array([0.5,0.8,0.9]),1.0)}', 'hsv_obj');
+add('color.core', 'HSV.s', {}, 'objects["hsv_obj"].s', 'value', 'objects={"hsv_obj":cc.HSV(np.array([0.5,0.8,0.9]),1.0)}', 'hsv_obj');
+add('color.core', 'HSV.saturation', {}, 'objects["hsv_obj"].saturation', 'value', 'objects={"hsv_obj":cc.HSV(np.array([0.5,0.8,0.9]),1.0)}', 'hsv_obj');
+add('color.core', 'HSV.v', {}, 'objects["hsv_obj"].v', 'value', 'objects={"hsv_obj":cc.HSV(np.array([0.5,0.8,0.9]),1.0)}', 'hsv_obj');
+add('color.core', 'HSV.value', {}, 'objects["hsv_obj"].value', 'value', 'objects={"hsv_obj":cc.HSV(np.array([0.5,0.8,0.9]),1.0)}', 'hsv_obj');
+
 // Path objects are distinct from strings in Manim's filesystem APIs. The only
 // module executed here is a fixed fixture written into this test's temp folder.
 add('file_ops', 'add_extension_if_not_present', { file_name: { $path: '图形' }, extension: '.svg' }, 'files.add_extension_if_not_present(Path("图形"),".svg")');
@@ -121,6 +160,7 @@ from pathlib import Path
 from collections.abc import Iterator
 from manim.utils import bezier as b, config_ops as c, iterables as i, paths, simple_functions as s, space_ops as sp
 from manim.utils import file_ops as files, module_ops as modules
+from manim.utils.color import core as cc
 
 def probe(value, kind, objects):
     if kind == "module":
@@ -134,6 +174,7 @@ def probe(value, kind, objects):
         return [value(np.array([[0.,0,0],[1,2,0]]),np.array([[2.,1,0],[-1,0,0]]),t) for t in [0,.2,.5,.8,1]]
     if kind == "vector": return [value(np.array(p)) for p in [[0.,0,0],[1,2,0],[-1,.5,0]]]
     if kind == "mutation": return (value, objects["data"])
+    if kind == "color_gen": return [value.next() for _ in range(5)]
     return value
 
 def compare(a, b):
@@ -172,8 +213,8 @@ test('numeric utilities and returned callbacks match native behavior', { timeout
       const entry = getApiEntry(item.id); assert.ok(entry, item.id);
       const known = new Set(entry.parameters.map(p => p.name));
       for (const key of Object.keys(item.params)) assert.ok(known.has(key), `${item.id}: ${key}`);
-      const action = createAction(entry.type, { name: 'result', mode: 'store', ...Object.fromEntries(Object.entries(item.params).map(([k, v]) => [`p_${k}`, JSON.stringify(v)])) });
-      const compiled = compiler.compile(action, entry, new Set(['data', 'a', 'b', 'fixture']), {});
+      const action = createAction(entry.type, { name: 'result', mode: 'store', ...(item.receiver ? { receiver: item.receiver } : {}), ...Object.fromEntries(Object.entries(item.params).map(([k, v]) => [`p_${k}`, JSON.stringify(v)])) });
+      const compiled = compiler.compile(action, entry, new Set(['data', 'a', 'b', 'fixture', 'red', 'green', 'gen', 'hsv_obj']), {});
       const setup = item.setup || 'objects={}';
       for (const [name, expression, prelude] of [['expected', item.expected, []], ['observed', compiled.expression, compiled.prelude]])
         probes.push(`def ${name}_${index}():\n${[setup, ...prelude, `value=${expression}`, `return probe(value,${JSON.stringify(item.probe)},objects)`].map(l => '    ' + l).join('\n')}`);

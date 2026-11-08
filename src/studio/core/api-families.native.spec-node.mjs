@@ -58,7 +58,16 @@ const families = {
       ['Union', { vmobjects: [ref('circle'), ref('square')] }], ['Intersection', { vmobjects: [ref('circle'), ref('square')] }],
       ['Difference', { subject: ref('circle'), clip: ref('square') }], ['Exclusion', { subject: ref('circle'), clip: ref('square') }],
       ['Cutout', { main_shape: ref('rectangle'), mobjects: [ref('cutout_hole')] }],
+      ['ArrowTriangleFilledTip', {}], ['ArrowTriangleTip', {}],
+      ['ArrowCircleFilledTip', {}], ['ArrowCircleTip', {}],
+      ['ArrowSquareFilledTip', {}], ['ArrowSquareTip', {}],
+      ['StealthTip', {}],
+      ['Cross', { stroke_color: '#FF0000' }],
+      ['Elbow', { width: 1.5 }],
+      ['Vector', { direction: vec(1, 2, 0) }],
+      ['ConvexHull', { points: [vec(0, 0, 0), vec(1, 0, 0), vec(0, 1, 0)] }],
     ]) api(id, id, params, {}, shape);
+    api('StealthTip.length', 'stealth_len', {}, { receiver: 'StealthTip' }, 'assert $result > 0');
     api('Line', 'horizontal', { start: vec(0, 0, 0), end: vec(2, 0, 0) }, {}, 'assert abs($result.get_length()-2)<1e-6');
     api('Line', 'vertical', { start: vec(0, 0, 0), end: vec(0, 2, 0) }, {}, 'assert abs($result.get_length()-2)<1e-6');
     api('Angle', 'angle', { line1: ref('horizontal'), line2: ref('vertical') }, {}, shape);

@@ -1,0 +1,106 @@
+.math-symbol-palette {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  user-select: none;
+}
+
+.math-token-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 6px;
+  border: 1px dashed rgba(100, 217, 193, 0.25);
+}
+
+.math-token-header {
+  font-size: 11px;
+  color: #64D9C1;
+  font-weight: 500;
+}
+
+.math-token-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.math-chunk-pill {
+  display: inline-block;
+  padding: 1px 6px;
+  background: rgba(100, 217, 193, 0.2);
+  border: 1px solid rgba(100, 217, 193, 0.45);
+  color: #E5EDF8;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.math-plain-pill {
+  display: inline-block;
+  padding: 1px 4px;
+  color: rgba(229, 237, 248, 0.4);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 11px;
+}
+
+.math-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.math-category-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.math-category-title {
+  font-size: 11px;
+  color: #8494AF;
+  min-width: 54px;
+  font-weight: 500;
+}
+
+.math-symbol-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.math-symbol-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 7px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #E5EDF8;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', 'KaTeX_Main', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.math-symbol-btn:hover {
+  background: rgba(100, 217, 193, 0.2);
+  border-color: rgba(100, 217, 193, 0.4);
+  color: #64D9C1;
+  transform: translateY(-1px);
+}
+
+.math-symbol-btn:active {
+  transform: translateY(0);
+}

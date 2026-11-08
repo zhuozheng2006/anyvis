@@ -1,5 +1,17 @@
 # AnyVis 验证记录
 
+## 演播模式、数学公式符号分块助手、画面风格预设与颜色/几何原生覆盖扩展（2026-11-08）
+
+十二组真实 Manim 证据合并 **1,290 / 2,293** 个独立入口，新增 37 个原生 API（覆盖 `manim.utils.color.core` 的全套颜色转换、渐变、插值、HSV 色彩空间，以及箭头尖端 `ArrowTriangleFilledTip`、`ArrowCircleTip`、`StealthTip`、`Vector`、`Cross`、`Elbow`、`ConvexHull` 等），剩余 1,003 项。全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格数值、类型与几何后置条件对比，0 失败、0 fixture gap：
+- **颜色空间与数值工具**：`color_to_rgb`、`color_to_rgba`、`color_to_int_rgb`、`color_to_int_rgba`、`hex_to_rgb`、`rgb_to_hex`、`rgb_to_color`、`rgba_to_color`、`interpolate_color`、`invert_color`、`average_color`、`color_gradient`、`get_shaded_rgb`、`random_color`、`random_bright_color`、`RandomColorGenerator`、`RandomColorGenerator.next`、`ManimColor`、`ManimColor.contrasting`、`ManimColor.to_int_rgb`、`ManimColor.to_int_rgba`、`ManimColor.to_int_rgba_with_alpha`、`ManimColor.to_rgba_with_alpha`、`ManimColor.opacity`、`ManimColor.into`、`ManimColor.parse`、`HSV`、`HSV.h`、`HSV.hue`、`HSV.s`、`HSV.saturation`、`HSV.v`、`HSV.value`。
+- **几何图元与箭头尖端**：`ArrowTriangleFilledTip`、`ArrowTriangleTip`、`ArrowCircleFilledTip`、`ArrowCircleTip`、`ArrowSquareFilledTip`、`ArrowSquareTip`、`StealthTip`、`StealthTip.length`、`Cross`、`Elbow`、`Vector`、`ConvexHull`。
+- **创新功能与同类产品超越**：
+  - **交互式演播/幻灯片放映模式 (`computePresentationSteps` & Presentation HUD)**：对比传统视频编辑器或 Motion Canvas（需写 TypeScript 代码），AnyVis 首创可视化交互演播模式。自动根据 `wait` 停顿点与动作节点切分讲解步骤，播放至停顿点自动驻留，支持空格/右键步进推进、左键倒退回看、从头重演及浮动 HUD 步进指示，数学教师与演讲者可直接投影演示。
+  - **LaTeX 数学符号调色板与公式分块助手 (`MathSymbolPalette`)**：在公式及文本检视器中内置分块匹配 (`{{...}}`)、分式、根号、求和、积分、极限、希腊字母及向量微积分快捷插入，支持光标选区智能包裹，并提供实时 `TransformMatchingTex` 动画匹配分块高亮预览。
+  - **画面风格/主题预设 (Math Theme Presets)**：在画面设置中一键应用 3B1B 经典黑、教室黑板、极简纸白、深邃纯黑与星云深紫预设，轻松调出专业数学动画质感。
+
+本地 352 项应用测试、22 项原生测试入口、6 项证据校验、11 项桌面检查、真实 worker 媒体渲染与混音、确定性钢琴合成及生产构建全部通过。
+
 ## 向量空间场景、缓动曲线交互选择与时间轴剃刀分割（2026-11-08）
 
 十二组真实 Manim 证据合并 **1,253 / 2,293** 个独立入口，新增 25 个 `VectorScene` 与 `LinearTransformationScene` API，剩余 1,040 项。全部调用均经 AnyVis 注册表编译器生成，包含真实的线性空间变换、基底向量、单位正方形和坐标系几何断言，0 失败、0 fixture gap：

@@ -47,3 +47,200 @@
 @media(max-width:880px){.studio-main{display:flex}.stage-column{overflow:visible}.object-manager-panel{height:500px;flex:none}.blocks-panel{height:640px}.editor-tabs>button{min-width:65px}}
 
 .settings-music{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px;border:1px solid #dce7e4;background:#f5faf8;border-radius:10px}.settings-music p{grid-column:1/-1;margin:0;color:#6e827c;font-size:12px;line-height:1.6}.settings-music input[type=range]{width:100%;accent-color:#407c70}.settings-music label span{font-weight:400;color:#6e827c}@media(max-width:600px){.settings-music{grid-template-columns:1fr}}
+
+/* Presentation Mode & Math Theme Presets */
+.presentation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+}
+.presentation-stage {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  position: relative;
+}
+.presentation-stage video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+.presentation-hud {
+  position: absolute;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 18px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  color: #e5edf8;
+  z-index: 10;
+  animation: hud-slide-up 0.3s ease;
+}
+@keyframes hud-slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.presentation-hud-left, .presentation-hud-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.presentation-hud-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+.presentation-step-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  background: rgba(100, 217, 193, 0.2);
+  color: #64d9c1;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+.presentation-step-title {
+  font-size: 13px;
+  font-weight: 500;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #f1f5f9;
+}
+.presentation-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.presentation-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+.presentation-dot:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+.presentation-dot.passed {
+  background: #64d9c1;
+}
+.presentation-dot.active {
+  background: #f2cb80;
+  transform: scale(1.35);
+  box-shadow: 0 0 8px rgba(242, 203, 128, 0.6);
+}
+.presentation-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e5edf8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.presentation-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+.presentation-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.presentation-btn.primary {
+  background: #258778;
+  border-color: #2e9f8e;
+  color: #ffffff;
+}
+.presentation-btn.primary:hover {
+  background: #2ea392;
+}
+.presentation-btn.close {
+  background: transparent;
+  border-color: transparent;
+  padding: 6px;
+  color: #94a3b8;
+}
+.presentation-btn.close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Math Themes in Settings */
+.math-theme-presets {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+.math-theme-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  margin-right: 4px;
+}
+.math-theme-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.math-theme-pill:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+}
+.math-theme-pill.active {
+  border-color: #258778;
+  background: #edf7f3;
+  color: #146d60;
+  font-weight: 600;
+}
+.math-theme-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}

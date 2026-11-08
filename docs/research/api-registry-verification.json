@@ -426,6 +426,7 @@
       "manim.mobject.geometry.line.DashedLine.get_last_handle",
       "manim.mobject.geometry.line.DashedLine.get_start",
       "manim.mobject.geometry.line.DoubleArrow",
+      "manim.mobject.geometry.line.Elbow",
       "manim.mobject.geometry.line.Line",
       "manim.mobject.geometry.line.Line.get_angle",
       "manim.mobject.geometry.line.Line.get_projection",
@@ -439,6 +440,8 @@
       "manim.mobject.geometry.line.Line.set_points_by_ends",
       "manim.mobject.geometry.line.RightAngle",
       "manim.mobject.geometry.line.TangentLine",
+      "manim.mobject.geometry.line.Vector",
+      "manim.mobject.geometry.polygram.ConvexHull",
       "manim.mobject.geometry.polygram.Cutout",
       "manim.mobject.geometry.polygram.Polygon",
       "manim.mobject.geometry.polygram.Polygram.get_vertices",
@@ -451,13 +454,21 @@
       "manim.mobject.geometry.polygram.Star",
       "manim.mobject.geometry.polygram.Triangle",
       "manim.mobject.geometry.shape_matchers.BackgroundRectangle",
+      "manim.mobject.geometry.shape_matchers.Cross",
       "manim.mobject.geometry.shape_matchers.SurroundingRectangle",
       "manim.mobject.geometry.shape_matchers.Underline",
+      "manim.mobject.geometry.tips.ArrowCircleFilledTip",
+      "manim.mobject.geometry.tips.ArrowCircleTip",
+      "manim.mobject.geometry.tips.ArrowSquareFilledTip",
+      "manim.mobject.geometry.tips.ArrowSquareTip",
       "manim.mobject.geometry.tips.ArrowTip.base",
       "manim.mobject.geometry.tips.ArrowTip.length",
       "manim.mobject.geometry.tips.ArrowTip.tip_angle",
       "manim.mobject.geometry.tips.ArrowTip.tip_point",
       "manim.mobject.geometry.tips.ArrowTip.vector",
+      "manim.mobject.geometry.tips.ArrowTriangleFilledTip",
+      "manim.mobject.geometry.tips.ArrowTriangleTip",
+      "manim.mobject.geometry.tips.StealthTip",
       "manim.mobject.geometry.tips.StealthTip.length",
       "manim.mobject.graph.DiGraph",
       "manim.mobject.graph.DiGraph.update_edges",
@@ -1153,6 +1164,7 @@
       "manim.utils.bezier.proportions_along_bezier_curve_for_point",
       "manim.utils.bezier.split_bezier",
       "manim.utils.bezier.subdivide_bezier",
+      "manim.utils.color.core.HSV",
       "manim.utils.color.core.HSV.h",
       "manim.utils.color.core.HSV.hue",
       "manim.utils.color.core.HSV.s",
@@ -1160,6 +1172,7 @@
       "manim.utils.color.core.HSV.v",
       "manim.utils.color.core.HSV.value",
       "manim.utils.color.core.ManimColor",
+      "manim.utils.color.core.ManimColor.contrasting",
       "manim.utils.color.core.ManimColor.darker",
       "manim.utils.color.core.ManimColor.from_hex",
       "manim.utils.color.core.ManimColor.from_hsl",
@@ -1167,14 +1180,38 @@
       "manim.utils.color.core.ManimColor.from_rgb",
       "manim.utils.color.core.ManimColor.from_rgba",
       "manim.utils.color.core.ManimColor.interpolate",
+      "manim.utils.color.core.ManimColor.into",
       "manim.utils.color.core.ManimColor.invert",
       "manim.utils.color.core.ManimColor.lighter",
+      "manim.utils.color.core.ManimColor.opacity",
+      "manim.utils.color.core.ManimColor.parse",
       "manim.utils.color.core.ManimColor.to_hex",
       "manim.utils.color.core.ManimColor.to_hsl",
       "manim.utils.color.core.ManimColor.to_hsv",
+      "manim.utils.color.core.ManimColor.to_int_rgb",
+      "manim.utils.color.core.ManimColor.to_int_rgba",
+      "manim.utils.color.core.ManimColor.to_int_rgba_with_alpha",
       "manim.utils.color.core.ManimColor.to_integer",
       "manim.utils.color.core.ManimColor.to_rgb",
       "manim.utils.color.core.ManimColor.to_rgba",
+      "manim.utils.color.core.ManimColor.to_rgba_with_alpha",
+      "manim.utils.color.core.RandomColorGenerator",
+      "manim.utils.color.core.RandomColorGenerator.next",
+      "manim.utils.color.core.average_color",
+      "manim.utils.color.core.color_gradient",
+      "manim.utils.color.core.color_to_int_rgb",
+      "manim.utils.color.core.color_to_int_rgba",
+      "manim.utils.color.core.color_to_rgb",
+      "manim.utils.color.core.color_to_rgba",
+      "manim.utils.color.core.get_shaded_rgb",
+      "manim.utils.color.core.hex_to_rgb",
+      "manim.utils.color.core.interpolate_color",
+      "manim.utils.color.core.invert_color",
+      "manim.utils.color.core.random_bright_color",
+      "manim.utils.color.core.random_color",
+      "manim.utils.color.core.rgb_to_color",
+      "manim.utils.color.core.rgb_to_hex",
+      "manim.utils.color.core.rgba_to_color",
       "manim.utils.config_ops.merge_dicts_recursively",
       "manim.utils.config_ops.update_dict_recursively",
       "manim.utils.file_ops.add_extension_if_not_present",
@@ -1371,7 +1408,7 @@
           "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
           "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
-          "src/studio/core/api-families.native.spec-node.mjs": "6b45e7b20b14ced3b96ee999665169d98c556d5c565eb5775320dabee04ee13d"
+          "src/studio/core/api-families.native.spec-node.mjs": "ddc37fce2fdd249d94d354401d0048bc83aee018ce7b33ea2cffab936859f06f"
         },
         "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "engineVersion": "0.20.1",
@@ -1435,10 +1472,13 @@
           "manim.mobject.geometry.line.Arrow",
           "manim.mobject.geometry.line.DashedLine",
           "manim.mobject.geometry.line.DoubleArrow",
+          "manim.mobject.geometry.line.Elbow",
           "manim.mobject.geometry.line.Line",
           "manim.mobject.geometry.line.Line.get_unit_vector",
           "manim.mobject.geometry.line.RightAngle",
           "manim.mobject.geometry.line.TangentLine",
+          "manim.mobject.geometry.line.Vector",
+          "manim.mobject.geometry.polygram.ConvexHull",
           "manim.mobject.geometry.polygram.Cutout",
           "manim.mobject.geometry.polygram.Polygon",
           "manim.mobject.geometry.polygram.Polygram.get_vertices",
@@ -1449,8 +1489,17 @@
           "manim.mobject.geometry.polygram.Star",
           "manim.mobject.geometry.polygram.Triangle",
           "manim.mobject.geometry.shape_matchers.BackgroundRectangle",
+          "manim.mobject.geometry.shape_matchers.Cross",
           "manim.mobject.geometry.shape_matchers.SurroundingRectangle",
           "manim.mobject.geometry.shape_matchers.Underline",
+          "manim.mobject.geometry.tips.ArrowCircleFilledTip",
+          "manim.mobject.geometry.tips.ArrowCircleTip",
+          "manim.mobject.geometry.tips.ArrowSquareFilledTip",
+          "manim.mobject.geometry.tips.ArrowSquareTip",
+          "manim.mobject.geometry.tips.ArrowTriangleFilledTip",
+          "manim.mobject.geometry.tips.ArrowTriangleTip",
+          "manim.mobject.geometry.tips.StealthTip",
+          "manim.mobject.geometry.tips.StealthTip.length",
           "manim.mobject.graphing.coordinate_systems.Axes",
           "manim.mobject.graphing.coordinate_systems.Axes.coords_to_point",
           "manim.mobject.graphing.coordinate_systems.Axes.point_to_coords",
@@ -1630,10 +1679,13 @@
               "manim.mobject.geometry.line.Angle",
               "manim.mobject.geometry.line.DashedLine",
               "manim.mobject.geometry.line.DoubleArrow",
+              "manim.mobject.geometry.line.Elbow",
               "manim.mobject.geometry.line.Line",
               "manim.mobject.geometry.line.Line.get_unit_vector",
               "manim.mobject.geometry.line.RightAngle",
               "manim.mobject.geometry.line.TangentLine",
+              "manim.mobject.geometry.line.Vector",
+              "manim.mobject.geometry.polygram.ConvexHull",
               "manim.mobject.geometry.polygram.Cutout",
               "manim.mobject.geometry.polygram.Polygon",
               "manim.mobject.geometry.polygram.Polygram.get_vertices",
@@ -1644,8 +1696,17 @@
               "manim.mobject.geometry.polygram.Star",
               "manim.mobject.geometry.polygram.Triangle",
               "manim.mobject.geometry.shape_matchers.BackgroundRectangle",
+              "manim.mobject.geometry.shape_matchers.Cross",
               "manim.mobject.geometry.shape_matchers.SurroundingRectangle",
               "manim.mobject.geometry.shape_matchers.Underline",
+              "manim.mobject.geometry.tips.ArrowCircleFilledTip",
+              "manim.mobject.geometry.tips.ArrowCircleTip",
+              "manim.mobject.geometry.tips.ArrowSquareFilledTip",
+              "manim.mobject.geometry.tips.ArrowSquareTip",
+              "manim.mobject.geometry.tips.ArrowTriangleFilledTip",
+              "manim.mobject.geometry.tips.ArrowTriangleTip",
+              "manim.mobject.geometry.tips.StealthTip",
+              "manim.mobject.geometry.tips.StealthTip.length",
               "manim.mobject.mobject.Mobject.copy",
               "manim.mobject.types.vectorized_mobject.DashedVMobject"
             ],
@@ -1892,6 +1953,86 @@
                 ],
                 "mode": "store",
                 "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.tips.ArrowTriangleFilledTip",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.tips.ArrowTriangleTip",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.tips.ArrowCircleFilledTip",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.tips.ArrowCircleTip",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.tips.ArrowSquareFilledTip",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.tips.ArrowSquareTip",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.tips.StealthTip",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.shape_matchers.Cross",
+                "parameters": [
+                  "stroke_color"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.line.Elbow",
+                "parameters": [
+                  "width"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.line.Vector",
+                "parameters": [
+                  "direction"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.polygram.ConvexHull",
+                "parameters": [
+                  "points"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.get_all_points()) > 0\nassert np.isfinite($result.get_all_points()).all()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.tips.StealthTip.length",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result > 0"
               },
               {
                 "apiId": "manim.mobject.geometry.line.Line",
@@ -7226,7 +7367,7 @@
           "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
           "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
-          "src/studio/core/api-utilities.native.spec-node.mjs": "76ebac017703bdc4ce5084063396405c3bdd67f266188bf13fb3353357e0b4af"
+          "src/studio/core/api-utilities.native.spec-node.mjs": "d5199d3656583467882a03d157fede623f685f3a80e8d5cf024b2f2db3d3cbb8"
         },
         "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "passed": true,
@@ -7250,6 +7391,39 @@
           "manim.utils.bezier.proportions_along_bezier_curve_for_point",
           "manim.utils.bezier.split_bezier",
           "manim.utils.bezier.subdivide_bezier",
+          "manim.utils.color.core.HSV",
+          "manim.utils.color.core.HSV.h",
+          "manim.utils.color.core.HSV.hue",
+          "manim.utils.color.core.HSV.s",
+          "manim.utils.color.core.HSV.saturation",
+          "manim.utils.color.core.HSV.v",
+          "manim.utils.color.core.HSV.value",
+          "manim.utils.color.core.ManimColor",
+          "manim.utils.color.core.ManimColor.contrasting",
+          "manim.utils.color.core.ManimColor.into",
+          "manim.utils.color.core.ManimColor.opacity",
+          "manim.utils.color.core.ManimColor.parse",
+          "manim.utils.color.core.ManimColor.to_int_rgb",
+          "manim.utils.color.core.ManimColor.to_int_rgba",
+          "manim.utils.color.core.ManimColor.to_int_rgba_with_alpha",
+          "manim.utils.color.core.ManimColor.to_rgba_with_alpha",
+          "manim.utils.color.core.RandomColorGenerator",
+          "manim.utils.color.core.RandomColorGenerator.next",
+          "manim.utils.color.core.average_color",
+          "manim.utils.color.core.color_gradient",
+          "manim.utils.color.core.color_to_int_rgb",
+          "manim.utils.color.core.color_to_int_rgba",
+          "manim.utils.color.core.color_to_rgb",
+          "manim.utils.color.core.color_to_rgba",
+          "manim.utils.color.core.get_shaded_rgb",
+          "manim.utils.color.core.hex_to_rgb",
+          "manim.utils.color.core.interpolate_color",
+          "manim.utils.color.core.invert_color",
+          "manim.utils.color.core.random_bright_color",
+          "manim.utils.color.core.random_color",
+          "manim.utils.color.core.rgb_to_color",
+          "manim.utils.color.core.rgb_to_hex",
+          "manim.utils.color.core.rgba_to_color",
           "manim.utils.config_ops.merge_dicts_recursively",
           "manim.utils.config_ops.update_dict_recursively",
           "manim.utils.file_ops.add_extension_if_not_present",
@@ -7723,6 +7897,138 @@
           },
           {
             "apiId": "manim.utils.space_ops.thick_diagonal",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.color_to_rgb",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.color_to_rgba",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.color_to_int_rgb",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.color_to_int_rgba",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.hex_to_rgb",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.rgb_to_hex",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.rgb_to_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.rgba_to_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.interpolate_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.invert_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.average_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.color_gradient",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.get_shaded_rgb",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.random_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.random_bright_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.RandomColorGenerator",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.RandomColorGenerator.next",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.ManimColor",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.ManimColor.contrasting",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.ManimColor.to_int_rgb",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.ManimColor.to_int_rgba",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.ManimColor.to_int_rgba_with_alpha",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.ManimColor.to_rgba_with_alpha",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.ManimColor.opacity",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.ManimColor.into",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.ManimColor.parse",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.HSV",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.HSV.h",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.HSV.hue",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.HSV.s",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.HSV.saturation",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.HSV.v",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.utils.color.core.HSV.value",
             "status": "verified"
           },
           {
@@ -11799,7 +12105,7 @@
       }
     ]
   },
-  "entriesWithBehaviorEvidence": 1253,
+  "entriesWithBehaviorEvidence": 1290,
   "entriesWithoutBehaviorEvidence": [
     "manim._config.cli_colors.parse_cli_ctx",
     "manim._config.logger_utils.JSONFormatter",
@@ -11945,26 +12251,15 @@
     "manim.mobject.geometry.line.Angle.from_three_points",
     "manim.mobject.geometry.line.Arrow.reset_normal_vector",
     "manim.mobject.geometry.line.Arrow.scale",
-    "manim.mobject.geometry.line.Elbow",
     "manim.mobject.geometry.line.Line.generate_points",
     "manim.mobject.geometry.line.Line.init_points",
-    "manim.mobject.geometry.line.Vector",
     "manim.mobject.geometry.line.Vector.coordinate_label",
-    "manim.mobject.geometry.polygram.ConvexHull",
     "manim.mobject.geometry.polygram.Polygram",
     "manim.mobject.geometry.polygram.Polygram.get_vertex_groups",
     "manim.mobject.geometry.polygram.RegularPolygram",
     "manim.mobject.geometry.shape_matchers.BackgroundRectangle.pointwise_become_partial",
     "manim.mobject.geometry.shape_matchers.BackgroundRectangle.set_style",
-    "manim.mobject.geometry.shape_matchers.Cross",
-    "manim.mobject.geometry.tips.ArrowCircleFilledTip",
-    "manim.mobject.geometry.tips.ArrowCircleTip",
-    "manim.mobject.geometry.tips.ArrowSquareFilledTip",
-    "manim.mobject.geometry.tips.ArrowSquareTip",
     "manim.mobject.geometry.tips.ArrowTip",
-    "manim.mobject.geometry.tips.ArrowTriangleFilledTip",
-    "manim.mobject.geometry.tips.ArrowTriangleTip",
-    "manim.mobject.geometry.tips.StealthTip",
     "manim.mobject.graph.GenericGraph",
     "manim.mobject.graph.GenericGraph.from_networkx",
     "manim.mobject.graph.LayoutFunction",
@@ -12720,33 +13015,7 @@
     "manim.scene.zoomed_scene.ZoomedScene.get_zoomed_display_pop_out_animation",
     "manim.scene.zoomed_scene.ZoomedScene.setup",
     "manim.utils.caching.handle_caching_play",
-    "manim.utils.color.core.HSV",
-    "manim.utils.color.core.ManimColor.contrasting",
     "manim.utils.color.core.ManimColor.gradient",
-    "manim.utils.color.core.ManimColor.into",
-    "manim.utils.color.core.ManimColor.opacity",
-    "manim.utils.color.core.ManimColor.parse",
-    "manim.utils.color.core.ManimColor.to_int_rgb",
-    "manim.utils.color.core.ManimColor.to_int_rgba",
-    "manim.utils.color.core.ManimColor.to_int_rgba_with_alpha",
-    "manim.utils.color.core.ManimColor.to_rgba_with_alpha",
-    "manim.utils.color.core.RandomColorGenerator",
-    "manim.utils.color.core.RandomColorGenerator.next",
-    "manim.utils.color.core.average_color",
-    "manim.utils.color.core.color_gradient",
-    "manim.utils.color.core.color_to_int_rgb",
-    "manim.utils.color.core.color_to_int_rgba",
-    "manim.utils.color.core.color_to_rgb",
-    "manim.utils.color.core.color_to_rgba",
-    "manim.utils.color.core.get_shaded_rgb",
-    "manim.utils.color.core.hex_to_rgb",
-    "manim.utils.color.core.interpolate_color",
-    "manim.utils.color.core.invert_color",
-    "manim.utils.color.core.random_bright_color",
-    "manim.utils.color.core.random_color",
-    "manim.utils.color.core.rgb_to_color",
-    "manim.utils.color.core.rgb_to_hex",
-    "manim.utils.color.core.rgba_to_color",
     "manim.utils.commands.VideoMetadata",
     "manim.utils.commands.capture",
     "manim.utils.commands.get_dir_layout",
