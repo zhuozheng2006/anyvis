@@ -4,6 +4,12 @@
 
 当前开发版本 v0.4.0：开源 React Timeline Editor、对象管理、图片/音频上传与真实混音、素材 ZIP、三视图同步与共享撤销已实现。最新测试范围见 [验证记录](verification.md#v040-时间轴对象与素材2026-11-08)。当前本地没有 Git 元数据，使用 GitHub Git Data API 基于远端树增量提交。
 
+## 830 项行为证据检查点
+
+图片 API 渲染与复合删除修复已发布 `04c5d206550cb2a476326096f990e12030a5f8d5`（tree `d34ad9630e0dc1eb22ba9b06c61e43775ea2eeaf`），独立原生工作流 42440905788、三平台桌面 42440905662 全部通过。
+
+随后只扩充测试与证据校验：animation-state 新增57项、pointcloud新增41项，raster改非默认缩放/旋转断言，明确抽象入口的动态派发。九份原生报告重新运行合并为830项，16个Node原生入口通过；证据校验6项通过，拒绝 apiIds/outcomes 不一致与假通过。剩余1463项（含533 OpenGL），PMobject.point_from_proportion的上游浮点索引错误仍未修复、未计通过。具体源码和复现命令见覆盖文档。
+
 ## 最新接续：图片 API 与删除保护
 
 2026-11-08：本地修复 compiler.ts 的图片兼容初始化，仅 image_asset 调用改为所有使用 API 或图片的场景统一初始化，防止 Pillow 13 下直接 API 图片渲染失败。authoring.ts 删除容器前检查完整子树中的对象外部依赖。新增 api-raster.native.spec-node.mjs：74 API / 75 断言和一个独立导出场景，新增净 70 项，七份证据重新运行后为 732 项。

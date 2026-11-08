@@ -110,48 +110,83 @@
       "manim._config.utils.ManimFrame.pixel_width",
       "manim._config.utils.ManimFrame.right_side",
       "manim._config.utils.ManimFrame.top",
+      "manim.animation.animation.Animation.begin",
+      "manim.animation.animation.Animation.clean_up_from_scene",
+      "manim.animation.animation.Animation.copy",
+      "manim.animation.animation.Animation.create_starting_mobject",
+      "manim.animation.animation.Animation.finish",
       "manim.animation.animation.Animation.get_all_families_zipped",
       "manim.animation.animation.Animation.get_all_mobjects",
       "manim.animation.animation.Animation.get_all_mobjects_to_update",
       "manim.animation.animation.Animation.get_rate_func",
       "manim.animation.animation.Animation.get_run_time",
+      "manim.animation.animation.Animation.get_sub_alpha",
+      "manim.animation.animation.Animation.interpolate",
       "manim.animation.animation.Animation.is_introducer",
       "manim.animation.animation.Animation.is_remover",
       "manim.animation.animation.Animation.run_time",
+      "manim.animation.animation.Animation.set_name",
+      "manim.animation.animation.Animation.set_rate_func",
+      "manim.animation.animation.Animation.set_run_time",
+      "manim.animation.animation.Animation.update_mobjects",
       "manim.animation.animation.Wait",
+      "manim.animation.animation.prepare_animation",
+      "manim.animation.composition.AnimationGroup.begin",
+      "manim.animation.composition.AnimationGroup.build_animations_with_timings",
+      "manim.animation.composition.AnimationGroup.finish",
       "manim.animation.composition.AnimationGroup.get_all_mobjects",
+      "manim.animation.composition.AnimationGroup.init_run_time",
+      "manim.animation.composition.AnimationGroup.interpolate",
+      "manim.animation.composition.LaggedStart",
       "manim.animation.composition.Succession",
       "manim.animation.creation.Create",
       "manim.animation.creation.DrawBorderThenFill",
       "manim.animation.creation.DrawBorderThenFill.get_all_mobjects",
       "manim.animation.creation.DrawBorderThenFill.get_outline",
+      "manim.animation.creation.ShowIncreasingSubsets",
+      "manim.animation.creation.ShowIncreasingSubsets.interpolate_mobject",
+      "manim.animation.creation.ShowIncreasingSubsets.update_submobject_list",
+      "manim.animation.creation.ShowSubmobjectsOneByOne.update_submobject_list",
       "manim.animation.creation.Uncreate",
       "manim.animation.creation.Unwrite",
       "manim.animation.creation.Write",
       "manim.animation.fading.FadeIn",
+      "manim.animation.fading.FadeIn.create_starting_mobject",
+      "manim.animation.fading.FadeIn.create_target",
       "manim.animation.fading.FadeOut",
+      "manim.animation.fading.FadeOut.clean_up_from_scene",
+      "manim.animation.fading.FadeOut.create_target",
       "manim.animation.growing.GrowArrow",
       "manim.animation.growing.GrowFromCenter",
       "manim.animation.growing.GrowFromEdge",
       "manim.animation.growing.GrowFromPoint",
+      "manim.animation.growing.GrowFromPoint.create_starting_mobject",
+      "manim.animation.growing.GrowFromPoint.create_target",
       "manim.animation.growing.SpinInFromNothing",
       "manim.animation.indication.ApplyWave",
       "manim.animation.indication.Circumscribe",
       "manim.animation.indication.Flash",
       "manim.animation.indication.FocusOn",
       "manim.animation.indication.Indicate",
+      "manim.animation.indication.Indicate.create_target",
       "manim.animation.indication.ShowPassingFlash",
       "manim.animation.indication.Wiggle",
       "manim.animation.indication.Wiggle.get_rotate_about_point",
       "manim.animation.indication.Wiggle.get_scale_about_point",
       "manim.animation.movement.ComplexHomotopy",
       "manim.animation.movement.Homotopy",
+      "manim.animation.movement.MoveAlongPath",
+      "manim.animation.movement.MoveAlongPath.interpolate_mobject",
+      "manim.animation.rotation.Rotate.create_target",
       "manim.animation.rotation.Rotating",
       "manim.animation.speedmodifier.ChangeSpeed.get_scaled_total_time",
       "manim.animation.transform.ApplyComplexFunction",
       "manim.animation.transform.ApplyFunction",
+      "manim.animation.transform.ApplyFunction.create_target",
       "manim.animation.transform.ApplyMatrix",
+      "manim.animation.transform.ApplyMatrix.initialize_matrix",
       "manim.animation.transform.ApplyMethod",
+      "manim.animation.transform.ApplyMethod.create_target",
       "manim.animation.transform.ApplyPointwiseFunction",
       "manim.animation.transform.ClockwiseTransform",
       "manim.animation.transform.CounterclockwiseTransform",
@@ -164,14 +199,27 @@
       "manim.animation.transform.ScaleInPlace",
       "manim.animation.transform.ShrinkToCenter",
       "manim.animation.transform.Transform",
+      "manim.animation.transform.Transform.begin",
+      "manim.animation.transform.Transform.clean_up_from_scene",
+      "manim.animation.transform.Transform.create_target",
       "manim.animation.transform.Transform.get_all_families_zipped",
       "manim.animation.transform.Transform.get_all_mobjects",
       "manim.animation.transform.Transform.path_arc",
       "manim.animation.transform.Transform.path_func",
       "manim.animation.transform.TransformFromCopy",
+      "manim.animation.updaters.mobject_update_utils.always",
       "manim.animation.updaters.mobject_update_utils.always_redraw",
+      "manim.animation.updaters.mobject_update_utils.always_rotate",
+      "manim.animation.updaters.mobject_update_utils.always_shift",
+      "manim.animation.updaters.mobject_update_utils.cycle_animation",
+      "manim.animation.updaters.mobject_update_utils.f_always",
+      "manim.animation.updaters.mobject_update_utils.turn_animation_into_updater",
+      "manim.animation.updaters.update.MaintainPositionRelativeTo",
+      "manim.animation.updaters.update.MaintainPositionRelativeTo.interpolate_mobject",
       "manim.animation.updaters.update.UpdateFromAlphaFunc",
+      "manim.animation.updaters.update.UpdateFromAlphaFunc.interpolate_mobject",
       "manim.animation.updaters.update.UpdateFromFunc",
+      "manim.animation.updaters.update.UpdateFromFunc.interpolate_mobject",
       "manim.camera.camera.Camera.adjust_out_of_range_points",
       "manim.camera.camera.Camera.adjusted_thickness",
       "manim.camera.camera.Camera.capture_mobject",
@@ -433,6 +481,7 @@
       "manim.mobject.mobject.Mobject.match_dim_size",
       "manim.mobject.mobject.Mobject.match_height",
       "manim.mobject.mobject.Mobject.match_points",
+      "manim.mobject.mobject.Mobject.match_updaters",
       "manim.mobject.mobject.Mobject.match_width",
       "manim.mobject.mobject.Mobject.match_x",
       "manim.mobject.mobject.Mobject.match_y",
@@ -443,11 +492,13 @@
       "manim.mobject.mobject.Mobject.point_from_proportion",
       "manim.mobject.mobject.Mobject.push_self_into_submobjects",
       "manim.mobject.mobject.Mobject.remove",
+      "manim.mobject.mobject.Mobject.remove_updater",
       "manim.mobject.mobject.Mobject.repeat",
       "manim.mobject.mobject.Mobject.replace",
       "manim.mobject.mobject.Mobject.rescale_to_fit",
       "manim.mobject.mobject.Mobject.reset_points",
       "manim.mobject.mobject.Mobject.restore",
+      "manim.mobject.mobject.Mobject.resume_updating",
       "manim.mobject.mobject.Mobject.reverse_points",
       "manim.mobject.mobject.Mobject.rotate",
       "manim.mobject.mobject.Mobject.rotate_about_origin",
@@ -473,8 +524,10 @@
       "manim.mobject.mobject.Mobject.stretch_to_fit_height",
       "manim.mobject.mobject.Mobject.stretch_to_fit_width",
       "manim.mobject.mobject.Mobject.surround",
+      "manim.mobject.mobject.Mobject.suspend_updating",
       "manim.mobject.mobject.Mobject.to_corner",
       "manim.mobject.mobject.Mobject.to_edge",
+      "manim.mobject.mobject.Mobject.update",
       "manim.mobject.mobject.Mobject.width",
       "manim.mobject.svg.brace.Brace.get_direction",
       "manim.mobject.svg.brace.Brace.get_tip",
@@ -523,13 +576,45 @@
       "manim.mobject.types.image_mobject.ImageMobjectFromCamera",
       "manim.mobject.types.image_mobject.ImageMobjectFromCamera.add_display_frame",
       "manim.mobject.types.image_mobject.ImageMobjectFromCamera.get_pixel_array",
+      "manim.mobject.types.point_cloud_mobject.Mobject1D",
+      "manim.mobject.types.point_cloud_mobject.Mobject1D.add_line",
+      "manim.mobject.types.point_cloud_mobject.Mobject2D",
+      "manim.mobject.types.point_cloud_mobject.PGroup",
+      "manim.mobject.types.point_cloud_mobject.PGroup.fade_to",
+      "manim.mobject.types.point_cloud_mobject.PMobject",
+      "manim.mobject.types.point_cloud_mobject.PMobject.add_points",
+      "manim.mobject.types.point_cloud_mobject.PMobject.align_points_with_larger",
+      "manim.mobject.types.point_cloud_mobject.PMobject.fade_to",
+      "manim.mobject.types.point_cloud_mobject.PMobject.filter_out",
       "manim.mobject.types.point_cloud_mobject.PMobject.get_all_rgbas",
       "manim.mobject.types.point_cloud_mobject.PMobject.get_array_attrs",
       "manim.mobject.types.point_cloud_mobject.PMobject.get_color",
+      "manim.mobject.types.point_cloud_mobject.PMobject.get_mobject_type_class",
       "manim.mobject.types.point_cloud_mobject.PMobject.get_point_mobject",
       "manim.mobject.types.point_cloud_mobject.PMobject.get_stroke_width",
+      "manim.mobject.types.point_cloud_mobject.PMobject.ingest_submobjects",
+      "manim.mobject.types.point_cloud_mobject.PMobject.interpolate_color",
+      "manim.mobject.types.point_cloud_mobject.PMobject.match_colors",
+      "manim.mobject.types.point_cloud_mobject.PMobject.pointwise_become_partial",
+      "manim.mobject.types.point_cloud_mobject.PMobject.reset_points",
+      "manim.mobject.types.point_cloud_mobject.PMobject.set_color",
+      "manim.mobject.types.point_cloud_mobject.PMobject.set_color_by_gradient",
+      "manim.mobject.types.point_cloud_mobject.PMobject.set_colors_by_radial_gradient",
+      "manim.mobject.types.point_cloud_mobject.PMobject.set_stroke_width",
+      "manim.mobject.types.point_cloud_mobject.PMobject.sort_points",
+      "manim.mobject.types.point_cloud_mobject.PMobject.thin_out",
+      "manim.mobject.types.point_cloud_mobject.Point",
+      "manim.mobject.types.point_cloud_mobject.Point.generate_points",
+      "manim.mobject.types.point_cloud_mobject.Point.init_points",
+      "manim.mobject.types.point_cloud_mobject.PointCloudDot",
+      "manim.mobject.types.point_cloud_mobject.PointCloudDot.generate_points",
+      "manim.mobject.types.point_cloud_mobject.PointCloudDot.init_points",
       "manim.mobject.types.vectorized_mobject.DashedVMobject",
+      "manim.mobject.types.vectorized_mobject.VDict",
+      "manim.mobject.types.vectorized_mobject.VDict.add",
+      "manim.mobject.types.vectorized_mobject.VDict.add_key_value_pair",
       "manim.mobject.types.vectorized_mobject.VDict.get_all_submobjects",
+      "manim.mobject.types.vectorized_mobject.VDict.remove",
       "manim.mobject.types.vectorized_mobject.VGroup",
       "manim.mobject.types.vectorized_mobject.VMobject",
       "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve",
@@ -605,12 +690,25 @@
       "manim.mobject.types.vectorized_mobject.VectorizedPoint.get_location",
       "manim.mobject.types.vectorized_mobject.VectorizedPoint.height",
       "manim.mobject.types.vectorized_mobject.VectorizedPoint.width",
+      "manim.mobject.value_tracker.ComplexValueTracker",
       "manim.mobject.value_tracker.ComplexValueTracker.get_value",
+      "manim.mobject.value_tracker.ComplexValueTracker.set_value",
       "manim.mobject.value_tracker.ValueTracker",
       "manim.mobject.value_tracker.ValueTracker.get_value",
+      "manim.mobject.value_tracker.ValueTracker.increment_value",
+      "manim.mobject.value_tracker.ValueTracker.interpolate",
       "manim.mobject.value_tracker.ValueTracker.set_value",
       "manim.mobject.vector_field.ArrowVectorField",
+      "manim.mobject.vector_field.ArrowVectorField.get_vector",
+      "manim.mobject.vector_field.VectorField",
       "manim.mobject.vector_field.VectorField.get_nudge_updater",
+      "manim.mobject.vector_field.VectorField.get_vectorized_rgba_gradient_function",
+      "manim.mobject.vector_field.VectorField.nudge",
+      "manim.mobject.vector_field.VectorField.nudge_submobjects",
+      "manim.mobject.vector_field.VectorField.scale_func",
+      "manim.mobject.vector_field.VectorField.shift_func",
+      "manim.mobject.vector_field.VectorField.start_submobject_movement",
+      "manim.mobject.vector_field.VectorField.stop_submobject_movement",
       "manim.scene.scene.Scene.clear",
       "manim.scene.scene.Scene.wait",
       "manim.utils.bezier.bezier",
@@ -8096,7 +8194,7 @@
           "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
           "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
-          "src/studio/core/api-raster.native.spec-node.mjs": "2379bf4cb3046865a903dc3fa6896ea42b3a5b869abc0ed7aa27f8646538831d"
+          "src/studio/core/api-raster.native.spec-node.mjs": "4e2c945f92d72cd78c130826b5a6ddf65430652bc41e6e7c45792a246185d8e5"
         },
         "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "passed": true,
@@ -8480,11 +8578,569 @@
             "status": "verified"
           }
         ],
-        "checks": "Compiled registry calls with explicit RGBA, geometry, real Cairo/Pillow pixels, camera projection and framing assertions. Setup calls and abstract no-op APIs are not counted."
+        "checks": "Compiled registry calls with explicit RGBA, geometry, real Cairo/Pillow pixels, camera projection and framing assertions. Setup calls are not counted. AbstractImageMobject pixel/color entries verify dynamic dispatch to concrete ImageMobject overrides, not direct execution of abstract base implementations."
+      },
+      {
+        "fixture": "src/studio/core/api-animation-state.native.spec-node.mjs",
+        "sourceFiles": {
+          "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
+          "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
+          "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
+          "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
+          "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
+          "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
+          "src/studio/core/catalog.ts": "9bf3c574559ec58e5b1f2e82a5045a36f5ee7a395a704641fffa5ffa141983b6",
+          "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
+          "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
+          "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
+          "src/studio/core/api-animation-state.native.spec-node.mjs": "c4c4e2b6ee274a295abf9d3602fda18ba756b471c9ecae4256f224785a7a141f"
+        },
+        "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
+        "passed": true,
+        "engineVersion": "0.20.1",
+        "renderer": "cairo",
+        "apiIds": [
+          "manim.animation.animation.Animation.begin",
+          "manim.animation.animation.Animation.clean_up_from_scene",
+          "manim.animation.animation.Animation.copy",
+          "manim.animation.animation.Animation.create_starting_mobject",
+          "manim.animation.animation.Animation.finish",
+          "manim.animation.animation.Animation.get_sub_alpha",
+          "manim.animation.animation.Animation.interpolate",
+          "manim.animation.animation.Animation.set_name",
+          "manim.animation.animation.Animation.set_rate_func",
+          "manim.animation.animation.Animation.set_run_time",
+          "manim.animation.animation.Animation.update_mobjects",
+          "manim.animation.animation.prepare_animation",
+          "manim.animation.composition.AnimationGroup.begin",
+          "manim.animation.composition.AnimationGroup.build_animations_with_timings",
+          "manim.animation.composition.AnimationGroup.finish",
+          "manim.animation.composition.AnimationGroup.init_run_time",
+          "manim.animation.composition.AnimationGroup.interpolate",
+          "manim.animation.composition.LaggedStart",
+          "manim.animation.creation.ShowIncreasingSubsets",
+          "manim.animation.creation.ShowIncreasingSubsets.interpolate_mobject",
+          "manim.animation.creation.ShowIncreasingSubsets.update_submobject_list",
+          "manim.animation.creation.ShowSubmobjectsOneByOne.update_submobject_list",
+          "manim.animation.fading.FadeIn.create_starting_mobject",
+          "manim.animation.fading.FadeIn.create_target",
+          "manim.animation.fading.FadeOut.clean_up_from_scene",
+          "manim.animation.fading.FadeOut.create_target",
+          "manim.animation.growing.GrowFromPoint.create_starting_mobject",
+          "manim.animation.growing.GrowFromPoint.create_target",
+          "manim.animation.indication.Indicate.create_target",
+          "manim.animation.movement.MoveAlongPath",
+          "manim.animation.movement.MoveAlongPath.interpolate_mobject",
+          "manim.animation.rotation.Rotate.create_target",
+          "manim.animation.transform.ApplyFunction.create_target",
+          "manim.animation.transform.ApplyMatrix.initialize_matrix",
+          "manim.animation.transform.ApplyMethod.create_target",
+          "manim.animation.transform.Transform.begin",
+          "manim.animation.transform.Transform.clean_up_from_scene",
+          "manim.animation.transform.Transform.create_target",
+          "manim.animation.updaters.mobject_update_utils.always",
+          "manim.animation.updaters.mobject_update_utils.always_rotate",
+          "manim.animation.updaters.mobject_update_utils.always_shift",
+          "manim.animation.updaters.mobject_update_utils.cycle_animation",
+          "manim.animation.updaters.mobject_update_utils.f_always",
+          "manim.animation.updaters.mobject_update_utils.turn_animation_into_updater",
+          "manim.animation.updaters.update.MaintainPositionRelativeTo",
+          "manim.animation.updaters.update.MaintainPositionRelativeTo.interpolate_mobject",
+          "manim.animation.updaters.update.UpdateFromAlphaFunc.interpolate_mobject",
+          "manim.animation.updaters.update.UpdateFromFunc.interpolate_mobject",
+          "manim.mobject.mobject.Mobject.match_updaters",
+          "manim.mobject.mobject.Mobject.remove_updater",
+          "manim.mobject.mobject.Mobject.resume_updating",
+          "manim.mobject.mobject.Mobject.suspend_updating",
+          "manim.mobject.mobject.Mobject.update",
+          "manim.mobject.value_tracker.ComplexValueTracker",
+          "manim.mobject.value_tracker.ComplexValueTracker.set_value",
+          "manim.mobject.value_tracker.ValueTracker.increment_value",
+          "manim.mobject.value_tracker.ValueTracker.interpolate"
+        ],
+        "outcomes": [
+          {
+            "apiId": "manim.animation.animation.Animation.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.finish",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.clean_up_from_scene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.copy",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.create_starting_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.get_sub_alpha",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.set_name",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.set_run_time",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.set_rate_func",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.update_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.Animation.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.animation.prepare_animation",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.fading.FadeIn.create_starting_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.fading.FadeIn.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.fading.FadeOut.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.fading.FadeOut.clean_up_from_scene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.growing.GrowFromPoint.create_starting_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.growing.GrowFromPoint.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.rotation.Rotate.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.indication.Indicate.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.ApplyMethod.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.ApplyFunction.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.ApplyMatrix.initialize_matrix",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.Transform.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.Transform.create_target",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.transform.Transform.clean_up_from_scene",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.mobject_update_utils.always_shift",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.mobject_update_utils.always_rotate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.mobject_update_utils.always",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.mobject_update_utils.f_always",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.mobject_update_utils.turn_animation_into_updater",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.mobject_update_utils.cycle_animation",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.update.MaintainPositionRelativeTo",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.update.MaintainPositionRelativeTo.interpolate_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.update.UpdateFromFunc.interpolate_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.updaters.update.UpdateFromAlphaFunc.interpolate_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.update",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.remove_updater",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.suspend_updating",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.resume_updating",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.mobject.Mobject.match_updaters",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.value_tracker.ComplexValueTracker",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.value_tracker.ComplexValueTracker.set_value",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.value_tracker.ValueTracker.increment_value",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.value_tracker.ValueTracker.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.AnimationGroup.build_animations_with_timings",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.AnimationGroup.init_run_time",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.AnimationGroup.begin",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.AnimationGroup.interpolate",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.AnimationGroup.finish",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.composition.LaggedStart",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.ShowIncreasingSubsets",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.ShowIncreasingSubsets.interpolate_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.ShowIncreasingSubsets.update_submobject_list",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.creation.ShowSubmobjectsOneByOne.update_submobject_list",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.movement.MoveAlongPath",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.animation.movement.MoveAlongPath.interpolate_mobject",
+            "status": "verified"
+          }
+        ],
+        "checks": "Compiled registry calls checked against explicit intermediate/final geometry, opacity, identity, timing, updater suspension/removal and tracker values. Animation.interpolate deliberately uses dynamic dispatch on Rotate. Setup calls and abstract no-op interpolators are not counted."
+      },
+      {
+        "fixture": "src/studio/core/api-pointcloud.native.spec-node.mjs",
+        "sourceFiles": {
+          "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
+          "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
+          "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
+          "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
+          "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
+          "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
+          "src/studio/core/catalog.ts": "9bf3c574559ec58e5b1f2e82a5045a36f5ee7a395a704641fffa5ffa141983b6",
+          "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
+          "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
+          "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
+          "src/studio/core/api-pointcloud.native.spec-node.mjs": "6400bb7031dcff7c5fbd6b797a33132fce58081365d15135fcf6837e10ab8f50"
+        },
+        "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
+        "passed": true,
+        "engineVersion": "0.20.1",
+        "renderer": "cairo",
+        "apiIds": [
+          "manim.mobject.types.point_cloud_mobject.Mobject1D",
+          "manim.mobject.types.point_cloud_mobject.Mobject1D.add_line",
+          "manim.mobject.types.point_cloud_mobject.Mobject2D",
+          "manim.mobject.types.point_cloud_mobject.PGroup",
+          "manim.mobject.types.point_cloud_mobject.PGroup.fade_to",
+          "manim.mobject.types.point_cloud_mobject.PMobject",
+          "manim.mobject.types.point_cloud_mobject.PMobject.add_points",
+          "manim.mobject.types.point_cloud_mobject.PMobject.align_points_with_larger",
+          "manim.mobject.types.point_cloud_mobject.PMobject.fade_to",
+          "manim.mobject.types.point_cloud_mobject.PMobject.filter_out",
+          "manim.mobject.types.point_cloud_mobject.PMobject.get_mobject_type_class",
+          "manim.mobject.types.point_cloud_mobject.PMobject.ingest_submobjects",
+          "manim.mobject.types.point_cloud_mobject.PMobject.interpolate_color",
+          "manim.mobject.types.point_cloud_mobject.PMobject.match_colors",
+          "manim.mobject.types.point_cloud_mobject.PMobject.pointwise_become_partial",
+          "manim.mobject.types.point_cloud_mobject.PMobject.reset_points",
+          "manim.mobject.types.point_cloud_mobject.PMobject.set_color",
+          "manim.mobject.types.point_cloud_mobject.PMobject.set_color_by_gradient",
+          "manim.mobject.types.point_cloud_mobject.PMobject.set_colors_by_radial_gradient",
+          "manim.mobject.types.point_cloud_mobject.PMobject.set_stroke_width",
+          "manim.mobject.types.point_cloud_mobject.PMobject.sort_points",
+          "manim.mobject.types.point_cloud_mobject.PMobject.thin_out",
+          "manim.mobject.types.point_cloud_mobject.Point",
+          "manim.mobject.types.point_cloud_mobject.Point.generate_points",
+          "manim.mobject.types.point_cloud_mobject.Point.init_points",
+          "manim.mobject.types.point_cloud_mobject.PointCloudDot",
+          "manim.mobject.types.point_cloud_mobject.PointCloudDot.generate_points",
+          "manim.mobject.types.point_cloud_mobject.PointCloudDot.init_points",
+          "manim.mobject.types.vectorized_mobject.VDict",
+          "manim.mobject.types.vectorized_mobject.VDict.add",
+          "manim.mobject.types.vectorized_mobject.VDict.add_key_value_pair",
+          "manim.mobject.types.vectorized_mobject.VDict.remove",
+          "manim.mobject.vector_field.ArrowVectorField.get_vector",
+          "manim.mobject.vector_field.VectorField",
+          "manim.mobject.vector_field.VectorField.get_vectorized_rgba_gradient_function",
+          "manim.mobject.vector_field.VectorField.nudge",
+          "manim.mobject.vector_field.VectorField.nudge_submobjects",
+          "manim.mobject.vector_field.VectorField.scale_func",
+          "manim.mobject.vector_field.VectorField.shift_func",
+          "manim.mobject.vector_field.VectorField.start_submobject_movement",
+          "manim.mobject.vector_field.VectorField.stop_submobject_movement"
+        ],
+        "outcomes": [
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.add_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.add_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.set_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.set_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.set_stroke_width",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.set_color_by_gradient",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.set_colors_by_radial_gradient",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.fade_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.filter_out",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.thin_out",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.sort_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.reset_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.ingest_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.align_points_with_larger",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.match_colors",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.interpolate_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.pointwise_become_partial",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PMobject.get_mobject_type_class",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.Mobject1D",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.Mobject2D",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.Mobject1D.add_line",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.Mobject1D.add_line",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.Point",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.Point.generate_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.Point.init_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PointCloudDot",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PointCloudDot.generate_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PointCloudDot.init_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PGroup",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.point_cloud_mobject.PGroup.fade_to",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VDict",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VDict.add",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VDict.add_key_value_pair",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.vectorized_mobject.VDict.remove",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.VectorField",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.VectorField.scale_func",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.VectorField.shift_func",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.VectorField.get_vectorized_rgba_gradient_function",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.VectorField.nudge",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.VectorField.nudge",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.VectorField.nudge_submobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.VectorField.start_submobject_movement",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.VectorField.stop_submobject_movement",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.vector_field.ArrowVectorField.get_vector",
+            "status": "verified"
+          }
+        ],
+        "checks": "Registry-compiled calls with explicit point/RGBA alignment, geometry, copy isolation, dictionary identity and vector-field integration/updater assertions. Setup calls are not counted. This fixture does not claim rendered movie coverage."
       }
     ]
   },
-  "entriesWithBehaviorEvidence": 732,
+  "entriesWithBehaviorEvidence": 830,
   "entriesWithoutBehaviorEvidence": [
     "manim._config.cli_colors.parse_cli_ctx",
     "manim._config.logger_utils.JSONFormatter",
@@ -8545,41 +9201,23 @@
     "manim.animation.animation.Add.interpolate",
     "manim.animation.animation.Add.update_mobjects",
     "manim.animation.animation.Animation",
-    "manim.animation.animation.Animation.begin",
-    "manim.animation.animation.Animation.clean_up_from_scene",
-    "manim.animation.animation.Animation.copy",
-    "manim.animation.animation.Animation.create_starting_mobject",
-    "manim.animation.animation.Animation.finish",
-    "manim.animation.animation.Animation.get_sub_alpha",
-    "manim.animation.animation.Animation.interpolate",
     "manim.animation.animation.Animation.interpolate_mobject",
     "manim.animation.animation.Animation.interpolate_submobject",
     "manim.animation.animation.Animation.set_default",
-    "manim.animation.animation.Animation.set_name",
-    "manim.animation.animation.Animation.set_rate_func",
-    "manim.animation.animation.Animation.set_run_time",
-    "manim.animation.animation.Animation.update_mobjects",
     "manim.animation.animation.Wait.begin",
     "manim.animation.animation.Wait.clean_up_from_scene",
     "manim.animation.animation.Wait.finish",
     "manim.animation.animation.Wait.interpolate",
     "manim.animation.animation.Wait.update_mobjects",
     "manim.animation.animation.override_animation",
-    "manim.animation.animation.prepare_animation",
     "manim.animation.changing.AnimatedBoundary",
     "manim.animation.changing.AnimatedBoundary.full_family_become_partial",
     "manim.animation.changing.AnimatedBoundary.update_boundary_copies",
     "manim.animation.changing.TracedPath",
     "manim.animation.changing.TracedPath.update_path",
     "manim.animation.composition.AnimationGroup",
-    "manim.animation.composition.AnimationGroup.begin",
-    "manim.animation.composition.AnimationGroup.build_animations_with_timings",
     "manim.animation.composition.AnimationGroup.clean_up_from_scene",
-    "manim.animation.composition.AnimationGroup.finish",
-    "manim.animation.composition.AnimationGroup.init_run_time",
-    "manim.animation.composition.AnimationGroup.interpolate",
     "manim.animation.composition.AnimationGroup.update_mobjects",
-    "manim.animation.composition.LaggedStart",
     "manim.animation.composition.LaggedStartMap",
     "manim.animation.composition.Succession.begin",
     "manim.animation.composition.Succession.finish",
@@ -8593,13 +9231,9 @@
     "manim.animation.creation.DrawBorderThenFill.get_stroke_color",
     "manim.animation.creation.DrawBorderThenFill.interpolate_submobject",
     "manim.animation.creation.RemoveTextLetterByLetter",
-    "manim.animation.creation.ShowIncreasingSubsets",
-    "manim.animation.creation.ShowIncreasingSubsets.interpolate_mobject",
-    "manim.animation.creation.ShowIncreasingSubsets.update_submobject_list",
     "manim.animation.creation.ShowPartial",
     "manim.animation.creation.ShowPartial.interpolate_submobject",
     "manim.animation.creation.ShowSubmobjectsOneByOne",
-    "manim.animation.creation.ShowSubmobjectsOneByOne.update_submobject_list",
     "manim.animation.creation.SpiralIn",
     "manim.animation.creation.SpiralIn.interpolate_mobject",
     "manim.animation.creation.TypeWithCursor",
@@ -8611,25 +9245,16 @@
     "manim.animation.creation.Write.begin",
     "manim.animation.creation.Write.finish",
     "manim.animation.creation.Write.reverse_submobjects",
-    "manim.animation.fading.FadeIn.create_starting_mobject",
-    "manim.animation.fading.FadeIn.create_target",
-    "manim.animation.fading.FadeOut.clean_up_from_scene",
-    "manim.animation.fading.FadeOut.create_target",
     "manim.animation.growing.GrowArrow.create_starting_mobject",
-    "manim.animation.growing.GrowFromPoint.create_starting_mobject",
-    "manim.animation.growing.GrowFromPoint.create_target",
     "manim.animation.indication.Blink",
     "manim.animation.indication.Flash.create_line_anims",
     "manim.animation.indication.Flash.create_lines",
     "manim.animation.indication.FocusOn.create_target",
-    "manim.animation.indication.Indicate.create_target",
     "manim.animation.indication.ShowPassingFlash.clean_up_from_scene",
     "manim.animation.indication.ShowPassingFlashWithThinningStrokeWidth",
     "manim.animation.indication.Wiggle.interpolate_submobject",
     "manim.animation.movement.Homotopy.function_at_time_t",
     "manim.animation.movement.Homotopy.interpolate_submobject",
-    "manim.animation.movement.MoveAlongPath",
-    "manim.animation.movement.MoveAlongPath.interpolate_mobject",
     "manim.animation.movement.PhaseFlow",
     "manim.animation.movement.PhaseFlow.interpolate_mobject",
     "manim.animation.movement.SmoothedVectorizedHomotopy",
@@ -8639,7 +9264,6 @@
     "manim.animation.numbers.ChangingDecimal.check_validity_of_input",
     "manim.animation.numbers.ChangingDecimal.interpolate_mobject",
     "manim.animation.rotation.Rotate",
-    "manim.animation.rotation.Rotate.create_target",
     "manim.animation.rotation.Rotating.interpolate_mobject",
     "manim.animation.specialized.Broadcast",
     "manim.animation.speedmodifier.ChangeSpeed",
@@ -8650,10 +9274,7 @@
     "manim.animation.speedmodifier.ChangeSpeed.interpolate",
     "manim.animation.speedmodifier.ChangeSpeed.setup",
     "manim.animation.speedmodifier.ChangeSpeed.update_mobjects",
-    "manim.animation.transform.ApplyFunction.create_target",
-    "manim.animation.transform.ApplyMatrix.initialize_matrix",
     "manim.animation.transform.ApplyMethod.check_validity_of_input",
-    "manim.animation.transform.ApplyMethod.create_target",
     "manim.animation.transform.ApplyPointwiseFunctionToCenter",
     "manim.animation.transform.ApplyPointwiseFunctionToCenter.begin",
     "manim.animation.transform.CyclicReplace",
@@ -8667,9 +9288,6 @@
     "manim.animation.transform.MoveToTarget.check_validity_of_input",
     "manim.animation.transform.Restore",
     "manim.animation.transform.Swap",
-    "manim.animation.transform.Transform.begin",
-    "manim.animation.transform.Transform.clean_up_from_scene",
-    "manim.animation.transform.Transform.create_target",
     "manim.animation.transform.Transform.interpolate_submobject",
     "manim.animation.transform.TransformAnimations",
     "manim.animation.transform.TransformAnimations.interpolate",
@@ -8685,17 +9303,7 @@
     "manim.animation.transform_matching_parts.TransformMatchingTex",
     "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_key",
     "manim.animation.transform_matching_parts.TransformMatchingTex.get_mobject_parts",
-    "manim.animation.updaters.mobject_update_utils.always",
-    "manim.animation.updaters.mobject_update_utils.always_rotate",
-    "manim.animation.updaters.mobject_update_utils.always_shift",
     "manim.animation.updaters.mobject_update_utils.assert_is_mobject_method",
-    "manim.animation.updaters.mobject_update_utils.cycle_animation",
-    "manim.animation.updaters.mobject_update_utils.f_always",
-    "manim.animation.updaters.mobject_update_utils.turn_animation_into_updater",
-    "manim.animation.updaters.update.MaintainPositionRelativeTo",
-    "manim.animation.updaters.update.MaintainPositionRelativeTo.interpolate_mobject",
-    "manim.animation.updaters.update.UpdateFromAlphaFunc.interpolate_mobject",
-    "manim.animation.updaters.update.UpdateFromFunc.interpolate_mobject",
     "manim.camera.camera.BackgroundColoredVMobjectDisplayer",
     "manim.camera.camera.BackgroundColoredVMobjectDisplayer.display",
     "manim.camera.camera.BackgroundColoredVMobjectDisplayer.get_background_array",
@@ -8926,15 +9534,12 @@
     "manim.mobject.mobject.Mobject.get_pieces",
     "manim.mobject.mobject.Mobject.init_colors",
     "manim.mobject.mobject.Mobject.interpolate",
-    "manim.mobject.mobject.Mobject.match_updaters",
     "manim.mobject.mobject.Mobject.null_point_align",
     "manim.mobject.mobject.Mobject.pose_at_angle",
     "manim.mobject.mobject.Mobject.proportion_from_point",
     "manim.mobject.mobject.Mobject.put_start_and_end_on",
     "manim.mobject.mobject.Mobject.reduce_across_dimension",
-    "manim.mobject.mobject.Mobject.remove_updater",
     "manim.mobject.mobject.Mobject.repeat_submobject",
-    "manim.mobject.mobject.Mobject.resume_updating",
     "manim.mobject.mobject.Mobject.save_image",
     "manim.mobject.mobject.Mobject.scale_to_fit_depth",
     "manim.mobject.mobject.Mobject.set",
@@ -8947,10 +9552,8 @@
     "manim.mobject.mobject.Mobject.sort_submobjects",
     "manim.mobject.mobject.Mobject.stretch_about_point",
     "manim.mobject.mobject.Mobject.stretch_to_fit_depth",
-    "manim.mobject.mobject.Mobject.suspend_updating",
     "manim.mobject.mobject.Mobject.throw_error_if_no_points",
     "manim.mobject.mobject.Mobject.to_original_color",
-    "manim.mobject.mobject.Mobject.update",
     "manim.mobject.mobject.override_animate",
     "manim.mobject.opengl.dot_cloud.DotCloud",
     "manim.mobject.opengl.dot_cloud.DotCloud.init_points",
@@ -9542,41 +10145,9 @@
     "manim.mobject.three_d.three_dimensions.Torus.func",
     "manim.mobject.types.image_mobject.AbstractImageMobject",
     "manim.mobject.types.image_mobject.ImageMobjectFromCamera.interpolate_color",
-    "manim.mobject.types.point_cloud_mobject.Mobject1D",
-    "manim.mobject.types.point_cloud_mobject.Mobject1D.add_line",
-    "manim.mobject.types.point_cloud_mobject.Mobject2D",
-    "manim.mobject.types.point_cloud_mobject.PGroup",
-    "manim.mobject.types.point_cloud_mobject.PGroup.fade_to",
-    "manim.mobject.types.point_cloud_mobject.PMobject",
-    "manim.mobject.types.point_cloud_mobject.PMobject.add_points",
-    "manim.mobject.types.point_cloud_mobject.PMobject.align_points_with_larger",
-    "manim.mobject.types.point_cloud_mobject.PMobject.fade_to",
-    "manim.mobject.types.point_cloud_mobject.PMobject.filter_out",
-    "manim.mobject.types.point_cloud_mobject.PMobject.get_mobject_type_class",
-    "manim.mobject.types.point_cloud_mobject.PMobject.ingest_submobjects",
-    "manim.mobject.types.point_cloud_mobject.PMobject.interpolate_color",
-    "manim.mobject.types.point_cloud_mobject.PMobject.match_colors",
     "manim.mobject.types.point_cloud_mobject.PMobject.point_from_proportion",
-    "manim.mobject.types.point_cloud_mobject.PMobject.pointwise_become_partial",
-    "manim.mobject.types.point_cloud_mobject.PMobject.reset_points",
-    "manim.mobject.types.point_cloud_mobject.PMobject.set_color",
-    "manim.mobject.types.point_cloud_mobject.PMobject.set_color_by_gradient",
-    "manim.mobject.types.point_cloud_mobject.PMobject.set_colors_by_radial_gradient",
-    "manim.mobject.types.point_cloud_mobject.PMobject.set_stroke_width",
-    "manim.mobject.types.point_cloud_mobject.PMobject.sort_points",
-    "manim.mobject.types.point_cloud_mobject.PMobject.thin_out",
-    "manim.mobject.types.point_cloud_mobject.Point",
-    "manim.mobject.types.point_cloud_mobject.Point.generate_points",
-    "manim.mobject.types.point_cloud_mobject.Point.init_points",
-    "manim.mobject.types.point_cloud_mobject.PointCloudDot",
-    "manim.mobject.types.point_cloud_mobject.PointCloudDot.generate_points",
-    "manim.mobject.types.point_cloud_mobject.PointCloudDot.init_points",
     "manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects",
     "manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects.point_from_proportion",
-    "manim.mobject.types.vectorized_mobject.VDict",
-    "manim.mobject.types.vectorized_mobject.VDict.add",
-    "manim.mobject.types.vectorized_mobject.VDict.add_key_value_pair",
-    "manim.mobject.types.vectorized_mobject.VDict.remove",
     "manim.mobject.types.vectorized_mobject.VGroup.add",
     "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curves",
     "manim.mobject.types.vectorized_mobject.VMobject.add_smooth_curve_to",
@@ -9617,25 +10188,12 @@
     "manim.mobject.utils.get_mobject_class",
     "manim.mobject.utils.get_point_mobject_class",
     "manim.mobject.utils.get_vectorized_mobject_class",
-    "manim.mobject.value_tracker.ComplexValueTracker",
-    "manim.mobject.value_tracker.ComplexValueTracker.set_value",
-    "manim.mobject.value_tracker.ValueTracker.increment_value",
-    "manim.mobject.value_tracker.ValueTracker.interpolate",
-    "manim.mobject.vector_field.ArrowVectorField.get_vector",
     "manim.mobject.vector_field.StreamLines",
     "manim.mobject.vector_field.StreamLines.create",
     "manim.mobject.vector_field.StreamLines.end_animation",
     "manim.mobject.vector_field.StreamLines.start_animation",
-    "manim.mobject.vector_field.VectorField",
     "manim.mobject.vector_field.VectorField.fit_to_coordinate_system",
     "manim.mobject.vector_field.VectorField.get_colored_background_image",
-    "manim.mobject.vector_field.VectorField.get_vectorized_rgba_gradient_function",
-    "manim.mobject.vector_field.VectorField.nudge",
-    "manim.mobject.vector_field.VectorField.nudge_submobjects",
-    "manim.mobject.vector_field.VectorField.scale_func",
-    "manim.mobject.vector_field.VectorField.shift_func",
-    "manim.mobject.vector_field.VectorField.start_submobject_movement",
-    "manim.mobject.vector_field.VectorField.stop_submobject_movement",
     "manim.plugins.plugins_flags.get_plugins",
     "manim.plugins.plugins_flags.list_plugins",
     "manim.renderer.cairo_renderer.CairoRenderer",

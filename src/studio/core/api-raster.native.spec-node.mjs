@@ -19,7 +19,9 @@ const ref = name => ({ $ref: name });
 const array = value => ({ $array: value });
 const cases = [];
 // Every case invokes a registry-compiled API and checks an observable postcondition.
-// Setup calls do not count as evidence; abstract no-op methods are deliberately excluded.
+// Setup calls do not count as evidence. AbstractImageMobject's pixel/color entries
+// verify dispatch through those user-selectable entries to ImageMobject overrides;
+// they do not claim that the abstract base implementations are directly usable.
 const add = (id, setup, params, check, fields = {}) => cases.push({ id, setup, params, check, fields });
 const image = 'manim.mobject.types.image_mobject.';
 const camera = 'manim.camera.camera.Camera.';
@@ -84,7 +86,7 @@ add(camera + 'type_or_raise', 's = make_camera(); objects["a"] = make_image()', 
 add(camera + 'get_thickening_nudges', 's = make_camera()', { thickness: 3 }, 'assert set(map(tuple,result)) == {(x,y) for x in [-1,0,1] for y in [-1,0,1]}');
 add(camera + 'thickened_coordinates', 's = make_camera()', { pixel_coords: array([[5,7]]), thickness: 3 }, 'assert set(map(tuple,result)) == {(x,y) for x in [4,5,6] for y in [6,7,8]}');
 add(camera + 'adjust_out_of_range_points', 's = make_camera(); s.max_allowable_norm = 5', { points: array([[6,8,0],[1,2,0]]) }, 'close(result, [[3,4,0],[1,2,0]])');
-add(camera + 'adjusted_thickness', 's = make_camera()', { thickness: 3 }, 'close(result, 3)');
+add(camera + 'adjusted_thickness', 's = Camera(pixel_width=32, pixel_height=16, frame_width=8, frame_height=4, background_color=BLACK)', { thickness: 3 }, 'close(result, 5)');
 
 // Real Cairo/Pillow drawing, not merely constructing a class or counting frames.
 for (const method of ['capture_mobject', 'capture_mobjects', 'display_vectorized', 'display_multiple_vectorized_mobjects', 'display_multiple_non_background_colored_vmobjects']) {
@@ -119,8 +121,8 @@ for (const [name, value] of [['phi',0.7],['theta',0.4],['gamma',0.2],['zoom',1.7
   add(three + 'get_' + name, `s = make_camera(ThreeDCamera); s.set_${name}(${value})`, {}, `close(result, ${value})`);
 }
 const topDown = 's = make_camera(ThreeDCamera); s.set_phi(0); s.set_theta(-PI/2); s.set_gamma(0); s.reset_rotation_matrix()';
-add(three + 'generate_rotation_matrix', topDown, {}, 'close(result, np.eye(3))');
-add(three + 'get_rotation_matrix', topDown, {}, 'close(result, np.eye(3))');
+add(three + 'generate_rotation_matrix', topDown + '; s.set_gamma(PI/2)', {}, 'close(result, [[0,-1,0],[1,0,0],[0,0,1]], atol=1e-8)');
+add(three + 'get_rotation_matrix', topDown + '; s.set_gamma(PI/2); s.reset_rotation_matrix()', {}, 'close(result, [[0,-1,0],[1,0,0],[0,0,1]], atol=1e-8)');
 add(three + 'reset_rotation_matrix', topDown + '; s.set_gamma(PI/2)', {}, 'close(s.rotation_matrix, [[0,-1,0],[1,0,0],[0,0,1]], atol=1e-8)');
 add(three + 'project_point', topDown + '; s.set_focal_distance(10); s.set_zoom(2)', { point: array([1,2,5]) }, 'close(result, [4,8,5])');
 add(three + 'project_points', topDown + '; s.set_focal_distance(10); s.set_zoom(2)', { points: array([[1,2,5],[1,2,0]]) }, 'close(result, [[4,8,5],[2,4,0]])');
@@ -206,7 +208,7 @@ print("ANYVIS_RASTER " + json.dumps(results))
     await writeFile(reportPath, JSON.stringify({ fixture, sourceFiles: await apiEvidenceSources(fixture),
       registrySha256: createHash('sha256').update(await readFile(new URL('./api-registry.json', import.meta.url))).digest('hex'),
       passed: failures.length === 0, engineVersion: health.version, renderer: 'cairo', apiIds, outcomes,
-      checks: 'Compiled registry calls with explicit RGBA, geometry, real Cairo/Pillow pixels, camera projection and framing assertions. Setup calls and abstract no-op APIs are not counted.'
+      checks: 'Compiled registry calls with explicit RGBA, geometry, real Cairo/Pillow pixels, camera projection and framing assertions. Setup calls are not counted. AbstractImageMobject pixel/color entries verify dynamic dispatch to concrete ImageMobject overrides, not direct execution of abstract base implementations.'
     }, null, 2) + '\n');
     t.diagnostic(`${apiIds.length} image/camera APIs, ${outcomes.length} cases, ${failures.length} failures.`);
     assert.deepEqual(failures, []);
