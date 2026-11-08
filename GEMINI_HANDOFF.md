@@ -11,7 +11,7 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 本机工作区：`/Users/zane/Documents/ChatGPT/AnyVis`。
 - 本地工作区完整关联 Git 仓库（分支 `main`，远端 `origin`），提交和推送可直接使用原生 Git 操作。
 - 已接入 Manim CE **0.20.1** 的 **2,293 个 API 入口**；**1,731 个**有原生行为证据，**562 个**尚无逐项行为证据（其中通用/Cairo 仅余 53 项，覆盖率达 97.0%；OpenGL 专属 509 项；已确证剩余 53 项通用接口全部属于抽象基类、静态类型协议、OpenGL 专属交互或上游缺陷，真正可执行调用的通用 Cairo API 达成 100% 覆盖闭环）。入口可生成调用不等于行为、参数组合或视觉结果全部正确。
-- 406 项应用测试（58 个测试文件）、30 项原生测试运行、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
+- 413 项应用测试（60 个测试文件）、30 项原生测试运行、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
 - 最新三平台桌面构建通过。Linux **Mesa softpipe** 已实际绘制并验证一个 OpenGL 场景；本机 Mac 的 OpenGL 上下文仍不可用。
 - 当前没有待合并的 PR #1：它已获用户许可并成功合并。不存在需要再次询问的旧合并阻塞。
 
@@ -59,6 +59,7 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 3B1B 黎曼和与定积分交互台 (`RiemannPlaygroundModal` / `riemann.ts`)：对标 3Blue1Brown 微积分本质第 8 章定积分与微积分基本定理，提供动态坐标系、可拖拽上下限 $[a, b]$、左/右/中点/梯形 4 种黎曼求和法则、精确 Simpson 复合积分对比、实时误差统计、一键平滑演示 $n: 4 \to 70$ 极限逼近动画，及一键生成 Manim CE `get_riemann_rectangles` / `get_area` 动画代码与工程动作。
 - Motion Canvas 风格缓动曲线与关键帧检查器 (`KeyframeCurveModal` / `easing-curve.ts`)：对标 Motion Canvas 动画设计器，提供交互式三阶贝塞尔曲线画布、可拖拽 $P_1(x_1, y_1)$ 与 $P_2(x_2, y_2)$ 控制手柄（支持 Anticipate 蓄力负向与 Overshoot 冲出回弹）、实时一阶导数速度曲线、支持位移/缩放/旋转/透明度 4 种形态的实时动画测车道 ($0.5\times, 1\times, 2\times$)、10 种经典与现代曲线预设、一键生成 Python Manim `rate_func` 及一键应用至当前选中的时间轴动画片段。
 - Remotion 风格音频响应式频谱与波形助手 (`AudioVisualizerModal` / `audio-visualizer.ts`)：对标 Remotion `@remotion/media-utils`，为教学讲解配音与钢琴配乐提供生动的视听动态交互，内置 3B1B 经典声波柱、霓虹镜像对称频谱、360° 环形星云声场、复古实验室示波器正弦波与极简底栏 5 种预设，支持频段数调节 ($8 \sim 64$)、位置对齐切换、实时声波律动仿真，及一键生成包含 `add_updater` 的原生 Manim 场景代码与 AnyVis 积木动作。
+- 3B1B 公式专属配色器 (`TexColorStylerModal` / `tex-color.ts`)：对标 3Blue1Brown 标志性的公式变量色彩体系（降低认知负荷），提供公式符号自动分词、单个变量/符号点选设色、3B1B 专属 8 色调色盘（金黄、青蓝、草绿、珊瑚红、薰衣紫、晨光蓝、亮橙、纯白）、实时双重视觉预览（高亮渲染与带颜色标注 LaTeX 代码）、生成使用 `substrings_to_isolate` 与 `set_color_by_tex` 的 Manim 原生场景脚本及一键插入工程动作。
 - 系统、文件与 TeX 工具链全量覆盖 (`systemAndFileUtilities`, +63 项原生 API，达 1,731 项)：涵盖文件操作底层、异常与弃用装饰器、代码高亮、字体注册、进阶分段与视频输出、TeX 全自动排错洞察等 14 组测试族。
 - 深度排查并记录 7 处 Manim CE 0.20.1 原生源码缺陷（`VectorScene`、`SpecialThreeDScene`、`ApplyPointwiseFunctionToCenter`、`SplitScreenCamera`、`VMobject.add_cubic_bezier_curves` 及 `print_tex_error`），并审计确证剩余 53 项通用/Cairo 接口全部属于非业务可调用项（抽象类、静态 Protocol、OpenGL 专属交互、桌面弹窗），真正可执行通用 Cairo API 达成 100% 覆盖。
 - CI 自动化与桌面端打包健壮性：修复 Linux GitHub 2-core runner 运行 ASAR 封装应用时偶发看门狗超时的问题，支持 `--smoke-timeout` 参数并将打包环境等待提升至 120s（外部看门狗 150s），在 Electron 宿主注入阶段性诊断日志打点（`Session / Mount / API / Video / Restart / Storage`），Linux/Windows/macOS 打包发布 100% 绿灯。

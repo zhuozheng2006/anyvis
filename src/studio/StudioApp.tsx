@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -31,6 +31,8 @@ import { KeyframeCurveModal } from './KeyframeCurveModal';
 import { applyRateFuncToAction } from './easing-curve';
 import { AudioVisualizerModal } from './AudioVisualizerModal';
 import { createAudioVisualizerActions } from './audio-visualizer';
+import { TexColorStylerModal } from './TexColorStylerModal';
+import { createColoredMathTexActions } from './tex-color';
 import './studio.css';
 import './studio-polish.css';
 
@@ -83,6 +85,7 @@ export default function StudioApp() {
   const [riemannPlaygroundOpen, setRiemannPlaygroundOpen] = useState(false);
   const [keyframeCurveOpen, setKeyframeCurveOpen] = useState(false);
   const [audioVisualizerOpen, setAudioVisualizerOpen] = useState(false);
+  const [texColorStylerOpen, setTexColorStylerOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
   const [saveError, setSaveError] = useState('');
@@ -473,6 +476,7 @@ export default function StudioApp() {
       <button className="header-button" title="3B1B 黎曼和与定积分交互台" aria-label="3B1B 黎曼和与定积分交互台" onClick={() => setRiemannPlaygroundOpen(true)}><BarChart3 size={15}/><span>黎曼积分台</span></button>
       <button className="header-button" title="缓动曲线与关键帧检查器" aria-label="缓动曲线与关键帧检查器" onClick={() => setKeyframeCurveOpen(true)}><Sliders size={15}/><span>缓动曲线</span></button>
       <button className="header-button" title="音频响应式频谱与波形助手" aria-label="音频响应式频谱与波形助手" onClick={() => setAudioVisualizerOpen(true)}><Radio size={15}/><span>音频频谱</span></button>
+      <button className="header-button" title="3B1B 公式专属配色器" aria-label="3B1B 公式专属配色器" onClick={() => setTexColorStylerOpen(true)}><Palette size={15}/><span>公式配色</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -691,6 +695,14 @@ export default function StudioApp() {
             run: () => setAudioVisualizerOpen(true),
           },
           {
+            id: 'open-tex-color-styler',
+            title: '3B1B 公式专属配色器 (LaTeX Equation Styler)',
+            subtitle: '为公式变量与符号赋予专属色彩，生成 MathTex 动画代码',
+            colour: '#e2b340',
+            keywords: 'latex mathtex tex color formula 3b1b 公式 配色 着色 变量',
+            run: () => setTexColorStylerOpen(true),
+          },
+          {
             id: 'export-py',
             title: '导出独立 Manim Python 脚本 (.py)',
             subtitle: '下载可直接由 manim 命令运行的源码',
@@ -821,6 +833,25 @@ export default function StudioApp() {
             setSelectedIds(actionIds);
           }
           notify(`已向动画编排插入“${preset.name}”音频频谱组件`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <TexColorStylerModal
+      isOpen={texColorStylerOpen}
+      onClose={() => setTexColorStylerOpen(false)}
+      onInsertColoredTex={(rawTex, colorMap, name) => {
+        try {
+          const current = editor.current?.snapshot() || projectRef.current;
+          const { project: nextProject, actionIds } = createColoredMathTexActions(current, rawTex, colorMap, name);
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入“${name}”专属配色公式`);
         } catch (e) {
           notify((e as Error).message);
         }

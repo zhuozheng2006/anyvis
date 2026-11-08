@@ -1,0 +1,322 @@
+.tex-styler-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  animation: texStylerFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes texStylerFadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.tex-styler-modal-container {
+  width: 900px;
+  max-width: 95vw;
+  max-height: 90vh;
+  background: #131620;
+  border: 1px solid #262c3e;
+  border-radius: 12px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65);
+  display: flex;
+  flex-direction: column;
+  color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+.tex-styler-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #1a1f2e;
+  border-bottom: 1px solid #262c3e;
+}
+
+.tex-styler-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.tex-styler-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(226, 179, 64, 0.15);
+  color: #e2b340;
+  border: 1px solid rgba(226, 179, 64, 0.3);
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.tex-styler-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.tex-styler-close-btn:hover {
+  background: #2a334d;
+  color: #fff;
+}
+
+.tex-styler-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  padding: 16px;
+  gap: 16px;
+}
+
+.tex-styler-preview-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #0d1017;
+  border: 1px solid #202636;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.tex-styler-stage {
+  height: 160px;
+  background: radial-gradient(circle at center, #191e2e 0%, #0c0f17 100%);
+  border: 1px solid #262d42;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+  padding: 20px;
+  text-align: center;
+  user-select: none;
+}
+
+.tex-styler-token-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: #151926;
+  border: 1px solid #22283a;
+  border-radius: 8px;
+}
+
+.tex-styler-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #1c2233;
+  border: 1px solid #2b344d;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: ui-monospace, monospace;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tex-styler-chip:hover {
+  background: #242c42;
+  border-color: #3b4566;
+}
+
+.tex-styler-chip.active {
+  border-color: #e2b340;
+  box-shadow: 0 0 8px rgba(226, 179, 64, 0.4);
+}
+
+.tex-styler-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.tex-styler-palette-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: #151926;
+  border: 1px solid #22283a;
+  border-radius: 8px;
+}
+
+.tex-styler-swatch-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #1e2436;
+  border: 1px solid #2e3852;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tex-styler-swatch-btn:hover {
+  background: #28314a;
+  border-color: #435175;
+}
+
+.tex-styler-swatch-btn.active {
+  border-color: #e2b340;
+  background: rgba(226, 179, 64, 0.15);
+}
+
+.tex-styler-output-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #11141e;
+  border: 1px solid #22283a;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.tex-styler-code-text {
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #94a3b8;
+  word-break: break-all;
+  user-select: all;
+}
+
+.tex-styler-controls-pane {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.tex-styler-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.tex-styler-preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tex-styler-preset-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 10px;
+  background: #1a1f2e;
+  border: 1px solid #262e44;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tex-styler-preset-card:hover {
+  background: #232a3f;
+  border-color: #384566;
+}
+
+.tex-styler-preset-card.active {
+  background: rgba(226, 179, 64, 0.14);
+  border-color: #e2b340;
+  color: #e2b340;
+}
+
+.tex-styler-input {
+  width: 100%;
+  padding: 8px 10px;
+  background: #161a26;
+  border: 1px solid #262d40;
+  border-radius: 6px;
+  color: #f1f5f9;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+}
+
+.tex-styler-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #171b26;
+  border-top: 1px solid #262c3e;
+}
+
+.tex-styler-action-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tex-styler-btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #222838;
+  border: 1px solid #333c54;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tex-styler-btn-secondary:hover {
+  background: #2d354b;
+  color: #fff;
+}
+
+.tex-styler-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: #e2b340;
+  border: none;
+  border-radius: 6px;
+  color: #10121a;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tex-styler-btn-primary:hover:not(:disabled) {
+  background: #f0c766;
+  box-shadow: 0 2px 10px rgba(226, 179, 64, 0.4);
+}
