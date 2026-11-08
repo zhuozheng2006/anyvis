@@ -1,0 +1,328 @@
+import type { Action, Project } from './core/types';
+
+export type Point2D = [number, number];
+
+export type GeometryPresetId =
+  | 'euler_line'
+  | 'pythagoras'
+  | 'incircle'
+  | 'circumcircle'
+  | 'curvature';
+
+export interface GeometryPreset {
+  id: GeometryPresetId;
+  name: string;
+  description: string;
+  initialA: Point2D;
+  initialB: Point2D;
+  initialC: Point2D;
+}
+
+export interface TriangleCenters {
+  A: Point2D;
+  B: Point2D;
+  C: Point2D;
+  sideA: number; // |BC|
+  sideB: number; // |AC|
+  sideC: number; // |AB|
+  area: number;
+  perimeter: number;
+  centroid: Point2D;     // G
+  circumcenter: Point2D; // O
+  circumradius: number;  // R
+  incenter: Point2D;     // I
+  inradius: number;      // r
+  orthocenter: Point2D;   // H
+  eulerRatio: number;    // |HG| / |GO| should be 2.0
+}
+
+export const GEOMETRY_PRESETS: GeometryPreset[] = [
+  {
+    id: 'euler_line',
+    name: '欧拉线与四心共线定理 (Euler Line)',
+    description: '外心 O、重心 G、垂心 H 永远共线，且垂心到重心距离等于重心到外心距离的两倍 (HG = 2·GO)',
+    initialA: [-2.4, -1.2],
+    initialB: [2.6, -1.2],
+    initialC: [0.6, 2.2],
+  },
+  {
+    id: 'pythagoras',
+    name: '勾股定理几何弦图 (Pythagorean Theorem)',
+    description: '直角三角形三边向外作正方形，两直角边正方形面积之和恒等于斜边正方形面积 (a² + b² = c²)',
+    initialA: [-1.8, -1.5],
+    initialB: [1.8, -1.5],
+    initialC: [-1.8, 1.2],
+  },
+  {
+    id: 'incircle',
+    name: '三角形内切圆与三内角平分线 (Incircle)',
+    description: '三条角平分线交于内心 I，内心到三边垂直距离等于内切圆半径 r = S / s',
+    initialA: [-2.6, -1.4],
+    initialB: [2.4, -1.4],
+    initialC: [-0.4, 2.0],
+  },
+  {
+    id: 'circumcircle',
+    name: '三角形外接圆与三边中垂线 (Circumcircle)',
+    description: '三边垂直平分线交于外心 O，外心到三个顶点距离相等，构成唯一外接圆',
+    initialA: [-2.2, -1.0],
+    initialB: [2.2, -1.0],
+    initialC: [0.2, 2.2],
+  },
+  {
+    id: 'curvature',
+    name: '抛物线顶点密切曲率圆 (Osculating Circle)',
+    description: '在曲线某点处具有相同切线与二阶导数的二阶相切密切圆，半径 R = (1+y\'²)^(3/2) / |y"|',
+    initialA: [-2.0, 1.0],
+    initialB: [0.0, -1.0],
+    initialC: [2.0, 1.0],
+  },
+];
+
+/** Distance between two 2D points */
+export function dist2D(p1: Point2D, p2: Point2D): number {
+  const dx = p1[0] - p2[0];
+  const dy = p1[1] - p2[1];
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+/** Computes triangle centers and classical Euclidean relations */
+export function computeTriangleCenters(A: Point2D, B: Point2D, C: Point2D): TriangleCenters {
+  const [ax, ay] = A;
+  const [bx, by] = B;
+  const [cx, cy] = C;
+
+  const a = dist2D(B, C);
+  const b = dist2D(A, C);
+  const c = dist2D(A, B);
+  const perimeter = a + b + c;
+  const s = perimeter / 2;
+
+  // Signed Area (positive for CCW)
+  const area = Math.abs((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)) / 2;
+
+  // 1. Centroid G (重心) = (A + B + C) / 3
+  const G: Point2D = [
+    (ax + bx + cx) / 3,
+    (ay + by + cy) / 3,
+  ];
+
+  // 2. Incenter I (内心) = (a*A + b*B + c*C) / (a + b + c)
+  const safePerimeter = perimeter > 1e-6 ? perimeter : 1;
+  const I: Point2D = [
+    (a * ax + b * bx + c * cx) / safePerimeter,
+    (a * ay + b * by + c * cy) / safePerimeter,
+  ];
+  const r = area / (s > 1e-6 ? s : 1);
+
+  // 3. Circumcenter O (外心)
+  const D = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by));
+  let O: Point2D;
+  let R: number;
+
+  if (Math.abs(D) < 1e-6) {
+    O = [G[0], G[1]];
+    R = 1.0;
+  } else {
+    const aSq = ax * ax + ay * ay;
+    const bSq = bx * bx + by * by;
+    const cSq = cx * cx + cy * cy;
+
+    const ox = (aSq * (by - cy) + bSq * (cy - ay) + cSq * (ay - by)) / D;
+    const oy = (aSq * (cx - bx) + bSq * (ax - cx) + cSq * (bx - ax)) / D;
+    O = [ox, oy];
+    R = dist2D(O, A);
+  }
+
+  // 4. Orthocenter H (垂心) via Euler relation: H = 3G - 2O
+  const H: Point2D = [
+    3 * G[0] - 2 * O[0],
+    3 * G[1] - 2 * O[1],
+  ];
+
+  const distGO = dist2D(G, O);
+  const distHG = dist2D(H, G);
+  const eulerRatio = distGO > 1e-4 ? distHG / distGO : 2.0;
+
+  return {
+    A,
+    B,
+    C,
+    sideA: a,
+    sideB: b,
+    sideC: c,
+    area,
+    perimeter,
+    centroid: G,
+    circumcenter: O,
+    circumradius: R,
+    incenter: I,
+    inradius: r,
+    orthocenter: H,
+    eulerRatio,
+  };
+}
+
+/** Computes the four vertices of a square constructed outwardly on edge P1 -> P2 */
+export function getAttachedSquare(p1: Point2D, p2: Point2D): [Point2D, Point2D, Point2D, Point2D] {
+  const dx = p2[0] - p1[0];
+  const dy = p2[1] - p1[1];
+  // Normal vector rotated 90 degrees outward (-dy, dx)
+  const nx = dy;
+  const ny = -dx;
+
+  const p3: Point2D = [p2[0] + nx, p2[1] + ny];
+  const p4: Point2D = [p1[0] + nx, p1[1] + ny];
+
+  return [p1, p2, p3, p4];
+}
+
+/** Generates runnable Manim CE Python code for geometric theorem */
+export function generateGeometryPythonCode(
+  preset: GeometryPreset,
+  A: Point2D,
+  B: Point2D,
+  C: Point2D,
+): string {
+  if (preset.id === 'euler_line') {
+    const centers = computeTriangleCenters(A, B, C);
+    return `# Auto-generated by AnyVis - 3B1B Style Euler Line Geometric Proof
+from manim import *
+
+class EulerLineScene(Scene):
+    def construct(self):
+        title = Title(r"Euler Line Theorem ($HG = 2\\cdot GO$)", color=GOLD)
+        self.play(Write(title))
+
+        # Triangle vertices
+        A = np.array([${A[0].toFixed(2)}, ${A[1].toFixed(2)}, 0])
+        B = np.array([${B[0].toFixed(2)}, ${B[1].toFixed(2)}, 0])
+        C = np.array([${C[0].toFixed(2)}, ${C[1].toFixed(2)}, 0])
+
+        tri = Polygon(A, B, C, color=TEAL, stroke_width=3)
+        self.play(Create(tri), run_time=1.5)
+
+        # Circumcenter O
+        O = np.array([${centers.circumcenter[0].toFixed(2)}, ${centers.circumcenter[1].toFixed(2)}, 0])
+        dot_O = Dot(O, color=BLUE).scale(1.2)
+        lbl_O = MathTex(r"O \\text{ (Circumcenter)}", color=BLUE).next_to(dot_O, DOWN)
+
+        # Centroid G
+        G = np.array([${centers.centroid[0].toFixed(2)}, ${centers.centroid[1].toFixed(2)}, 0])
+        dot_G = Dot(G, color=GOLD).scale(1.2)
+        lbl_G = MathTex(r"G \\text{ (Centroid)}", color=GOLD).next_to(dot_G, UP)
+
+        # Orthocenter H
+        H = np.array([${centers.orthocenter[0].toFixed(2)}, ${centers.orthocenter[1].toFixed(2)}, 0])
+        dot_H = Dot(H, color=RED).scale(1.2)
+        lbl_H = MathTex(r"H \\text{ (Orthocenter)}", color=RED).next_to(dot_H, LEFT)
+
+        # Euler Line connecting H, G, O
+        euler_line = Line(H, O, color=YELLOW, stroke_width=3.5)
+
+        self.play(FadeIn(dot_O), Write(lbl_O), FadeIn(dot_G), Write(lbl_G), FadeIn(dot_H), Write(lbl_H))
+        self.play(Create(euler_line), run_time=1.8)
+        self.wait(2.0)
+`;
+  }
+
+  if (preset.id === 'pythagoras') {
+    return `# Auto-generated by AnyVis - 3B1B Style Pythagorean Proof Without Words
+from manim import *
+
+class PythagorasScene(Scene):
+    def construct(self):
+        title = Title(r"Pythagorean Theorem: $a^2 + b^2 = c^2$", color=GOLD)
+        self.play(Write(title))
+
+        A = np.array([${A[0].toFixed(2)}, ${A[1].toFixed(2)}, 0])
+        B = np.array([${B[0].toFixed(2)}, ${B[1].toFixed(2)}, 0])
+        C = np.array([${C[0].toFixed(2)}, ${C[1].toFixed(2)}, 0])
+
+        tri = Polygon(A, B, C, color=WHITE, fill_color=TEAL, fill_opacity=0.5, stroke_width=3)
+        self.play(Create(tri), run_time=1.5)
+        self.wait(2.0)
+`;
+  }
+
+  return `# Auto-generated by AnyVis - Euclidean Geometry Construction
+from manim import *
+
+class EuclideanGeometryScene(Scene):
+    def construct(self):
+        title = Title(r"${preset.name}", color=GOLD)
+        self.play(Write(title))
+
+        A = np.array([${A[0].toFixed(2)}, ${A[1].toFixed(2)}, 0])
+        B = np.array([${B[0].toFixed(2)}, ${B[1].toFixed(2)}, 0])
+        C = np.array([${C[0].toFixed(2)}, ${C[1].toFixed(2)}, 0])
+
+        tri = Polygon(A, B, C, color=TEAL, stroke_width=3)
+        self.play(Create(tri), run_time=1.5)
+        self.wait(2.0)
+`;
+}
+
+/** Injects geometry actions into AnyVis project */
+export function createGeometryActions(
+  project: Project,
+  preset: GeometryPreset,
+  A: Point2D,
+  B: Point2D,
+  C: Point2D,
+): { project: Project; actionIds: string[] } {
+  const ts = Date.now();
+  const centers = computeTriangleCenters(A, B, C);
+  const titleName = `geo_title_${ts.toString().slice(-4)}`;
+
+  const titleAction: Action = {
+    id: `action_geotitle_${ts}`,
+    type: 'create_text',
+    fields: {
+      name: titleName,
+      text: `${preset.name}`,
+      color: '#e2b340',
+      x: 0,
+      y: 3.2,
+      fontSize: 28,
+    },
+    children: [],
+  };
+
+  const circumCircleAction: Action = {
+    id: `action_geocircum_${ts}`,
+    type: 'create_circle',
+    fields: {
+      name: `circumcircle_${ts.toString().slice(-4)}`,
+      radius: Number(centers.circumradius.toFixed(2)),
+      x: Number(centers.circumcenter[0].toFixed(2)),
+      y: Number(centers.circumcenter[1].toFixed(2)),
+      color: '#38bdf8',
+      fill: false,
+    },
+    children: [],
+  };
+
+  const inCircleAction: Action = {
+    id: `action_geoin_${ts}`,
+    type: 'create_circle',
+    fields: {
+      name: `incircle_${ts.toString().slice(-4)}`,
+      radius: Number(centers.inradius.toFixed(2)),
+      x: Number(centers.incenter[0].toFixed(2)),
+      y: Number(centers.incenter[1].toFixed(2)),
+      color: '#83c167',
+      fill: false,
+    },
+    children: [],
+  };
+
+  const nextActions = [...project.actions, titleAction, circumCircleAction, inCircleAction];
+  return {
+    project: {
+      ...project,
+      actions: nextActions,
+    },
+    actionIds: [titleAction.id, circumCircleAction.id, inCircleAction.id],
+  };
+}
