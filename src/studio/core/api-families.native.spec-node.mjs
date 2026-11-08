@@ -757,6 +757,265 @@ objects["tex_tpl_file"] = _tpl_path
     api('manim.scene.scene.SceneInteractRerun.sender', 'sir_snd', {}, { receiver: 'sir_inst' }, 'assert $result == "rend_scene"');
     api('manim.scene.scene.SceneInteractRerun.kwargs', 'sir_kw', {}, { receiver: 'sir_inst' }, 'assert $result["step"] == 1');
   },
+  systemAndFileUtilities(f) {
+    const { api, check } = f;
+    check(`
+import glob, re, os, tempfile, subprocess
+from pathlib import Path
+from queue import Queue
+from PIL import Image
+from pydub import AudioSegment
+from manim.constants import RendererType, CapStyleType, LineJointType
+from manim.scene.section import DefaultSectionType, Section
+from manim.utils.deprecation import deprecated, deprecated_params
+from manim.utils.caching import handle_caching_play
+from manim.mobject.types.image_mobject import ImageMobjectFromCamera
+from manim.camera.camera import Camera
+
+_test_tmpdir = tempfile.mkdtemp(prefix="anyvis_sys_")
+_test_path = Path(_test_tmpdir) / "guarantee_dir"
+_test_code_file = Path(_test_tmpdir) / "test_import.py"
+_test_code_file.write_text("x = 10\\n")
+_test_wav_file = Path(_test_tmpdir) / "test_audio.wav"
+_test_out_wav = Path(_test_tmpdir) / "test_audio_out.wav"
+AudioSegment.silent(duration=500).export(str(_test_wav_file), format="wav")
+_test_png_file = Path(_test_tmpdir) / "test_img.png"
+Image.new("RGB", (64, 64), (255, 0, 0)).save(str(_test_png_file))
+_test_svg_file = Path(_test_tmpdir) / "test_vec.svg"
+_test_svg_file.write_text('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" /></svg>')
+_test_vid_file = Path(_test_tmpdir) / "dummy.mp4"
+subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "color=c=red:s=32x32:d=0.2", "-pix_fmt", "yuv420p", str(_test_vid_file)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+objects["sys_tmpdir_path"] = _test_path
+objects["sys_code_path"] = _test_code_file
+objects["sys_wav_path"] = str(_test_wav_file)
+objects["sys_out_wav_path"] = _test_out_wav
+objects["sys_png_path"] = str(_test_png_file)
+objects["sys_svg_path"] = str(_test_svg_file)
+objects["sys_video_path"] = _test_vid_file
+objects["sys_video_dir"] = _test_vid_file.parent
+`);
+    api('Circle', 'sys_tmpdir_path', {}, {}, 'objects["sys_tmpdir_path"] = _test_path');
+    api('Circle', 'sys_code_path', {}, {}, 'objects["sys_code_path"] = _test_code_file');
+    api('Circle', 'sys_wav_path', {}, {}, 'objects["sys_wav_path"] = str(_test_wav_file)');
+    api('Circle', 'sys_out_wav_path', {}, {}, 'objects["sys_out_wav_path"] = _test_out_wav');
+    api('Circle', 'sys_png_path', {}, {}, 'objects["sys_png_path"] = str(_test_png_file)');
+    api('Circle', 'sys_svg_path', {}, {}, 'objects["sys_svg_path"] = str(_test_svg_file)');
+    api('Circle', 'sys_video_path', {}, {}, 'objects["sys_video_path"] = _test_vid_file');
+    api('Circle', 'sys_video_dir', {}, {}, 'objects["sys_video_dir"] = _test_vid_file.parent');
+
+    // 2. file_ops
+    api('manim.utils.file_ops.guarantee_existence', 'fop_ge', { path: ref('sys_tmpdir_path') }, {}, 'assert objects["sys_tmpdir_path"].is_dir()');
+    api('manim.utils.file_ops.guarantee_empty_existence', 'fop_gee', { path: ref('sys_tmpdir_path') }, {}, 'assert objects["sys_tmpdir_path"].is_dir()');
+    api('manim.utils.file_ops.add_import_statement', 'fop_ais', { file: ref('sys_code_path') }, {}, 'assert "from manim import *" in objects["sys_code_path"].read_text()');
+    api('manim.utils.file_ops.modify_atime', 'fop_mat', { file_path: ref('sys_code_path') }, {}, 'assert objects["sys_code_path"].exists()');
+    api('manim.utils.file_ops.ensure_executable', 'fop_ee', { path_to_exe: ref('sys_code_path') }, {}, 'assert isinstance($result, bool)');
+    api('manim.utils.file_ops.copy_template_files', 'fop_ctf', { project_dir: ref('sys_tmpdir_path') }, {}, 'assert (objects["sys_tmpdir_path"] / "manim.cfg").exists()');
+
+    // 3. deprecation & exceptions
+    check(`
+@deprecated(since="v0.20.0", message="Test deprecated")
+def _sample_dep_fn(x):
+    return x * 2
+
+@deprecated_params(redirections=[("old_k", "new_k")])
+def _sample_dep_params(**kwargs):
+    return kwargs.get("new_k")
+
+objects["dep_fn_sample"] = _sample_dep_fn
+objects["dep_params_sample"] = _sample_dep_params
+`);
+    api('Circle', 'dep_fn_sample', {}, {}, 'objects["dep_fn_sample"] = _sample_dep_fn');
+    api('Circle', 'dep_params_sample', {}, {}, 'objects["dep_params_sample"] = _sample_dep_params');
+
+    api('manim.utils.deprecation.deprecated', 'dep_dec', { func: ref('dep_fn_sample') }, {}, 'assert callable($result) and $result(5) == 10');
+    api('manim.utils.deprecation.deprecated_params', 'dep_param_dec', { params: 'old_k' }, {}, 'assert callable($result)');
+    api('manim.utils.exceptions.EndSceneEarlyException', 'exc_esee', { args: ['early exit'] }, {}, 'assert str($result) == "early exit"');
+    api('manim.utils.exceptions.MultiAnimationOverrideException', 'exc_maoe', { args: ['override conflict'] }, {}, 'assert str($result) == "override conflict"');
+    api('manim.utils.exceptions.RerunSceneException', 'exc_rse', { args: ['rerun requested'] }, {}, 'assert str($result) == "rerun requested"');
+
+    // 4. constants & data_structures
+    api('manim.constants.CapStyleType', 'const_cst', { values: [1] }, {}, 'assert $result.ROUND.name == "ROUND"');
+    api('manim.constants.LineJointType', 'const_ljt', { values: [1] }, {}, 'assert $result.MITER.name == "MITER"');
+    api('manim.constants.RendererType', 'const_rt', { values: ['cairo'] }, {}, 'assert $result.CAIRO.name == "CAIRO"');
+
+    api('Circle', 'mwa_circle', { radius: 0.5 }, {}, 'assert $result is not None');
+    api('manim.data_structures.MethodWithArgs', 'mwa_inst', { method: { $method: { api: 'Mobject.shift', receiver: ref('mwa_circle') } }, args: [vec(1, 0, 0)], kwargs: {} }, {}, 'np.testing.assert_allclose($result.args[0], [1, 0, 0])');
+
+    // 5. plugins_flags
+    api('manim.plugins.plugins_flags.get_plugins', 'plg_get', {}, {}, 'assert isinstance($result, dict)');
+    api('manim.plugins.plugins_flags.list_plugins', 'plg_list', {}, {}, 'assert True');
+
+    // 6. sounds, images, family
+    api('manim.utils.sounds.get_full_sound_file_path', 'snd_path', { sound_file_name: ref('sys_wav_path') }, {}, 'assert str($result).endswith(".wav")');
+    api('manim.utils.images.get_full_raster_image_path', 'img_path', { image_file_name: ref('sys_png_path') }, {}, 'assert str($result).endswith(".png")');
+    api('manim.utils.images.get_full_vector_image_path', 'vec_path', { image_file_name: ref('sys_svg_path') }, {}, 'assert str($result).endswith(".svg")');
+    api('manim.utils.family.extract_mobject_family_members', 'fam_ext', { mobjects: [ref('mwa_circle')] }, {}, 'assert len($result) >= 1');
+
+    // 7. animation updaters & override
+    api('ApplyMethod', 'am_inst', { method: { $method: { api: 'Mobject.shift', receiver: ref('mwa_circle') } }, args: [vec(1, 0, 0)] }, {}, 'assert True');
+    api('manim.animation.transform.ApplyMethod.check_validity_of_input', 'app_chk', { method: { $method: { api: 'Mobject.shift', receiver: ref('mwa_circle') } } }, { receiver: 'am_inst' }, 'assert True');
+    api('manim.animation.updaters.mobject_update_utils.assert_is_mobject_method', 'upd_aimm', { method: { $method: { api: 'Mobject.shift', receiver: ref('mwa_circle') } } }, {}, 'assert True');
+    check('objects["fade_in_cls"] = FadeIn');
+    api('Circle', 'fade_in_cls', {}, {}, 'objects["fade_in_cls"] = FadeIn');
+    api('manim.animation.animation.override_animation', 'oa_dec', { animation_class: ref('fade_in_cls') }, {}, 'assert callable($result)');
+
+    // 8. VMobject background images
+    api('Circle', 'vm_bg_c1', {}, {}, 'assert $result is not None');
+    api('Circle', 'vm_bg_c2', {}, {}, 'assert $result is not None');
+    api('manim.mobject.types.vectorized_mobject.VMobject.color_using_background_image', 'vm_cubi', { background_image: ref('sys_png_path') }, { receiver: 'vm_bg_c1' }, 'assert $result.get_background_image() == objects["sys_png_path"]');
+    api('manim.mobject.types.vectorized_mobject.VMobject.get_background_image', 'vm_gbi', {}, { receiver: 'vm_bg_c1' }, 'assert $result == objects["sys_png_path"]');
+    api('manim.mobject.types.vectorized_mobject.VMobject.match_background_image', 'vm_mbi', { vmobject: ref('vm_bg_c1') }, { receiver: 'vm_bg_c2' }, 'assert $result.get_background_image() == objects["sys_png_path"]');
+
+    // 9. BackgroundColoredVMobjectDisplayer & CoordinateSystem
+    api('Camera', 'sys_camera', {}, {}, 'assert $result is not None');
+    api('manim.camera.camera.BackgroundColoredVMobjectDisplayer', 'bcvm_disp', { camera: ref('sys_camera') }, {}, 'assert $result is not None');
+    api('manim.camera.camera.BackgroundColoredVMobjectDisplayer.get_background_array', 'bcvm_gba', { image: ref('sys_png_path') }, { receiver: 'bcvm_disp' }, 'assert len($result.shape) >= 2');
+    api('manim.mobject.graphing.coordinate_systems.CoordinateSystem', 'coord_sys', {}, {}, 'assert $result is not None');
+
+    // 10. Code mobject, register_font, video metadata
+    api('manim.mobject.text.code_mobject.Code', 'code_mob', { code_string: "a = 1\\nb = 2\\n", language: 'python' }, {}, 'assert len($result.code_lines) >= 1');
+    api('manim.utils.commands.get_video_metadata', 'vid_meta', { path_to_video: ref('sys_video_path') }, {}, 'assert $result["width"] > 0 and $result["height"] > 0');
+    check(`
+font_candidates = glob.glob("/System/Library/Fonts/*.ttf") + glob.glob("/System/Library/Fonts/*.ttc") + glob.glob("/usr/share/fonts/**/*.ttf", recursive=True) + glob.glob("/usr/share/fonts/**/*.ttc", recursive=True) + glob.glob("C:/Windows/Fonts/*.ttf")
+_sys_font = font_candidates[0] if font_candidates else str(_test_png_file)
+objects["sys_font_path"] = _sys_font
+`);
+    api('Circle', 'sys_font_path', {}, {}, 'objects["sys_font_path"] = _sys_font');
+    api('manim.mobject.text.text_mobject.register_font', 'reg_font_ctx', { font_file: ref('sys_font_path') }, {}, 'assert hasattr($result, "__enter__")');
+
+    // 11. Section & DefaultSectionType
+    api('manim.scene.section.DefaultSectionType', 'sec_type', { values: ['default.normal'] }, {}, 'assert $result.NORMAL.name == "NORMAL"');
+    check(`
+_sec_inst = Section(DefaultSectionType.NORMAL, objects["sys_video_path"].name, "demo_sec", False)
+objects["sec_instance"] = _sec_inst
+`);
+    api('Circle', 'sec_instance', {}, {}, 'objects["sec_instance"] = _sec_inst');
+    api('manim.scene.section.Section.get_dict', 'sec_get_dict', { sections_dir: ref('sys_video_dir') }, { receiver: 'sec_instance' }, 'assert $result["name"] == "demo_sec" and $result["width"] > 0');
+
+    // 12. VectorScene
+    api('manim.scene.vector_space_scene.VectorScene', 'vec_scene', {}, {}, 'assert $result is not None');
+
+    // 13. SceneFileWriter advanced
+    api('Scene', 'rend_scene', {}, {}, 'assert $result is not None');
+    api('CairoRenderer', 'cairo_rend', {}, {}, 'assert $result is not None');
+    api('SceneFileWriter', 'sfw_adv', { renderer: ref('cairo_rend'), scene_name: 'AdvWriter' }, {}, 'assert $result is not None');
+    api('SceneFileWriter.init_output_directories', 'sfw_adv_init', { scene_name: 'AdvWriter' }, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"] is not None');
+    api('SceneFileWriter.next_section', 'sfw_adv_sec', { name: 'sec_adv', type_: 'normal', skip_animations: false }, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"] is not None');
+    check(`
+config["write_to_movie"] = True
+_pmd = Path(_test_tmpdir) / "partial_movies"
+_pmd.mkdir(parents=True, exist_ok=True)
+(_pmd / "cached_part.mp4").write_text("dummy")
+objects["sfw_adv"].partial_movie_directory = _pmd
+`);
+    api('SceneFileWriter.add_partial_movie_file', 'sfw_adv_apmf', { hash_animation: 'test_hash_adv' }, { receiver: 'sfw_adv' }, 'assert any("test_hash_adv" in str(x) for x in objects["sfw_adv"].partial_movie_files)');
+    api('SceneFileWriter.begin_animation', 'sfw_adv_ba', { allow_write: false, file_path: null }, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"] is not None');
+    api('SceneFileWriter.end_animation', 'sfw_adv_ea', { allow_write: false }, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"] is not None');
+    api('SceneFileWriter.clean_cache', 'sfw_adv_cc', {}, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"] is not None');
+    api('SceneFileWriter.flush_cache_directory', 'sfw_adv_fcd', {}, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"] is not None');
+    api('SceneFileWriter.create_audio_segment', 'sfw_adv_cas', {}, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"].audio_segment is not None');
+    api('SceneFileWriter.add_sound', 'sfw_adv_as', { sound_file: ref('sys_wav_path'), time: 0, gain: 0 }, { receiver: 'sfw_adv' }, 'assert len(objects["sfw_adv"].audio_segment) >= 500');
+    api('manim.scene.scene_file_writer.convert_audio', 'sfw_conv_aud', { input_path: ref('sys_wav_path'), output_path: ref('sys_out_wav_path'), codec_name: 'pcm_s16le' }, {}, 'assert objects["sys_out_wav_path"].exists()');
+    api('SceneFileWriter.print_file_ready_message', 'sfw_adv_pfrm', { file_path: ref('sys_wav_path') }, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"] is not None');
+
+    check(`
+_test_img_obj = Image.new("RGBA", (10, 10), (0, 255, 0, 255))
+_test_arr = np.zeros((10, 10, 4), dtype=np.uint8)
+objects["sys_pil_img"] = _test_img_obj
+objects["sys_frame_arr"] = _test_arr
+objects["sys_tmpdir_str"] = str(_test_tmpdir) + "/"
+config["format"] = "png"
+config["write_to_movie"] = False
+`);
+    api('Circle', 'sys_pil_img', {}, {}, 'objects["sys_pil_img"] = _test_img_obj');
+    api('Circle', 'sys_frame_arr', {}, {}, 'objects["sys_frame_arr"] = _test_arr');
+    api('Circle', 'sys_tmpdir_str', {}, {}, 'objects["sys_tmpdir_str"] = str(_test_tmpdir) + "/"');
+    api('SceneFileWriter.output_image', 'sfw_out_img', { image: ref('sys_pil_img'), target_dir: ref('sys_tmpdir_str'), ext: '.png', zero_pad: 0 }, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"].frame_count > 0');
+    api('SceneFileWriter.save_image', 'sfw_sav_img', { image: ref('sys_pil_img') }, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"] is not None');
+    api('SceneFileWriter.write_frame', 'sfw_wrt_frame', { frame_or_renderer: ref('sys_frame_arr'), num_frames: 1 }, { receiver: 'sfw_adv' }, 'assert objects["sfw_adv"] is not None');
+
+    // 14. CairoRenderer add_frame & Scene add_sound
+    check('objects["cairo_rend"].file_writer = objects["sfw_adv"]');
+    api('CairoRenderer.add_frame', 'cr_add_frame', { frame: ref('sys_frame_arr'), num_frames: 1 }, { receiver: 'cairo_rend' }, 'assert objects["cairo_rend"].time > 0');
+    api('manim.scene.scene.Scene.add_sound', 'sc_add_sound', { sound_file: ref('sys_wav_path'), time_offset: 0, gain: 0 }, { receiver: 'rend_scene' }, 'assert objects["rend_scene"] is not None');
+
+    // 15. RerunSceneHandler
+    check(`
+_rsh_q = Queue()
+objects["sys_queue"] = _rsh_q
+`);
+    api('Circle', 'sys_queue', {}, {}, 'objects["sys_queue"] = _rsh_q');
+    api('manim.scene.scene.RerunSceneHandler', 'rsh_inst', { queue: ref('sys_queue') }, {}, 'assert $result is not None');
+    api('manim.scene.scene.RerunSceneHandler.on_modified', 'rsh_mod', { event: null }, { receiver: 'rsh_inst' }, 'assert not objects["sys_queue"].empty() and objects["sys_queue"].get().sender == "file"');
+
+    // 16. ImageMobjectFromCamera.interpolate_color
+    check(`
+_imfc_cam = Camera()
+_imfc_1 = ImageMobjectFromCamera(_imfc_cam)
+_imfc_1.pixel_array = np.zeros((10, 10, 4), dtype=np.uint8)
+_imfc_2 = ImageMobjectFromCamera(_imfc_cam)
+_imfc_2.pixel_array = np.full((10, 10, 4), 100, dtype=np.uint8)
+objects["imfc_1"] = _imfc_1
+objects["imfc_2"] = _imfc_2
+`);
+    api('Circle', 'imfc_1', {}, {}, 'objects["imfc_1"] = _imfc_1');
+    api('Circle', 'imfc_2', {}, {}, 'objects["imfc_2"] = _imfc_2');
+    api('manim.mobject.types.image_mobject.ImageMobjectFromCamera', 'imfc_target', { camera: ref('sys_camera') }, {}, 'assert $result is not None');
+    api('manim.mobject.types.image_mobject.ImageMobjectFromCamera.interpolate_color', 'imfc_interp', { mobject1: ref('imfc_1'), mobject2: ref('imfc_2'), alpha: 0.5 }, { receiver: 'imfc_target' }, 'assert objects["imfc_target"].pixel_array[0, 0, 0] == 50');
+
+    // 17. Hashing & caching play
+    check(`
+objects["sys_anim_circle"] = Circle()
+objects["sys_anim_fade"] = FadeIn(objects["sys_anim_circle"])
+`);
+    api('Circle', 'sys_anim_circle', {}, {}, 'objects["sys_anim_circle"] = Circle()');
+    api('Circle', 'sys_anim_fade', {}, {}, 'objects["sys_anim_fade"] = FadeIn(objects["sys_anim_circle"])');
+    api('manim.utils.hashing.get_hash_from_play_call', 'hsh_play', { scene_object: ref('rend_scene'), camera_object: ref('sys_camera'), animations_list: [ref('sys_anim_fade')], current_mobjects_list: [ref('sys_anim_circle')] }, {}, 'assert "_" in $result');
+    check(`
+@handle_caching_play
+def _mock_cache_play(renderer, scene, *args, **kwargs):
+    return "ok"
+objects["mock_cached_play_fn"] = _mock_cache_play
+`);
+    api('Circle', 'mock_cached_play_fn', {}, {}, 'objects["mock_cached_play_fn"] = _mock_cache_play');
+    api('manim.utils.caching.handle_caching_play', 'hcp_dec', { func: ref('mock_cached_play_fn') }, {}, 'assert callable($result)');
+
+    // 18. tex_file_writing
+    api('manim.utils.tex_file_writing.make_tex_compilation_command', 'tfw_mcmd', { tex_compiler: 'pdflatex', output_format: '.pdf', tex_file: ref('sys_code_path'), tex_dir: ref('sys_tmpdir_path') }, {}, 'assert len($result) >= 5');
+    api('manim.utils.tex_file_writing.generate_tex_file', 'tfw_gen_tex', { expression: 'Hello' }, {}, 'assert str($result).endswith(".tex")');
+    api('manim.utils.tex_file_writing.delete_nonsvg_files', 'tfw_del_nonsvg', {}, {}, 'assert True');
+    api('manim.utils.tex_file_writing.tex_to_svg_file', 'tfw_t2s', { expression: 'Hello' }, {}, 'assert str($result).endswith(".svg") and os.path.exists($result)');
+    api('manim.utils.tex_file_writing.compile_tex', 'tfw_comp', { tex_file: ref('tfw_gen_tex'), tex_compiler: 'latex', output_format: '.dvi' }, {}, 'assert str($result).endswith(".dvi") and os.path.exists($result)');
+    api('manim.utils.tex_file_writing.convert_to_svg', 'tfw_c2s', { dvi_file: ref('tfw_comp'), extension: '.dvi', page: 1 }, {}, 'assert str($result).endswith(".svg") and os.path.exists($result)');
+    check(`
+_m_input = re.search(r"([0-9a-fA-F]+)", "0041")
+_m_pkg = re.search(r"(\\w+)", "amsmath")
+objects["re_match_input"] = _m_input
+objects["re_match_pkg"] = _m_pkg
+`);
+    api('Circle', 're_match_input', {}, {}, 'objects["re_match_input"] = _m_input');
+    api('Circle', 're_match_pkg', {}, {}, 'objects["re_match_pkg"] = _m_pkg');
+    api('manim.utils.tex_file_writing.insight_inputenc_error', 'tfw_iie', { matching: ref('re_match_input') }, {}, 'assert "LATIN CAPITAL LETTER A" in list($result)[0]');
+    api('manim.utils.tex_file_writing.insight_package_not_found_error', 'tfw_ipnfe', { matching: ref('re_match_pkg') }, {}, 'assert "amsmath" in list($result)[0]');
+    check(`
+_comp_log = ["! Undefined control sequence.", "l.4 \\\\foo", "End error."]
+_tex_src = ["line1\\n", "line2\\n", "line3\\n", "\\\\foo\\n", "line5\\n", "line6\\n"]
+_log_file = Path(_test_tmpdir) / "test.log"
+_log_file.write_text("! Error\\nl.4 \\\\bad\\n")
+_bad_tex = Path(_test_tmpdir) / "bad.tex"
+_bad_tex.write_text("line1\\nline2\\nline3\\n\\\\bad\\nline5\\nline6\\n")
+objects["sys_log_lines"] = _comp_log
+objects["sys_tex_src"] = _tex_src
+objects["sys_log_file"] = _log_file
+objects["sys_bad_tex"] = _bad_tex
+`);
+    api('Circle', 'sys_log_lines', {}, {}, 'objects["sys_log_lines"] = _comp_log');
+    api('Circle', 'sys_tex_src', {}, {}, 'objects["sys_tex_src"] = _tex_src');
+    api('Circle', 'sys_log_file', {}, {}, 'objects["sys_log_file"] = _log_file');
+    api('Circle', 'sys_bad_tex', {}, {}, 'objects["sys_bad_tex"] = _bad_tex');
+    api('manim.utils.tex_file_writing.print_tex_error', 'tfw_pte', { tex_compilation_log: ref('sys_log_lines'), error_start_index: 0, tex_source: ref('sys_tex_src') }, {}, 'assert True');
+    api('manim.utils.tex_file_writing.print_all_tex_errors', 'tfw_pate', { log_file: ref('sys_log_file'), tex_compiler: 'latex', tex_file: ref('sys_bad_tex') }, {}, 'assert True');
+  },
 };
 
 test('native API families have executable postconditions', { timeout: 300_000 }, async t => {

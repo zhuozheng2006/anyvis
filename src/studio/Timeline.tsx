@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Timeline as TimelineEditor, type TimelineState } from '@xzdarcy/react-timeline-editor';
-import { ArrowLeft, ArrowRight, Bookmark, Clock3, Copy, Layers3, Magnet, Maximize2, Minus, Music2, Pause, Play, Plus, Scissors, SkipBack, Trash2, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bookmark, Clock3, Copy, Layers3, Magnet, Maximize2, Minus, Music2, Pause, Play, Plus, Scissors, SkipBack, Sparkles, Trash2, Volume2, VolumeX, X } from 'lucide-react';
 import type { TimelineRow } from '@xzdarcy/timeline-engine';
 import type { Project } from './core/types';
 import { CURATED_BLOCK_CATALOG, getBlockDefinition } from './core/catalog';
@@ -8,7 +8,8 @@ import { actionLabel, actionTrack, appendAction, duplicateAction, flattenActions
 import { audioClips, checkedEdit, editAudioClip, frameTime, moveAnimationClip, moveAnimationClips, resizeAnimationClip, splitActionClip, splitAudioClip } from './timeline-model';
 import { AudioWaveform } from './AudioWaveform';
 import { ActionInspector } from './ActionInspector';
-import { TimelineMarkerBar, addMarker, removeMarker, snapTimeToMarkers, updateMarker } from './TimelineMarkerBar';
+import { TimelineMarkerBar, addMarker, clearMarkers, removeMarker, snapTimeToMarkers, updateMarker } from './TimelineMarkerBar';
+import { SmartMarkerModal } from './SmartMarkerModal';
 import '@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css';
 import './timeline.css';
 
@@ -32,6 +33,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
   const [revision, setRevision] = useState(0), [hint, setHint] = useState('');
   const [internalSelectedIds, setInternalSelectedIds] = useState<string[]>([]);
   const [box, setBox] = useState<{ active: boolean; startX: number; startY: number; currentX: number; currentY: number } | null>(null);
+  const [smartMarkerOpen, setSmartMarkerOpen] = useState(false);
 
   const editor = useRef<TimelineState>(null), trackLabels = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null);
   const clips = useMemo(() => timelineClips(project.actions), [project.actions]);
@@ -238,6 +240,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       <span className="tl-timecode">{timecode(time, project.scene.fps)}</span><small className="tl-fps">{project.scene.fps} FPS</small><div className="tl-spacer"/>
       <button aria-label="磁性吸附" aria-pressed={snapping} title="吸附片段边缘与帧网格（S）" onClick={() => setSnapping(v => !v)}><Magnet size={15}/></button>
       <button aria-label="添加时间轴标记" title="在当前播放头处添加时间标记（M）" onClick={handleAddMarker}><Bookmark size={14}/> 标记</button>
+      <button aria-label="智能节奏打点" title="基于配音停顿、音乐节拍或动作切换自动生成标记" onClick={() => setSmartMarkerOpen(true)}><Sparkles size={14}/> 智能打点</button>
       <button aria-label="设置默认配乐" title={musicEnabled ? '自动钢琴配乐' : '当前无默认配乐'} onClick={onMusicSettings}><Music2 size={14}/> 配乐</button>
       <button onClick={() => add('wait')}><Clock3 size={14}/> 等待</button><button className="tl-add" onClick={() => setAdding(!adding)}><Plus size={14}/> 动画</button>
       <span className="tl-divider"/><button aria-label="缩小时间轴" onClick={() => setScale(s => Math.max(8, s / 1.4))}><Minus size={14}/></button><input className="tl-scale" aria-label="时间轴缩放" type="range" min="8" max="240" value={scale} onChange={e => setScale(Number(e.target.value))}/><button aria-label="放大时间轴" onClick={() => setScale(s => Math.min(240, s * 1.4))}><Plus size={14}/></button><button aria-label="适合全部片段" onClick={fit}><Maximize2 size={14}/></button>
@@ -248,6 +251,8 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       fps={project.scene.fps}
       onSeek={seek}
       onAddMarker={handleAddMarker}
+      onOpenSmartMarker={() => setSmartMarkerOpen(true)}
+      onClearAllMarkers={() => mutate(() => clearMarkers(project))}
       onUpdateMarker={(markerId, updates) => mutate(() => updateMarker(project, markerId, updates))}
       onRemoveMarker={markerId => mutate(() => removeMarker(project, markerId))}
     />
@@ -346,5 +351,11 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
         <ActionInspector key={selected.id} action={selected} actions={project.actions} assets={project.assets} fields={managedObject(selected) ? ['appear', 'duration', 'mode'].filter(name => definition?.fields.some(f => f.name === name)) : undefined} onChange={fields => mutate(() => updateAction(project, selected.id, fields))} onError={onError}/>
         {definition?.container && <p className="tl-note">复合片段包含内部动作，双击打开积木。</p>}</> : <p className="tl-note">选择片段编辑参数。动画按顺序联动，可组合并行；配音独立放置和裁剪。按住 Shift / Cmd 多选或框选。</p>}
     </div>
+    <SmartMarkerModal
+      project={project}
+      isOpen={smartMarkerOpen}
+      onClose={() => setSmartMarkerOpen(false)}
+      onApply={markers => mutate(() => ({ ...project, scene: { ...project.scene, markers } }))}
+    />
   </section>;
 }

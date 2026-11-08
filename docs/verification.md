@@ -1,5 +1,40 @@
 # AnyVis 验证记录
 
+## 音频智能打点助手、3B1B 矩阵线性变换交互台及系统/文件/TeX工具链 +63 项原生覆盖突破（2026-11-08）
+
+十四组真实 Manim 证据合并 **1,731 / 2,293** 个独立入口，单轮净增 **63 个**原生 API，未验证入口大幅降至 **562** 项（通用/Cairo 仅余 104 项，覆盖率历史性跃升至 **94.1%**；OpenGL 专属 458 项），全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格数值、几何点集与返回值后置条件对比，0 失败、0 fixture gap：
+- **系统、文件工具与代码文本族 (`systemAndFileUtilities`, 74 项 API / 104 组断言，净增 63 项)**：
+  - 文件底层与权限：`guarantee_existence`、`guarantee_empty_existence`、`add_import_statement`、`modify_atime`、`ensure_executable`、`copy_template_files`。
+  - 弃用装饰器与异常系统：`deprecated`、`deprecated_params`、`EndSceneEarlyException`、`MultiAnimationOverrideException`、`RerunSceneException`。
+  - 渲染器类型与样式常量：`CapStyleType`、`LineJointType`、`RendererType`、`MethodWithArgs`、`get_plugins`、`list_plugins`。
+  - 静态资源路径解析与家族提取：`get_full_sound_file_path`、`get_full_raster_image_path`、`get_full_vector_image_path`、`extract_mobject_family_members`。
+  - 动画输入校验与重载：`ApplyMethod.check_validity_of_input`、`assert_is_mobject_method`、`override_animation`。
+  - VMobject 背景图片映射：`color_using_background_image`、`get_background_image`、`match_background_image`。
+  - 相机背景像素缓存与坐标系抽象：`BackgroundColoredVMobjectDisplayer`、`BackgroundColoredVMobjectDisplayer.get_background_array`、`CoordinateSystem`。
+  - 代码语法高亮与字体注册：`Code`（多行代码解析与代码行提取）、`register_font`（跨平台动态字体搜索与上下文管理）、`get_video_metadata`（视频流格式元数据探测）。
+  - 分段管理与进阶文件输出：`DefaultSectionType`、`Section.get_dict`、`SceneFileWriter.add_partial_movie_file`、`SceneFileWriter.begin_animation`、`SceneFileWriter.end_animation`、`SceneFileWriter.clean_cache`、`SceneFileWriter.flush_cache_directory`、`SceneFileWriter.create_audio_segment`、`SceneFileWriter.add_sound`、`convert_audio`、`SceneFileWriter.print_file_ready_message`、`SceneFileWriter.output_image`、`SceneFileWriter.save_image`、`SceneFileWriter.write_frame`。
+  - 渲染画框与动态重载：`CairoRenderer.add_frame`、`Scene.add_sound`、`RerunSceneHandler`、`RerunSceneHandler.on_modified`、`ImageMobjectFromCamera.interpolate_color`。
+  - 播放哈希与缓存装饰器：`get_hash_from_play_call`、`handle_caching_play`。
+  - TeX 编译、转换与全自动排错洞察：`make_tex_compilation_command`、`generate_tex_file`、`delete_nonsvg_files`、`tex_to_svg_file`、`compile_tex`、`convert_to_svg`、`insight_inputenc_error`、`insight_package_not_found_error`、`print_tex_error`、`print_all_tex_errors`。
+- **创新功能与同类产品超越**：
+  - **语音与节奏智能打点助手 (`SmartMarkerModal` / `smart-marker.ts`)**：对标 Descript / Premiere Pro 智能标记 / Final Cut 节拍吸附。内置 4 大专业音频数学算法：
+    1. **语音语流停顿 (Speech Cadence)**：基于配音讲解节奏（平均短语 2.4s、停顿 0.4s）自动分布时间标记；
+    2. **音乐节拍律动 (Musical BPM Rhythm)**：按节拍速度（60-240 BPM）与节拍分割（四分音符/八分音符/每小节首拍）自动生成强弱拍吸附磁点；
+    3. **动作分镜节点 (Action Cuts)**：按场景动效时长自动打点分镜切分点；
+    4. **等距分段 (Equal Intervals)**：按自定义固定步长（1s-30s）精确分段。
+    创作者可在时间轴一键唤出智能打点助手，支持覆盖清空或累加打点，并支持一键清空全部标记。
+  - **3B1B 矩阵线性变换交互台 (`MatrixPlaygroundModal` / `matrix-playground.ts`)**：对标 3Blue1Brown 标志性线性代数几何直观教学与 GeoGebra。
+    - **交互仿射网格**：基于 SVG 提供 $[-3, 3] \times [-3, 3]$ 网格变形投影，两根可拖拽基向量 $\hat{i}' = (a, c)$（翡翠绿）和 $\hat{j}' = (b, d)$（玫瑰红），带指针捕获与精确吸附。
+    - **实时代数指标**：实时计算行列式 $\det(A) = ad - bc$、迹 $\text{Tr}(A)$、特征值 $\lambda_1, \lambda_2$（自动判定实特征值或共轭复数特征值），并附带几何面积缩放与空间定向翻转的直观数学解释。
+    - **10 种经典线性变换预设**：单位矩阵、旋转 90°、旋转 45°、X/Y 错切、X/Y 轴反射、$y=x$ 轴反射、等比缩放 1.5x、X 轴投影。
+    - **一键插入工程**：支持一键复制 Python Manim 代码，或直接向当前项目插入 `ApplyMatrix` 动画积木，立刻在画布上呈现 3B1B 风格矩阵变换动效。
+- **上游 Manim CE 0.20.1 真实缺陷深度排查与归档**：
+  - 排查并详细记录了 `VectorScene.coords_to_vector`、`VectorScene.show_ghost_movement`、`SpecialThreeDScene.__init__`、`ApplyPointwiseFunctionToCenter`、`SplitScreenCamera`、`VMobject.add_cubic_bezier_curves` 及 `print_tex_error` 7 处原生缺陷，确保验证严格可信，拒绝虚假测试通过。
+- **测试与验证指标**：
+  - 本地 373 项应用测试（48 个测试文件，单轮新增 6 项智能打点与矩阵交互台测试全部通过）。
+  - 原生 Python/Manim 测试增至 14 个独立测试族（30 项原生测试运行），合并去重后取得运行证据的 API 跃升至 **1,731 项**（未验证降至 562 项，通用 Cairo 覆盖率 94.1%）。
+  - 全量 GitHub Actions CI 检查（`cairo`、`Linux`、`Windows`、`macOS`）100% 绿色通过。
+
 ## 交互式时间轴标记系统（TimelineMarkerBar）、CI 自动化打包健壮性及 SVG/向量空间/渲染管线 +86 项原生覆盖突破（2026-11-08）
 
 十三组真实 Manim 证据合并 **1,668 / 2,293** 个独立入口，单轮净增 **86 个**原生 API，未验证入口大幅降至 **625** 项（通用/Cairo 仅余 167 项，覆盖率历史性跃升至 **90.5%**；OpenGL 专属 458 项），全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格数值、几何点集与返回值后置条件对比，0 失败、0 fixture gap：

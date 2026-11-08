@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { createEmptyProject } from './core/project';
-import { addMarker, findNearestMarker, removeMarker, snapTimeToMarkers, updateMarker } from './TimelineMarkerBar';
+import { addMarker, clearMarkers, findNearestMarker, removeMarker, snapTimeToMarkers, updateMarker } from './TimelineMarkerBar';
 
 describe('TimelineMarkerBar functions', () => {
-  it('adds, updates and removes timeline markers with chronological sorting and frame snapping', () => {
+  it('adds, updates, removes and clears timeline markers with chronological sorting and frame snapping', () => {
     let p = createEmptyProject();
     expect(p.scene.markers).toBeUndefined();
 
@@ -25,6 +25,9 @@ describe('TimelineMarkerBar functions', () => {
     p = removeMarker(p, res2.marker.id);
     expect(p.scene.markers).toHaveLength(1);
     expect(p.scene.markers?.[0].label).toBe('重要定理');
+
+    p = clearMarkers(p);
+    expect(p.scene.markers).toEqual([]);
   });
 
   it('finds nearest marker and snaps time when within threshold', () => {

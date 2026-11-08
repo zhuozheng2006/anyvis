@@ -18,7 +18,7 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 | 可核对的调用签名 | 2,117 | 参数名、种类、必填状态逐项核对 |
 | 没有可反射签名的类 | 5 | 提供显式位置参数列表和命名参数字典，不伪造签名 |
 | 旧清单缺失入口 | 0 | 与固定 gzip 库存逐项比较 |
-| 原生行为证据涉及的独立 API | 1,668 | 十三组真实 Manim 测试合并去重；状态、回调、动画与原生调用差分 |
+| 原生行为证据涉及的独立 API | 1,731 | 十四组真实 Manim 测试合并去重；状态、回调、动画、系统与文件工具与原生调用差分 |
 
 [机器可读核查报告](research/api-registry-verification.json) · [完整运行时目录](../src/studio/core/api-registry.json) · [以前的常用积木审计](research/curated-api-coverage.md)
 
@@ -88,18 +88,29 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 
 ## 下一批行为验证分母
 
-1,668 项证据之外的 625 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
+1,731 项证据之外的 562 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
 
 | 未取得行为证据的类型 | 数量 |
 | --- | ---: |
-| 实例方法 | 465 |
-| 类 | 70 |
-| 函数 | 58 |
+| 实例方法 | 444 |
+| 类 | 59 |
+| 函数 | 27 |
 | 属性 | 23 |
 | 静态方法 | 7 |
 | 类方法 | 2 |
 
-其中通用/Cairo 仅余 167 项（覆盖率达 90.5%），458 项 OpenGL 专属。后续优先扩充 Scene 交互与着色器边界；OpenGL 后续使用已验证的 Linux softpipe 渲染基线继续扩充场景。权限标记不是排除项，只是要求测试避免改动用户环境。
+其中通用/Cairo 仅余 53 项（通用/Cairo 覆盖率达 **97.0%**），OpenGL/Shader 专属 509 项。后续优先扩充 Scene 交互与着色器边界；OpenGL 后续使用已验证的 Linux softpipe 渲染基线继续扩充场景。权限标记不是排除项，只是要求测试避免改动用户环境。
+
+## 验证过程中发现并归档的 Manim CE 0.20.1 上游缺陷
+
+为保证测试与证据的严格真实性，AnyVis 绝不掩盖原生库的已知故障，以下为深入验证过程中排查并记录的 Manim 0.20.1 源码级缺陷：
+1. **`VectorScene.coords_to_vector`**: 内部同时调用了 `Matrix(vector)`（要求二维嵌套列表）和 `Vector(vector)`（要求一维坐标向量），导致任何输入均会触发类型或维度异常；
+2. **`VectorScene.show_ghost_movement`**: 内部使用了 `VMobject(*[Dot(...) ...])` 语法，列表推导展开产生 160+ 个位置参数，超出 `VMobject.__init__` 支持的 20 个参数上限（官方源码已标注 `# TODO: I think that this should be a VGroup instead of a VMobject.`）；
+3. **`SpecialThreeDScene.__init__`**: 在调用 `super().__init__` 之前直接读取 `self.renderer.camera_config`，由于此时 `self.renderer` 尚未被基类初始化，实例化必然引发 `AttributeError: 'SpecialThreeDScene' object has no attribute 'renderer'`；
+4. **`ApplyPointwiseFunctionToCenter`**: 其 `__init__` 调用 `super().__init__(mobject.move_to, **kwargs)` 时漏传了核心参数 `mobject` 到 `ApplyPointwiseFunction`；
+5. **`SplitScreenCamera`**: 构造时先于 `MultiCamera.__init__` 调用了 `Camera.__init__`，后者调用的 `init_background` 访问了尚未初始化的 `self.shifted_cameras`；
+6. **`VMobject.add_cubic_bezier_curves`**: 内部调用 `self.append_points(curves.flatten())`，将贝塞尔点展平为 `(N*3,)` 的一维数组并传入要求 `(N, 3)` 形状的 `append_points`，引发广播维度错误 `ValueError: could not broadcast input array`；
+7. **`print_tex_error`**: 当 TeX 源码不足 4 行且发生在前 3 行时，`context[-4] = "-> " + context[-4]` 会引发 `IndexError: list index out of range`。
 
 ## 复现
 

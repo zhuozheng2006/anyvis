@@ -199,6 +199,7 @@
       "manim.animation.animation.Wait.finish",
       "manim.animation.animation.Wait.interpolate",
       "manim.animation.animation.Wait.update_mobjects",
+      "manim.animation.animation.override_animation",
       "manim.animation.animation.prepare_animation",
       "manim.animation.changing.AnimatedBoundary",
       "manim.animation.changing.AnimatedBoundary.full_family_become_partial",
@@ -319,6 +320,7 @@
       "manim.animation.transform.ApplyMatrix",
       "manim.animation.transform.ApplyMatrix.initialize_matrix",
       "manim.animation.transform.ApplyMethod",
+      "manim.animation.transform.ApplyMethod.check_validity_of_input",
       "manim.animation.transform.ApplyMethod.create_target",
       "manim.animation.transform.ApplyPointwiseFunction",
       "manim.animation.transform.ClockwiseTransform",
@@ -367,6 +369,7 @@
       "manim.animation.updaters.mobject_update_utils.always_redraw",
       "manim.animation.updaters.mobject_update_utils.always_rotate",
       "manim.animation.updaters.mobject_update_utils.always_shift",
+      "manim.animation.updaters.mobject_update_utils.assert_is_mobject_method",
       "manim.animation.updaters.mobject_update_utils.cycle_animation",
       "manim.animation.updaters.mobject_update_utils.f_always",
       "manim.animation.updaters.mobject_update_utils.turn_animation_into_updater",
@@ -378,6 +381,7 @@
       "manim.animation.updaters.update.UpdateFromFunc.interpolate_mobject",
       "manim.camera.camera.BackgroundColoredVMobjectDisplayer",
       "manim.camera.camera.BackgroundColoredVMobjectDisplayer.display",
+      "manim.camera.camera.BackgroundColoredVMobjectDisplayer.get_background_array",
       "manim.camera.camera.BackgroundColoredVMobjectDisplayer.reset_pixel_array",
       "manim.camera.camera.BackgroundColoredVMobjectDisplayer.resize_background_array",
       "manim.camera.camera.BackgroundColoredVMobjectDisplayer.resize_background_array_to_match",
@@ -480,7 +484,11 @@
       "manim.camera.three_d_camera.ThreeDCamera.set_theta",
       "manim.camera.three_d_camera.ThreeDCamera.set_zoom",
       "manim.camera.three_d_camera.ThreeDCamera.transform_points_pre_display",
+      "manim.constants.CapStyleType",
+      "manim.constants.LineJointType",
       "manim.constants.QualityDict",
+      "manim.constants.RendererType",
+      "manim.data_structures.MethodWithArgs",
       "manim.data_structures.MethodWithArgs.args",
       "manim.data_structures.MethodWithArgs.kwargs",
       "manim.data_structures.MethodWithArgs.method",
@@ -630,6 +638,7 @@
       "manim.mobject.graphing.coordinate_systems.ComplexPlane.number_to_point",
       "manim.mobject.graphing.coordinate_systems.ComplexPlane.p2n",
       "manim.mobject.graphing.coordinate_systems.ComplexPlane.point_to_number",
+      "manim.mobject.graphing.coordinate_systems.CoordinateSystem",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.add_coordinates",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.angle_of_tangent",
       "manim.mobject.graphing.coordinate_systems.CoordinateSystem.c2p",
@@ -1060,6 +1069,7 @@
       "manim.mobject.table.Table.scale",
       "manim.mobject.table.Table.set_column_colors",
       "manim.mobject.table.Table.set_row_colors",
+      "manim.mobject.text.code_mobject.Code",
       "manim.mobject.text.code_mobject.Code.get_styles_list",
       "manim.mobject.text.numbers.DecimalNumber",
       "manim.mobject.text.numbers.DecimalNumber.font_size",
@@ -1093,6 +1103,7 @@
       "manim.mobject.text.text_mobject.Text.font_list",
       "manim.mobject.text.text_mobject.Text.font_size",
       "manim.mobject.text.text_mobject.Text.init_colors",
+      "manim.mobject.text.text_mobject.register_font",
       "manim.mobject.text.text_mobject.remove_invisible_chars",
       "manim.mobject.three_d.polyhedra.ConvexHull3D",
       "manim.mobject.three_d.polyhedra.Dodecahedron",
@@ -1161,6 +1172,7 @@
       "manim.mobject.types.image_mobject.ImageMobjectFromCamera",
       "manim.mobject.types.image_mobject.ImageMobjectFromCamera.add_display_frame",
       "manim.mobject.types.image_mobject.ImageMobjectFromCamera.get_pixel_array",
+      "manim.mobject.types.image_mobject.ImageMobjectFromCamera.interpolate_color",
       "manim.mobject.types.point_cloud_mobject.Mobject1D",
       "manim.mobject.types.point_cloud_mobject.Mobject1D.add_line",
       "manim.mobject.types.point_cloud_mobject.Mobject2D",
@@ -1222,6 +1234,7 @@
       "manim.mobject.types.vectorized_mobject.VMobject.clear_points",
       "manim.mobject.types.vectorized_mobject.VMobject.close_path",
       "manim.mobject.types.vectorized_mobject.VMobject.color",
+      "manim.mobject.types.vectorized_mobject.VMobject.color_using_background_image",
       "manim.mobject.types.vectorized_mobject.VMobject.consider_points_equals",
       "manim.mobject.types.vectorized_mobject.VMobject.consider_points_equals_2d",
       "manim.mobject.types.vectorized_mobject.VMobject.fade",
@@ -1233,6 +1246,7 @@
       "manim.mobject.types.vectorized_mobject.VMobject.get_anchors",
       "manim.mobject.types.vectorized_mobject.VMobject.get_anchors_and_handles",
       "manim.mobject.types.vectorized_mobject.VMobject.get_arc_length",
+      "manim.mobject.types.vectorized_mobject.VMobject.get_background_image",
       "manim.mobject.types.vectorized_mobject.VMobject.get_color",
       "manim.mobject.types.vectorized_mobject.VMobject.get_cubic_bezier_tuples",
       "manim.mobject.types.vectorized_mobject.VMobject.get_cubic_bezier_tuples_from_points",
@@ -1278,6 +1292,7 @@
       "manim.mobject.types.vectorized_mobject.VMobject.is_closed",
       "manim.mobject.types.vectorized_mobject.VMobject.make_jagged",
       "manim.mobject.types.vectorized_mobject.VMobject.make_smooth",
+      "manim.mobject.types.vectorized_mobject.VMobject.match_background_image",
       "manim.mobject.types.vectorized_mobject.VMobject.match_style",
       "manim.mobject.types.vectorized_mobject.VMobject.n_points_per_curve",
       "manim.mobject.types.vectorized_mobject.VMobject.point_from_proportion",
@@ -1339,7 +1354,10 @@
       "manim.mobject.vector_field.VectorField.shift_func",
       "manim.mobject.vector_field.VectorField.start_submobject_movement",
       "manim.mobject.vector_field.VectorField.stop_submobject_movement",
+      "manim.plugins.plugins_flags.get_plugins",
+      "manim.plugins.plugins_flags.list_plugins",
       "manim.renderer.cairo_renderer.CairoRenderer",
+      "manim.renderer.cairo_renderer.CairoRenderer.add_frame",
       "manim.renderer.cairo_renderer.CairoRenderer.freeze_current_frame",
       "manim.renderer.cairo_renderer.CairoRenderer.get_frame",
       "manim.renderer.cairo_renderer.CairoRenderer.init_scene",
@@ -1351,11 +1369,14 @@
       "manim.renderer.vectorized_mobject_rendering.triangulate_mobject",
       "manim.scene.moving_camera_scene.MovingCameraScene",
       "manim.scene.moving_camera_scene.MovingCameraScene.get_moving_mobjects",
+      "manim.scene.scene.RerunSceneHandler",
+      "manim.scene.scene.RerunSceneHandler.on_modified",
       "manim.scene.scene.Scene",
       "manim.scene.scene.Scene.add",
       "manim.scene.scene.Scene.add_foreground_mobject",
       "manim.scene.scene.Scene.add_foreground_mobjects",
       "manim.scene.scene.Scene.add_mobjects_from_animations",
+      "manim.scene.scene.Scene.add_sound",
       "manim.scene.scene.Scene.add_subcaption",
       "manim.scene.scene.Scene.add_updater",
       "manim.scene.scene.Scene.begin_animations",
@@ -1403,16 +1424,30 @@
       "manim.scene.scene.SceneInteractRerun.sender",
       "manim.scene.scene_file_writer.SceneFileWriter",
       "manim.scene.scene_file_writer.SceneFileWriter.add_audio_segment",
+      "manim.scene.scene_file_writer.SceneFileWriter.add_partial_movie_file",
+      "manim.scene.scene_file_writer.SceneFileWriter.add_sound",
+      "manim.scene.scene_file_writer.SceneFileWriter.begin_animation",
+      "manim.scene.scene_file_writer.SceneFileWriter.clean_cache",
+      "manim.scene.scene_file_writer.SceneFileWriter.create_audio_segment",
+      "manim.scene.scene_file_writer.SceneFileWriter.end_animation",
       "manim.scene.scene_file_writer.SceneFileWriter.finish_last_section",
+      "manim.scene.scene_file_writer.SceneFileWriter.flush_cache_directory",
       "manim.scene.scene_file_writer.SceneFileWriter.get_resolution_directory",
       "manim.scene.scene_file_writer.SceneFileWriter.init_audio",
       "manim.scene.scene_file_writer.SceneFileWriter.init_output_directories",
       "manim.scene.scene_file_writer.SceneFileWriter.is_already_cached",
       "manim.scene.scene_file_writer.SceneFileWriter.next_section",
+      "manim.scene.scene_file_writer.SceneFileWriter.output_image",
+      "manim.scene.scene_file_writer.SceneFileWriter.print_file_ready_message",
+      "manim.scene.scene_file_writer.SceneFileWriter.save_image",
+      "manim.scene.scene_file_writer.SceneFileWriter.write_frame",
       "manim.scene.scene_file_writer.SceneFileWriter.write_subcaption_file",
+      "manim.scene.scene_file_writer.convert_audio",
       "manim.scene.scene_file_writer.to_av_frame_rate",
+      "manim.scene.section.DefaultSectionType",
       "manim.scene.section.Section",
       "manim.scene.section.Section.get_clean_partial_movie_files",
+      "manim.scene.section.Section.get_dict",
       "manim.scene.section.Section.is_empty",
       "manim.scene.three_d_scene.ThreeDScene",
       "manim.scene.three_d_scene.ThreeDScene.add_fixed_in_frame_mobjects",
@@ -1491,6 +1526,7 @@
       "manim.utils.bezier.proportions_along_bezier_curve_for_point",
       "manim.utils.bezier.split_bezier",
       "manim.utils.bezier.subdivide_bezier",
+      "manim.utils.caching.handle_caching_play",
       "manim.utils.color.core.HSV",
       "manim.utils.color.core.HSV.h",
       "manim.utils.color.core.HSV.hue",
@@ -1542,27 +1578,43 @@
       "manim.utils.commands.VideoMetadata",
       "manim.utils.commands.capture",
       "manim.utils.commands.get_dir_layout",
+      "manim.utils.commands.get_video_metadata",
       "manim.utils.config_ops.DictAsObject",
       "manim.utils.config_ops.merge_dicts_recursively",
       "manim.utils.config_ops.update_dict_recursively",
       "manim.utils.debug.index_labels",
       "manim.utils.debug.print_family",
+      "manim.utils.deprecation.deprecated",
+      "manim.utils.deprecation.deprecated_params",
+      "manim.utils.exceptions.EndSceneEarlyException",
+      "manim.utils.exceptions.MultiAnimationOverrideException",
+      "manim.utils.exceptions.RerunSceneException",
+      "manim.utils.family.extract_mobject_family_members",
       "manim.utils.family_ops.extract_mobject_family_members",
       "manim.utils.family_ops.restructure_list_to_exclude_certain_family_members",
       "manim.utils.file_ops.add_extension_if_not_present",
+      "manim.utils.file_ops.add_import_statement",
       "manim.utils.file_ops.add_version_before_extension",
+      "manim.utils.file_ops.copy_template_files",
+      "manim.utils.file_ops.ensure_executable",
       "manim.utils.file_ops.get_template_names",
       "manim.utils.file_ops.get_template_path",
+      "manim.utils.file_ops.guarantee_empty_existence",
+      "manim.utils.file_ops.guarantee_existence",
       "manim.utils.file_ops.is_gif_format",
       "manim.utils.file_ops.is_mov_format",
       "manim.utils.file_ops.is_mp4_format",
       "manim.utils.file_ops.is_png_format",
       "manim.utils.file_ops.is_webm_format",
+      "manim.utils.file_ops.modify_atime",
       "manim.utils.file_ops.seek_full_path_from_defaults",
       "manim.utils.file_ops.write_to_movie",
+      "manim.utils.hashing.get_hash_from_play_call",
       "manim.utils.hashing.get_json",
       "manim.utils.images.change_to_rgba_array",
       "manim.utils.images.drag_pixels",
+      "manim.utils.images.get_full_raster_image_path",
+      "manim.utils.images.get_full_vector_image_path",
       "manim.utils.images.invert_image",
       "manim.utils.iterables.adjacent_n_tuples",
       "manim.utils.iterables.adjacent_pairs",
@@ -1661,6 +1713,7 @@
       "manim.utils.simple_functions.binary_search",
       "manim.utils.simple_functions.clip",
       "manim.utils.simple_functions.sigmoid",
+      "manim.utils.sounds.get_full_sound_file_path",
       "manim.utils.space_ops.R3_to_complex",
       "manim.utils.space_ops.angle_axis_from_quaternion",
       "manim.utils.space_ops.angle_between_vectors",
@@ -1705,7 +1758,17 @@
       "manim.utils.tex.TexTemplate.from_file",
       "manim.utils.tex.TexTemplate.get_texcode_for_expression",
       "manim.utils.tex.TexTemplate.get_texcode_for_expression_in_env",
+      "manim.utils.tex_file_writing.compile_tex",
+      "manim.utils.tex_file_writing.convert_to_svg",
+      "manim.utils.tex_file_writing.delete_nonsvg_files",
+      "manim.utils.tex_file_writing.generate_tex_file",
+      "manim.utils.tex_file_writing.insight_inputenc_error",
+      "manim.utils.tex_file_writing.insight_package_not_found_error",
+      "manim.utils.tex_file_writing.make_tex_compilation_command",
+      "manim.utils.tex_file_writing.print_all_tex_errors",
+      "manim.utils.tex_file_writing.print_tex_error",
       "manim.utils.tex_file_writing.tex_hash",
+      "manim.utils.tex_file_writing.tex_to_svg_file",
       "manim.utils.tex_templates.TexFontTemplates",
       "manim.utils.tex_templates.TexTemplateLibrary",
       "manim.utils.unit.Percent",
@@ -1786,7 +1849,7 @@
           "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
           "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
           "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
-          "src/studio/core/api-families.native.spec-node.mjs": "4368f9804d46a575158f508e2c983f57fafcd30c2028cdbf0c76e3db3d0697c9"
+          "src/studio/core/api-families.native.spec-node.mjs": "1ddce282443de0a5306683461e8bb4f61ccd7444396a98720888d80f8cca81aa"
         },
         "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
         "engineVersion": "0.20.1",
@@ -1810,6 +1873,7 @@
           "manim.animation.animation.Wait.finish",
           "manim.animation.animation.Wait.interpolate",
           "manim.animation.animation.Wait.update_mobjects",
+          "manim.animation.animation.override_animation",
           "manim.animation.composition.AnimationGroup",
           "manim.animation.composition.Succession",
           "manim.animation.creation.Create",
@@ -1837,6 +1901,7 @@
           "manim.animation.transform.ApplyFunction",
           "manim.animation.transform.ApplyMatrix",
           "manim.animation.transform.ApplyMethod",
+          "manim.animation.transform.ApplyMethod.check_validity_of_input",
           "manim.animation.transform.ApplyPointwiseFunction",
           "manim.animation.transform.ClockwiseTransform",
           "manim.animation.transform.CounterclockwiseTransform",
@@ -1848,10 +1913,12 @@
           "manim.animation.transform.ShrinkToCenter",
           "manim.animation.transform.Transform",
           "manim.animation.transform.TransformFromCopy",
+          "manim.animation.updaters.mobject_update_utils.assert_is_mobject_method",
           "manim.animation.updaters.update.UpdateFromAlphaFunc",
           "manim.animation.updaters.update.UpdateFromFunc",
           "manim.camera.camera.BackgroundColoredVMobjectDisplayer",
           "manim.camera.camera.BackgroundColoredVMobjectDisplayer.display",
+          "manim.camera.camera.BackgroundColoredVMobjectDisplayer.get_background_array",
           "manim.camera.camera.BackgroundColoredVMobjectDisplayer.reset_pixel_array",
           "manim.camera.camera.BackgroundColoredVMobjectDisplayer.resize_background_array",
           "manim.camera.camera.BackgroundColoredVMobjectDisplayer.resize_background_array_to_match",
@@ -1894,7 +1961,11 @@
           "manim.camera.three_d_camera.ThreeDCamera.get_stroke_rgbas",
           "manim.camera.three_d_camera.ThreeDCamera.modified_rgbas",
           "manim.camera.three_d_camera.ThreeDCamera.transform_points_pre_display",
+          "manim.constants.CapStyleType",
+          "manim.constants.LineJointType",
           "manim.constants.QualityDict",
+          "manim.constants.RendererType",
+          "manim.data_structures.MethodWithArgs",
           "manim.mobject.frame.FullScreenRectangle",
           "manim.mobject.frame.ScreenRectangle",
           "manim.mobject.geometry.arc.AnnotationDot",
@@ -1971,6 +2042,7 @@
           "manim.mobject.graphing.coordinate_systems.Axes.coords_to_point",
           "manim.mobject.graphing.coordinate_systems.Axes.point_to_coords",
           "manim.mobject.graphing.coordinate_systems.ComplexPlane",
+          "manim.mobject.graphing.coordinate_systems.CoordinateSystem",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_area",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_horizontal_line",
           "manim.mobject.graphing.coordinate_systems.CoordinateSystem.get_lines_to_point",
@@ -2087,6 +2159,7 @@
           "manim.mobject.table.MobjectTable",
           "manim.mobject.table.Table",
           "manim.mobject.table.Table.create",
+          "manim.mobject.text.code_mobject.Code",
           "manim.mobject.text.code_mobject.Code.get_styles_list",
           "manim.mobject.text.numbers.DecimalNumber",
           "manim.mobject.text.numbers.DecimalNumber.font_size",
@@ -2120,6 +2193,7 @@
           "manim.mobject.text.text_mobject.Text.font_list",
           "manim.mobject.text.text_mobject.Text.font_size",
           "manim.mobject.text.text_mobject.Text.init_colors",
+          "manim.mobject.text.text_mobject.register_font",
           "manim.mobject.text.text_mobject.remove_invisible_chars",
           "manim.mobject.three_d.polyhedra.ConvexHull3D",
           "manim.mobject.three_d.polyhedra.Dodecahedron",
@@ -2157,6 +2231,7 @@
           "manim.mobject.three_d.three_dimensions.Torus.func",
           "manim.mobject.types.image_mobject.ImageMobjectFromCamera",
           "manim.mobject.types.image_mobject.ImageMobjectFromCamera.get_pixel_array",
+          "manim.mobject.types.image_mobject.ImageMobjectFromCamera.interpolate_color",
           "manim.mobject.types.point_cloud_mobject.PMobject",
           "manim.mobject.types.point_cloud_mobject.PMobject.add_points",
           "manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects",
@@ -2167,8 +2242,10 @@
           "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curve_to",
           "manim.mobject.types.vectorized_mobject.VMobject.add_line_to",
           "manim.mobject.types.vectorized_mobject.VMobject.close_path",
+          "manim.mobject.types.vectorized_mobject.VMobject.color_using_background_image",
           "manim.mobject.types.vectorized_mobject.VMobject.get_anchors",
           "manim.mobject.types.vectorized_mobject.VMobject.get_arc_length",
+          "manim.mobject.types.vectorized_mobject.VMobject.get_background_image",
           "manim.mobject.types.vectorized_mobject.VMobject.get_color",
           "manim.mobject.types.vectorized_mobject.VMobject.get_fill_color",
           "manim.mobject.types.vectorized_mobject.VMobject.get_fill_opacity",
@@ -2179,6 +2256,7 @@
           "manim.mobject.types.vectorized_mobject.VMobject.get_stroke_opacity",
           "manim.mobject.types.vectorized_mobject.VMobject.get_stroke_width",
           "manim.mobject.types.vectorized_mobject.VMobject.init_colors",
+          "manim.mobject.types.vectorized_mobject.VMobject.match_background_image",
           "manim.mobject.types.vectorized_mobject.VMobject.match_style",
           "manim.mobject.types.vectorized_mobject.VMobject.point_from_proportion",
           "manim.mobject.types.vectorized_mobject.VMobject.set_fill",
@@ -2197,7 +2275,10 @@
           "manim.mobject.vector_field.StreamLines.start_animation",
           "manim.mobject.vector_field.VectorField.fit_to_coordinate_system",
           "manim.mobject.vector_field.VectorField.get_colored_background_image",
+          "manim.plugins.plugins_flags.get_plugins",
+          "manim.plugins.plugins_flags.list_plugins",
           "manim.renderer.cairo_renderer.CairoRenderer",
+          "manim.renderer.cairo_renderer.CairoRenderer.add_frame",
           "manim.renderer.cairo_renderer.CairoRenderer.freeze_current_frame",
           "manim.renderer.cairo_renderer.CairoRenderer.get_frame",
           "manim.renderer.cairo_renderer.CairoRenderer.init_scene",
@@ -2207,7 +2288,10 @@
           "manim.renderer.cairo_renderer.CairoRenderer.update_skipping_status",
           "manim.renderer.vectorized_mobject_rendering.build_matrix_lists",
           "manim.renderer.vectorized_mobject_rendering.triangulate_mobject",
+          "manim.scene.scene.RerunSceneHandler",
+          "manim.scene.scene.RerunSceneHandler.on_modified",
           "manim.scene.scene.Scene",
+          "manim.scene.scene.Scene.add_sound",
           "manim.scene.scene.Scene.clear",
           "manim.scene.scene.Scene.construct",
           "manim.scene.scene.Scene.setup",
@@ -2219,16 +2303,30 @@
           "manim.scene.scene.SceneInteractRerun.sender",
           "manim.scene.scene_file_writer.SceneFileWriter",
           "manim.scene.scene_file_writer.SceneFileWriter.add_audio_segment",
+          "manim.scene.scene_file_writer.SceneFileWriter.add_partial_movie_file",
+          "manim.scene.scene_file_writer.SceneFileWriter.add_sound",
+          "manim.scene.scene_file_writer.SceneFileWriter.begin_animation",
+          "manim.scene.scene_file_writer.SceneFileWriter.clean_cache",
+          "manim.scene.scene_file_writer.SceneFileWriter.create_audio_segment",
+          "manim.scene.scene_file_writer.SceneFileWriter.end_animation",
           "manim.scene.scene_file_writer.SceneFileWriter.finish_last_section",
+          "manim.scene.scene_file_writer.SceneFileWriter.flush_cache_directory",
           "manim.scene.scene_file_writer.SceneFileWriter.get_resolution_directory",
           "manim.scene.scene_file_writer.SceneFileWriter.init_audio",
           "manim.scene.scene_file_writer.SceneFileWriter.init_output_directories",
           "manim.scene.scene_file_writer.SceneFileWriter.is_already_cached",
           "manim.scene.scene_file_writer.SceneFileWriter.next_section",
+          "manim.scene.scene_file_writer.SceneFileWriter.output_image",
+          "manim.scene.scene_file_writer.SceneFileWriter.print_file_ready_message",
+          "manim.scene.scene_file_writer.SceneFileWriter.save_image",
+          "manim.scene.scene_file_writer.SceneFileWriter.write_frame",
           "manim.scene.scene_file_writer.SceneFileWriter.write_subcaption_file",
+          "manim.scene.scene_file_writer.convert_audio",
           "manim.scene.scene_file_writer.to_av_frame_rate",
+          "manim.scene.section.DefaultSectionType",
           "manim.scene.section.Section",
           "manim.scene.section.Section.get_clean_partial_movie_files",
+          "manim.scene.section.Section.get_dict",
           "manim.scene.section.Section.is_empty",
           "manim.scene.vector_space_scene.LinearTransformationScene",
           "manim.scene.vector_space_scene.LinearTransformationScene.add_transformable_label",
@@ -2255,6 +2353,7 @@
           "manim.scene.zoomed_scene.ZoomedScene.get_zoomed_display_pop_out_animation",
           "manim.scene.zoomed_scene.ZoomedScene.setup",
           "manim.utils.bezier.interpolate",
+          "manim.utils.caching.handle_caching_play",
           "manim.utils.color.core.ManimColor",
           "manim.utils.color.core.ManimColor.darker",
           "manim.utils.color.core.ManimColor.from_hex",
@@ -2273,14 +2372,30 @@
           "manim.utils.commands.VideoMetadata",
           "manim.utils.commands.capture",
           "manim.utils.commands.get_dir_layout",
+          "manim.utils.commands.get_video_metadata",
           "manim.utils.config_ops.DictAsObject",
           "manim.utils.debug.index_labels",
           "manim.utils.debug.print_family",
+          "manim.utils.deprecation.deprecated",
+          "manim.utils.deprecation.deprecated_params",
+          "manim.utils.exceptions.EndSceneEarlyException",
+          "manim.utils.exceptions.MultiAnimationOverrideException",
+          "manim.utils.exceptions.RerunSceneException",
+          "manim.utils.family.extract_mobject_family_members",
           "manim.utils.family_ops.extract_mobject_family_members",
           "manim.utils.family_ops.restructure_list_to_exclude_certain_family_members",
+          "manim.utils.file_ops.add_import_statement",
+          "manim.utils.file_ops.copy_template_files",
+          "manim.utils.file_ops.ensure_executable",
+          "manim.utils.file_ops.guarantee_empty_existence",
+          "manim.utils.file_ops.guarantee_existence",
+          "manim.utils.file_ops.modify_atime",
+          "manim.utils.hashing.get_hash_from_play_call",
           "manim.utils.hashing.get_json",
           "manim.utils.images.change_to_rgba_array",
           "manim.utils.images.drag_pixels",
+          "manim.utils.images.get_full_raster_image_path",
+          "manim.utils.images.get_full_vector_image_path",
           "manim.utils.images.invert_image",
           "manim.utils.parameter_parsing.flatten_iterable_parameters",
           "manim.utils.polylabel.Cell",
@@ -2347,6 +2462,7 @@
           "manim.utils.rate_functions.unit_interval",
           "manim.utils.rate_functions.wiggle",
           "manim.utils.rate_functions.zero",
+          "manim.utils.sounds.get_full_sound_file_path",
           "manim.utils.space_ops.angle_between_vectors",
           "manim.utils.space_ops.cross",
           "manim.utils.space_ops.normalize",
@@ -2358,7 +2474,17 @@
           "manim.utils.tex.TexTemplate.from_file",
           "manim.utils.tex.TexTemplate.get_texcode_for_expression",
           "manim.utils.tex.TexTemplate.get_texcode_for_expression_in_env",
+          "manim.utils.tex_file_writing.compile_tex",
+          "manim.utils.tex_file_writing.convert_to_svg",
+          "manim.utils.tex_file_writing.delete_nonsvg_files",
+          "manim.utils.tex_file_writing.generate_tex_file",
+          "manim.utils.tex_file_writing.insight_inputenc_error",
+          "manim.utils.tex_file_writing.insight_package_not_found_error",
+          "manim.utils.tex_file_writing.make_tex_compilation_command",
+          "manim.utils.tex_file_writing.print_all_tex_errors",
+          "manim.utils.tex_file_writing.print_tex_error",
           "manim.utils.tex_file_writing.tex_hash",
+          "manim.utils.tex_file_writing.tex_to_svg_file",
           "manim.utils.tex_templates.TexFontTemplates",
           "manim.utils.tex_templates.TexTemplateLibrary",
           "manim.utils.unit.Percent",
@@ -10412,6 +10538,871 @@
                 "assertion": "assert $result[\"step\"] == 1"
               }
             ]
+          },
+          {
+            "family": "systemAndFileUtilities",
+            "passed": true,
+            "apiIds": [
+              "manim.animation.animation.override_animation",
+              "manim.animation.transform.ApplyMethod",
+              "manim.animation.transform.ApplyMethod.check_validity_of_input",
+              "manim.animation.updaters.mobject_update_utils.assert_is_mobject_method",
+              "manim.camera.camera.BackgroundColoredVMobjectDisplayer",
+              "manim.camera.camera.BackgroundColoredVMobjectDisplayer.get_background_array",
+              "manim.camera.camera.Camera",
+              "manim.constants.CapStyleType",
+              "manim.constants.LineJointType",
+              "manim.constants.RendererType",
+              "manim.data_structures.MethodWithArgs",
+              "manim.mobject.geometry.arc.Circle",
+              "manim.mobject.graphing.coordinate_systems.CoordinateSystem",
+              "manim.mobject.text.code_mobject.Code",
+              "manim.mobject.text.text_mobject.register_font",
+              "manim.mobject.types.image_mobject.ImageMobjectFromCamera",
+              "manim.mobject.types.image_mobject.ImageMobjectFromCamera.interpolate_color",
+              "manim.mobject.types.vectorized_mobject.VMobject.color_using_background_image",
+              "manim.mobject.types.vectorized_mobject.VMobject.get_background_image",
+              "manim.mobject.types.vectorized_mobject.VMobject.match_background_image",
+              "manim.plugins.plugins_flags.get_plugins",
+              "manim.plugins.plugins_flags.list_plugins",
+              "manim.renderer.cairo_renderer.CairoRenderer",
+              "manim.renderer.cairo_renderer.CairoRenderer.add_frame",
+              "manim.scene.scene.RerunSceneHandler",
+              "manim.scene.scene.RerunSceneHandler.on_modified",
+              "manim.scene.scene.Scene",
+              "manim.scene.scene.Scene.add_sound",
+              "manim.scene.scene_file_writer.SceneFileWriter",
+              "manim.scene.scene_file_writer.SceneFileWriter.add_partial_movie_file",
+              "manim.scene.scene_file_writer.SceneFileWriter.add_sound",
+              "manim.scene.scene_file_writer.SceneFileWriter.begin_animation",
+              "manim.scene.scene_file_writer.SceneFileWriter.clean_cache",
+              "manim.scene.scene_file_writer.SceneFileWriter.create_audio_segment",
+              "manim.scene.scene_file_writer.SceneFileWriter.end_animation",
+              "manim.scene.scene_file_writer.SceneFileWriter.flush_cache_directory",
+              "manim.scene.scene_file_writer.SceneFileWriter.init_output_directories",
+              "manim.scene.scene_file_writer.SceneFileWriter.next_section",
+              "manim.scene.scene_file_writer.SceneFileWriter.output_image",
+              "manim.scene.scene_file_writer.SceneFileWriter.print_file_ready_message",
+              "manim.scene.scene_file_writer.SceneFileWriter.save_image",
+              "manim.scene.scene_file_writer.SceneFileWriter.write_frame",
+              "manim.scene.scene_file_writer.convert_audio",
+              "manim.scene.section.DefaultSectionType",
+              "manim.scene.section.Section.get_dict",
+              "manim.scene.vector_space_scene.VectorScene",
+              "manim.utils.caching.handle_caching_play",
+              "manim.utils.commands.get_video_metadata",
+              "manim.utils.deprecation.deprecated",
+              "manim.utils.deprecation.deprecated_params",
+              "manim.utils.exceptions.EndSceneEarlyException",
+              "manim.utils.exceptions.MultiAnimationOverrideException",
+              "manim.utils.exceptions.RerunSceneException",
+              "manim.utils.family.extract_mobject_family_members",
+              "manim.utils.file_ops.add_import_statement",
+              "manim.utils.file_ops.copy_template_files",
+              "manim.utils.file_ops.ensure_executable",
+              "manim.utils.file_ops.guarantee_empty_existence",
+              "manim.utils.file_ops.guarantee_existence",
+              "manim.utils.file_ops.modify_atime",
+              "manim.utils.hashing.get_hash_from_play_call",
+              "manim.utils.images.get_full_raster_image_path",
+              "manim.utils.images.get_full_vector_image_path",
+              "manim.utils.sounds.get_full_sound_file_path",
+              "manim.utils.tex_file_writing.compile_tex",
+              "manim.utils.tex_file_writing.convert_to_svg",
+              "manim.utils.tex_file_writing.delete_nonsvg_files",
+              "manim.utils.tex_file_writing.generate_tex_file",
+              "manim.utils.tex_file_writing.insight_inputenc_error",
+              "manim.utils.tex_file_writing.insight_package_not_found_error",
+              "manim.utils.tex_file_writing.make_tex_compilation_command",
+              "manim.utils.tex_file_writing.print_all_tex_errors",
+              "manim.utils.tex_file_writing.print_tex_error",
+              "manim.utils.tex_file_writing.tex_to_svg_file"
+            ],
+            "cases": [
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_tmpdir_path\"] = _test_path"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_code_path\"] = _test_code_file"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_wav_path\"] = str(_test_wav_file)"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_out_wav_path\"] = _test_out_wav"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_png_path\"] = str(_test_png_file)"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_svg_path\"] = str(_test_svg_file)"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_video_path\"] = _test_vid_file"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_video_dir\"] = _test_vid_file.parent"
+              },
+              {
+                "apiId": "manim.utils.file_ops.guarantee_existence",
+                "parameters": [
+                  "path"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sys_tmpdir_path\"].is_dir()"
+              },
+              {
+                "apiId": "manim.utils.file_ops.guarantee_empty_existence",
+                "parameters": [
+                  "path"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sys_tmpdir_path\"].is_dir()"
+              },
+              {
+                "apiId": "manim.utils.file_ops.add_import_statement",
+                "parameters": [
+                  "file"
+                ],
+                "mode": "store",
+                "assertion": "assert \"from manim import *\" in objects[\"sys_code_path\"].read_text()"
+              },
+              {
+                "apiId": "manim.utils.file_ops.modify_atime",
+                "parameters": [
+                  "file_path"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sys_code_path\"].exists()"
+              },
+              {
+                "apiId": "manim.utils.file_ops.ensure_executable",
+                "parameters": [
+                  "path_to_exe"
+                ],
+                "mode": "store",
+                "assertion": "assert isinstance($result, bool)"
+              },
+              {
+                "apiId": "manim.utils.file_ops.copy_template_files",
+                "parameters": [
+                  "project_dir"
+                ],
+                "mode": "store",
+                "assertion": "assert (objects[\"sys_tmpdir_path\"] / \"manim.cfg\").exists()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"dep_fn_sample\"] = _sample_dep_fn"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"dep_params_sample\"] = _sample_dep_params"
+              },
+              {
+                "apiId": "manim.utils.deprecation.deprecated",
+                "parameters": [
+                  "func"
+                ],
+                "mode": "store",
+                "assertion": "assert callable($result) and $result(5) == 10"
+              },
+              {
+                "apiId": "manim.utils.deprecation.deprecated_params",
+                "parameters": [
+                  "params"
+                ],
+                "mode": "store",
+                "assertion": "assert callable($result)"
+              },
+              {
+                "apiId": "manim.utils.exceptions.EndSceneEarlyException",
+                "parameters": [
+                  "args"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result) == \"early exit\""
+              },
+              {
+                "apiId": "manim.utils.exceptions.MultiAnimationOverrideException",
+                "parameters": [
+                  "args"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result) == \"override conflict\""
+              },
+              {
+                "apiId": "manim.utils.exceptions.RerunSceneException",
+                "parameters": [
+                  "args"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result) == \"rerun requested\""
+              },
+              {
+                "apiId": "manim.constants.CapStyleType",
+                "parameters": [
+                  "values"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.ROUND.name == \"ROUND\""
+              },
+              {
+                "apiId": "manim.constants.LineJointType",
+                "parameters": [
+                  "values"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.MITER.name == \"MITER\""
+              },
+              {
+                "apiId": "manim.constants.RendererType",
+                "parameters": [
+                  "values"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.CAIRO.name == \"CAIRO\""
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [
+                  "radius"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.data_structures.MethodWithArgs",
+                "parameters": [
+                  "method",
+                  "args",
+                  "kwargs"
+                ],
+                "mode": "store",
+                "assertion": "np.testing.assert_allclose($result.args[0], [1, 0, 0])"
+              },
+              {
+                "apiId": "manim.plugins.plugins_flags.get_plugins",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert isinstance($result, dict)"
+              },
+              {
+                "apiId": "manim.plugins.plugins_flags.list_plugins",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert True"
+              },
+              {
+                "apiId": "manim.utils.sounds.get_full_sound_file_path",
+                "parameters": [
+                  "sound_file_name"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result).endswith(\".wav\")"
+              },
+              {
+                "apiId": "manim.utils.images.get_full_raster_image_path",
+                "parameters": [
+                  "image_file_name"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result).endswith(\".png\")"
+              },
+              {
+                "apiId": "manim.utils.images.get_full_vector_image_path",
+                "parameters": [
+                  "image_file_name"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result).endswith(\".svg\")"
+              },
+              {
+                "apiId": "manim.utils.family.extract_mobject_family_members",
+                "parameters": [
+                  "mobjects"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result) >= 1"
+              },
+              {
+                "apiId": "manim.animation.transform.ApplyMethod",
+                "parameters": [
+                  "method",
+                  "args"
+                ],
+                "mode": "store",
+                "assertion": "assert True"
+              },
+              {
+                "apiId": "manim.animation.transform.ApplyMethod.check_validity_of_input",
+                "parameters": [
+                  "method"
+                ],
+                "mode": "store",
+                "assertion": "assert True"
+              },
+              {
+                "apiId": "manim.animation.updaters.mobject_update_utils.assert_is_mobject_method",
+                "parameters": [
+                  "method"
+                ],
+                "mode": "store",
+                "assertion": "assert True"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"fade_in_cls\"] = FadeIn"
+              },
+              {
+                "apiId": "manim.animation.animation.override_animation",
+                "parameters": [
+                  "animation_class"
+                ],
+                "mode": "store",
+                "assertion": "assert callable($result)"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.types.vectorized_mobject.VMobject.color_using_background_image",
+                "parameters": [
+                  "background_image"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.get_background_image() == objects[\"sys_png_path\"]"
+              },
+              {
+                "apiId": "manim.mobject.types.vectorized_mobject.VMobject.get_background_image",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result == objects[\"sys_png_path\"]"
+              },
+              {
+                "apiId": "manim.mobject.types.vectorized_mobject.VMobject.match_background_image",
+                "parameters": [
+                  "vmobject"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.get_background_image() == objects[\"sys_png_path\"]"
+              },
+              {
+                "apiId": "manim.camera.camera.Camera",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.camera.camera.BackgroundColoredVMobjectDisplayer",
+                "parameters": [
+                  "camera"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.camera.camera.BackgroundColoredVMobjectDisplayer.get_background_array",
+                "parameters": [
+                  "image"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.shape) >= 2"
+              },
+              {
+                "apiId": "manim.mobject.graphing.coordinate_systems.CoordinateSystem",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.text.code_mobject.Code",
+                "parameters": [
+                  "code_string",
+                  "language"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result.code_lines) >= 1"
+              },
+              {
+                "apiId": "manim.utils.commands.get_video_metadata",
+                "parameters": [
+                  "path_to_video"
+                ],
+                "mode": "store",
+                "assertion": "assert $result[\"width\"] > 0 and $result[\"height\"] > 0"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_font_path\"] = _sys_font"
+              },
+              {
+                "apiId": "manim.mobject.text.text_mobject.register_font",
+                "parameters": [
+                  "font_file"
+                ],
+                "mode": "store",
+                "assertion": "assert hasattr($result, \"__enter__\")"
+              },
+              {
+                "apiId": "manim.scene.section.DefaultSectionType",
+                "parameters": [
+                  "values"
+                ],
+                "mode": "store",
+                "assertion": "assert $result.NORMAL.name == \"NORMAL\""
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sec_instance\"] = _sec_inst"
+              },
+              {
+                "apiId": "manim.scene.section.Section.get_dict",
+                "parameters": [
+                  "sections_dir"
+                ],
+                "mode": "store",
+                "assertion": "assert $result[\"name\"] == \"demo_sec\" and $result[\"width\"] > 0"
+              },
+              {
+                "apiId": "manim.scene.vector_space_scene.VectorScene",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.scene.scene.Scene",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.renderer.cairo_renderer.CairoRenderer",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter",
+                "parameters": [
+                  "renderer",
+                  "scene_name"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.init_output_directories",
+                "parameters": [
+                  "scene_name"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"] is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.next_section",
+                "parameters": [
+                  "name",
+                  "type_",
+                  "skip_animations"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"] is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.add_partial_movie_file",
+                "parameters": [
+                  "hash_animation"
+                ],
+                "mode": "store",
+                "assertion": "assert any(\"test_hash_adv\" in str(x) for x in objects[\"sfw_adv\"].partial_movie_files)"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.begin_animation",
+                "parameters": [
+                  "allow_write",
+                  "file_path"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"] is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.end_animation",
+                "parameters": [
+                  "allow_write"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"] is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.clean_cache",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"] is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.flush_cache_directory",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"] is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.create_audio_segment",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"].audio_segment is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.add_sound",
+                "parameters": [
+                  "sound_file",
+                  "time",
+                  "gain"
+                ],
+                "mode": "store",
+                "assertion": "assert len(objects[\"sfw_adv\"].audio_segment) >= 500"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.convert_audio",
+                "parameters": [
+                  "input_path",
+                  "output_path",
+                  "codec_name"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sys_out_wav_path\"].exists()"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.print_file_ready_message",
+                "parameters": [
+                  "file_path"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"] is not None"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_pil_img\"] = _test_img_obj"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_frame_arr\"] = _test_arr"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_tmpdir_str\"] = str(_test_tmpdir) + \"/\""
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.output_image",
+                "parameters": [
+                  "image",
+                  "target_dir",
+                  "ext",
+                  "zero_pad"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"].frame_count > 0"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.save_image",
+                "parameters": [
+                  "image"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"] is not None"
+              },
+              {
+                "apiId": "manim.scene.scene_file_writer.SceneFileWriter.write_frame",
+                "parameters": [
+                  "frame_or_renderer",
+                  "num_frames"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"sfw_adv\"] is not None"
+              },
+              {
+                "apiId": "manim.renderer.cairo_renderer.CairoRenderer.add_frame",
+                "parameters": [
+                  "frame",
+                  "num_frames"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"cairo_rend\"].time > 0"
+              },
+              {
+                "apiId": "manim.scene.scene.Scene.add_sound",
+                "parameters": [
+                  "sound_file",
+                  "time_offset",
+                  "gain"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"rend_scene\"] is not None"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_queue\"] = _rsh_q"
+              },
+              {
+                "apiId": "manim.scene.scene.RerunSceneHandler",
+                "parameters": [
+                  "queue"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.scene.scene.RerunSceneHandler.on_modified",
+                "parameters": [
+                  "event"
+                ],
+                "mode": "store",
+                "assertion": "assert not objects[\"sys_queue\"].empty() and objects[\"sys_queue\"].get().sender == \"file\""
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"imfc_1\"] = _imfc_1"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"imfc_2\"] = _imfc_2"
+              },
+              {
+                "apiId": "manim.mobject.types.image_mobject.ImageMobjectFromCamera",
+                "parameters": [
+                  "camera"
+                ],
+                "mode": "store",
+                "assertion": "assert $result is not None"
+              },
+              {
+                "apiId": "manim.mobject.types.image_mobject.ImageMobjectFromCamera.interpolate_color",
+                "parameters": [
+                  "mobject1",
+                  "mobject2",
+                  "alpha"
+                ],
+                "mode": "store",
+                "assertion": "assert objects[\"imfc_target\"].pixel_array[0, 0, 0] == 50"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_anim_circle\"] = Circle()"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_anim_fade\"] = FadeIn(objects[\"sys_anim_circle\"])"
+              },
+              {
+                "apiId": "manim.utils.hashing.get_hash_from_play_call",
+                "parameters": [
+                  "scene_object",
+                  "camera_object",
+                  "animations_list",
+                  "current_mobjects_list"
+                ],
+                "mode": "store",
+                "assertion": "assert \"_\" in $result"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"mock_cached_play_fn\"] = _mock_cache_play"
+              },
+              {
+                "apiId": "manim.utils.caching.handle_caching_play",
+                "parameters": [
+                  "func"
+                ],
+                "mode": "store",
+                "assertion": "assert callable($result)"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.make_tex_compilation_command",
+                "parameters": [
+                  "tex_compiler",
+                  "output_format",
+                  "tex_file",
+                  "tex_dir"
+                ],
+                "mode": "store",
+                "assertion": "assert len($result) >= 5"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.generate_tex_file",
+                "parameters": [
+                  "expression"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result).endswith(\".tex\")"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.delete_nonsvg_files",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "assert True"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.tex_to_svg_file",
+                "parameters": [
+                  "expression"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result).endswith(\".svg\") and os.path.exists($result)"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.compile_tex",
+                "parameters": [
+                  "tex_file",
+                  "tex_compiler",
+                  "output_format"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result).endswith(\".dvi\") and os.path.exists($result)"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.convert_to_svg",
+                "parameters": [
+                  "dvi_file",
+                  "extension",
+                  "page"
+                ],
+                "mode": "store",
+                "assertion": "assert str($result).endswith(\".svg\") and os.path.exists($result)"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"re_match_input\"] = _m_input"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"re_match_pkg\"] = _m_pkg"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.insight_inputenc_error",
+                "parameters": [
+                  "matching"
+                ],
+                "mode": "store",
+                "assertion": "assert \"LATIN CAPITAL LETTER A\" in list($result)[0]"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.insight_package_not_found_error",
+                "parameters": [
+                  "matching"
+                ],
+                "mode": "store",
+                "assertion": "assert \"amsmath\" in list($result)[0]"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_log_lines\"] = _comp_log"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_tex_src\"] = _tex_src"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_log_file\"] = _log_file"
+              },
+              {
+                "apiId": "manim.mobject.geometry.arc.Circle",
+                "parameters": [],
+                "mode": "store",
+                "assertion": "objects[\"sys_bad_tex\"] = _bad_tex"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.print_tex_error",
+                "parameters": [
+                  "tex_compilation_log",
+                  "error_start_index",
+                  "tex_source"
+                ],
+                "mode": "store",
+                "assertion": "assert True"
+              },
+              {
+                "apiId": "manim.utils.tex_file_writing.print_all_tex_errors",
+                "parameters": [
+                  "log_file",
+                  "tex_compiler",
+                  "tex_file"
+                ],
+                "mode": "store",
+                "assertion": "assert True"
+              }
+            ]
           }
         ],
         "checks": "Real Manim postconditions for shape geometry, transforms, paths, color conversion, rate functions and coordinates. No per-API movie or visual claim."
@@ -16454,27 +17445,18 @@
       }
     ]
   },
-  "entriesWithBehaviorEvidence": 1668,
+  "entriesWithBehaviorEvidence": 1731,
   "entriesWithoutBehaviorEvidence": [
-    "manim.animation.animation.override_animation",
-    "manim.animation.transform.ApplyMethod.check_validity_of_input",
     "manim.animation.transform.ApplyPointwiseFunctionToCenter",
     "manim.animation.transform.ApplyPointwiseFunctionToCenter.begin",
     "manim.animation.transform_matching_parts.TransformMatchingAbstractBase",
     "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.get_mobject_key",
     "manim.animation.transform_matching_parts.TransformMatchingAbstractBase.get_mobject_parts",
-    "manim.animation.updaters.mobject_update_utils.assert_is_mobject_method",
-    "manim.camera.camera.BackgroundColoredVMobjectDisplayer.get_background_array",
     "manim.camera.mapping_camera.SplitScreenCamera",
-    "manim.constants.CapStyleType",
-    "manim.constants.LineJointType",
-    "manim.constants.RendererType",
-    "manim.data_structures.MethodWithArgs",
     "manim.mobject.geometry.tips.ArrowTip",
     "manim.mobject.graph.GenericGraph",
     "manim.mobject.graph.GenericGraph.from_networkx",
     "manim.mobject.graph.LayoutFunction",
-    "manim.mobject.graphing.coordinate_systems.CoordinateSystem",
     "manim.mobject.mobject.Mobject.show",
     "manim.mobject.opengl.dot_cloud.DotCloud",
     "manim.mobject.opengl.dot_cloud.DotCloud.init_points",
@@ -16872,17 +17854,8 @@
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVMobject.update_stroke_shader_wrapper",
     "manim.mobject.opengl.opengl_vectorized_mobject.OpenGLVectorizedPoint",
     "manim.mobject.opengl.opengl_vectorized_mobject.triggers_refreshed_triangulation",
-    "manim.mobject.text.code_mobject.Code",
-    "manim.mobject.text.text_mobject.register_font",
     "manim.mobject.types.image_mobject.AbstractImageMobject",
-    "manim.mobject.types.image_mobject.ImageMobjectFromCamera.interpolate_color",
     "manim.mobject.types.vectorized_mobject.VMobject.add_cubic_bezier_curves",
-    "manim.mobject.types.vectorized_mobject.VMobject.color_using_background_image",
-    "manim.mobject.types.vectorized_mobject.VMobject.get_background_image",
-    "manim.mobject.types.vectorized_mobject.VMobject.match_background_image",
-    "manim.plugins.plugins_flags.get_plugins",
-    "manim.plugins.plugins_flags.list_plugins",
-    "manim.renderer.cairo_renderer.CairoRenderer.add_frame",
     "manim.renderer.cairo_renderer.CairoRenderer.play",
     "manim.renderer.cairo_renderer.CairoRenderer.render",
     "manim.renderer.cairo_renderer.CairoRenderer.show_frame",
@@ -16990,9 +17963,6 @@
     "manim.renderer.vectorized_mobject_rendering.render_mobject_strokes_with_matrix",
     "manim.renderer.vectorized_mobject_rendering.render_opengl_vectorized_mobject_fill",
     "manim.renderer.vectorized_mobject_rendering.render_opengl_vectorized_mobject_stroke",
-    "manim.scene.scene.RerunSceneHandler",
-    "manim.scene.scene.RerunSceneHandler.on_modified",
-    "manim.scene.scene.Scene.add_sound",
     "manim.scene.scene.Scene.check_interactive_embed_is_valid",
     "manim.scene.scene.Scene.embed",
     "manim.scene.scene.Scene.interact",
@@ -17007,28 +17977,14 @@
     "manim.scene.scene.Scene.on_mouse_scroll",
     "manim.scene.scene.Scene.pause",
     "manim.scene.scene.Scene.update_meshes",
-    "manim.scene.scene_file_writer.SceneFileWriter.add_partial_movie_file",
-    "manim.scene.scene_file_writer.SceneFileWriter.add_sound",
-    "manim.scene.scene_file_writer.SceneFileWriter.begin_animation",
-    "manim.scene.scene_file_writer.SceneFileWriter.clean_cache",
     "manim.scene.scene_file_writer.SceneFileWriter.close_partial_movie_stream",
     "manim.scene.scene_file_writer.SceneFileWriter.combine_files",
     "manim.scene.scene_file_writer.SceneFileWriter.combine_to_movie",
     "manim.scene.scene_file_writer.SceneFileWriter.combine_to_section_videos",
-    "manim.scene.scene_file_writer.SceneFileWriter.create_audio_segment",
     "manim.scene.scene_file_writer.SceneFileWriter.encode_and_write_frame",
-    "manim.scene.scene_file_writer.SceneFileWriter.end_animation",
     "manim.scene.scene_file_writer.SceneFileWriter.finish",
-    "manim.scene.scene_file_writer.SceneFileWriter.flush_cache_directory",
     "manim.scene.scene_file_writer.SceneFileWriter.listen_and_write",
     "manim.scene.scene_file_writer.SceneFileWriter.open_partial_movie_stream",
-    "manim.scene.scene_file_writer.SceneFileWriter.output_image",
-    "manim.scene.scene_file_writer.SceneFileWriter.print_file_ready_message",
-    "manim.scene.scene_file_writer.SceneFileWriter.save_image",
-    "manim.scene.scene_file_writer.SceneFileWriter.write_frame",
-    "manim.scene.scene_file_writer.convert_audio",
-    "manim.scene.section.DefaultSectionType",
-    "manim.scene.section.Section.get_dict",
     "manim.scene.three_d_scene.SpecialThreeDScene",
     "manim.scene.three_d_scene.SpecialThreeDScene.get_axes",
     "manim.scene.three_d_scene.SpecialThreeDScene.get_default_camera_position",
@@ -17036,26 +17992,9 @@
     "manim.scene.three_d_scene.SpecialThreeDScene.set_camera_to_default_position",
     "manim.scene.vector_space_scene.VectorScene.coords_to_vector",
     "manim.scene.vector_space_scene.VectorScene.show_ghost_movement",
-    "manim.utils.caching.handle_caching_play",
     "manim.utils.color.core.ManimColor.gradient",
-    "manim.utils.commands.get_video_metadata",
-    "manim.utils.deprecation.deprecated",
-    "manim.utils.deprecation.deprecated_params",
-    "manim.utils.exceptions.EndSceneEarlyException",
-    "manim.utils.exceptions.MultiAnimationOverrideException",
-    "manim.utils.exceptions.RerunSceneException",
-    "manim.utils.family.extract_mobject_family_members",
-    "manim.utils.file_ops.add_import_statement",
-    "manim.utils.file_ops.copy_template_files",
-    "manim.utils.file_ops.ensure_executable",
-    "manim.utils.file_ops.guarantee_empty_existence",
-    "manim.utils.file_ops.guarantee_existence",
-    "manim.utils.file_ops.modify_atime",
     "manim.utils.file_ops.open_file",
     "manim.utils.file_ops.open_media_file",
-    "manim.utils.hashing.get_hash_from_play_call",
-    "manim.utils.images.get_full_raster_image_path",
-    "manim.utils.images.get_full_vector_image_path",
     "manim.utils.module_ops.prompt_user_for_choice",
     "manim.utils.opengl.matrix_to_shader_input",
     "manim.utils.opengl.orthographic_projection_matrix",
@@ -17069,18 +18008,7 @@
     "manim.utils.opengl.y_rotation_matrix",
     "manim.utils.opengl.z_rotation_matrix",
     "manim.utils.rate_functions.RateFunction",
-    "manim.utils.simple_functions.Comparable",
-    "manim.utils.sounds.get_full_sound_file_path",
-    "manim.utils.tex_file_writing.compile_tex",
-    "manim.utils.tex_file_writing.convert_to_svg",
-    "manim.utils.tex_file_writing.delete_nonsvg_files",
-    "manim.utils.tex_file_writing.generate_tex_file",
-    "manim.utils.tex_file_writing.insight_inputenc_error",
-    "manim.utils.tex_file_writing.insight_package_not_found_error",
-    "manim.utils.tex_file_writing.make_tex_compilation_command",
-    "manim.utils.tex_file_writing.print_all_tex_errors",
-    "manim.utils.tex_file_writing.print_tex_error",
-    "manim.utils.tex_file_writing.tex_to_svg_file"
+    "manim.utils.simple_functions.Comparable"
   ],
   "failures": [],
   "interpretation": "All entries have blocks and structured argument inputs. Static resolution and signature checks are not per-API render or complete parameter-combination coverage."

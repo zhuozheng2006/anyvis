@@ -1,0 +1,377 @@
+.mpm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: mpmFadeIn 0.15s ease-out;
+}
+
+@keyframes mpmFadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.mpm-modal {
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 12px;
+  width: 760px;
+  max-width: 95vw;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  color: #f4f4f5;
+  font-family: inherit;
+  overflow: hidden;
+}
+
+.mpm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #27272a;
+  background: #202023;
+}
+
+.mpm-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #38bdf8;
+}
+
+.mpm-title-icon {
+  color: #38bdf8;
+}
+
+.mpm-close-btn {
+  background: transparent;
+  border: none;
+  color: #a1a1aa;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.mpm-close-btn:hover {
+  background: #27272a;
+  color: #f4f4f5;
+}
+
+.mpm-content {
+  display: flex;
+  padding: 16px;
+  gap: 18px;
+  overflow-y: auto;
+}
+
+.mpm-left-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.mpm-canvas-wrap {
+  width: 360px;
+  height: 360px;
+  background: #111113;
+  border: 1px solid #27272a;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.mpm-svg {
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  touch-action: none;
+}
+
+.mpm-handle {
+  cursor: grab;
+  transition: r 0.15s, stroke-width 0.15s;
+}
+
+.mpm-handle:active {
+  cursor: grabbing;
+}
+
+.mpm-handle-i {
+  fill: #10b981;
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.mpm-handle-i:hover {
+  r: 9;
+}
+
+.mpm-handle-j {
+  fill: #ef4444;
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.mpm-handle-j:hover {
+  r: 9;
+}
+
+.mpm-canvas-hint {
+  font-size: 11.5px;
+  color: #71717a;
+}
+
+.mpm-right-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mpm-matrix-box {
+  background: #202023;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.mpm-matrix-label {
+  font-size: 12px;
+  color: #a1a1aa;
+  margin-bottom: 6px;
+}
+
+.mpm-bracket-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mpm-bracket {
+  font-size: 42px;
+  font-weight: 200;
+  color: #71717a;
+  line-height: 1;
+}
+
+.mpm-matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.mpm-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mpm-cell label {
+  font-size: 10px;
+  color: #71717a;
+}
+
+.mpm-cell input {
+  width: 64px;
+  background: #18181b;
+  border: 1px solid #3f3f46;
+  border-radius: 4px;
+  color: #f4f4f5;
+  text-align: center;
+  font-size: 13px;
+  font-family: monospace;
+  padding: 4px;
+  outline: none;
+}
+
+.mpm-cell input:focus {
+  border-color: #38bdf8;
+}
+
+.mpm-math-stats {
+  background: #202023;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mpm-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.mpm-stat-key {
+  color: #a1a1aa;
+  white-space: nowrap;
+}
+
+.mpm-stat-val {
+  font-family: monospace;
+  font-weight: 600;
+  color: #fbbf24;
+}
+
+.mpm-val-invert {
+  color: #f43f5e;
+}
+
+.mpm-val-zero {
+  color: #ef4444;
+}
+
+.mpm-stat-desc {
+  font-size: 11px;
+  color: #71717a;
+  margin-left: auto;
+}
+
+.mpm-stat-eigen {
+  color: #a855f7;
+  font-size: 11.5px;
+}
+
+.mpm-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mpm-presets-head {
+  font-size: 11.5px;
+  color: #a1a1aa;
+}
+
+.mpm-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.mpm-preset-btn {
+  background: #27272a;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  color: #d4d4d8;
+  padding: 5px 6px;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.mpm-preset-btn:hover {
+  background: #38bdf8;
+  border-color: #38bdf8;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.mpm-code-preview {
+  background: #111113;
+  border: 1px solid #27272a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mpm-code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #71717a;
+}
+
+.mpm-copy-btn {
+  background: transparent;
+  border: none;
+  color: #38bdf8;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.mpm-copy-btn:hover {
+  background: rgba(56, 189, 248, 0.15);
+}
+
+.mpm-code {
+  font-family: monospace;
+  font-size: 11px;
+  color: #a7f3d0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.mpm-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 18px;
+  border-top: 1px solid #27272a;
+  background: #202023;
+}
+
+.mpm-cancel-btn {
+  background: #27272a;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  color: #d4d4d8;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.mpm-cancel-btn:hover {
+  background: #3f3f46;
+  color: #ffffff;
+}
+
+.mpm-insert-btn {
+  background: #38bdf8;
+  border: 1px solid #0284c7;
+  border-radius: 6px;
+  color: #0f172a;
+  font-weight: 600;
+  padding: 6px 16px;
+  font-size: 12.5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.mpm-insert-btn:hover {
+  background: #0ea5e9;
+}

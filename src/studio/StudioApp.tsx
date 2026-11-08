@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -15,11 +15,12 @@ import { builtinPreview, type VideoPreview } from './previews';
 import { Timeline } from './Timeline';
 import { ObjectManager } from './ObjectManager';
 import { MusicSettings } from './MusicSettings';
-import { appendAction, managedObject } from './authoring';
+import { appendAction, flattenActions, managedObject } from './authoring';
 import { projectHistory } from './project-history';
 import { COMMON_COLOURS } from './blocks/colour-field';
 import { computePresentationSteps } from './presentation';
 import { CommandPalette } from './CommandPalette';
+import { MatrixPlaygroundModal } from './MatrixPlaygroundModal';
 import './studio.css';
 import './studio-polish.css';
 
@@ -66,6 +67,7 @@ export default function StudioApp() {
   const [presentationPlaying, setPresentationPlaying] = useState(false);
   const presentationVideoRef = useRef<HTMLVideoElement>(null);
   const presentationSteps = useMemo(() => computePresentationSteps(project), [project]);
+  const [matrixPlaygroundOpen, setMatrixPlaygroundOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
   const [saveError, setSaveError] = useState('');
@@ -450,6 +452,7 @@ export default function StudioApp() {
       <div className="project-title"><input aria-label="作品名称" value={project.name} maxLength={80} onBlur={() => { if (!project.name.trim()) setProject(p => ({ ...p, name: '未命名动画' })); }} onChange={e => setProject(p => ({ ...p, name: e.target.value }))}/><span className={saveError ? 'save-status error' : 'save-status'}>{saveError ? '需要备份' : saved ? <><Check size={12}/> 已自动保存</> : '保存中…'}</span></div>
       <div className="header-spacer"/>
       <button className="header-button" title="全局命令面板 · ⌘/Ctrl K" aria-label="全局命令面板" onClick={() => setCmdPaletteOpen(true)}><Search size={15}/><span>命令 ⌘K</span></button>
+      <button className="header-button" title="3B1B 矩阵线性变换交互台" aria-label="3B1B 矩阵线性变换交互台" onClick={() => setMatrixPlaygroundOpen(true)}><Grid size={15}/><span>矩阵台</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -620,6 +623,14 @@ export default function StudioApp() {
             run: () => switchView('code'),
           },
           {
+            id: 'matrix-playground',
+            title: '3B1B 矩阵线性变换交互台',
+            subtitle: '直观探索二维线性变换、网格形变、特征值与行列式',
+            colour: '#38bdf8',
+            keywords: 'matrix linear transformation 矩阵 变换 行列式 3b1b 几何',
+            run: () => setMatrixPlaygroundOpen(true),
+          },
+          {
             id: 'export-py',
             title: '导出独立 Manim Python 脚本 (.py)',
             subtitle: '下载可直接由 manim 命令运行的源码',
@@ -637,5 +648,24 @@ export default function StudioApp() {
         ]}
       />
     )}
+
+    <MatrixPlaygroundModal
+      isOpen={matrixPlaygroundOpen}
+      onClose={() => setMatrixPlaygroundOpen(false)}
+      onInsertMatrix={matStr => {
+        try {
+          const current = editor.current?.snapshot() || projectRef.current;
+          const lastVisual = flattenActions(current.actions).filter(managedObject).pop();
+          const targetName = lastVisual ? String(lastVisual.fields.name) : '平面';
+          const result = appendAction(current, 'apply_matrix', { matrix: matStr, target: targetName });
+          setProject(result.project);
+          setSelected(result.action.id);
+          setSelectedIds([result.action.id]);
+          notify(`已插入线性变换动画：ApplyMatrix(${matStr}, ${targetName})`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
   </div>;
 }

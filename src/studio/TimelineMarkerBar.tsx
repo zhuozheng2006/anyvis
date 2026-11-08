@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bookmark, Edit2, Trash2 } from 'lucide-react';
+import { Bookmark, Edit2, Sparkles, Trash2 } from 'lucide-react';
 import type { Project, TimelineMarker } from './core/types';
 import { timecode } from './Timeline';
 import './timeline-marker-bar.css';
@@ -61,6 +61,16 @@ export function removeMarker(project: Project, markerId: string): Project {
   };
 }
 
+export function clearMarkers(project: Project): Project {
+  return {
+    ...project,
+    scene: {
+      ...project.scene,
+      markers: [],
+    },
+  };
+}
+
 export function findNearestMarker(markers: TimelineMarker[] = [], time: number, threshold = 0.1): TimelineMarker | null {
   let nearest: TimelineMarker | null = null;
   let minDiff = Infinity;
@@ -85,6 +95,8 @@ export interface TimelineMarkerBarProps {
   fps: number;
   onSeek(time: number): void;
   onAddMarker(): void;
+  onOpenSmartMarker?(): void;
+  onClearAllMarkers?(): void;
   onUpdateMarker(markerId: string, updates: Partial<TimelineMarker>): void;
   onRemoveMarker(markerId: string): void;
 }
@@ -95,6 +107,8 @@ export const TimelineMarkerBar: React.FC<TimelineMarkerBarProps> = ({
   fps,
   onSeek,
   onAddMarker,
+  onOpenSmartMarker,
+  onClearAllMarkers,
   onUpdateMarker,
   onRemoveMarker,
 }) => {
@@ -194,15 +208,39 @@ export const TimelineMarkerBar: React.FC<TimelineMarkerBarProps> = ({
           );
         })}
       </div>
-      <button
-        type="button"
-        className="tmb-add-btn"
-        onClick={onAddMarker}
-        title="在当前播放头位置打点（快捷键 M）"
-        aria-label="在播放头位置添加标记"
-      >
-        + 打点
-      </button>
+      <div className="tmb-toolbar-actions">
+        <button
+          type="button"
+          className="tmb-add-btn"
+          onClick={onAddMarker}
+          title="在当前播放头位置打点（快捷键 M）"
+          aria-label="在播放头位置添加标记"
+        >
+          + 打点
+        </button>
+        {onOpenSmartMarker && (
+          <button
+            type="button"
+            className="tmb-smart-btn"
+            onClick={onOpenSmartMarker}
+            title="智能节奏打点助手（基于配音停顿、音乐律动或镜头换镜）"
+            aria-label="打开智能打点助手"
+          >
+            <Sparkles size={11} /> 智能打点
+          </button>
+        )}
+        {onClearAllMarkers && (
+          <button
+            type="button"
+            className="tmb-clear-btn"
+            onClick={onClearAllMarkers}
+            title="清空全部标记"
+            aria-label="清空全部时间轴标记"
+          >
+            清空
+          </button>
+        )}
+      </div>
     </div>
   );
 };

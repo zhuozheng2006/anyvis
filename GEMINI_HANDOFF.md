@@ -10,8 +10,8 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 本次交接前主分支：`20f588cb37c5ce9d724495e86d0b30c946eaec79`；交接文档提交会在它之后。开始工作时重新读取当前 HEAD，勿硬编码旧 HEAD 推送。
 - 本机工作区：`/Users/zane/Documents/ChatGPT/AnyVis`。
 - 本地工作区完整关联 Git 仓库（分支 `main`，远端 `origin`），提交和推送可直接使用原生 Git 操作。
-- 已接入 Manim CE **0.20.1** 的 **2,293 个 API 入口**；**1,668 个**有原生行为证据，**625 个**尚无逐项行为证据（其中通用/Cairo 仅余 167 项，覆盖率达 90.5%；OpenGL 专属 458 项）。入口可生成调用不等于行为、参数组合或视觉结果全部正确。
-- 367 项应用测试（46 个测试文件）、22 项原生测试入口、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
+- 已接入 Manim CE **0.20.1** 的 **2,293 个 API 入口**；**1,731 个**有原生行为证据，**562 个**尚无逐项行为证据（其中通用/Cairo 仅余 53 项，覆盖率达 97.0%；OpenGL 专属 509 项）。入口可生成调用不等于行为、参数组合或视觉结果全部正确。
+- 373 项应用测试（48 个测试文件）、30 项原生测试运行、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
 - 最新三平台桌面构建通过。Linux **Mesa softpipe** 已实际绘制并验证一个 OpenGL 场景；本机 Mac 的 OpenGL 上下文仍不可用。
 - 当前没有待合并的 PR #1：它已获用户许可并成功合并。不存在需要再次询问的旧合并阻塞。
 
@@ -52,6 +52,10 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 时间轴单片段与批量一键变速（`scaleActionsDuration`）：时间轴单片段与多选批量栏支持一键 `2x` 加速与 `0.5x` 减速并对齐帧网格。
 - 对象与时间轴动作一键克隆（`duplicateAction`）：对象管理器与时间轴（含快捷键 `D`）支持一键复制对象或动作片段并自动生成无冲突唯一名称。
 - 画面风格/主题预设（Math Theme Presets）：画面设置中一键应用 3B1B 经典黑、教室黑板、极简纸白、深邃纯黑与星云深紫预设，轻松调出专业数学动画质感。
+- 音频驱动智能打点助手 (`SmartMarkerModal` / `smart-marker.ts`)：内置语音语流停顿 (Speech Cadence)、音乐节拍律动 (Musical BPM Rhythm)、动作分镜节点 (Action Cuts) 及等距分段 (Equal Intervals) 4 种算法自动生成时间轴标记，支持覆盖/追加打点及一键清空全部标记。
+- 3B1B 矩阵线性变换交互台 (`MatrixPlaygroundModal` / `matrix-playground.ts`)：对标 3Blue1Brown 线性代数直观教学，提供仿射网格实时形变、拖拽基向量 $\hat{i}', \hat{j}'$、行列式几何投影阴影、特征值与迹计算、10 种经典线性变换预设及一键插入 `ApplyMatrix` 动画积木。
+- 系统、文件与 TeX 工具链全量覆盖 (`systemAndFileUtilities`, +63 项原生 API，达 1,731 项)：涵盖文件操作底层、异常与弃用装饰器、代码高亮、字体注册、进阶分段与视频输出、TeX 全自动排错洞察等 14 组测试族。
+- 深度排查并记录 7 处 Manim CE 0.20.1 原生源码缺陷（`VectorScene`、`SpecialThreeDScene`、`ApplyPointwiseFunctionToCenter`、`SplitScreenCamera`、`VMobject.add_cubic_bezier_curves` 及 `print_tex_error`）。
 - CI 自动化与桌面端打包健壮性：修复 Linux GitHub 2-core runner 运行 ASAR 封装应用时 30s 硬编码看门狗超时的偶发问题，支持 `--smoke-timeout` 参数并将打包环境默认等待从 30s 提高至 75s（外部看门狗 90s），Linux/Windows/macOS 打包发布 100% 绿灯。
 - 前端构建代码分包优化（`vite.config.ts`）：按 `api-registry`、`vendor-blockly`、`vendor-codemirror`、`vendor-math`、`vendor-three`、`vendor-timeline` 等模块拆分，`StudioApp.js` 主入口体积从 3,453 kB 降至 330 kB。
 - 空格播放、逐帧定位、Home/End、Shift + 方向键、吸附快捷键；长代码滚动修复。
@@ -64,7 +68,7 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 
 ### 尚未完成，不要当成已有功能
 
-1. 剩余 625 项 API 逐项行为验证（通用/Cairo 167 项，OpenGL 458 项）；全参数组合、全部渲染器/平台的视觉验收远未完成。
+1. 剩余 562 项 API 逐项行为验证（通用/Cairo 仅余 53 项，OpenGL/Shader 509 项）；全参数组合、全部渲染器/平台的视觉验收远未完成。
 2. 完整关键帧曲线、任意跨轨动画重叠、嵌套复合片段内展开（时间轴框选/多选、批量移动/删除、动画与等待片段剃刀分割、片段一键复制已实现）。
 3. 任意时间点重新执行脚本状态；当前播放头定位的是已经生成的视频。
 4. Manim 0.22.1 适配。当前固定清单和测试基线为 0.20.1，不能直接升级后沿用旧证据。
