@@ -1,0 +1,203 @@
+.stage-direct-gizmo-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  overflow: visible;
+  user-select: none;
+}
+
+/* Draggable Reticle */
+.gizmo-reticle {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  transition: transform 0.05s ease-out;
+}
+
+.gizmo-reticle.dragging {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+.reticle-ring {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  border: 1.5px dashed #58c4dd;
+  animation: reticle-pulse 3s infinite linear;
+}
+
+@keyframes reticle-pulse {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.reticle-crosshair-h {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.reticle-crosshair-v {
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.reticle-center-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #58c4dd;
+  box-shadow: 0 0 6px rgba(88, 196, 221, 0.9);
+  z-index: 2;
+}
+
+.reticle-tag {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 4px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.reticle-tag-name {
+  font-size: 10px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.reticle-tag-coord {
+  font-size: 9px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #38bdf8;
+}
+
+/* Floating Quick Strip */
+.gizmo-quick-strip {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  z-index: 10;
+  animation: gizmo-slide-up 0.2s ease-out;
+}
+
+@keyframes gizmo-slide-up {
+  from { opacity: 0; transform: translate(-50%, 6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.gizmo-strip-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  padding-right: 8px;
+}
+
+.gizmo-object-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.gizmo-object-name {
+  font-size: 11px;
+  color: #f8fafc;
+  max-width: 85px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 9-Grid Alignment Group */
+.gizmo-align-group {
+  display: grid;
+  grid-template-columns: repeat(3, 16px);
+  gap: 2px;
+}
+
+.gizmo-align-btn {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 2px;
+  color: #94a3b8;
+  font-size: 9px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.gizmo-align-btn:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.gizmo-align-btn.active {
+  background: #0284c7;
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+/* Quick Color Swatches */
+.gizmo-color-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gizmo-color-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+
+.gizmo-color-dot:hover {
+  transform: scale(1.25);
+}
+
+.gizmo-color-dot.active {
+  box-shadow: 0 0 0 2px #38bdf8;
+}

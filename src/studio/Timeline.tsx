@@ -291,7 +291,37 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
           currentY: e.clientY,
         });
       }}>
-      <aside className="tl-labels"><div className="tl-track-heading">轨道<span>{labels.length}</span></div><div className="tl-label-scroll" ref={trackLabels} onWheel={e => { if (trackLabels.current) editor.current?.setScrollTop(trackLabels.current.scrollTop + e.deltaY); }}>{labels.map(label => <div className="tl-track-label" key={label.id}><i style={{ background: label.colour }}/><span title={label.name}>{label.audio && <Music2 size={12}/>} {label.name}</span><small>{label.id === musicId ? '配乐 · 自动铺满' : label.audio ? '配音 · 独立音轨' : '动画 · 顺序联动'}</small></div>)}</div></aside>
+      <aside className="tl-labels"><div className="tl-track-heading">轨道<span>{labels.length}</span></div><div className="tl-label-scroll" ref={trackLabels} onWheel={e => { if (trackLabels.current) editor.current?.setScrollTop(trackLabels.current.scrollTop + e.deltaY); }}>{labels.map(label => {
+        const isMusic = label.id === musicId;
+        const audioClip = !isMusic && label.audio ? audio.find(c => c.id === label.id) : null;
+        const isMuted = audioClip ? audioClip.action.fields.muted === 'yes' : false;
+
+        return (
+          <div className="tl-track-label" key={label.id}>
+            <i style={{ background: label.colour }}/>
+            <span title={label.name}>{label.audio && <Music2 size={12}/>} {label.name}</span>
+            {audioClip && (
+              <button
+                type="button"
+                className="tl-track-mute-btn"
+                title={isMuted ? '点击取消静音' : '点击静音此配音轨'}
+                aria-label={isMuted ? `取消静音 ${label.name}` : `静音 ${label.name}`}
+                onClick={e => {
+                  e.stopPropagation();
+                  mutate(() => {
+                    return updateAction(project, audioClip.action.id, {
+                      muted: isMuted ? 'no' : 'yes',
+                    });
+                  });
+                }}
+              >
+                {isMuted ? <VolumeX size={12} color="#f87171" /> : <Volume2 size={12} color="#94a3b8" />}
+              </button>
+            )}
+            <small>{isMusic ? '配乐 · 自动铺满' : label.audio ? (isMuted ? '配音 · 已静音' : '配音 · 独立音轨') : '动画 · 顺序联动'}</small>
+          </div>
+        );
+      })}</div></aside>
       <TimelineEditor ref={editor} editorData={rows} effects={effects} style={{ flex: 1, width: 0, height: '100%' }} scale={tick} scaleWidth={scale * tick} scaleSplitCount={tick * project.scene.fps} startLeft={16} rowHeight={58} minScaleCount={Math.ceil(Math.max(10, knownEnd + 3) / tick)} maxScaleCount={Math.ceil(600 / tick)} gridSnap={snapping} dragLine={snapping} autoScroll autoReRender={false}
         onChange={() => false}
         onScroll={({ scrollTop }) => { if (trackLabels.current) trackLabels.current.scrollTop = scrollTop; }}

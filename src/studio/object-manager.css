@@ -583,8 +583,97 @@
   color: #64748b;
   border-bottom: 1px solid #edf2f7;
   flex-shrink: 0;
-  height: 20px;
+  height: 22px;
   box-sizing: border-box;
+}
+
+.om-tray-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.om-tray-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.om-tray-pill {
+  padding: 1px 5px;
+  font-size: 9.5px;
+  border-radius: 3px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.om-tray-pill:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.om-tray-pill.active {
+  background: #e0f2fe;
+  border-color: #38bdf8;
+  color: #0369a1;
+  font-weight: 600;
+}
+
+.om-tray-tools-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.om-tray-search-input {
+  height: 16px;
+  font-size: 9.5px;
+  padding: 0 4px;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  width: 65px;
+  background: #ffffff;
+  color: #334155;
+  outline: none;
+}
+
+.om-tray-search-input:focus {
+  border-color: #38bdf8;
+}
+
+.om-card-actions {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  z-index: 2;
+}
+
+.om-card-layer-btn {
+  width: 13px;
+  height: 13px;
+  padding: 0;
+  border: none;
+  background: rgba(241, 245, 249, 0.85);
+  border-radius: 2px;
+  color: #64748b;
+  font-size: 7.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.1s;
+}
+
+.om-card-layer-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
 }
 
 .om-cards-scroll-area {

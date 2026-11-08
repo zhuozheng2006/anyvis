@@ -15,7 +15,7 @@ import { builtinPreview, type VideoPreview } from './previews';
 import { Timeline } from './Timeline';
 import { ObjectManager } from './ObjectManager';
 import { MusicSettings } from './MusicSettings';
-import { appendAction, flattenActions, managedObject } from './authoring';
+import { appendAction, flattenActions, managedObject, updateAction } from './authoring';
 import { projectHistory } from './project-history';
 import { COMMON_COLOURS } from './blocks/colour-field';
 import { computePresentationSteps } from './presentation';
@@ -46,6 +46,7 @@ import { AutoLayoutModal } from './AutoLayoutModal';
 import { PolarParametricModal } from './PolarParametricModal';
 import { Vector3DPlaygroundModal } from './Vector3DPlaygroundModal';
 import { StageGuidesOverlay } from './StageGuidesOverlay';
+import { StageDirectGizmo } from './StageDirectGizmo';
 import { ToolsHubDropdown } from './ToolsHubDropdown';
 import { ShortcutsHelpModal } from './ShortcutsHelpModal';
 import { QuickAddToolbar } from './QuickAddToolbar';
@@ -154,6 +155,10 @@ export default function StudioApp() {
   const flattened = useMemo(() => allActions(project.actions), [project.actions]);
   const selectedAction = flattened.find(item => item.id === selected);
   const selectedObjectId = selectedAction && managedObject(selectedAction) ? selectedAction.id : flattened.find(a => managedObject(a) && a.fields.name === (selectedAction?.fields.target || selectedAction?.fields.receiver))?.id || null;
+  const selectedManagedObject = useMemo(
+    () => (selectedObjectId ? flattened.find(a => a.id === selectedObjectId) || null : null),
+    [selectedObjectId, flattened]
+  );
   const running = job?.status === 'running' || job?.status === 'queued';
   const currentVideo = video?.revision === currentRevision;
   const [activeQuality, setActiveQuality] = useState<'preview' | 'final'>('preview');
@@ -595,7 +600,7 @@ export default function StudioApp() {
           <StudioBlocks animationOnly onUndo={undoProject} onRedo={redoProject} ref={editor} project={project} onChange={setProject} onSelect={id => { setSelected(id); setSelectedIds(id ? [id] : []); }} selectedBlockId={selected || undefined} highlightedBlockId={job?.blockId} onWorkspaceError={message => setRenderError(message || '')}/>
         </div>
         {editorTab === 'timeline' && <Timeline onMusicSettings={() => setModal('settings')} project={project} selectedId={selected} selectedIds={selectedIds} onSelectIds={setSelectedIds} time={time} playing={playing} canPlay={!!video} onPlay={play} onChange={setProject} onSelect={id => { setSelected(id); setSelectedIds(id ? [id] : []); }} onShowBlocks={chooseStep} onSeek={seek} onError={notify}/>}
-        {editorTab === 'code' && <div className="python-view"><div className="code-intro"><div><strong>生成的 Manim 源码 · 只读</strong><p>在对象管理器、积木或时间轴中修改，代码会同步更新。</p></div><button className="small-button" disabled={!!errors.length} onClick={() => void exportSource()}><Download size={14}/> {project.assets?.length ? '导出源码与素材' : '导出 .py'}</button></div><CodeMirror className="generated-code" value={compiled.code} editable={false} readOnly height="100%" basicSetup={{ lineNumbers: true, foldGutter: true }} theme="light"/>{compiled.requiresTrust && <label className="trust-code"><input type="checkbox" checked={trusted} onChange={e => setTrusted(e.target.checked)}/> 我已检查此作品的 Python 扩展及 API 调用，允许它在本机运行。</label>}</div>}
+        {editorTab === 'code' && <div className="python-view"><div className="code-intro"><div><strong>生成的 Manim 源码 · 只读</strong><p>在对象管理器、积木或时间轴中修改，代码会同步更新。</p></div><div style={{ display: 'flex', gap: '8px' }}><button className="small-button" onClick={async () => { try { await navigator.clipboard.writeText(compiled.code); notify('已复制 Manim 源码到剪贴板！'); } catch { notify('复制失败，请手动选取代码。'); } }} title="复制完整 Manim Python 源码到剪贴板"><Copy size={14}/> 复制代码</button><button className="small-button" disabled={!!errors.length} onClick={() => void exportSource()}><Download size={14}/> {project.assets?.length ? '导出源码与素材' : '导出 .py'}</button></div></div><CodeMirror className="generated-code" value={compiled.code} editable={false} readOnly height="100%" basicSetup={{ lineNumbers: true, foldGutter: true }} theme="light"/>{compiled.requiresTrust && <label className="trust-code"><input type="checkbox" checked={trusted} onChange={e => setTrusted(e.target.checked)}/> 我已检查此作品的 Python 扩展及 API 调用，允许它在本机运行。</label>}</div>}
         <div className="workspace-footer"><span>{flattened.length} 个积木<span className="footer-separator">·</span>{project.scene.dimension === '3d' ? '三维场景' : '二维场景'}</span><span>{compiled.duration === null ? '动态时长' : `约 ${compiled.duration.toFixed(1)} 秒`}<span className="footer-separator">·</span>Manim 原生动画</span></div>
       </section>
 
@@ -670,6 +675,14 @@ export default function StudioApp() {
               showSafeArea={showSafeArea}
               showRuleOfThirds={showRuleOfThirds}
               showOriginCrosshair={showOriginCrosshair}
+            />
+            <StageDirectGizmo
+              action={selectedManagedObject}
+              onChange={fields => {
+                if (!selectedManagedObject) return;
+                const next = updateAction(project, selectedManagedObject.id, fields);
+                setProject(next);
+              }}
             />
             {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => { setVideoDuration(player.current?.duration || 0); setTime(0); }} onTimeUpdate={() => setTime(player.current?.currentTime || 0)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
             {running && job?.posterUrl && <img className="live-render-frame" src={job.posterUrl} alt="Manim 正在生成的实际画面"/>}

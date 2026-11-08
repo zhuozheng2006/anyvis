@@ -11,7 +11,7 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 本机工作区：`/Users/zane/Documents/ChatGPT/AnyVis`。
 - 本地工作区完整关联 Git 仓库（分支 `main`，远端 `origin`），提交和推送可直接使用原生 Git 操作。
 - 已接入 Manim CE **0.20.1** 的 **2,293 个 API 入口**；**1,731 个**有原生行为证据，**562 个**尚无逐项行为证据（其中通用/Cairo 仅余 53 项，覆盖率达 97.0%；OpenGL 专属 509 项；已确证剩余 53 项通用接口全部属于抽象基类、静态类型协议、OpenGL 专属交互或上游缺陷，真正可执行调用的通用 Cairo API 达成 100% 覆盖闭环）。入口可生成调用不等于行为、参数组合或视觉结果全部正确。
-- 524 项应用测试（88 个测试文件）、30 项原生测试运行、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
+- 537 项应用测试（92 个测试文件）、30 项原生测试运行、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
 - 最新三平台桌面构建通过。Linux **Mesa softpipe** 已实际绘制并验证一个 OpenGL 场景；本机 Mac 的 OpenGL 上下文仍不可用。
 - 当前没有待合并的 PR #1：它已获用户许可并成功合并。不存在需要再次询问的旧合并阻塞。
 
@@ -78,6 +78,10 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 数理动效工作台合集下拉中心 (`ToolsHubDropdown` / `tools-hub.css`)：将 19 款专业级数学与动效工作台整理为 3 大分类 Mega Menu（3B1B 高等数理 7 款、几何拓扑与空间 6 款、导演运镜与视听 6 款），每个条目带图标色块与功能副标题，彻底解决顶部栏按钮水平拥挤与溢出问题；同时保留 3 大高频工具顶栏直达引脚与快捷键入口。
 - 全局快捷键速查中心与工作区视图热键 (`ShortcutsHelpModal` / `shortcuts-help.css`)：支持 `?` / `Shift + /` 随时唤出键盘速查弹窗（播放控制、1/2/3 视图切换、M 标记、D 克隆、⌘K 命令面板、⌘S 保存），并在输入框外支持按 `1`/`2`/`3` 键秒级无缝切换积木/时间轴/代码视图。
 - 画布快速对象添加栏 (`QuickAddToolbar` / `quick-add.css`)：在工作区顶部提供 1-click 快捷创建按钮（文字、LaTeX公式、圆、正方形、坐标系、箭头），无需翻查积木抽屉即可一键向场景注入初始对象并自动选中。
+- 交互式舞台直接操纵标靶与九宫格/色板浮动栏 (`StageDirectGizmo` / `stage-direct-gizmo.ts` / `stage-direct-gizmo.css`)：在预览舞台上为选中的对象直观叠加交互式可拖拽标靶与实时坐标投影，支持直接在舞台上拖拽平移物体并自动对齐零点，舞台底部浮动操作条集成九宫格极速对齐（`UL/UP/UR/LEFT/CENTER/RIGHT/DL/DOWN/DR`）与 3B1B 经典 8 色色板秒级换色，大幅降低在侧边栏反复手动输入坐标与色值的摩擦。
+- 对象管理器分类过滤、即时检索与图层排序 (`ObjectManager` / `object-manager.css`)：对象托盘增加“全部 / 图形 / 文字 / 坐标”分类筛选 Tab、实时关键词过滤搜索框，以及每张对象卡片内建的图层上移/下移（◀ / ▶）层级快捷微调按钮，便于在多对象复杂动画中快速定位并调整渲染遮挡层级。
+- 代码视图一键复制与快捷反馈：代码视图右上角新增“复制代码”按钮与高亮视觉反馈，点击瞬间拷贝完整生成的 Python Manim 代码到剪贴板，并触发全局 Toast 提示。
+- 时间轴音频轨独立静音快捷切换：时间轴音频轨道标题处直接提供音量喇叭/静音图标按钮，点击可快速切换该配音轨的静音状态，无需下潜到检视面板。
 - 系统、文件与 TeX 工具链全量覆盖 (`systemAndFileUtilities`, +63 项原生 API，达 1,731 项)：涵盖文件操作底层、异常与弃用装饰器、代码高亮、字体注册、进阶分段与视频输出、TeX 全自动排错洞察等 14 组测试族。
 - 深度排查并记录 7 处 Manim CE 0.20.1 原生源码缺陷（`VectorScene`、`SpecialThreeDScene`、`ApplyPointwiseFunctionToCenter`、`SplitScreenCamera`、`VMobject.add_cubic_bezier_curves` 及 `print_tex_error`），并审计确证剩余 53 项通用/Cairo 接口全部属于非业务可调用项（抽象类、静态 Protocol、OpenGL 专属交互、桌面弹窗），真正可执行通用 Cairo API 达成 100% 覆盖。
 - CI 自动化与桌面端打包健壮性：修复 Linux GitHub 2-core runner 运行 ASAR 封装应用时偶发看门狗超时的问题，支持 `--smoke-timeout` 参数并将打包环境等待提升至 120s（外部看门狗 150s），在 Electron 宿主注入阶段性诊断日志打点（`Session / Mount / API / Video / Restart / Storage`），Linux/Windows/macOS 打包发布 100% 绿灯。
