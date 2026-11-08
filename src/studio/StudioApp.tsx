@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -25,6 +25,12 @@ import { FourierPlaygroundModal } from './FourierPlaygroundModal';
 import { createFourierActions } from './fourier';
 import { CalculusPlaygroundModal } from './CalculusPlaygroundModal';
 import { createCalculusActions } from './calculus';
+import { RiemannPlaygroundModal } from './RiemannPlaygroundModal';
+import { createRiemannActions } from './riemann';
+import { KeyframeCurveModal } from './KeyframeCurveModal';
+import { applyRateFuncToAction } from './easing-curve';
+import { AudioVisualizerModal } from './AudioVisualizerModal';
+import { createAudioVisualizerActions } from './audio-visualizer';
 import './studio.css';
 import './studio-polish.css';
 
@@ -74,6 +80,9 @@ export default function StudioApp() {
   const [matrixPlaygroundOpen, setMatrixPlaygroundOpen] = useState(false);
   const [fourierPlaygroundOpen, setFourierPlaygroundOpen] = useState(false);
   const [calculusPlaygroundOpen, setCalculusPlaygroundOpen] = useState(false);
+  const [riemannPlaygroundOpen, setRiemannPlaygroundOpen] = useState(false);
+  const [keyframeCurveOpen, setKeyframeCurveOpen] = useState(false);
+  const [audioVisualizerOpen, setAudioVisualizerOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
   const [saveError, setSaveError] = useState('');
@@ -461,6 +470,9 @@ export default function StudioApp() {
       <button className="header-button" title="3B1B 矩阵线性变换交互台" aria-label="3B1B 矩阵线性变换交互台" onClick={() => setMatrixPlaygroundOpen(true)}><Grid size={15}/><span>矩阵台</span></button>
       <button className="header-button" title="3B1B 傅里叶环绕圆交互台" aria-label="3B1B 傅里叶环绕圆交互台" onClick={() => setFourierPlaygroundOpen(true)}><Activity size={15}/><span>傅里叶台</span></button>
       <button className="header-button" title="3B1B 微积分导数与切线交互台" aria-label="3B1B 微积分导数与切线交互台" onClick={() => setCalculusPlaygroundOpen(true)}><TrendingUp size={15}/><span>微积分台</span></button>
+      <button className="header-button" title="3B1B 黎曼和与定积分交互台" aria-label="3B1B 黎曼和与定积分交互台" onClick={() => setRiemannPlaygroundOpen(true)}><BarChart3 size={15}/><span>黎曼积分台</span></button>
+      <button className="header-button" title="缓动曲线与关键帧检查器" aria-label="缓动曲线与关键帧检查器" onClick={() => setKeyframeCurveOpen(true)}><Sliders size={15}/><span>缓动曲线</span></button>
+      <button className="header-button" title="音频响应式频谱与波形助手" aria-label="音频响应式频谱与波形助手" onClick={() => setAudioVisualizerOpen(true)}><Radio size={15}/><span>音频频谱</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -655,6 +667,30 @@ export default function StudioApp() {
             run: () => setCalculusPlaygroundOpen(true),
           },
           {
+            id: 'open-riemann-playground',
+            title: '3B1B 黎曼和与定积分交互台 (Riemann Sums)',
+            subtitle: '矩形求和极限逼近、定积分面积与 Manim 代码生成',
+            colour: '#58c4dd',
+            keywords: 'riemann integral 黎曼和 定积分 面积 极限 3b1b 微积分',
+            run: () => setRiemannPlaygroundOpen(true),
+          },
+          {
+            id: 'open-keyframe-curve',
+            title: '缓动曲线与关键帧检查器 (Keyframe Easing Inspector)',
+            subtitle: '交互式三阶贝塞尔曲线调节、实时运动预览与 rate_func 代码生成',
+            colour: '#bb86fc',
+            keywords: 'keyframe easing bezier rate_func 缓动 贝塞尔 关键帧 曲线 速度 动画质感',
+            run: () => setKeyframeCurveOpen(true),
+          },
+          {
+            id: 'open-audio-visualizer',
+            title: '音频响应式频谱与波形助手 (Audio Visualizer)',
+            subtitle: '直方频谱柱、对称波形、环形声场与示波器动画生成',
+            colour: '#e2b340',
+            keywords: 'audio visualizer spectrum waveform 频谱 波形 声波 音频 律动 示波器',
+            run: () => setAudioVisualizerOpen(true),
+          },
+          {
             id: 'export-py',
             title: '导出独立 Manim Python 脚本 (.py)',
             subtitle: '下载可直接由 manim 命令运行的源码',
@@ -724,6 +760,67 @@ export default function StudioApp() {
             setSelectedIds(actionIds);
           }
           notify(`已向动画编排插入“${preset.name}”及导函数曲线 (x₀=${x0.toFixed(2)})`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <RiemannPlaygroundModal
+      isOpen={riemannPlaygroundOpen}
+      onClose={() => setRiemannPlaygroundOpen(false)}
+      onInsertRiemann={(preset, a, b, n, mode) => {
+        try {
+          const current = editor.current?.snapshot() || projectRef.current;
+          const { project: nextProject, actionIds } = createRiemannActions(current, preset, a, b, n, mode);
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入“${preset.name}”黎曼和与定积分`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <KeyframeCurveModal
+      isOpen={keyframeCurveOpen}
+      onClose={() => setKeyframeCurveOpen(false)}
+      onApplyRateFunc={(rateFuncName, coords) => {
+        try {
+          const current = editor.current?.snapshot() || projectRef.current;
+          if (selected) {
+            const all = flattenActions(current.actions);
+            const target = all.find(a => a.id === selected);
+            if (target && !managedObject(target)) {
+              const updated = applyRateFuncToAction(target, rateFuncName, coords);
+              const mapActions = (acts: Action[]): Action[] =>
+                acts.map(a => (a.id === selected ? updated : { ...a, children: mapActions(a.children || []) }));
+              setProject({ ...current, actions: mapActions(current.actions) });
+            }
+          }
+          notify(`已应用缓动曲线 cubic-bezier(${coords.map(v => v.toFixed(2)).join(', ')})`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <AudioVisualizerModal
+      isOpen={audioVisualizerOpen}
+      onClose={() => setAudioVisualizerOpen(false)}
+      onInsertAudioVisualizer={preset => {
+        try {
+          const current = editor.current?.snapshot() || projectRef.current;
+          const { project: nextProject, actionIds } = createAudioVisualizerActions(current, preset);
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入“${preset.name}”音频频谱组件`);
         } catch (e) {
           notify((e as Error).message);
         }

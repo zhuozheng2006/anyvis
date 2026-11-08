@@ -1,0 +1,277 @@
+.audio-vis-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  animation: audioVisFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes audioVisFadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.audio-vis-modal-container {
+  width: 920px;
+  max-width: 95vw;
+  max-height: 90vh;
+  background: #141722;
+  border: 1px solid #282f44;
+  border-radius: 12px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.65);
+  display: flex;
+  flex-direction: column;
+  color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+.audio-vis-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #1a1f2e;
+  border-bottom: 1px solid #262c3e;
+}
+
+.audio-vis-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.audio-vis-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(226, 179, 64, 0.15);
+  color: #e2b340;
+  border: 1px solid rgba(226, 179, 64, 0.3);
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.audio-vis-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.audio-vis-close-btn:hover {
+  background: #2a334d;
+  color: #fff;
+}
+
+.audio-vis-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  padding: 16px;
+  gap: 16px;
+}
+
+.audio-vis-stage-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #0d1017;
+  border: 1px solid #202636;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.audio-vis-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 360px;
+  background: radial-gradient(circle at center, #151a28 0%, #0a0c12 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.audio-vis-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.audio-vis-playback-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #161a26;
+  border-top: 1px solid #242a3c;
+}
+
+.audio-vis-controls-pane {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.audio-vis-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.audio-vis-preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.audio-vis-preset-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 10px;
+  background: #1a1f2e;
+  border: 1px solid #262e44;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.audio-vis-preset-card:hover {
+  background: #232a3f;
+  border-color: #384566;
+}
+
+.audio-vis-preset-card.active {
+  background: rgba(226, 179, 64, 0.14);
+  border-color: #e2b340;
+  color: #e2b340;
+}
+
+.audio-vis-slider-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #171c2a;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #262d42;
+}
+
+.audio-vis-slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.audio-vis-slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.audio-vis-slider {
+  width: 100%;
+  accent-color: #e2b340;
+  cursor: pointer;
+}
+
+.audio-vis-pos-pills {
+  display: flex;
+  gap: 4px;
+}
+
+.audio-vis-pos-pill {
+  flex: 1;
+  padding: 5px;
+  background: #1c2233;
+  border: 1px solid #2b344d;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.audio-vis-pos-pill.active {
+  background: #2a344f;
+  color: #e2b340;
+  border-color: #e2b340;
+}
+
+.audio-vis-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #171b26;
+  border-top: 1px solid #262c3e;
+}
+
+.audio-vis-action-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.audio-vis-btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #222838;
+  border: 1px solid #333c54;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.audio-vis-btn-secondary:hover {
+  background: #2d354b;
+  color: #fff;
+}
+
+.audio-vis-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: #e2b340;
+  border: none;
+  border-radius: 6px;
+  color: #10121a;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.audio-vis-btn-primary:hover:not(:disabled) {
+  background: #f0c766;
+  box-shadow: 0 2px 10px rgba(226, 179, 64, 0.4);
+}

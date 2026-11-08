@@ -1,0 +1,344 @@
+.riemann-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+  animation: riemannFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes riemannFadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.riemann-modal-container {
+  width: 960px;
+  max-width: 95vw;
+  max-height: 90vh;
+  background: #14161d;
+  border: 1px solid #282c3c;
+  border-radius: 12px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+}
+
+.riemann-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #1a1e2a;
+  border-bottom: 1px solid #282c3c;
+}
+
+.riemann-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.riemann-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(88, 196, 221, 0.15);
+  color: #58c4dd;
+  border: 1px solid rgba(88, 196, 221, 0.3);
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.riemann-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.riemann-close-btn:hover {
+  background: #2a3044;
+  color: #fff;
+}
+
+.riemann-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  padding: 16px;
+  gap: 16px;
+}
+
+.riemann-canvas-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #0f1117;
+  border: 1px solid #222636;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.riemann-svg-wrap {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  background: radial-gradient(circle at center, #151926 0%, #0d0f16 100%);
+  user-select: none;
+  touch-action: none;
+}
+
+.riemann-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.riemann-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 12px 14px;
+  background: #161a26;
+  border-top: 1px solid #252a3b;
+}
+
+.riemann-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: #1e2333;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #2d344d;
+}
+
+.riemann-stat-card.highlight {
+  border-color: rgba(88, 196, 221, 0.4);
+  background: rgba(88, 196, 221, 0.08);
+}
+
+.riemann-stat-label {
+  font-size: 11px;
+  color: #8e9bb5;
+  font-weight: 500;
+}
+
+.riemann-stat-val {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #f8fafc;
+}
+
+.riemann-stat-val.primary {
+  color: #58c4dd;
+}
+
+.riemann-stat-val.gold {
+  color: #e2b340;
+}
+
+.riemann-controls-pane {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.riemann-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.riemann-preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.riemann-preset-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 10px;
+  background: #1c2130;
+  border: 1px solid #2a3148;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.riemann-preset-btn:hover {
+  background: #252b40;
+  border-color: #3b4566;
+}
+
+.riemann-preset-btn.active {
+  background: rgba(88, 196, 221, 0.16);
+  border-color: #58c4dd;
+  color: #58c4dd;
+}
+
+.riemann-mode-pill-row {
+  display: flex;
+  gap: 4px;
+  background: #181d2a;
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid #282f44;
+}
+
+.riemann-mode-pill {
+  flex: 1;
+  padding: 6px 4px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.riemann-mode-pill.active {
+  background: #2a334d;
+  color: #fff;
+  font-weight: 600;
+}
+
+.riemann-slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #181d2a;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #262c40;
+}
+
+.riemann-slider-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.riemann-slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.riemann-slider {
+  width: 100%;
+  accent-color: #58c4dd;
+  cursor: pointer;
+}
+
+.riemann-limit-anim-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #2b6cb0 0%, #1a4f8b 100%);
+  border: 1px solid #4299e1;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.riemann-limit-anim-btn:hover:not(:disabled) {
+  filter: brightness(1.15);
+  box-shadow: 0 4px 14px rgba(66, 153, 225, 0.35);
+}
+
+.riemann-limit-anim-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.riemann-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #181c28;
+  border-top: 1px solid #282c3c;
+}
+
+.riemann-action-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.riemann-btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #222838;
+  border: 1px solid #333c54;
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.riemann-btn-secondary:hover {
+  background: #2d354b;
+  color: #fff;
+}
+
+.riemann-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: #58c4dd;
+  border: none;
+  border-radius: 6px;
+  color: #0b141d;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.riemann-btn-primary:hover:not(:disabled) {
+  background: #7bd5ea;
+  box-shadow: 0 2px 10px rgba(88, 196, 221, 0.4);
+}
