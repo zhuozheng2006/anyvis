@@ -11,7 +11,7 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 本机工作区：`/Users/zane/Documents/ChatGPT/AnyVis`。
 - 本地工作区完整关联 Git 仓库（分支 `main`，远端 `origin`），提交和推送可直接使用原生 Git 操作。
 - 已接入 Manim CE **0.20.1** 的 **2,293 个 API 入口**；**1,731 个**有原生行为证据，**562 个**尚无逐项行为证据（其中通用/Cairo 仅余 53 项，覆盖率达 97.0%；OpenGL 专属 509 项；已确证剩余 53 项通用接口全部属于抽象基类、静态类型协议、OpenGL 专属交互或上游缺陷，真正可执行调用的通用 Cairo API 达成 100% 覆盖闭环）。入口可生成调用不等于行为、参数组合或视觉结果全部正确。
-- 501 项应用测试（82 个测试文件）、30 项原生测试运行、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
+- 505 项应用测试（85 个测试文件）、30 项原生测试运行、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
 - 最新三平台桌面构建通过。Linux **Mesa softpipe** 已实际绘制并验证一个 OpenGL 场景；本机 Mac 的 OpenGL 上下文仍不可用。
 - 当前没有待合并的 PR #1：它已获用户许可并成功合并。不存在需要再次询问的旧合并阻塞。
 
@@ -71,6 +71,9 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 经典欧几里得几何与三角形四心画板 (`GeometryPlaygroundModal` / `geometry-euclidean.ts`)：对标 3Blue1Brown 经典几何直观教学与 GeoGebra，提供三角形顶点 $A, B, C$ 自由拖拽形变、重心 $G$、外心 $O$、内心 $I$、垂心 $H$ 实时计算与 Euler 欧拉线恒成立比值 ($HG = 2 \cdot GO$) 动态验证、勾股定理外接正方形弦图 ($a^2+b^2=c^2$)、内切圆 ($r = S/s$) 与外接圆半径实时度量 HUD，及一键生成 Manim CE 几何构造脚本与 AnyVis 积木动作。
 - 智能对齐与多物体自动布局 (`AutoLayoutModal` / `auto-layout.ts`)：对标 Motion Canvas / Figma / Manim `VGroup.arrange` 与 `arrange_in_grid`，支持水平整齐排列、垂直对齐、网格矩阵布局、环形放射分布与水平/垂直等距均分 6 种排版模式、间距/行间距/列间距/圆环半径精确滑块调节、质心中心与原点基准锚点切换、选中物体实时位移虚线投影预览，及一键更新工程中全部选中物体的排版坐标与生成 Manim 编组排版代码。
 - 极坐标与参数方程曲线动画交互台 (`PolarParametricModal` / `polar-parametric.ts`)：对标 3Blue1Brown 与 Desmos 极坐标微积分与动力学轨迹动画，内置心脏线、玫瑰花瓣线、阿基米德螺线、等角对数螺线、李萨如简谐振动相图、最速降线摆线、星形线与蝴蝶曲线 8 种经典高阶数学曲线预设、同心圆与极角射线网格背景、循迹动态描迹动画控制、切线方向单位向量与箭头指示、实时极坐标 $(r, \theta)$ 与累计弧长 $L = \int ds$ 统计量 HUD，及一键生成 Manim CE `PolarPlane` 与 `ParametricFunction` 动画脚本。
+- 数理动效工作台合集下拉中心 (`ToolsHubDropdown` / `tools-hub.css`)：将 18 款专业级数学与动效工作台整理为 3 大分类 Mega Menu（3B1B 高等数理 7 款、几何拓扑与空间 5 款、导演运镜与视听 6 款），每个条目带图标色块与功能副标题，解决顶部栏按钮水平拥挤与溢出问题；同时保留 3 大高频工具顶栏直达引脚与快捷键入口。
+- 全局快捷键速查中心与工作区视图热键 (`ShortcutsHelpModal` / `shortcuts-help.css`)：支持 `?` / `Shift + /` 随时唤出键盘速查弹窗（播放控制、1/2/3 视图切换、M 标记、D 克隆、⌘K 命令面板、⌘S 保存），并在输入框外支持按 `1`/`2`/`3` 键秒级无缝切换积木/时间轴/代码视图。
+- 画布快速对象添加栏 (`QuickAddToolbar` / `quick-add.css`)：在工作区顶部提供 1-click 快捷创建按钮（文字、LaTeX公式、圆、正方形、坐标系、箭头），无需翻查积木抽屉即可一键向场景注入初始对象并自动选中。
 - 系统、文件与 TeX 工具链全量覆盖 (`systemAndFileUtilities`, +63 项原生 API，达 1,731 项)：涵盖文件操作底层、异常与弃用装饰器、代码高亮、字体注册、进阶分段与视频输出、TeX 全自动排错洞察等 14 组测试族。
 - 深度排查并记录 7 处 Manim CE 0.20.1 原生源码缺陷（`VectorScene`、`SpecialThreeDScene`、`ApplyPointwiseFunctionToCenter`、`SplitScreenCamera`、`VMobject.add_cubic_bezier_curves` 及 `print_tex_error`），并审计确证剩余 53 项通用/Cairo 接口全部属于非业务可调用项（抽象类、静态 Protocol、OpenGL 专属交互、桌面弹窗），真正可执行通用 Cairo API 达成 100% 覆盖。
 - CI 自动化与桌面端打包健壮性：修复 Linux GitHub 2-core runner 运行 ASAR 封装应用时偶发看门狗超时的问题，支持 `--smoke-timeout` 参数并将打包环境等待提升至 120s（外部看门狗 150s），在 Electron 宿主注入阶段性诊断日志打点（`Session / Mount / API / Video / Restart / Storage`），Linux/Windows/macOS 打包发布 100% 绿灯。

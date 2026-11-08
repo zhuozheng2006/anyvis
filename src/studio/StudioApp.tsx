@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, Compass, Globe, Film, Box, Video, Captions, Network, AreaChart, Triangle, AlignJustify, Orbit, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Box, Video, Keyboard, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -44,6 +44,9 @@ import { ProbabilityPlaygroundModal } from './ProbabilityPlaygroundModal';
 import { GeometryPlaygroundModal } from './GeometryPlaygroundModal';
 import { AutoLayoutModal } from './AutoLayoutModal';
 import { PolarParametricModal } from './PolarParametricModal';
+import { ToolsHubDropdown } from './ToolsHubDropdown';
+import { ShortcutsHelpModal } from './ShortcutsHelpModal';
+import { QuickAddToolbar } from './QuickAddToolbar';
 import './studio.css';
 import './studio-polish.css';
 
@@ -108,6 +111,7 @@ export default function StudioApp() {
   const [geometryPlaygroundOpen, setGeometryPlaygroundOpen] = useState(false);
   const [autoLayoutOpen, setAutoLayoutOpen] = useState(false);
   const [polarParametricOpen, setPolarParametricOpen] = useState(false);
+  const [shortcutsModalOpen, setShortcutsModalOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
   const [saveError, setSaveError] = useState('');
@@ -446,6 +450,37 @@ export default function StudioApp() {
     return () => window.removeEventListener('keydown', handler, true);
   }, [presenting, advancePresentation, jumpPresentationStep, exitPresentation, presentationStepIdx]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tagName = target?.tagName?.toLowerCase();
+      if (
+        tagName === 'input' ||
+        tagName === 'textarea' ||
+        tagName === 'select' ||
+        target?.isContentEditable ||
+        target?.closest('.cm-editor')
+      ) {
+        return;
+      }
+      if (e.key === '1') {
+        e.preventDefault();
+        switchView('blocks');
+      } else if (e.key === '2') {
+        e.preventDefault();
+        switchView('timeline');
+      } else if (e.key === '3') {
+        e.preventDefault();
+        switchView('code');
+      } else if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        e.preventDefault();
+        setShortcutsModalOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [switchView]);
+
   const importAI = async () => {
     setAiError('');
     try {
@@ -492,24 +527,30 @@ export default function StudioApp() {
       <div className="project-title"><input aria-label="作品名称" value={project.name} maxLength={80} onBlur={() => { if (!project.name.trim()) setProject(p => ({ ...p, name: '未命名动画' })); }} onChange={e => setProject(p => ({ ...p, name: e.target.value }))}/><span className={saveError ? 'save-status error' : 'save-status'}>{saveError ? '需要备份' : saved ? <><Check size={12}/> 已自动保存</> : '保存中…'}</span></div>
       <div className="header-spacer"/>
       <button className="header-button" title="全局命令面板 · ⌘/Ctrl K" aria-label="全局命令面板" onClick={() => setCmdPaletteOpen(true)}><Search size={15}/><span>命令 ⌘K</span></button>
+      <ToolsHubDropdown
+        onOpenMatrix={() => setMatrixPlaygroundOpen(true)}
+        onOpenFourier={() => setFourierPlaygroundOpen(true)}
+        onOpenCalculus={() => setCalculusPlaygroundOpen(true)}
+        onOpenRiemann={() => setRiemannPlaygroundOpen(true)}
+        onOpenVectorField={() => setVectorFieldOpen(true)}
+        onOpenComplexMapping={() => setComplexMappingOpen(true)}
+        onOpenPolarParametric={() => setPolarParametricOpen(true)}
+        onOpenGeometry={() => setGeometryPlaygroundOpen(true)}
+        onOpenSurface={() => setSurfacePlaygroundOpen(true)}
+        onOpenGraph={() => setGraphPlaygroundOpen(true)}
+        onOpenProbability={() => setProbabilityPlaygroundOpen(true)}
+        onOpenAutoLayout={() => setAutoLayoutOpen(true)}
+        onOpenCameraDirector={() => setCameraDirectorOpen(true)}
+        onOpenSubtitleSync={() => setSubtitleSyncOpen(true)}
+        onOpenStoryboard={() => setStoryboardOpen(true)}
+        onOpenEasingCurve={() => setKeyframeCurveOpen(true)}
+        onOpenAudioVisualizer={() => setAudioVisualizerOpen(true)}
+        onOpenTexColorStyler={() => setTexColorStylerOpen(true)}
+      />
       <button className="header-button" title="3B1B 矩阵线性变换交互台" aria-label="3B1B 矩阵线性变换交互台" onClick={() => setMatrixPlaygroundOpen(true)}><Grid size={15}/><span>矩阵台</span></button>
-      <button className="header-button" title="3B1B 傅里叶环绕圆交互台" aria-label="3B1B 傅里叶环绕圆交互台" onClick={() => setFourierPlaygroundOpen(true)}><Activity size={15}/><span>傅里叶台</span></button>
-      <button className="header-button" title="3B1B 微积分导数与切线交互台" aria-label="3B1B 微积分导数与切线交互台" onClick={() => setCalculusPlaygroundOpen(true)}><TrendingUp size={15}/><span>微积分台</span></button>
-      <button className="header-button" title="3B1B 黎曼和与定积分交互台" aria-label="3B1B 黎曼和与定积分交互台" onClick={() => setRiemannPlaygroundOpen(true)}><BarChart3 size={15}/><span>黎曼积分台</span></button>
-      <button className="header-button" title="缓动曲线与关键帧检查器" aria-label="缓动曲线与关键帧检查器" onClick={() => setKeyframeCurveOpen(true)}><Sliders size={15}/><span>缓动曲线</span></button>
-      <button className="header-button" title="音频响应式频谱与波形助手" aria-label="音频响应式频谱与波形助手" onClick={() => setAudioVisualizerOpen(true)}><Radio size={15}/><span>音频频谱</span></button>
-      <button className="header-button" title="3B1B 公式专属配色器" aria-label="3B1B 公式专属配色器" onClick={() => setTexColorStylerOpen(true)}><Palette size={15}/><span>公式配色</span></button>
-      <button className="header-button" title="2D 向量场与流线工作台" aria-label="2D 向量场与流线工作台" onClick={() => setVectorFieldOpen(true)}><Compass size={15}/><span>向量场</span></button>
-      <button className="header-button" title="3B1B 复变函数与共形映射工作台" aria-label="3B1B 复变函数与共形映射工作台" onClick={() => setComplexMappingOpen(true)}><Globe size={15}/><span>复变共形</span></button>
-      <button className="header-button" title="分镜剧本与多章节大纲" aria-label="分镜剧本与多章节大纲" onClick={() => setStoryboardOpen(true)}><Film size={15}/><span>分镜剧本</span></button>
       <button className="header-button" title="3B1B 3D 参数曲面与视角工作台" aria-label="3B1B 3D 参数曲面与视角工作台" onClick={() => setSurfacePlaygroundOpen(true)}><Box size={15}/><span>3D 曲面</span></button>
       <button className="header-button" title="运镜导演与动态取景器" aria-label="运镜导演与动态取景器" onClick={() => setCameraDirectorOpen(true)}><Video size={15}/><span>运镜导演</span></button>
-      <button className="header-button" title="字幕配音同步工作台" aria-label="字幕配音同步工作台" onClick={() => setSubtitleSyncOpen(true)}><Captions size={15}/><span>字幕配音</span></button>
-      <button className="header-button" title="图论网络与拓扑交互台" aria-label="图论网络与拓扑交互台" onClick={() => setGraphPlaygroundOpen(true)}><Network size={15}/><span>图论拓扑</span></button>
-      <button className="header-button" title="概率分布与中心极限定理交互台" aria-label="概率分布与中心极限定理交互台" onClick={() => setProbabilityPlaygroundOpen(true)}><AreaChart size={15}/><span>概率分布</span></button>
-      <button className="header-button" title="经典欧几里得几何与三角形四心画板" aria-label="经典欧几里得几何与三角形四心画板" onClick={() => setGeometryPlaygroundOpen(true)}><Triangle size={15}/><span>欧氏几何</span></button>
-      <button className="header-button" title="智能对齐与多物体自动布局" aria-label="智能对齐与多物体自动布局" onClick={() => setAutoLayoutOpen(true)}><AlignJustify size={15}/><span>自动布局</span></button>
-      <button className="header-button" title="极坐标与参数方程曲线动画交互台" aria-label="极坐标与参数方程曲线动画交互台" onClick={() => setPolarParametricOpen(true)}><Orbit size={15}/><span>极坐标参数</span></button>
+      <button className="header-button" title="全局快捷键速查中心 (按 ? 或 Shift+/)" aria-label="全局快捷键速查中心" onClick={() => setShortcutsModalOpen(true)}><Keyboard size={15}/><span>快捷键 ?</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -524,7 +565,13 @@ export default function StudioApp() {
           <div className="editor-tabs" role="tablist" aria-label="编辑方式"><button role="tab" aria-selected={editorTab === 'blocks'} className={editorTab === 'blocks' ? 'active' : ''} onClick={() => switchView('blocks')}><Clapperboard size={16}/> 积木</button><button role="tab" aria-selected={editorTab === 'timeline'} className={editorTab === 'timeline' ? 'active' : ''} onClick={() => switchView('timeline')}><LayoutGrid size={16}/> 时间轴</button><button role="tab" aria-selected={editorTab === 'code'} className={editorTab === 'code' ? 'active' : ''} onClick={() => switchView('code')}><Code2 size={16}/> 代码</button></div>
           <div className="workspace-tools"><button className="icon-button" disabled={!history.past.length} onClick={undoProject} title="撤销" aria-label="撤销"><Undo2 size={16}/></button><button className="icon-button" disabled={!history.future.length} onClick={redoProject} title="重做" aria-label="重做"><Redo2 size={16}/></button><span/><button className="icon-button" onClick={() => setModal('settings')} title="画面设置" aria-label="画面设置"><Settings2 size={16}/></button></div>
         </div>
-        <div className="workspace-intro"><span className="tiny-dot"/><span>在右侧管理对象，在这里编排动作。</span><button onClick={() => setModal('templates')}>从示例开始 <ArrowRight size={12}/></button></div>
+        <div className="workspace-intro">
+          <span className="tiny-dot"/>
+          <QuickAddToolbar onAdd={addObject} />
+          <span style={{ margin: '0 4px', color: '#cbd5e1' }}>|</span>
+          <span style={{ color: '#64748b' }}>在右侧管理对象，在这里编排动作</span>
+          <button onClick={() => setModal('templates')}>从示例开始 <ArrowRight size={12}/></button>
+        </div>
         <div className="workspace-content" style={{ display: editorTab === 'blocks' ? 'flex' : 'none' }}>
           <StudioBlocks animationOnly onUndo={undoProject} onRedo={redoProject} ref={editor} project={project} onChange={setProject} onSelect={id => { setSelected(id); setSelectedIds(id ? [id] : []); }} selectedBlockId={selected || undefined} highlightedBlockId={job?.blockId} onWorkspaceError={message => setRenderError(message || '')}/>
         </div>
@@ -822,6 +869,14 @@ export default function StudioApp() {
             colour: '#38bdf8',
             keywords: 'polar parametric curve cardioid rose lissajous 极坐标 参数方程 心脏线 玫瑰线 螺线 描迹 3b1b',
             run: () => setPolarParametricOpen(true),
+          },
+          {
+            id: 'shortcuts-help',
+            title: '全局快捷键速查中心 (Keyboard Shortcuts)',
+            subtitle: '查看播放控制、视图切换、标记与编辑快捷键列表',
+            colour: '#38bdf8',
+            keywords: 'shortcuts keys keyboard hotkey 快捷键 帮助 键盘 操作',
+            run: () => setShortcutsModalOpen(true),
           },
           {
             id: 'export-py',
@@ -1171,6 +1226,11 @@ export default function StudioApp() {
           notify((e as Error).message);
         }
       }}
+    />
+
+    <ShortcutsHelpModal
+      isOpen={shortcutsModalOpen}
+      onClose={() => setShortcutsModalOpen(false)}
     />
   </div>;
 }
