@@ -411,7 +411,10 @@ export async function createAnyVisServer(options = {}) {
       child.once('close', () => { clearTimeout(timer); resolve(); });
     })));
     await healthPromise;
-    if (server.listening) await new Promise(resolve => server.close(resolve));
+    if (server.listening) {
+      if (typeof server.closeAllConnections === 'function') server.closeAllConnections();
+      await new Promise(resolve => server.close(resolve));
+    }
   }
   return { server, port: actualPort, close, healthPromise, cacheRoot };
 }

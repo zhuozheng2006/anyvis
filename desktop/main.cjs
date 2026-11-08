@@ -176,7 +176,9 @@ async function finishSmoke(error) {
     if (smokeResult) await writeFile(smokeResult, JSON.stringify({ ok: false, error: failure.message, electron: process.versions.electron }, null, 2)).catch(() => {});
     console.error(`AnyVis desktop smoke failed: ${failure.message}`); process.exitCode = 1;
   }
-  app.quit();
+  for (const win of BrowserWindow.getAllWindows()) if (!win.isDestroyed()) win.destroy();
+  try { await engine?.close(); } catch {}
+  app.exit(process.exitCode || 0);
 }
 
 function installIPC() {
