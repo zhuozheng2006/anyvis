@@ -514,9 +514,252 @@ const families = {
     api('manim.utils.images.invert_image', 'cl_inv_img', { image: ref('cl_pa') }, {}, 'assert $result.size[0] > 0');
     api('manim.utils.images.drag_pixels', 'cl_drg_px', { frames: [ref('cl_pa'), ref('cl_pa')] }, {}, 'assert len($result) == 2');
   },
+  svgMobjects(f) {
+    const { api, check } = f;
+    api('Circle', 'circle', { radius: 1 }, {}, 'assert objects["circle"] is not None');
+    check(`
+import os, tempfile, svgelements, xml.etree.ElementTree as ET
+_svg_path = tempfile.mktemp(suffix=".svg")
+with open(_svg_path, "w") as _f:
+    _f.write("""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect x="10" y="10" width="80" height="80" fill="red" />
+  <circle cx="50" cy="50" r="30" fill="blue" />
+  <line x1="0" y1="0" x2="100" y2="100" stroke="black" />
+  <polygon points="20,20 40,40 20,40" fill="green" />
+  <polyline points="10,10 30,30 50,10" stroke="yellow" />
+  <path d="M 10 10 L 90 90" stroke="purple" />
+  <text x="20" y="20">Hi</text>
+</svg>""")
+objects["_svg_doc"] = svgelements.SVG.parse(_svg_path)
+objects["_rect_el"] = [el for el in objects["_svg_doc"].elements() if isinstance(el, svgelements.Rect)][0]
+objects["_circ_el"] = [el for el in objects["_svg_doc"].elements() if isinstance(el, (svgelements.Circle, svgelements.Ellipse))][0]
+objects["_line_el"] = [el for el in objects["_svg_doc"].elements() if isinstance(el, svgelements.SimpleLine)][0]
+objects["_poly_el"] = [el for el in objects["_svg_doc"].elements() if isinstance(el, svgelements.Polygon)][0]
+objects["_pl_el"] = [el for el in objects["_svg_doc"].elements() if isinstance(el, svgelements.Polyline)][0]
+objects["_path_el"] = [el for el in objects["_svg_doc"].elements() if isinstance(el, svgelements.Path)][0]
+objects["_text_el"] = svgelements.Text("Hi")
+objects["_path_obj"] = svgelements.Path("M 0 0 L 10 10 Z")
+objects["_xml_tree"] = ET.parse(_svg_path)
+`);
+    api('Circle', 'rect_shape', {}, {}, 'objects["rect_shape"] = objects["_rect_el"]');
+    api('Circle', 'circ_shape', {}, {}, 'objects["circ_shape"] = objects["_circ_el"]');
+    api('Circle', 'line_shape', {}, {}, 'objects["line_shape"] = objects["_line_el"]');
+    api('Circle', 'poly_shape', {}, {}, 'objects["poly_shape"] = objects["_poly_el"]');
+    api('Circle', 'pl_shape', {}, {}, 'objects["pl_shape"] = objects["_pl_el"]');
+    api('Circle', 'path_shape', {}, {}, 'objects["path_shape"] = objects["_path_el"]');
+    api('Circle', 'text_shape', {}, {}, 'objects["text_shape"] = objects["_text_el"]');
+    api('Circle', 'path_obj_ref', {}, {}, 'objects["path_obj_ref"] = objects["_path_obj"]');
+    api('Circle', 'xml_tree_ref', {}, {}, 'objects["xml_tree_ref"] = objects["_xml_tree"]');
+    api('Circle', 'doc_ref', {}, {}, 'objects["doc_ref"] = objects["_svg_doc"]');
+    api('Circle', 'matrix_ref', {}, {}, 'objects["matrix_ref"] = objects["_rect_el"].transform');
+
+    api('SVGMobject', 'svg_mob', { file_name: 'test_icon.svg' }, {}, 'assert len($result.submobjects) >= 1');
+    api('SVGMobject.get_file_path', 'svg_fp', {}, { receiver: 'svg_mob' }, 'assert str($result).endswith(".svg")');
+    api('SVGMobject.rect_to_mobject', 'svg_rect', { rect: ref('rect_shape') }, {}, 'assert len($result.get_all_points()) > 0');
+    api('SVGMobject.ellipse_to_mobject', 'svg_ellipse', { ellipse: ref('circ_shape') }, {}, 'assert len($result.get_all_points()) > 0');
+    api('SVGMobject.line_to_mobject', 'svg_line', { line: ref('line_shape') }, {}, 'assert len($result.get_all_points()) > 0');
+    api('SVGMobject.polygon_to_mobject', 'svg_poly', { polygon: ref('poly_shape') }, {}, 'assert len($result.get_all_points()) > 0');
+    api('SVGMobject.polyline_to_mobject', 'svg_pl', { polyline: ref('pl_shape') }, { receiver: 'svg_mob' }, 'assert len($result.get_all_points()) > 0');
+    api('SVGMobject.path_to_mobject', 'svg_path_mob', { path: ref('path_shape') }, { receiver: 'svg_mob' }, 'assert len($result.get_all_points()) > 0');
+    api('SVGMobject.text_to_mobject', 'svg_text_mob', { text: ref('text_shape') }, {}, 'assert objects["svg_mob"] is not None');
+    api('SVGMobject.apply_style_to_mobject', 'svg_styled', { mob: ref('circle'), shape: ref('rect_shape') }, {}, 'assert objects["circle"] is not None');
+    api('SVGMobject.handle_transform', 'svg_trans', { mob: ref('circle'), matrix: ref('matrix_ref') }, {}, 'assert objects["circle"] is not None');
+    api('SVGMobject.get_mob_from_shape_element', 'svg_from_shape', { shape: ref('rect_shape') }, { receiver: 'svg_mob' }, 'assert len($result.get_all_points()) > 0');
+    api('SVGMobject.get_mobjects_from', 'svg_from_doc', { svg: ref('doc_ref') }, { receiver: 'svg_mob' }, 'assert len($result) > 0');
+    api('SVGMobject.generate_config_style_dict', 'svg_style_dict', {}, { receiver: 'svg_mob' }, 'assert isinstance($result, dict)');
+    api('SVGMobject.init_svg_mobject', 'svg_init', { use_svg_cache: false }, { receiver: 'svg_mob' }, 'assert objects["svg_mob"] is not None');
+    api('SVGMobject.modify_xml_tree', 'svg_mod_tree', { element_tree: ref('xml_tree_ref') }, { receiver: 'svg_mob' }, 'assert $result is not None');
+    api('SVGMobject.move_into_position', 'svg_mv_pos', {}, { receiver: 'svg_mob' }, 'assert objects["svg_mob"] is not None');
+    api('SVGMobject.generate_mobject', 'svg_gen_mob', {}, { receiver: 'svg_mob' }, 'assert objects["svg_mob"] is not None');
+    api('VMobjectFromSVGPath', 'v_svg_path', { path_obj: ref('path_obj_ref') }, {}, 'assert len($result.get_all_points()) > 0');
+    api('VMobjectFromSVGPath.handle_commands', 'v_hnd_cmd', {}, { receiver: 'v_svg_path' }, 'assert len(objects["v_svg_path"].points) > 0');
+    api('VMobjectFromSVGPath.init_points', 'v_init_pts', {}, { receiver: 'v_svg_path' }, 'assert len(objects["v_svg_path"].points) > 0');
+    api('VMobjectFromSVGPath.generate_points', 'v_gen_pts', {}, { receiver: 'v_svg_path' }, 'assert len(objects["v_svg_path"].points) > 0');
+
+    // Mobject methods & overrides
+    api('Circle', 'anim_fn_ref', {}, {}, 'objects["anim_fn_ref"] = lambda m: Write(m)');
+    api('Circle', 'anim_class_ref', {}, {}, 'objects["anim_class_ref"] = FadeIn');
+    api('manim.mobject.mobject.Mobject.add_animation_override', 'm_add_override', { animation_class: ref('anim_class_ref'), override_func: ref('anim_fn_ref') }, {}, 'assert objects["circle"] is not None');
+    api('manim.mobject.mobject.Mobject.animation_override_for', 'm_override_for', { animation_class: ref('anim_class_ref') }, {}, 'assert callable($result)');
+    check('Mobject._original__init__ = Mobject.__init__');
+    api('manim.mobject.mobject.Mobject.set_default', 'm_set_default', {}, {}, 'assert Square is not None');
+    api('manim.mobject.mobject.override_animate', 'm_over_anim', { method: ref('anim_fn_ref') }, {}, 'assert callable($result)');
+    check('config.video_dir = tempfile.mkdtemp()');
+    api('manim.mobject.mobject.Mobject.save_image', 'm_save_img', { name: 'saved_circle' }, { receiver: 'circle' }, 'assert os.path.exists(os.path.join(config.get_dir("video_dir"), "saved_circle.png"))');
+  },
+  vectorAndZoomScenes(f) {
+    const { api, check } = f;
+    // VectorScene
+    api('VectorScene', 'vs_inst', {}, {}, 'assert $result is not None');
+    check(`
+objects["vs_inst"].skip_animations = True
+objects["vs_inst"].plane = objects["vs_inst"].add_plane()
+`);
+    api('Vector', 'vs_vec', { direction: vec(1, 2, 0) }, {}, 'assert len($result.get_all_points()) > 0');
+    api('Line', 'vs_x_line', { start: vec(0, 0, 0), end: vec(1, 0, 0) }, {}, 'assert len($result.get_all_points()) > 0');
+    api('Line', 'vs_y_line', { start: vec(1, 0, 0), end: vec(1, 2, 0) }, {}, 'assert len($result.get_all_points()) > 0');
+    api('MathTex', 'vs_x_coord', { tex_strings: ['1'] }, {}, 'assert len($result.get_all_points()) > 0');
+    api('MathTex', 'vs_y_coord', { tex_strings: ['2'] }, {}, 'assert len($result.get_all_points()) > 0');
+
+    api('VectorScene.get_vector', 'vs_get_vec', { numerical_vector: vec(1, 2, 0) }, { receiver: 'vs_inst' }, 'assert len($result.get_all_points()) > 0');
+    api('VectorScene.get_basis_vector_labels', 'vs_basis', {}, { receiver: 'vs_inst' }, 'assert len($result) == 2');
+    api('VectorScene.position_x_coordinate', 'vs_pos_x', { x_coord: ref('vs_x_coord'), x_line: ref('vs_x_line'), vector: vec(1, 2, 0) }, { receiver: 'vs_inst' }, 'assert $result is objects["vs_x_coord"]');
+    api('VectorScene.position_y_coordinate', 'vs_pos_y', { y_coord: ref('vs_y_coord'), y_line: ref('vs_y_line'), vector: vec(1, 2, 0) }, { receiver: 'vs_inst' }, 'assert $result is objects["vs_y_coord"]');
+    api('VectorScene.write_vector_coordinates', 'vs_wvc', { vector: ref('vs_vec') }, { receiver: 'vs_inst' }, 'assert $result is not None');
+
+    // LinearTransformationScene
+    api('LinearTransformationScene', 'lts_inst', {}, {}, 'assert $result is not None');
+    api('Vector', 'lts_v1', { direction: vec(1, 0, 0) }, {}, 'assert len($result.get_all_points()) > 0');
+    check(`
+objects["lts_inst"].skip_animations = True
+objects["lts_inst"].setup()
+objects["lts_inst"].add_vector(objects["lts_v1"])
+for _m in objects["lts_v1"].get_family(): _m.target = _m.copy()
+objects["lts_fn"] = lambda p: p * 2
+objects["lts_mat"] = np.array([[2, 0], [0, 2]])
+objects["lts_conf1"] = [{"a": 1}]
+objects["lts_conf2"] = [{"b": 2}]
+`);
+    api('Circle', 'lts_fn', {}, {}, 'objects["lts_fn"] = lambda p: p * 2');
+    api('Circle', 'lts_mat', {}, {}, 'objects["lts_mat"] = np.array([[2, 0], [0, 2]])');
+    api('Circle', 'lts_conf1', {}, {}, 'objects["lts_conf1"] = [{"a": 1}]');
+    api('Circle', 'lts_conf2', {}, {}, 'objects["lts_conf2"] = [{"b": 2}]');
+
+    api('LinearTransformationScene.update_default_configs', 'lts_cfg', { default_configs: ref('lts_conf1'), passed_configs: ref('lts_conf2') }, {}, 'assert objects["lts_conf1"][0]["b"] == 2');
+    api('LinearTransformationScene.get_piece_movement', 'lts_pc_mov', { pieces: ref('lts_v1') }, { receiver: 'lts_inst' }, 'assert $result is not None');
+    api('LinearTransformationScene.get_moving_mobject_movement', 'lts_mv_mov', { func: ref('lts_fn') }, { receiver: 'lts_inst' }, 'assert isinstance($result, Animation)');
+    api('LinearTransformationScene.get_vector_movement', 'lts_vec_mov', { func: ref('lts_fn') }, { receiver: 'lts_inst' }, 'assert isinstance($result, Animation)');
+    api('LinearTransformationScene.write_vector_coordinates', 'lts_wvc', { vector: ref('lts_v1') }, { receiver: 'lts_inst' }, 'assert $result is not None');
+    api('LinearTransformationScene.add_transformable_label', 'lts_add_lbl', { vector: ref('lts_v1'), label: 'v1' }, { receiver: 'lts_inst' }, 'assert $result is not None');
+    check(`
+objects["lts_v1"].target = objects["lts_v1"].copy()
+for _m in objects["lts_add_lbl"].get_family(): _m.target = _m.copy()
+`);
+    api('LinearTransformationScene.get_transformable_label_movement', 'lts_tl_mov', {}, { receiver: 'lts_inst' }, 'assert isinstance($result, Animation)');
+    api('LinearTransformationScene.apply_function', 'lts_app_fn', { function: ref('lts_fn') }, { receiver: 'lts_inst' }, 'assert objects["lts_inst"] is not None');
+
+    api('LinearTransformationScene', 'lts_inst2', {}, {}, 'assert $result is not None');
+    check(`
+objects["lts_inst2"].skip_animations = True
+objects["lts_inst2"].setup()
+`);
+    api('LinearTransformationScene.apply_inverse', 'lts_app_inv', { matrix: ref('lts_mat') }, { receiver: 'lts_inst2' }, 'assert objects["lts_inst2"] is not None');
+
+    api('LinearTransformationScene', 'lts_inst3', {}, {}, 'assert $result is not None');
+    check(`
+objects["lts_inst3"].skip_animations = True
+objects["lts_inst3"].setup()
+`);
+    api('LinearTransformationScene.apply_inverse_transpose', 'lts_app_inv_t', { t_matrix: ref('lts_mat') }, { receiver: 'lts_inst3' }, 'assert objects["lts_inst3"] is not None');
+
+    api('LinearTransformationScene', 'lts_inst4', {}, {}, 'assert $result is not None');
+    check(`
+objects["lts_inst4"].skip_animations = True
+objects["lts_inst4"].setup()
+`);
+    api('LinearTransformationScene.apply_nonlinear_transformation', 'lts_app_nonlin', { function: ref('lts_fn') }, { receiver: 'lts_inst4' }, 'assert objects["lts_inst4"] is not None');
+
+    // ZoomedScene
+    api('ZoomedScene', 'zs_scene', {}, {}, 'assert $result is not None');
+    api('ZoomedScene.setup', 'zs_setup', {}, { receiver: 'zs_scene' }, 'assert objects["zs_scene"] is not None');
+    api('ZoomedScene.get_zoom_factor', 'zs_zf', {}, { receiver: 'zs_scene' }, 'assert $result > 0');
+    api('ZoomedScene.activate_zooming', 'zs_act', { animate: false }, { receiver: 'zs_scene' }, 'assert objects["zs_scene"] is not None');
+    api('ZoomedScene.get_zoom_in_animation', 'zs_zin', {}, { receiver: 'zs_scene' }, 'assert $result is not None');
+    api('ZoomedScene.get_zoomed_display_pop_out_animation', 'zs_zout', {}, { receiver: 'zs_scene' }, 'assert $result is not None');
+  },
+  renderingAndFileWriter(f) {
+    const { api, check } = f;
+    // CairoRenderer
+    api('CairoRenderer', 'cairo_rend', {}, {}, 'assert $result is not None');
+    api('Scene', 'rend_scene', {}, {}, 'assert $result is not None');
+    api('Circle', 'rend_circle', {}, {}, 'assert objects["rend_circle"] is not None');
+    check('objects["rend_static"] = [objects["rend_circle"]]');
+    api('Circle', 'rend_static', {}, {}, 'assert len(objects["rend_static"]) == 1');
+
+    api('CairoRenderer.init_scene', 'cr_init_sc', { scene: ref('rend_scene') }, { receiver: 'cairo_rend' }, 'assert objects["cairo_rend"] is not None');
+    api('CairoRenderer.update_skipping_status', 'cr_upd_skip', {}, { receiver: 'cairo_rend' }, 'assert objects["cairo_rend"] is not None');
+    api('CairoRenderer.get_frame', 'cr_frame', {}, { receiver: 'cairo_rend' }, 'assert $result.shape[2] == 4');
+    api('CairoRenderer.save_static_frame_data', 'cr_save_stat', { scene: ref('rend_scene'), static_mobjects: ref('rend_static') }, { receiver: 'cairo_rend' }, 'assert objects["cairo_rend"] is not None');
+    api('CairoRenderer.update_frame', 'cr_upd_fr', { scene: ref('rend_scene') }, { receiver: 'cairo_rend' }, 'assert objects["cairo_rend"] is not None');
+    api('CairoRenderer.freeze_current_frame', 'cr_frz_fr', { duration: 0.1 }, { receiver: 'cairo_rend' }, 'assert objects["cairo_rend"] is not None');
+    api('CairoRenderer.scene_finished', 'cr_sc_fin', { scene: ref('rend_scene') }, { receiver: 'cairo_rend' }, 'assert objects["cairo_rend"] is not None');
+
+    // vectorized_mobject_rendering
+    check(`
+from manim.mobject.opengl.opengl_geometry import OpenGLCircle
+objects["gl_circle"] = OpenGLCircle()
+`);
+    api('Circle', 'gl_circle', {}, {}, 'objects["gl_circle"] = OpenGLCircle()');
+    api('manim.renderer.vectorized_mobject_rendering.triangulate_mobject', 'vmr_tri', { mob: ref('gl_circle') }, {}, 'assert len($result[0]) > 0');
+    api('manim.renderer.vectorized_mobject_rendering.build_matrix_lists', 'vmr_mat_list', { mob: ref('gl_circle') }, {}, 'assert len($result) >= 1');
+
+    // SceneFileWriter
+    check(`
+from pydub import AudioSegment
+import os, tempfile
+config.output_file = "test_output.mp4"
+objects["sfw_audio_seg"] = AudioSegment.silent(duration=1000)
+`);
+    api('Circle', 'sfw_audio_seg', {}, {}, 'objects["sfw_audio_seg"] = AudioSegment.silent(duration=1000)');
+    api('SceneFileWriter', 'sfw_inst', { renderer: ref('cairo_rend'), scene_name: 'TestSceneFileWriter' }, {}, 'assert $result is not None');
+    api('SceneFileWriter.init_output_directories', 'sfw_init_out', { scene_name: 'TestSceneFileWriter' }, { receiver: 'sfw_inst' }, 'assert objects["sfw_inst"] is not None');
+    api('SceneFileWriter.get_resolution_directory', 'sfw_res_dir', {}, { receiver: 'sfw_inst' }, 'assert len($result) > 0');
+    api('SceneFileWriter.is_already_cached', 'sfw_cached', { hash_invocation: 'test_hash' }, { receiver: 'sfw_inst' }, 'assert $result is False');
+    api('SceneFileWriter.init_audio', 'sfw_init_aud', {}, { receiver: 'sfw_inst' }, 'assert objects["sfw_inst"] is not None');
+    api('SceneFileWriter.add_audio_segment', 'sfw_add_aud', { new_segment: ref('sfw_audio_seg'), time: 0, gain_to_background: 0 }, { receiver: 'sfw_inst' }, 'assert objects["sfw_inst"] is not None');
+    api('SceneFileWriter.write_subcaption_file', 'sfw_subcap', {}, { receiver: 'sfw_inst' }, 'assert objects["sfw_inst"] is not None');
+    api('SceneFileWriter.next_section', 'sfw_next_sec', { name: 's2', type_: 'normal', skip_animations: false }, { receiver: 'sfw_inst' }, 'assert objects["sfw_inst"] is not None');
+    api('SceneFileWriter.finish_last_section', 'sfw_fin_sec', {}, { receiver: 'sfw_inst' }, 'assert objects["sfw_inst"] is not None');
+    api('manim.scene.scene_file_writer.to_av_frame_rate', 'sfw_av_fps', { fps: 30 }, {}, 'assert $result == 30');
+
+    // manimpango & pango utils
+    check(`
+_test_svg_pango = tempfile.mktemp(suffix=".svg")
+with open(_test_svg_pango, "w") as _f:
+    _f.write("<svg><path d=\\"M 0 0 L 10 10 M 20 20\\" /></svg>")
+objects["pango_svg_file"] = _test_svg_pango
+`);
+    api('Circle', 'pango_svg_file', {}, {}, 'objects["pango_svg_file"] = _test_svg_pango');
+    api('manimpango.cmanimpango.MarkupUtils', 'mp_mu_cls', {}, {}, 'assert $result is not None');
+    api('manimpango.cmanimpango.MarkupUtils.text2svg', 'mp_t2s', { text: '<b>Pango</b>', font: 'sans-serif', slant: 'NORMAL', weight: 'NORMAL', size: 16, _: 0, disable_liga: false, file_name: ref('pango_svg_file'), START_X: 0, START_Y: 0, width: 100, height: 100 }, {}, 'assert os.path.exists($result)');
+    api('manimpango.utils.PangoUtils', 'mp_pu_cls', {}, {}, 'assert $result is not None');
+    api('manimpango.utils.PangoUtils.remove_last_M', 'mp_rem_m', { file_name: ref('pango_svg_file') }, {}, 'assert objects["pango_svg_file"] is not None');
+
+    // commands, constants, TexTemplate.from_file
+    check(`
+_tpl_path = tempfile.mktemp(suffix=".tex")
+with open(_tpl_path, "w") as _f:
+    _f.write(r"""\\documentclass{article}
+\\usepackage{amsmath}
+\\begin{document}
+\\begin{align*}
+X
+\\end{align*}
+\\end{document}
+""")
+objects["tex_tpl_file"] = _tpl_path
+`);
+    api('Circle', 'tex_tpl_file', {}, {}, 'objects["tex_tpl_file"] = _tpl_path');
+
+    api('manim.constants.QualityDict', 'qd_inst', { args: [{ pixel_width: 1920, pixel_height: 1080, frame_rate: 60 }] }, {}, 'assert $result["pixel_width"] == 1920');
+    api('manim.utils.commands.VideoMetadata', 'vm_inst', { args: [{ width: 1920, height: 1080, fps: 60.0 }] }, {}, 'assert $result["width"] == 1920 and $result["height"] == 1080');
+    api('manim.utils.commands.capture', 'cmd_cap', { command: ['echo', 'hello'] }, {}, 'assert "hello" in $result[0]');
+    api('manim.utils.commands.get_dir_layout', 'dir_layout', { dirpath: '.' }, {}, 'assert hasattr($result, "__iter__")');
+    api('manim.utils.tex.TexTemplate.from_file', 'tex_from_file', { file: ref('tex_tpl_file') }, {}, 'assert "amsmath" in $result.preamble');
+
+    // Scene lifecycle & interactive events
+    api('manim.scene.scene.Scene.setup', 'sc_setup', {}, { receiver: 'rend_scene' }, 'assert objects["rend_scene"] is not None');
+    api('manim.scene.scene.Scene.construct', 'sc_construct', {}, { receiver: 'rend_scene' }, 'assert objects["rend_scene"] is not None');
+    api('manim.scene.scene.Scene.tear_down', 'sc_teardown', {}, { receiver: 'rend_scene' }, 'assert objects["rend_scene"] is not None');
+    api('manim.scene.scene.SceneInteractContinue', 'sic_inst', { sender: 'rend_scene' }, {}, 'assert $result.sender == "rend_scene"');
+    api('manim.scene.scene.SceneInteractContinue.sender', 'sic_snd', {}, { receiver: 'sic_inst' }, 'assert $result == "rend_scene"');
+    api('manim.scene.scene.SceneInteractRerun', 'sir_inst', { sender: 'rend_scene', kwargs: { step: 1 } }, {}, 'assert $result.sender == "rend_scene"');
+    api('manim.scene.scene.SceneInteractRerun.sender', 'sir_snd', {}, { receiver: 'sir_inst' }, 'assert $result == "rend_scene"');
+    api('manim.scene.scene.SceneInteractRerun.kwargs', 'sir_kw', {}, { receiver: 'sir_inst' }, 'assert $result["step"] == 1');
+  },
 };
 
-test('native API families have executable postconditions', { timeout: 180_000 }, async t => {
+test('native API families have executable postconditions', { timeout: 300_000 }, async t => {
   const health = await discoverPython(); if (!health.available) { t.skip('Manim required'); return; }
   const directory = await mkdtemp(path.join(tmpdir(), 'anyvis-api-families-'));
   const results = [];
@@ -525,6 +768,7 @@ test('native API families have executable postconditions', { timeout: 180_000 },
       await t.test(family, { timeout: 40_000 }, async () => {
         const f = fixture(); build(f);
         const c = compileProject(f.project); assert.deepEqual(c.diagnostics.filter(d => d.severity === 'error'), []);
+        await writeFile(path.join(directory, 'test_icon.svg'), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" fill="red" /></svg>');
         const filename = path.join(directory, `${family}.py`);
         await writeFile(filename, c.code + '\nwith tempconfig({"write_to_movie":False,"save_last_frame":False,"renderer":"cairo","media_dir":"media","pixel_width":320,"pixel_height":180,"frame_rate":10,"progress_bar":"none","verbosity":"WARNING"}):\n    AnyVisScene().render()\nprint("ANYVIS_FAMILY_OK")\n');
         const result = await execute(health.python, [filename], { cwd: directory, timeout: 35_000, maxBuffer: 1024 * 1024 });

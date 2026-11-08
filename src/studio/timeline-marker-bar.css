@@ -1,0 +1,135 @@
+.tmb-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  background: rgba(15, 23, 42, 0.7);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  font-size: 11px;
+  overflow-x: auto;
+  min-height: 28px;
+  user-select: none;
+}
+
+.tmb-heading {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.tmb-head-icon {
+  color: #fbbf24;
+}
+
+.tmb-list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.tmb-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  color: #f1f5f9;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.tmb-pill:hover {
+  background: rgba(51, 65, 85, 0.95);
+  border-color: var(--marker-color, #fbbf24);
+}
+
+.tmb-pill-active {
+  border-color: var(--marker-color, #fbbf24);
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.12);
+}
+
+.tmb-diamond {
+  width: 6px;
+  height: 6px;
+  background: var(--marker-color, #fbbf24);
+  transform: rotate(45deg);
+  border-radius: 1px;
+}
+
+.tmb-timecode {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.tmb-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.tmb-input {
+  font-size: 11px;
+  width: 72px;
+  padding: 1px 4px;
+  background: #0f172a;
+  border: 1px solid #38bdf8;
+  border-radius: 3px;
+  color: #fff;
+  outline: none;
+}
+
+.tmb-actions {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  margin-left: 2px;
+}
+
+.tmb-pill:hover .tmb-actions {
+  display: inline-flex;
+}
+
+.tmb-action-btn {
+  padding: 1px 3px;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.tmb-action-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tmb-action-del:hover {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.tmb-add-btn {
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.32);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tmb-add-btn:hover {
+  background: rgba(251, 191, 36, 0.25);
+}

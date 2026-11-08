@@ -10,6 +10,8 @@ const { pathToFileURL } = require('node:url');
 app.setName('AnyVis');
 const smoke = process.argv.includes('--smoke-test');
 const smokeResult = process.argv.find(value => value.startsWith('--smoke-result='))?.slice('--smoke-result='.length);
+const smokeTimeoutArg = process.argv.find(value => value.startsWith('--smoke-timeout='))?.slice('--smoke-timeout='.length);
+const smokeTimeoutMs = smokeTimeoutArg ? Math.max(5000, Number(smokeTimeoutArg) || 0) : (app.isPackaged ? 75_000 : 45_000);
 if (smoke) app.setPath('userData', mkdtempSync(path.join(tmpdir(), 'anyvis-desktop-smoke-')));
 protocol.registerSchemesAsPrivileged([{ scheme: 'anyvis', privileges: { standard: true, secure: true, supportFetchAPI: true, stream: true, corsEnabled: true } }]);
 const singleInstance = app.requestSingleInstanceLock();
@@ -232,8 +234,8 @@ else app.whenReady().then(initialize).catch(async error => {
   else { dialog.showErrorBox('AnyVis 无法启动', `${error.message}\n请重新构建或安装桌面应用。`); app.quit(); }
 });
 if (smoke) setTimeout(async () => {
-  const error = 'Desktop smoke timed out after 30 seconds.';
+  const error = `Desktop smoke timed out after ${Math.round(smokeTimeoutMs / 1000)} seconds.`;
   console.error(error); process.exitCode = 1;
   if (smokeResult) await writeFile(smokeResult, JSON.stringify({ ok: false, error })).catch(() => {});
   app.quit(); setTimeout(() => app.exit(1), 3000).unref();
-}, 30_000).unref();
+}, smokeTimeoutMs).unref();

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Timeline as TimelineEditor, type TimelineState } from '@xzdarcy/react-timeline-editor';
-import { ArrowLeft, ArrowRight, Clock3, Copy, Layers3, Magnet, Maximize2, Minus, Music2, Pause, Play, Plus, Scissors, SkipBack, Trash2, Volume2, VolumeX, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Bookmark, Clock3, Copy, Layers3, Magnet, Maximize2, Minus, Music2, Pause, Play, Plus, Scissors, SkipBack, Trash2, Volume2, VolumeX, X } from 'lucide-react';
 import type { TimelineRow } from '@xzdarcy/timeline-engine';
 import type { Project } from './core/types';
 import { CURATED_BLOCK_CATALOG, getBlockDefinition } from './core/catalog';
@@ -8,6 +8,7 @@ import { actionLabel, actionTrack, appendAction, duplicateAction, flattenActions
 import { audioClips, checkedEdit, editAudioClip, frameTime, moveAnimationClip, moveAnimationClips, resizeAnimationClip, splitActionClip, splitAudioClip } from './timeline-model';
 import { AudioWaveform } from './AudioWaveform';
 import { ActionInspector } from './ActionInspector';
+import { TimelineMarkerBar, addMarker, removeMarker, snapTimeToMarkers, updateMarker } from './TimelineMarkerBar';
 import '@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css';
 import './timeline.css';
 
@@ -83,13 +84,14 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
     const isMulti = selectedIds.length > 1 && selectedIds.includes(resolved);
     if (!isMulti) handleSelectIds([resolved]);
     const clip = audio.find(c => c.id === id);
+    const effectiveStart = snapping && project.scene.markers?.length ? snapTimeToMarkers(project.scene.markers, start) : start;
     if (clip) {
-      mutate(() => editAudioClip(project, clip, start, end, mode));
+      mutate(() => editAudioClip(project, clip, effectiveStart, effectiveStart + (end - start), mode));
     } else if (mode === 'move') {
       if (isMulti) {
-        mutate(() => moveAnimationClips(project, selectedIds, start, resolved));
+        mutate(() => moveAnimationClips(project, selectedIds, effectiveStart, resolved));
       } else {
-        mutate(() => moveAnimationClip(project, resolved, start));
+        mutate(() => moveAnimationClip(project, resolved, effectiveStart));
       }
     } else {
       mutate(() => resizeAnimationClip(project, resolved, end - start));
@@ -127,6 +129,14 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       const result = splitActionClip(project, selectedClip, time);
       handleSelectIds([result.id]);
       return result.project;
+    });
+  };
+
+  const handleAddMarker = () => {
+    mutate(() => {
+      const res = addMarker(project, time);
+      setHint(`已在 ${timecode(res.marker.time, project.scene.fps)} 添加标记：${res.marker.label}`);
+      return res.project;
     });
   };
 
@@ -210,6 +220,10 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
         return result.project;
       });
     }
+    else if (event.key.toLowerCase() === 'm' && !event.repeat) {
+      event.preventDefault();
+      handleAddMarker();
+    }
     else if (event.key === 'Escape') { event.preventDefault(); handleSelectIds([]); }
     else if ((event.key === 'Delete' || event.key === 'Backspace') && selectedIds.length > 0) {
       event.preventDefault();
@@ -223,10 +237,20 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       <button aria-label={playing ? '暂停时间轴预览' : '播放时间轴预览'} disabled={!canPlay} title={canPlay ? '空格：播放 / 暂停' : '先生成预览'} onClick={onPlay}>{playing ? <Pause size={15}/> : <Play size={15}/>}</button>
       <span className="tl-timecode">{timecode(time, project.scene.fps)}</span><small className="tl-fps">{project.scene.fps} FPS</small><div className="tl-spacer"/>
       <button aria-label="磁性吸附" aria-pressed={snapping} title="吸附片段边缘与帧网格（S）" onClick={() => setSnapping(v => !v)}><Magnet size={15}/></button>
+      <button aria-label="添加时间轴标记" title="在当前播放头处添加时间标记（M）" onClick={handleAddMarker}><Bookmark size={14}/> 标记</button>
       <button aria-label="设置默认配乐" title={musicEnabled ? '自动钢琴配乐' : '当前无默认配乐'} onClick={onMusicSettings}><Music2 size={14}/> 配乐</button>
       <button onClick={() => add('wait')}><Clock3 size={14}/> 等待</button><button className="tl-add" onClick={() => setAdding(!adding)}><Plus size={14}/> 动画</button>
       <span className="tl-divider"/><button aria-label="缩小时间轴" onClick={() => setScale(s => Math.max(8, s / 1.4))}><Minus size={14}/></button><input className="tl-scale" aria-label="时间轴缩放" type="range" min="8" max="240" value={scale} onChange={e => setScale(Number(e.target.value))}/><button aria-label="放大时间轴" onClick={() => setScale(s => Math.min(240, s * 1.4))}><Plus size={14}/></button><button aria-label="适合全部片段" onClick={fit}><Maximize2 size={14}/></button>
     </div>
+    <TimelineMarkerBar
+      markers={project.scene.markers}
+      currentTime={time}
+      fps={project.scene.fps}
+      onSeek={seek}
+      onAddMarker={handleAddMarker}
+      onUpdateMarker={(markerId, updates) => mutate(() => updateMarker(project, markerId, updates))}
+      onRemoveMarker={markerId => mutate(() => removeMarker(project, markerId))}
+    />
     {adding && <div className="tl-library"><input aria-label="搜索动画动作" placeholder="搜索移动、变形、循环…" value={query} onChange={e => setQuery(e.target.value)}/><button onClick={() => setAdding(false)}>关闭</button><div>{options.map(d => <button key={d.type} onClick={() => add(d.type)}><i style={{ background: d.colour }}/>{d.label}</button>)}</div></div>}
     <div className="tl-body" ref={surface} tabIndex={0} aria-label="时间轴编辑区"
       onWheel={e => { if (e.ctrlKey || e.metaKey) setScale(s => Math.max(8, Math.min(240, s * (e.deltaY < 0 ? 1.15 : 1 / 1.15)))); }}
@@ -300,7 +324,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       {!labels.length && <div className="tl-empty"><Layers3 size={28}/><strong>给对象安排第一段动画</strong><p>从右侧添加对象或上传配音，再安排动画。</p></div>}
     </div>
     {unknown.length > 0 && <div className="tl-dynamic"><span>动态时长 · 在积木中编排</span>{unknown.map(c => <button key={c.id} onClick={() => { handleSelectIds([c.action.id]); onShowBlocks(c.action.id); }}>{actionLabel(c.action)} · {c.track}</button>)}</div>}
-    <div className="tl-status"><span title="Home 回到开头；End 到已知结尾；Shift + 方向键移动 10 帧；Delete 删除所选片段；C 分割片段；按住 Shift/Cmd 多选">{hint || '拖动片段 · 边缘调整 · C 剃刀分割 · S 吸附 · ← → 逐帧 · Shift/Cmd 多选 · 空格播放'}</span><span>{timecode(knownEnd, project.scene.fps)} {unknown.length ? '+ 动态片段' : ''}</span></div>
+    <div className="tl-status"><span title="Home 回到开头；End 到已知结尾；Shift + 方向键移动 10 帧；Delete 删除所选片段；C 分割片段；M 添加标记；按住 Shift/Cmd 多选">{hint || '拖动片段 · 边缘调整 · C 剃刀分割 · M 标记 · S 吸附 · ← → 逐帧 · Shift/Cmd 多选 · 空格播放'}</span><span>{timecode(knownEnd, project.scene.fps)} {unknown.length ? '+ 动态片段' : ''}</span></div>
     <div className="tl-inspector">
       {selectedIds.length > 1 ? (
         <div className="tl-batch-bar">

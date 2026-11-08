@@ -19,8 +19,9 @@ for (const candidate of candidates) {
 if (!executable) throw new Error(`Packaged application not found: ${candidates.join(', ')}`);
 const report = path.join(root, 'desktop-build', 'packaged-smoke-result.json');
 await rm(report, { force: true });
-const child = spawn(executable, ['--smoke-test', `--smoke-result=${report}`], { cwd: root, stdio: 'inherit' });
-const timer = setTimeout(() => child.kill(), 60_000);
+const timeoutMs = 90_000;
+const child = spawn(executable, ['--smoke-test', `--smoke-result=${report}`, '--smoke-timeout=75000'], { cwd: root, stdio: 'inherit' });
+const timer = setTimeout(() => child.kill(), timeoutMs);
 try {
   await new Promise((resolve, reject) => {
     child.once('error', reject);

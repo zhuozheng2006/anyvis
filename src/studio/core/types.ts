@@ -1,6 +1,12 @@
 /** Versioned authoring model. Blockly coordinates are optional editor metadata. */
 export type FieldValue = string | number | boolean;
 export type BackgroundMusic = 'none' | 'piano';
+export interface TimelineMarker {
+  id: string;
+  time: number;
+  label: string;
+  color?: string;
+}
 export interface Action {
   id: string;
   type: string;
@@ -12,7 +18,17 @@ export interface Project {
   schemaVersion: 2;
   id: string;
   name: string;
-  scene: { dimension: '2d' | '3d'; renderer?: 'cairo' | 'opengl'; background: string; width: number; height: number; fps: number; backgroundMusic?: BackgroundMusic; musicGainDb?: number };
+  scene: {
+    dimension: '2d' | '3d';
+    renderer?: 'cairo' | 'opengl';
+    background: string;
+    width: number;
+    height: number;
+    fps: number;
+    backgroundMusic?: BackgroundMusic;
+    musicGainDb?: number;
+    markers?: TimelineMarker[];
+  };
   actions: Action[];
   assets?: MediaAsset[];
   workspace?: unknown;
