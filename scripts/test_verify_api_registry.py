@@ -52,5 +52,31 @@ class EvidenceTests(unittest.TestCase):
                 self.assertTrue(any('Source changed' in error for error in self.errors(self.report)))
                 (self.root / name).write_text('fixed source')
 
+    def test_detailed_outcomes_must_support_declared_coverage(self):
+        report = copy.deepcopy(self.report)
+        report['outcomes'] = [{'apiId':'Circle','status':'verified'}]
+        self.assertEqual(self.errors(report), [])
+        # Multiple argument cases for one API are permitted and counted once.
+        report['outcomes'] *= 2
+        self.assertEqual(self.errors(report), [])
+        for outcomes in [[], [{'apiId':'Circle','status':'fixture_gap'}],
+                         [{'apiId':'Circle','status':'failed'}]]:
+            report['outcomes'] = outcomes
+            self.assertTrue(self.errors(report))
+        report['apiIds'] = []
+        report['outcomes'] = [{'apiId':'Circle','status':'fixture_gap'}]
+        self.assertEqual(self.errors(report), [])
+        report['outcomes'] = [{'apiId':'Circle','status':'failed'}]
+        self.assertTrue(self.errors(report))
+
+    def test_rejects_malformed_outcomes_without_crashing(self):
+        for outcomes in [None, {}, ['Circle'], [{'apiId':[]}],
+                         [{'apiId':'Circle','status':'skipped'}],
+                         [{'apiId':'unknown','status':'verified'}]]:
+            with self.subTest(outcomes=outcomes):
+                report = copy.deepcopy(self.report)
+                report['outcomes'] = outcomes
+                self.assertTrue(self.errors(report))
+
 if __name__ == '__main__':
     unittest.main()

@@ -2,10 +2,10 @@
 
 ## 图片 API 与复合片段删除修复（2026-11-08）
 
-- 图片/相机新增 75 组具体断言，涉及 74 个 API；与既有证据合并后为 **732 / 2,293** 个独立 API，新增 70 项，仍有 1,561 项待验证。
+- 图片/相机新增 75 组具体断言，涉及 74 个 API；图片/相机阶段与既有证据合并后为 **732 / 2,293** 个独立 API，新增 70 项。继续加入 57 项动画和 41 项点云/向量场后，当前共 **830 / 2,293** 项，较上一轮新增 168 项，仍有 1,463 项待验证。
 - 修复通过 API 创建 ImageMobject 时遗漏 Pillow 13 兼容初始化的问题。独立导出的纯 API 图片工程实际渲染，红色图片位移后像素重心落在预期区域；既有上传 PNG/SVG 与配音混音回归通过。
 - 修复删除复合片段时漏检内部对象的外部引用。现在检查整个删除子树，阻止产生悬空引用；子树内部对象和引用可以一起删除。新增回归先复现旧实现失败，再验证修复。
-- 本地 342 项应用测试、14 项原生测试入口（七份证据）、4 项证据验证、11 项桌面回归及 TypeScript/Vite 构建通过。云端结果以本节后续记录为准；下方安装包暂为上一轮已验证版本。
+- 本地 342 项应用测试、16 项原生测试入口（九份证据）、6 项证据验证、11 项桌面回归及 TypeScript/Vite 构建通过。应用修复提交 `04c5d206550cb2a476326096f990e12030a5f8d5` 的[原生 CI](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905788)（732 项证据）与[三平台桌面 CI](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662)均通过。后续 830 项扩展只修改测试、证据校验和文档，集中在[草稿 PR #1](https://github.com/zhuozheng2006/anyvis/pull/1)；最终云端结果见 PR 检查页。
 
 ## v0.4.0 时间轴、对象与素材（2026-11-08）
 
@@ -160,16 +160,16 @@
 
 ## 最新桌面测试包
 
-**AnyVis v0.4.0**：[构建 42413639341](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341)，对应 `4c544f7c6fd7ea23d8d1ee9171542b5832c971c9`，三平台构建与最终 ASAR 启动均通过。包含开源时间轴、对象管理器、图片与配音、SVG 尺寸修复、配音分割、默认钢琴与无配乐设置，以及服务重启后的会话恢复。
+**AnyVis v0.4.0**：[构建 42440905662](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662)，对应 `04c5d206550cb2a476326096f990e12030a5f8d5`，三平台构建与最终 ASAR 启动均通过。包含开源时间轴、对象管理器、图片与配音、SVG 尺寸修复、配音分割、默认钢琴与无配乐设置，服务重启后的会话恢复，以及本轮 API 图片渲染与复合片段删除修复。
 
 | 系统 | 安装包附件 | 实际启动验证 |
 | --- | --- | --- |
-| Apple Silicon Mac | [ARM64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341/artifacts/13590343660) | 通过 |
-| Intel Mac | [x64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341/artifacts/13590373579) | 仅构建，未在 Intel 运行 |
-| Windows x64 | [NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341/artifacts/13590542704) | 通过 |
-| Linux x64 | [AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42413639341/artifacts/13590537713) | 通过 |
+| Apple Silicon Mac | [ARM64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662/artifacts/13601577386) | 通过 |
+| Intel Mac | [x64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662/artifacts/13601975289) | 仅构建，未在 Intel 运行 |
+| Windows x64 | [NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662/artifacts/13600689920) | 通过 |
+| Linux x64 | [AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662/artifacts/13601124397) | 通过 |
 
-每个平台执行 340 项应用测试、11 项桌面回归、准备目录和最终打包应用的 Electron 冒烟；实际操作 API Wait 搜索/添加、Circle 对象管理器、时间轴、只读代码，以及钢琴→无配乐→钢琴切换。附件保存 14 天（预计北京时间 2026-11-22 到期），需要 GitHub 登录。Python/Manim、字体和 LaTeX 仍需外部环境；macOS 尚未公证、Windows 尚未配置发行者签名，未运行安装向导。
+每个平台执行 342 项应用测试、11 项桌面回归、准备目录和最终打包应用的 Electron 冒烟；实际操作 API Wait 搜索/添加、Circle 对象管理器、时间轴、只读代码，以及钢琴→无配乐→钢琴切换。附件保存 14 天（预计北京时间 2026-11-22 到期），需要 GitHub 登录。Python/Manim、字体和 LaTeX 仍需外部环境；macOS 尚未公证、Windows 尚未配置发行者签名，未运行安装向导。
 
 ## v0.3.1 历史桌面测试包
 

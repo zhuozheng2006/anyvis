@@ -24,7 +24,7 @@ EVIDENCE_SOURCES={
     'src/studio/core/catalog.ts', 'src/studio/core/project.ts', 'src/studio/core/assets.ts',
     'src/studio/core/piano.ts',
 }
-EVIDENCE_FIXTURES={'src/studio/core/api.native.spec-node.mjs', 'src/studio/core/api-families.native.spec-node.mjs', 'src/studio/core/api-queries.native.spec-node.mjs', 'src/studio/core/api-utilities.native.spec-node.mjs', 'src/studio/core/api-mutations.native.spec-node.mjs', 'src/studio/core/api-config.native.spec-node.mjs', 'src/studio/core/api-raster.native.spec-node.mjs'}
+EVIDENCE_FIXTURES={'src/studio/core/api.native.spec-node.mjs', 'src/studio/core/api-families.native.spec-node.mjs', 'src/studio/core/api-queries.native.spec-node.mjs', 'src/studio/core/api-utilities.native.spec-node.mjs', 'src/studio/core/api-mutations.native.spec-node.mjs', 'src/studio/core/api-config.native.spec-node.mjs', 'src/studio/core/api-raster.native.spec-node.mjs', 'src/studio/core/api-animation-state.native.spec-node.mjs', 'src/studio/core/api-pointcloud.native.spec-node.mjs'}
 
 def validate_native_evidence(native, registry_hash, ids, version, root=ROOT):
     errors=[]
@@ -34,6 +34,22 @@ def validate_native_evidence(native, registry_hash, ids, version, root=ROOT):
     api_ids=native.get('apiIds')
     if not isinstance(api_ids,list) or not all(isinstance(item,str) for item in api_ids) or not set(api_ids).issubset(ids):
         errors.append('Unknown or malformed API IDs in evidence.')
+    # Detailed fixtures must agree with their declared coverage. A passing suite
+    # flag cannot turn a skipped/failed outcome into behavior evidence.
+    if 'outcomes' in native:
+        outcomes=native['outcomes']
+        valid=(isinstance(outcomes,list) and all(
+            isinstance(item,dict) and isinstance(item.get('apiId'),str)
+            and item['apiId'] in ids and item.get('status') in ('verified','fixture_gap','failed')
+            for item in outcomes))
+        if not valid:
+            errors.append('Malformed native outcomes.')
+        else:
+            if any(item['status']=='failed' for item in outcomes):
+                errors.append('Native outcomes contain failures.')
+            verified={item['apiId'] for item in outcomes if item['status']=='verified'}
+            if not isinstance(api_ids,list) or not all(isinstance(item,str) for item in api_ids) or set(api_ids)!=verified:
+                errors.append('Declared API coverage differs from verified outcomes.')
     fixture=native.get('fixture')
     if fixture not in EVIDENCE_FIXTURES: errors.append('Unrecognized evidence fixture.')
     sources=native.get('sourceFiles',{})
