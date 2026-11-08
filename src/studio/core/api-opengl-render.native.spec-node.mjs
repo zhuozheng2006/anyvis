@@ -108,8 +108,10 @@ try:
         spec=importlib.util.spec_from_file_location('anyvis_gl_fixture','generated_scene.py')
         module=importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
+        print('ANYVIS_GL_STAGE imported',flush=True)
         renderer=OpenGLRenderer()
         scene=module.AnyVisScene(renderer=renderer)
+        print('ANYVIS_GL_STAGE scene '+str(renderer.context.info.get('GL_RENDERER')),flush=True)
         assert isinstance(scene.renderer,OpenGLRenderer)
         assert renderer.window is None
         # Frozen waits bypass renderer.render and submit one framebuffer with
@@ -124,7 +126,9 @@ try:
             write_calls.append(num_frames)
             return result
         renderer.file_writer.write_frame=capture_frame
+        print('ANYVIS_GL_STAGE rendering',flush=True)
         scene.render()
+        print('ANYVIS_GL_STAGE rendered '+str(len(frames)),flush=True)
         assert len(frames)==12, f'Expected 12 submitted frames including both waits, got {len(frames)}'
         assert abs(scene.time-1)<1e-6, scene.time
         samples=[]
@@ -147,13 +151,14 @@ try:
         metrics={'frameCount':len(frames),'writeCalls':write_calls,'width':320,'height':180,'seconds':float(scene.time),'initial':first,'final':last,'horizontalDisplacement':displacement,'minRedPixels':min(sample['redPixels'] for sample in samples),'maxRedPixels':max(sample['redPixels'] for sample in samples),'samples':samples,'device':renderer.context.info.get('GL_RENDERER'),'version':renderer.context.info.get('GL_VERSION')}
         print('${prefix}'+json.dumps(metrics))
 finally:
+    print('ANYVIS_GL_STAGE cleanup',flush=True)
     if renderer is not None:
         framebuffer=getattr(renderer,'frame_buffer_object',None)
         if framebuffer is not None: framebuffer.release()
         context=getattr(renderer,'context',None)
         if context is not None: context.release()
 `);
-    const output = await execute(health.python, [runnerPath], { cwd:directory, timeout:75_000, maxBuffer:4*1024*1024 });
+    const output = await execute(health.python, ['-X','faulthandler','-u',runnerPath], { cwd:directory, timeout:75_000, maxBuffer:4*1024*1024 });
     const line = output.stdout.split('\n').find(row => row.startsWith(prefix));
     assert.ok(line, output.stdout);
     const metrics = JSON.parse(line.slice(prefix.length));
