@@ -10,7 +10,7 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 本次交接前主分支：`dce1948e1a8cec711423431e36e36af36728b3ab`；交接文档提交会在它之后。开始工作时重新读取当前 HEAD，勿硬编码旧 HEAD 推送。
 - 本机工作区：`/Users/zane/Documents/ChatGPT/AnyVis`。
 - **这个工作区没有 `.git` 元数据，源码没有丢失。**此前通过 GitHub Git Data API 增量提交。远端已保存应用代码与覆盖报告；本机还包含依赖、构建结果、素材缓存及测试输出，不能直接用旧副本覆盖。
-- 已接入 Manim CE **0.20.1** 的 **2,293 个 API 入口**；**1,012 个**有原生行为证据，**1,281 个**尚无逐项行为证据。入口可生成调用不等于行为、参数组合或视觉结果全部正确。
+- 已接入 Manim CE **0.20.1** 的 **2,293 个 API 入口**；**1,094 个**有原生行为证据，**1,199 个**尚无逐项行为证据。入口可生成调用不等于行为、参数组合或视觉结果全部正确。
 - 342 项应用测试、22 项原生测试入口、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
 - 最新三平台桌面构建通过。Linux **Mesa softpipe** 已实际绘制并验证一个 OpenGL 场景；本机 Mac 的 OpenGL 上下文仍不可用。
 - 当前没有待合并的 PR #1：它已获用户许可并成功合并。不存在需要再次询问的旧合并阻塞。
@@ -105,9 +105,9 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 
 ## 6. API 覆盖如何继续
 
-权威文件是 [机器报告](docs/research/api-registry-verification.json) 与 [覆盖说明](docs/Manim-API-Coverage.md)。当前 12 份原生报告合并去重为 1,012 项，不能把各 fixture 的数量直接相加。
+权威文件是 [机器报告](docs/research/api-registry-verification.json) 与 [覆盖说明](docs/Manim-API-Coverage.md)。当前 12 份原生报告合并去重为 1,094 项，不能把各 fixture 的数量直接相加。
 
-剩余入口：825 项通用/Cairo，456 项 OpenGL；按种类是实例方法 848、类 207、函数 116、属性 69、静态方法 29、类方法 12。机器报告 `entriesWithoutBehaviorEvidence` 给出每一项 ID。
+剩余入口：743 项通用/Cairo，456 项 OpenGL；按种类是实例方法 768、类 207、函数 116、属性 69、静态方法 29、类方法 10。机器报告 `entriesWithoutBehaviorEvidence` 给出每一项 ID。
 
 接下来的首批任务建议：
 
@@ -235,4 +235,4 @@ LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=softpipe ANYVIS_REQUIRE_OPENGL=1 \
 
 给 Gemini 的最短启动指令：
 
-> 请先读仓库根目录 GEMINI_HANDOFF.md，再检查当前源码与 main 差异。从已有 1,012 项行为证据的基线继续推进 AnyVis，不重写架构。优先补真实 API 行为验证并修复发现的问题，同时按既定对象管理器/积木/时间轴/只读代码设计改善体验。只统计有具体断言的通过项，改编译器后重跑源码绑定证据；发布后检查 CI 和远端文件一致性。
+> 请先读仓库根目录 GEMINI_HANDOFF.md，再检查当前源码与 main 差异。从已有 1,094 项行为证据的基线继续推进 AnyVis，不重写架构。优先补真实 API 行为验证并修复发现的问题，同时按既定对象管理器/积木/时间轴/只读代码设计改善体验。只统计有具体断言的通过项，改编译器后重跑源码绑定证据；发布后检查 CI 和远端文件一致性。

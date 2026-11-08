@@ -116,7 +116,97 @@ const mutationCases = [
   { id: 'manim.mobject.geometry.arc.Circle.surround', params: { mobject: { $ref: 'target' } }, factory: 'Circle()', ctx: '{ "target": Square(side_length=2.0) }', ctxVars: ['target'], exp: 's.surround(ctx["target"])' },
   { id: 'manim.mobject.geometry.arc.TipableVMobject.add_tip', params: {}, factory: 'Line(LEFT, RIGHT)', exp: 's.add_tip()' },
   { id: 'manim.mobject.geometry.arc.TipableVMobject.pop_tips', params: {}, factory: 'Arrow(LEFT, RIGHT)', exp: 's.pop_tips()' },
-  { id: 'manim.mobject.geometry.polygram.Polygram.round_corners', params: { radius: 0.2 }, factory: 'Polygon(LEFT, UP, RIGHT)', exp: 's.round_corners(radius=0.2)' }
+  { id: 'manim.mobject.geometry.polygram.Polygram.round_corners', params: { radius: 0.2 }, factory: 'Polygon(LEFT, UP, RIGHT)', exp: 's.round_corners(radius=0.2)' },
+
+  // Group H: VMobject curves, styling & subpaths (28)
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.add_smooth_curve_to', params: { points: [{ $array: [1, 1, 0] }] }, factory: 'VMobject().start_new_path(ORIGIN).add_line_to(RIGHT)', exp: 's.add_smooth_curve_to(np.array([1, 1, 0]))' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.gen_cubic_bezier_tuples_from_points', mode: 'store', params: { points: { $ref: 'pts' } }, factory: 'Circle()', ctx: '{ "pts": Circle().points }', ctxVars: ['pts'], exp: 'list(s.gen_cubic_bezier_tuples_from_points(ctx["pts"]))' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.get_cubic_bezier_tuples_from_points', mode: 'store', params: { points: { $ref: 'pts' } }, factory: 'Circle()', ctx: '{ "pts": Circle().points }', ctxVars: ['pts'], exp: 's.get_cubic_bezier_tuples_from_points(ctx["pts"])' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_function', mode: 'store', params: { n: 0 }, factory: 'Circle()', exp: 's.get_nth_curve_function(0)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_function_with_length', mode: 'store', params: { n: 0 }, factory: 'Circle()', exp: 's.get_nth_curve_function_with_length(0)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.get_nth_curve_length_pieces', mode: 'store', params: { n: 0 }, factory: 'Circle()', exp: 's.get_nth_curve_length_pieces(0)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.gen_subpaths_from_points_2d', mode: 'store', params: { points: { $ref: 'pts' } }, factory: 'Circle()', ctx: '{ "pts": Circle().points }', ctxVars: ['pts'], exp: 'list(s.gen_subpaths_from_points_2d(ctx["pts"]))' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.get_subpaths_from_points', mode: 'store', params: { points: { $ref: 'pts' } }, factory: 'Circle()', ctx: '{ "pts": Circle().points }', ctxVars: ['pts'], exp: 's.get_subpaths_from_points(ctx["pts"])' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.insert_n_curves_to_point_list', mode: 'store', params: { n: 3, points: { $ref: 'pts' } }, factory: 'Circle()', ctx: '{ "pts": Circle().points }', ctxVars: ['pts'], exp: 's.insert_n_curves_to_point_list(3, ctx["pts"])' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.pointwise_become_partial', params: { vmobject: { $ref: 'target' }, a: 0.2, b: 0.8 }, factory: 'Circle()', ctx: '{ "target": Square() }', ctxVars: ['target'], exp: 's.pointwise_become_partial(ctx["target"], 0.2, 0.8)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.set_anchors_and_handles', params: { anchors1: { $array: [[0,0,0]] }, handles1: { $array: [[0,1,0]] }, handles2: { $array: [[1,1,0]] }, anchors2: { $array: [[1,0,0]] } }, factory: 'VMobject()', exp: 's.set_anchors_and_handles(np.array([[0,0,0]]), np.array([[0,1,0]]), np.array([[1,1,0]]), np.array([[1,0,0]]))' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.scale_handle_to_anchor_distances', params: { factor: 1.5 }, factory: 'Circle()', exp: 's.scale_handle_to_anchor_distances(1.5)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.force_direction', params: { target_direction: 'CCW' }, factory: 'Circle()', exp: 's.force_direction("CCW")' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.change_anchor_mode', params: { mode: 'jagged' }, factory: 'Circle()', exp: 's.change_anchor_mode("jagged")' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.consider_points_equals_2d', mode: 'store', params: { p0: { $array: [1, 0, 0] }, p1: { $array: [1, 0, 5] } }, factory: 'Circle()', exp: 's.consider_points_equals_2d(np.array([1, 0, 0]), np.array([1, 0, 5]))' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.align_points', params: { vmobject: { $ref: 'target' } }, factory: 'Line(LEFT, RIGHT)', ctx: '{ "target": Square() }', ctxVars: ['target'], exp: 's.align_points(ctx["target"])' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.align_rgbas', params: { vmobject: { $ref: 'target' } }, factory: 'Circle()', ctx: '{ "target": Square() }', ctxVars: ['target'], exp: 's.align_rgbas(ctx["target"])' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.generate_rgbas_array', mode: 'store', params: { color: '#FF0000', opacity: 0.5 }, factory: 'Circle()', exp: 's.generate_rgbas_array(ManimColor("#FF0000"), 0.5)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.update_rgbas_array', params: { array_name: 'fill_rgba', color: '#0000FF', opacity: 0.8 }, factory: 'Circle()', exp: 's.update_rgbas_array("fill_rgba", color=ManimColor("#0000FF"), opacity=0.8)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.set_shade_in_3d', params: { value: true }, factory: 'Circle()', exp: 's.set_shade_in_3d(True)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.set_style', params: { fill_color: '#FF0000', fill_opacity: 0.7, stroke_color: '#0000FF', stroke_width: 5.0, stroke_opacity: 0.9 }, factory: 'Circle()', exp: 's.set_style(fill_color=ManimColor("#FF0000"), fill_opacity=0.7, stroke_color=ManimColor("#0000FF"), stroke_width=5.0, stroke_opacity=0.9)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.set_points', params: { points: { $array: [[0,0,0],[0,1,0],[1,1,0],[1,0,0]] } }, factory: 'VMobject()', exp: 's.set_points(np.array([[0,0,0],[0,1,0],[1,1,0],[1,0,0]]))' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.set_color', params: { color: '#FF0000' }, factory: 'Circle()', exp: 's.set_color(ManimColor("#FF0000"))' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.fade', params: { darkness: 0.5 }, factory: 'Circle().set_opacity(0.8)', exp: 's.fade(0.5)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.rotate', params: { angle: 1.5707963267948966, about_point: { $array: [0, 0, 0] } }, factory: 'Square().shift(RIGHT)', exp: 's.rotate(PI/2, about_point=ORIGIN)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.scale', params: { scale_factor: 2.0, scale_stroke: true }, factory: 'Square()', exp: 's.scale(2.0, scale_stroke=True)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.apply_function', params: { function: { $lambda: { params: ['p'], body: { $expr: 'p * 2.0' } } } }, factory: 'Square()', exp: 's.apply_function(lambda p: p * 2.0)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VMobject.interpolate_color', params: { mobject1: { $ref: 'm1' }, mobject2: { $ref: 'm2' }, alpha: 0.5 }, factory: 'Square()', ctx: '{ "m1": Square().set_color(RED), "m2": Square().set_color(BLUE) }', ctxVars: ['m1', 'm2'], exp: 's.interpolate_color(ctx["m1"], ctx["m2"], 0.5)' },
+  { id: 'manim.mobject.types.vectorized_mobject.VectorizedPoint.set_location', params: { new_loc: { $array: [4, 5, 6] } }, factory: 'VectorizedPoint([1, 2, 3])', exp: 's.set_location(np.array([4, 5, 6]))' },
+  { id: 'manim.mobject.types.vectorized_mobject.CurvesAsSubmobjects.point_from_proportion', mode: 'store', params: { alpha: 0.25 }, factory: 'CurvesAsSubmobjects(Circle())', exp: 's.point_from_proportion(0.25)' },
+
+  // Group I: Mobject positioning, family & gradient methods (21)
+  { id: 'manim.mobject.mobject.Mobject.fade_to', params: { color: { $ref: 'red' }, alpha: 0.5 }, factory: 'Square()', ctx: '{ "red": ManimColor("#FF0000") }', ctxVars: ['red'], exp: 's.fade_to(ctx["red"], 0.5)' },
+  { id: 'manim.mobject.mobject.Mobject.proportion_from_point', mode: 'store', params: { point: { $array: [1, 0, 0] } }, factory: 'Circle()', exp: 's.proportion_from_point(np.array([1, 0, 0]))' },
+  { id: 'manim.mobject.mobject.Mobject.put_start_and_end_on', params: { start: { $array: [-2, 0, 0] }, end: { $array: [2, 0, 0] } }, factory: 'Line(LEFT, RIGHT)', exp: 's.put_start_and_end_on(LEFT*2, RIGHT*2)' },
+  { id: 'manim.mobject.mobject.Mobject.set_color_by_gradient', params: { colors: ['#FF0000', '#0000FF'] }, factory: 'Square()', exp: 's.set_color_by_gradient(ManimColor("#FF0000"), ManimColor("#0000FF"))' },
+  { id: 'manim.mobject.mobject.Mobject.set_colors_by_radial_gradient', params: { center: { $array: [0, 0, 0] }, radius: 2.0, inner_color: { $ref: 'red' }, outer_color: { $ref: 'blue' } }, factory: 'Square()', ctx: '{ "red": ManimColor("#FF0000"), "blue": ManimColor("#0000FF") }', ctxVars: ['red', 'blue'], exp: 's.set_colors_by_radial_gradient(center=ORIGIN, radius=2.0, inner_color=ctx["red"], outer_color=ctx["blue"])' },
+  { id: 'manim.mobject.mobject.Mobject.set_submobject_colors_by_radial_gradient', params: { center: { $array: [0, 0, 0] }, radius: 2.0, inner_color: { $ref: 'red' }, outer_color: { $ref: 'blue' } }, factory: 'VGroup(Square().shift(LEFT), Circle().shift(RIGHT))', ctx: '{ "red": ManimColor("#FF0000"), "blue": ManimColor("#0000FF") }', ctxVars: ['red', 'blue'], exp: 's.set_submobject_colors_by_radial_gradient(center=ORIGIN, radius=2.0, inner_color=ctx["red"], outer_color=ctx["blue"])' },
+  { id: 'manim.mobject.mobject.Mobject.stretch_about_point', params: { factor: 2.0, dim: 0, point: { $array: [0, 0, 0] } }, factory: 'Square()', exp: 's.stretch_about_point(2.0, 0, ORIGIN)' },
+  { id: 'manim.mobject.mobject.Mobject.stretch_to_fit_depth', params: { depth: 1.5 }, factory: 'Square()', exp: 's.stretch_to_fit_depth(1.5)' },
+  { id: 'manim.mobject.mobject.Mobject.scale_to_fit_depth', params: { depth: 2.0 }, factory: 'Square()', exp: 's.scale_to_fit_depth(2.0)' },
+  { id: 'manim.mobject.mobject.Mobject.sort_submobjects', params: { args: [{ $lambda: { params: ['p'], body: { $index: { value: { $local: 'p' }, index: 0 } } } }] }, factory: 'VGroup(Square().shift(RIGHT), Square().shift(LEFT))', exp: 's.sort_submobjects(lambda p: p[0])' },
+  { id: 'manim.mobject.mobject.Mobject.apply_to_family', params: { func: { $lambda: { params: ['m'], body: { $call: { api: 'Mobject.scale', receiver: { $local: 'm' }, args: [2.0] } } } } }, factory: 'VGroup(Square(), Circle())', exp: 's.apply_to_family(lambda m: m.scale(2.0))' },
+  { id: 'manim.mobject.mobject.Mobject.align_points', params: { mobject: { $ref: 'target' } }, factory: 'PMobject().add_points(np.array([[0,0,0], [1,0,0]]))', ctx: '{ "target": PMobject().add_points(np.array([[0,0,0], [1,0,0], [2,0,0]])) }', ctxVars: ['target'], exp: 's.align_points(ctx["target"])' },
+  { id: 'manim.mobject.mobject.Mobject.align_points_with_larger', params: { larger_mobject: { $ref: 'target' } }, factory: 'PMobject().add_points(np.array([[0,0,0], [1,0,0]]))', ctx: '{ "target": PMobject().add_points(np.array([[0,0,0], [1,0,0], [2,0,0], [3,0,0]])) }', ctxVars: ['target'], exp: 's.align_points_with_larger(ctx["target"])' },
+  { id: 'manim.mobject.mobject.Mobject.null_point_align', params: { mobject: { $ref: 'target' } }, factory: 'VGroup()', ctx: '{ "target": Square() }', ctxVars: ['target'], exp: 's.null_point_align(ctx["target"])' },
+  { id: 'manim.mobject.mobject.Mobject.interpolate', params: { mobject1: { $ref: 'm1' }, mobject2: { $ref: 'm2' }, alpha: 0.5 }, factory: 'Square()', ctx: '{ "m1": Square().shift(LEFT), "m2": Square().shift(RIGHT) }', ctxVars: ['m1', 'm2'], exp: 's.interpolate(ctx["m1"], ctx["m2"], 0.5)' },
+  { id: 'manim.mobject.mobject.Mobject.add_background_rectangle_to_family_members_with_points', params: {}, factory: 'Square()', exp: 's.add_background_rectangle_to_family_members_with_points()' },
+  { id: 'manim.mobject.mobject.Mobject.add_background_rectangle_to_submobjects', params: {}, factory: 'Square()', exp: 's.add_background_rectangle_to_submobjects()' },
+  { id: 'manim.mobject.mobject.Mobject.pose_at_angle', params: {}, factory: 'Square()', exp: 's.pose_at_angle()' },
+  { id: 'manim.mobject.mobject.Mobject.to_original_color', params: {}, factory: 'Square().set_color(RED)', exp: 's.to_original_color()' },
+  { id: 'manim.mobject.mobject.Mobject.repeat_submobject', params: { submob: { $ref: 'target' } }, factory: 'VGroup(Square())', ctx: '{ "target": Circle() }', ctxVars: ['target'], exp: 's.repeat_submobject(ctx["target"])' },
+  { id: 'manim.mobject.mobject.Mobject.reduce_across_dimension', mode: 'store', params: { reduce_func: { $lambda: { params: ['pts'], body: { $index: { value: { $local: 'pts' }, index: 0 } } } }, dim: 0 }, factory: 'Square()', exp: 's.reduce_across_dimension(lambda pts: pts[0], 0)' },
+
+  // Group J: 3D and Arc geometry (22)
+  { id: 'manim.mobject.three_d.three_dimensions.Line3D.parallel_to', isStatic: true, mode: 'store', params: { line: { $ref: 'target' } }, factory: 'None', ctx: '{ "target": Line3D(start=ORIGIN, end=OUT) }', ctxVars: ['target'], exp: 'Line3D.parallel_to(ctx["target"])' },
+  { id: 'manim.mobject.three_d.three_dimensions.Line3D.perpendicular_to', isStatic: true, mode: 'store', params: { line: { $ref: 'target' }, point: { $array: [0, 0, 0] } }, factory: 'None', ctx: '{ "target": Line3D(start=RIGHT*2, end=UP+OUT) }', ctxVars: ['target'], exp: 'Line3D.perpendicular_to(ctx["target"], point=ORIGIN)' },
+  { id: 'manim.mobject.three_d.three_dimensions.Line3D.pointify', mode: 'store', params: { mob_or_point: { $array: [0, 0, 0] } }, factory: 'Line3D(start=ORIGIN, end=OUT)', exp: 's.pointify(ORIGIN)' },
+  { id: 'manim.mobject.three_d.three_dimensions.Line3D.set_start_and_end_attrs', params: { start: { $array: [0, 0, 0] }, end: { $array: [0, 0, 2] } }, factory: 'Line3D(start=ORIGIN, end=OUT)', exp: 's.set_start_and_end_attrs(start=ORIGIN, end=OUT*2)' },
+  { id: 'manim.mobject.three_d.three_dimensions.Cone.set_direction', params: { direction: { $array: [0, 0, 1] } }, factory: 'Cone()', exp: 's.set_direction(OUT)' },
+  { id: 'manim.mobject.three_d.three_dimensions.Cylinder.set_direction', params: { direction: { $array: [0, 0, 1] } }, factory: 'Cylinder()', exp: 's.set_direction(OUT)' },
+  { id: 'manim.mobject.three_d.three_dimensions.Cylinder.add_bases', params: {}, factory: 'Cylinder()', exp: 's.add_bases()' },
+  { id: 'manim.mobject.three_d.three_dimensions.Surface.set_fill_by_checkerboard', params: { colors: ['#FF0000', '#0000FF'] }, factory: 'Surface(lambda u, v: np.array([u, v, 0]), u_range=[-1, 1], v_range=[-1, 1])', exp: 's.set_fill_by_checkerboard(ManimColor("#FF0000"), ManimColor("#0000FF"))' },
+  { id: 'manim.mobject.three_d.three_dimensions.Surface.set_fill_by_value', params: { axes: { $ref: 'axes' }, colorscale: ['#FF0000', '#0000FF'] }, factory: 'Surface(lambda u, v: np.array([u, v, 0]), u_range=[-1, 1], v_range=[-1, 1])', ctx: '{ "axes": ThreeDAxes(x_range=[-1, 1], y_range=[-1, 1], z_range=[-1, 1]) }', ctxVars: ['axes'], exp: 's.set_fill_by_value(axes=ctx["axes"], colorscale=[ManimColor("#FF0000"), ManimColor("#0000FF")])' },
+  { id: 'manim.mobject.three_d.three_dimensions.Cube.generate_points', params: {}, factory: 'Cube()', exp: 's.generate_points()' },
+  { id: 'manim.mobject.three_d.three_dimensions.Cube.init_points', params: {}, factory: 'Cube()', exp: 's.init_points()' },
+  { id: 'manim.mobject.three_d.three_dimensions.Prism.generate_points', params: {}, factory: 'Prism()', exp: 's.generate_points()' },
+  { id: 'manim.mobject.geometry.arc.Arc.generate_points', params: {}, factory: 'Arc(angle=PI/2)', exp: 's.generate_points()' },
+  { id: 'manim.mobject.geometry.arc.Arc.init_points', params: {}, factory: 'Arc(angle=PI/2)', exp: 's.init_points()' },
+  { id: 'manim.mobject.geometry.arc.Annulus.generate_points', params: {}, factory: 'Annulus(inner_radius=0.5, outer_radius=1.0)', exp: 's.generate_points()' },
+  { id: 'manim.mobject.geometry.arc.Annulus.init_points', params: {}, factory: 'Annulus(inner_radius=0.5, outer_radius=1.0)', exp: 's.init_points()' },
+  { id: 'manim.mobject.geometry.arc.AnnularSector.generate_points', params: {}, factory: 'AnnularSector(inner_radius=0.5, outer_radius=1.0, angle=PI/2)', exp: 's.generate_points()' },
+  { id: 'manim.mobject.geometry.arc.AnnularSector.init_points', params: {}, factory: 'AnnularSector(inner_radius=0.5, outer_radius=1.0, angle=PI/2)', exp: 's.init_points()' },
+  { id: 'manim.mobject.geometry.arc.TipableVMobject.create_tip', mode: 'store', params: {}, factory: 'Line(LEFT, RIGHT)', exp: 's.create_tip()' },
+  { id: 'manim.mobject.geometry.arc.TipableVMobject.assign_tip_attr', params: { tip: { $ref: 'tip' }, at_start: false }, factory: 'Line(LEFT, RIGHT)', ctx: '{ "tip": ArrowTriangleTip() }', ctxVars: ['tip'], exp: 's.assign_tip_attr(ctx["tip"], at_start=False)' },
+  { id: 'manim.mobject.geometry.arc.TipableVMobject.position_tip', params: { tip: { $ref: 'tip' } }, factory: 'Line(LEFT, RIGHT)', ctx: '{ "tip": ArrowTriangleTip() }', ctxVars: ['tip'], exp: 's.position_tip(ctx["tip"])' },
+  { id: 'manim.mobject.geometry.arc.TipableVMobject.reset_endpoints_based_on_tip', params: { tip: { $ref: 'tip' }, at_start: false }, factory: 'Line(LEFT, RIGHT)', ctx: '{ "tip": ArrowTriangleTip() }', ctxVars: ['tip'], exp: 's.reset_endpoints_based_on_tip(ctx["tip"], at_start=False)' },
+
+  // Group K: Brace and Table methods (9)
+  { id: 'manim.mobject.svg.brace.Brace.get_text', mode: 'store', params: { text: ['label'] }, factory: 'Brace(Square())', exp: 's.get_text("label")' },
+  { id: 'manim.mobject.svg.brace.Brace.get_tex', mode: 'store', params: { tex: ['x'] }, factory: 'Brace(Square())', exp: 's.get_tex("x")' },
+  { id: 'manim.mobject.svg.brace.Brace.put_at_tip', params: { mob: { $ref: 'target' } }, factory: 'Brace(Square())', ctx: '{ "target": Text("hello") }', ctxVars: ['target'], exp: 's.put_at_tip(ctx["target"])' },
+  { id: 'manim.mobject.svg.brace.BraceLabel.change_label', params: { text: ['new_label'] }, factory: 'BraceLabel(Square(), "old_label")', exp: 's.change_label("new_label")' },
+  { id: 'manim.mobject.table.Table.add_background_to_entries', params: {}, factory: 'Table([["a", "b"], ["c", "d"]], element_to_mobject=Text)', exp: 's.add_background_to_entries()' },
+  { id: 'manim.mobject.table.Table.add_highlighted_cell', params: { pos: [1, 1], color: '#FF0000' }, factory: 'Table([["a", "b"], ["c", "d"]], element_to_mobject=Text)', exp: 's.add_highlighted_cell((1, 1), color=ManimColor("#FF0000"))' },
+  { id: 'manim.mobject.table.Table.set_column_colors', params: { colors: ['#FF0000', '#0000FF'] }, factory: 'Table([["a", "b"], ["c", "d"]], element_to_mobject=Text)', exp: 's.set_column_colors(ManimColor("#FF0000"), ManimColor("#0000FF"))' },
+  { id: 'manim.mobject.table.Table.set_row_colors', params: { colors: ['#FF0000', '#0000FF'] }, factory: 'Table([["a", "b"], ["c", "d"]], element_to_mobject=Text)', exp: 's.set_row_colors(ManimColor("#FF0000"), ManimColor("#0000FF"))' },
+  { id: 'manim.mobject.table.Table.scale', params: { scale_factor: 1.5 }, factory: 'Table([["a", "b"], ["c", "d"]], element_to_mobject=Text)', exp: 's.scale(1.5)' }
 ];
 
 test('native mutations match independent direct Python calls', { timeout: 120_000 }, async t => {
@@ -155,7 +245,7 @@ ${compiled.prelude.map(l => '    ' + l).join('\n')}
     const runner = `
 from manim import *
 import numpy as np
-import random, json
+import random, json, inspect
 
 ${API_RUNTIME}
 ${compiler.imports().join('\n')}
@@ -180,6 +270,9 @@ def compare_postconditions(exp_sub, exp_res, act_sub, act_res):
         elif hasattr(exp_sub, "color") and hasattr(act_sub, "color"):
             assert act_sub.color == exp_sub.color
 
+    if inspect.isgenerator(exp_res): exp_res = list(exp_res)
+    if inspect.isgenerator(act_res): act_res = list(act_res)
+
     if exp_res is exp_sub:
         assert act_res is act_sub
     elif exp_res is None:
@@ -190,11 +283,24 @@ def compare_postconditions(exp_sub, exp_res, act_sub, act_res):
         assert np.isclose(float(act_res), float(exp_res), atol=1e-5)
     elif isinstance(exp_res, np.ndarray):
         np.testing.assert_allclose(act_res, exp_res, atol=1e-5)
+    elif callable(exp_res):
+        assert callable(act_res)
+        for t in [0.0, 0.25, 0.5, 0.75, 1.0]:
+            pt_exp = exp_res(t)
+            pt_act = act_res(t)
+            if isinstance(pt_exp, np.ndarray):
+                np.testing.assert_allclose(pt_act, pt_exp, atol=1e-5)
+            else:
+                assert np.isclose(float(pt_act), float(pt_exp), atol=1e-5)
     elif isinstance(exp_res, (list, tuple)):
         assert len(act_res) == len(exp_res)
         for a, b in zip(act_res, exp_res):
             if isinstance(b, np.ndarray):
                 np.testing.assert_allclose(a, b, atol=1e-5)
+            elif callable(b):
+                assert callable(a)
+                for t in [0.0, 0.5, 1.0]:
+                    np.testing.assert_allclose(a(t), b(t), atol=1e-5)
             elif isinstance(b, (int, float, np.number)):
                 assert np.isclose(float(a), float(b), atol=1e-5)
             elif isinstance(b, Mobject):
@@ -276,7 +382,7 @@ print("ANYVIS_MUTATIONS " + json.dumps(results))
     );
 
     assert.deepEqual(failures, []);
-    assert.ok(verified.length >= 60, `Expected at least 60 verified APIs, got ${verified.length}`);
+    assert.ok(verified.length >= 170, `Expected at least 170 verified APIs, got ${verified.length}`);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

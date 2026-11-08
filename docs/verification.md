@@ -1,5 +1,15 @@
 # AnyVis 验证记录
 
+## Mobject/VMobject、三维与几何标注扩展验证（2026-11-08）
+
+十二组真实 Manim 证据合并 **1,094 / 2,293** 个独立入口，新增 82 个几何路径、变形、三维与表格 API，剩余 1,199 项。全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格后置条件对比，0 失败、0 fixture gap：
+- **VMobject 路径与贝塞尔**：`add_smooth_curve_to`、`gen_cubic_bezier_tuples_from_points`、`get_cubic_bezier_tuples_from_points`、`get_nth_curve_function`、`get_nth_curve_function_with_length`、`get_nth_curve_length_pieces`、`gen_subpaths_from_points_2d`、`get_subpaths_from_points`、`insert_n_curves_to_point_list`、`pointwise_become_partial`、`set_anchors_and_handles`、`scale_handle_to_anchor_distances`、`force_direction`、`change_anchor_mode`、`consider_points_equals_2d`、`align_points`、`align_rgbas`、`generate_rgbas_array`、`update_rgbas_array`、`set_shade_in_3d`、`set_style`、`set_points`、`set_color`、`fade`、`rotate`、`scale`、`apply_function`、`interpolate_color`、`VectorizedPoint.set_location`、`CurvesAsSubmobjects.point_from_proportion`。
+- **Mobject 变换与家族**：`fade_to`、`proportion_from_point`、`put_start_and_end_on`、`set_color_by_gradient`、`set_colors_by_radial_gradient`、`set_submobject_colors_by_radial_gradient`、`stretch_about_point`、`stretch_to_fit_depth`、`scale_to_fit_depth`、`sort_submobjects`、`apply_to_family`、`align_points`（PMobject 派发）、`align_points_with_larger`、`null_point_align`、`interpolate`、`add_background_rectangle_to_family_members_with_points`、`add_background_rectangle_to_submobjects`、`pose_at_angle`、`to_original_color`、`repeat_submobject`、`reduce_across_dimension`。
+- **三维与弧线**：`Line3D.parallel_to`、`Line3D.perpendicular_to`、`Line3D.pointify`、`Line3D.set_start_and_end_attrs`、`Cone.set_direction`、`Cylinder.set_direction`、`Cylinder.add_bases`、`Surface.set_fill_by_checkerboard`、`Surface.set_fill_by_value`、`Cube.generate_points`、`Cube.init_points`、`Prism.generate_points`、`Arc.generate_points`、`Arc.init_points`、`Annulus.generate_points`、`Annulus.init_points`、`AnnularSector.generate_points`、`AnnularSector.init_points`、`TipableVMobject.create_tip`、`TipableVMobject.assign_tip_attr`、`TipableVMobject.position_tip`、`TipableVMobject.reset_endpoints_based_on_tip`。
+- **标注与表格**：`Brace.get_text`、`Brace.get_tex`、`Brace.put_at_tip`、`BraceLabel.change_label`、`Table.add_background_to_entries`、`Table.add_highlighted_cell`、`Table.set_column_colors`、`Table.set_row_colors`、`Table.scale`。
+
+本地 342 项应用测试、22 项原生测试、6 项证据校验、11 项桌面检查、真实 worker 渲染与生产构建通过。
+
 ## OpenGL 状态与曲线长度兼容验证（2026-11-08）
 
 十二组真实 Manim 证据合并 **1,012 / 2,293** 个独立入口，新增 77 个 OpenGL 对象状态 API，剩余 1,281 项。点数组、曲面采样、路径、复制隔离、样式和更新器均断言具体结果；状态测试不创建图形上下文，明确 `renderValidated=false`。
