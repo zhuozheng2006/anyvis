@@ -4,6 +4,14 @@
 
 当前开发版本 v0.4.0：开源 React Timeline Editor、对象管理、图片/音频上传与真实混音、素材 ZIP、三视图同步与共享撤销已实现。最新测试范围见 [验证记录](verification.md#v040-时间轴对象与素材2026-11-08)。当前本地没有 Git 元数据，使用 GitHub Git Data API 基于远端树增量提交。
 
+## 当前接续：1,012 项证据与 OpenGL 验证
+
+935 项源码已发布 `354e3610dcbe3108fa650a2914aef528d4c43e51`，原生工作流 42443586274、桌面工作流 42443586279 全部成功。继续新增 77 项上下文无关的 OpenGL 状态验证，十二份原生证据合并 1,012 项，剩余 1,281 项，其中 456 项 OpenGL。状态报告显式 renderValidated=false，不可写成逐项渲染通过。
+
+新增 _av_opengl_length_compat：Manim 0.20.1 的 OpenGLVMobject.get_arc_length 在当前 NumPy 2.5.4 下 np.sum(generator) 报错，版本/模块/能力探测后仅把输入物化成列表，保留采样参数、NumPy 返回与子类分派。不修改用户 Python 安装；已有正确实现、其他版本、空路径、非默认采样和重复初始化已回归。
+
+实际 OpenGL 像素验证为独立 fixture，Linux CI 增加 Xvfb/Mesa 并强制 ANYVIS_REQUIRE_OPENGL=1；本机因上下文缺失明确跳过。最终 CI 结果与发布提交见 verification.md 和 artifacts/v04-opengl-publication.json。
+
 ## 当前接续：935 项行为证据与三项兼容修复
 
 用户已明确允许合并并继续工作，PR #1 成功合并到 main：`4173c5fd06fb1669cd86bf0c1369fec49273dd0e`。前一轮自动审批阻断已解除，不需要再次请求 PR #1 的合并许可。

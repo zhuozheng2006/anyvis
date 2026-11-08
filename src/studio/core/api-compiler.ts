@@ -165,6 +165,28 @@ def _av_point_cloud_compat():
     point_from_proportion._anyvis_integer_index = True
     _av_PMobject.point_from_proportion = point_from_proportion
 _av_point_cloud_compat()
+def _av_opengl_length_compat():
+    # NumPy 2.4+ rejects np.sum(generator), used by Manim 0.20.1 here.
+    # Probe the native method without creating objects or a GL context.
+    import manim as _av_manim
+    from types import SimpleNamespace as _av_Namespace
+    from manim.mobject.opengl.opengl_vectorized_mobject import OpenGLVMobject as _av_GLVMobject
+    if _av_manim.__version__ != '0.20.1': return
+    original = _av_GLVMobject.get_arc_length
+    if original.__module__ != 'manim.mobject.opengl.opengl_vectorized_mobject': return
+    probe = _av_Namespace(get_curve_functions_with_lengths=lambda **kwargs: iter([(None, 2.), (None, 3.)]))
+    try:
+        original(probe)
+        return
+    except TypeError as error:
+        if 'generator' not in str(error): return
+    except Exception:
+        return
+    def get_arc_length(self, sample_points_per_curve=None):
+        return np.sum([length for _, length in self.get_curve_functions_with_lengths(
+            sample_points=sample_points_per_curve)])
+    _av_GLVMobject.get_arc_length = get_arc_length
+_av_opengl_length_compat()
 def _av_default_camera_compat():
     # 0.20.1's constructor and default-orientation method use different names.
     # Probe only that method, without creating a scene or rendering resources.
