@@ -57,9 +57,40 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
 
   // API-value modal state & stable lifecycle
   const [activeApiField, setActiveApiField] = useState<FieldDefinition | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const activeEditorRef = useRef<ApiValueEditorElement | null>(null);
   const editorMountedRef = useRef(false);
   const mathInputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+
+  const handleScrubPointerDown = (e: React.PointerEvent, f: FieldDefinition) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const raw = drafts[f.name] ?? '';
+    const startVal = !isNaN(parseFloat(raw)) ? parseFloat(raw) : (typeof f.default === 'number' ? f.default : 0);
+    const baseStep = f.step || 0.1;
+
+    const onPointerMove = (ev: PointerEvent) => {
+      const dx = ev.clientX - startX;
+      const step = ev.shiftKey ? baseStep * 10 : ev.altKey ? baseStep * 0.1 : baseStep;
+      const delta = Math.round(dx / 4) * step;
+      let nextVal = Math.round((startVal + delta) * 10000) / 10000;
+      if (typeof f.min === 'number') nextVal = Math.max(f.min, nextVal);
+      if (typeof f.max === 'number') nextVal = Math.min(f.max, nextVal);
+      const strVal = String(nextVal);
+      setDrafts(prev => ({ ...prev, [f.name]: strVal }));
+      onChangeRef.current({ [f.name]: nextVal });
+    };
+
+    const onPointerUp = () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+    };
+
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+  };
 
   const closeApiEditor = useCallback(() => {
     if (activeEditorRef.current) {
@@ -445,10 +476,34 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
               if (e.key === 'Enter') {
                 commitDraft(field);
                 e.currentTarget.blur();
+              } else if (field.type === 'number' && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+                e.preventDefault();
+                const raw = drafts[field.name] ?? '';
+                const currentNum = parseFloat(raw);
+                const valid = !isNaN(currentNum) ? currentNum : (typeof field.default === 'number' ? field.default : 0);
+                const baseStep = field.step || 0.1;
+                const step = e.shiftKey ? baseStep * 10 : e.altKey ? baseStep * 0.1 : baseStep;
+                const delta = e.key === 'ArrowUp' ? step : -step;
+                let nextVal = Math.round((valid + delta) * 10000) / 10000;
+                if (typeof field.min === 'number') nextVal = Math.max(field.min, nextVal);
+                if (typeof field.max === 'number') nextVal = Math.min(field.max, nextVal);
+                const strVal = String(nextVal);
+                handleDraftChange(field.name, strVal);
+                onChange({ [field.name]: nextVal });
               }
             }}
             aria-label={field.label}
           />
+          {field.type === 'number' && (
+            <span
+              className="ai-fields-scrub-handle"
+              title="按住拖拽快速调整数值（Shift 加速，Alt 微调）"
+              aria-label={`按住拖拽调整${field.label}`}
+              onPointerDown={e => handleScrubPointerDown(e, field)}
+            >
+              ↔
+            </span>
+          )}
           {field.suffix && <span className="ai-fields-suffix">{field.suffix}</span>}
         </div>
         {isMathTex && (
@@ -499,20 +554,66 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
 
   return (
     <div className="ai-fields-container">
-      {targetFields.map(field => (
-        <div
-          key={field.name}
-          className="ai-fields-row"
-          data-field={field.name}
-          title={field.description || field.label}
-        >
-          <div className="ai-fields-label-row">
-            <label className="ai-fields-label">{field.label}</label>
+      {targetFields.map(field => {
+        const isFieldMathTex =
+          field.name === 'tex' ||
+          (field.name === 'text' && (action.type === 'formula' || action.type === 'matching_tex')) ||
+          action.type === 'formula' ||
+          action.type === 'matching_tex';
+        const isFieldModified =
+          field.default !== undefined &&
+          action.fields[field.name] !== undefined &&
+          String(action.fields[field.name]) !== String(field.default);
+
+        return (
+          <div
+            key={field.name}
+            className="ai-fields-row"
+            data-field={field.name}
+            title={field.description || field.label}
+          >
+            <div className="ai-fields-label-row">
+              <label className="ai-fields-label">{field.label}</label>
+              <div className="ai-fields-label-actions">
+                {isFieldMathTex && (
+                  <button
+                    type="button"
+                    className="ai-fields-copy-tex-btn"
+                    title="复制 LaTeX 公式代码"
+                    aria-label="复制 LaTeX 公式代码"
+                    onClick={() => {
+                      const val = String(drafts[field.name] || action.fields[field.name] || '');
+                      if (navigator.clipboard) {
+                        void navigator.clipboard.writeText(val);
+                      }
+                      setCopiedField(field.name);
+                      setTimeout(() => setCopiedField(null), 2000);
+                    }}
+                  >
+                    {copiedField === field.name ? '✓ 已复制' : '📋 复制'}
+                  </button>
+                )}
+                {isFieldModified && (
+                  <button
+                    type="button"
+                    className="ai-fields-reset-btn"
+                    title={`重置为默认值 (${field.default})`}
+                    aria-label={`重置${field.label}为默认值`}
+                    onClick={() => {
+                      handleDraftChange(field.name, String(field.default));
+                      onChange({ [field.name]: field.default });
+                    }}
+                  >
+                    ↺ 重置
+                  </button>
+                )}
+              </div>
+            </div>
+            {renderControl(field)}
+            {field.description && <p className="ai-fields-help">{field.description}</p>}
           </div>
-          {renderControl(field)}
-          {field.description && <p className="ai-fields-help">{field.description}</p>}
-        </div>
-      ))}
+        );
+      })}
 
       {activeApiField && (
         <div className="ai-fields-modal-overlay" onClick={closeApiEditor}>

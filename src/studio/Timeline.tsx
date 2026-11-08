@@ -10,6 +10,7 @@ import { AudioWaveform } from './AudioWaveform';
 import { ActionInspector } from './ActionInspector';
 import { TimelineMarkerBar, addMarker, clearMarkers, removeMarker, snapTimeToMarkers, updateMarker } from './TimelineMarkerBar';
 import { SmartMarkerModal } from './SmartMarkerModal';
+import { classifyActionCategory } from './timeline-category';
 import '@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css';
 import './timeline.css';
 
@@ -35,6 +36,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
   const [box, setBox] = useState<{ active: boolean; startX: number; startY: number; currentX: number; currentY: number } | null>(null);
   const [smartMarkerOpen, setSmartMarkerOpen] = useState(false);
   const [hoverInfo, setHoverInfo] = useState<{ time: number; x: number } | null>(null);
+  const [colorMode, setColorMode] = useState<'category' | 'track'>('category');
 
   const editor = useRef<TimelineState>(null), trackLabels = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null);
   const clips = useMemo(() => timelineClips(project.actions), [project.actions]);
@@ -249,6 +251,15 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       <button aria-label="添加时间轴标记" title="在当前播放头处添加时间标记（M）" onClick={handleAddMarker}><Bookmark size={14}/> 标记</button>
       <button aria-label="智能节奏打点" title="基于配音停顿、音乐节拍或动作切换自动生成标记" onClick={() => setSmartMarkerOpen(true)}><Sparkles size={14}/> 智能打点</button>
       <button aria-label="设置默认配乐" title={musicEnabled ? '自动钢琴配乐' : '当前无默认配乐'} onClick={onMusicSettings}><Music2 size={14}/> 配乐</button>
+      <button
+        type="button"
+        className={`tl-color-mode-btn ${colorMode === 'category' ? 'active' : ''}`}
+        title="切换时间轴配色模式：按动作分类 / 按轨道统一"
+        aria-label={`切换时间轴配色模式（当前：${colorMode === 'category' ? '按动作分类' : '按轨道统一'}）`}
+        onClick={() => setColorMode(m => (m === 'category' ? 'track' : 'category'))}
+      >
+        <Sparkles size={13} /> {colorMode === 'category' ? '分类色彩' : '轨道色彩'}
+      </button>
       <button onClick={() => add('wait')}><Clock3 size={14}/> 等待</button><button className="tl-add" onClick={() => setAdding(!adding)}><Plus size={14}/> 动画</button>
       <span className="tl-divider"/><button aria-label="缩小时间轴" onClick={() => setScale(s => Math.max(8, s / 1.4))}><Minus size={14}/></button><input className="tl-scale" aria-label="时间轴缩放" type="range" min="8" max="240" value={scale} onChange={e => setScale(Number(e.target.value))}/><button aria-label="放大时间轴" onClick={() => setScale(s => Math.min(240, s * 1.4))}><Plus size={14}/></button><button aria-label="适合全部片段" onClick={fit}><Maximize2 size={14}/></button>
     </div>
@@ -351,22 +362,76 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
         onActionResizeEnd={({ action, start, end, dir }) => commit(action.id, start, end, dir)}
         getScaleRender={value => <span>{timecode(value, project.scene.fps).slice(0, -3)}</span>}
         getActionRender={(item, row) => {
-          if (item.id === musicId) return <div className="tl-item music" role="button" tabIndex={0} aria-label="默认配乐 · 舒缓钢琴" title="自动生成并铺满实际作品时长；点击设置音量或选择无配乐" onClick={onMusicSettings} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); onMusicSettings?.(); } }} style={{ '--clip-colour': '#d4b481' } as React.CSSProperties}><span><Music2 size={12}/> 舒缓钢琴 · 自动铺满</span><small>{project.scene.musicGainDb ?? -18} dB · 首尾淡入淡出</small></div>;
+          if (item.id === musicId) {
+            return (
+              <div
+                className="tl-item music"
+                role="button"
+                tabIndex={0}
+                aria-label="默认配乐 · 舒缓钢琴"
+                title="自动生成并铺满实际作品时长；点击设置音量或选择无配乐"
+                onClick={onMusicSettings}
+                onKeyDown={event => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    onMusicSettings?.();
+                  }
+                }}
+                style={{ '--clip-colour': '#d4b481', '--category-color': '#d4b481' } as React.CSSProperties}
+              >
+                <span className="tl-item-content">
+                  <span className="tl-item-category-tag" style={{ backgroundColor: '#d4b481' }}>配乐</span>
+                  <Music2 size={12}/> 舒缓钢琴 · 自动铺满
+                </span>
+                <small>{project.scene.musicGainDb ?? -18} dB · 首尾淡入淡出</small>
+              </div>
+            );
+          }
           const clip = audio.find(c => c.id === item.id), source = clip?.action || clips.find(c => c.action.id === item.id)?.action;
           if (!source) return null;
           const label = labels.find(l => l.id === row.id);
           const isItemPressed = selectedIdSet.has(source.id);
-          return <div role="button" tabIndex={0} data-action-id={source.id} aria-label={`${clip ? '配音' : actionLabel(source)} · ${label?.name} · ${timecode(item.start, project.scene.fps)}`} aria-pressed={isItemPressed} onClick={e => {
-            e.stopPropagation();
-            if (e.shiftKey || e.metaKey || e.ctrlKey) {
-              const next = selectedIds.includes(source.id) ? selectedIds.filter(id => id !== source.id) : [...selectedIds, source.id];
-              handleSelectIds(next);
-            } else {
-              handleSelectIds([source.id]);
-            }
-          }} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleSelectIds([source.id]); } }} className={`tl-item ${clip ? 'audio' : ''} ${item.effectId === 'event' ? 'event' : ''} ${source.fields.muted === 'yes' ? 'muted' : ''}`} style={{ '--clip-colour': label?.colour } as React.CSSProperties} title={clip ? '拖动移动配音；左右边缘裁剪源文件' : '拖动调整顺序；右边缘调整时长；双击打开积木；按住 Shift/Cmd 多选'}>
-            {clip && <AudioWaveform asset={project.assets?.find(a => a.id === source.fields.asset)} offset={clip.offset} duration={item.end - item.start}/>}<span>{clip ? <Music2 size={12}/> : getBlockDefinition(source.type)?.container ? <Layers3 size={12}/> : null}{clip ? String(source.fields.name) : actionLabel(source)}</span><small>{item.effectId === 'event' ? '事件' : `${(item.end - item.start).toFixed(2)}s`}{clip ? ` · ${Number(source.fields.gain)} dB` : ''}</small>
-          </div>;
+          const cat = classifyActionCategory(clip ? { type: 'audio_play', fields: source.fields } : source);
+          const clipColour = colorMode === 'category' ? cat.color : (label?.colour || '#6ca6ed');
+          return (
+            <div
+              role="button"
+              tabIndex={0}
+              data-action-id={source.id}
+              data-category={cat.type}
+              aria-label={`${clip ? '配音' : actionLabel(source)} · [${cat.label}] · ${label?.name} · ${timecode(item.start, project.scene.fps)}`}
+              aria-pressed={isItemPressed}
+              onClick={e => {
+                e.stopPropagation();
+                if (e.shiftKey || e.metaKey || e.ctrlKey) {
+                  const next = selectedIds.includes(source.id) ? selectedIds.filter(id => id !== source.id) : [...selectedIds, source.id];
+                  handleSelectIds(next);
+                } else {
+                  handleSelectIds([source.id]);
+                }
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSelectIds([source.id]);
+                }
+              }}
+              className={`tl-item ${clip ? 'audio' : ''} ${item.effectId === 'event' ? 'event' : ''} ${source.fields.muted === 'yes' ? 'muted' : ''}`}
+              style={{
+                '--clip-colour': clipColour,
+                '--category-color': cat.color,
+              } as React.CSSProperties}
+              title={clip ? '拖动移动配音；左右边缘裁剪源文件' : `[${cat.label}] 拖动调整顺序；右边缘调整时长；双击打开积木；按住 Shift/Cmd 多选`}
+            >
+              {clip && <AudioWaveform asset={project.assets?.find(a => a.id === source.fields.asset)} offset={clip.offset} duration={item.end - item.start}/>}
+              <span className="tl-item-content">
+                <span className="tl-item-category-tag" style={{ backgroundColor: cat.color }}>{cat.label}</span>
+                {clip ? <Music2 size={12}/> : getBlockDefinition(source.type)?.container ? <Layers3 size={12}/> : null}
+                <span className="tl-item-title">{clip ? String(source.fields.name) : actionLabel(source)}</span>
+              </span>
+              <small>{item.effectId === 'event' ? '事件' : `${(item.end - item.start).toFixed(2)}s`}{clip ? ` · ${Number(source.fields.gain)} dB` : ''}</small>
+            </div>
+          );
         }}/>
       {hoverInfo && (
         <div

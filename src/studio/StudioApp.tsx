@@ -47,6 +47,7 @@ import { PolarParametricModal } from './PolarParametricModal';
 import { Vector3DPlaygroundModal } from './Vector3DPlaygroundModal';
 import { StageGuidesOverlay } from './StageGuidesOverlay';
 import { StageDirectGizmo } from './StageDirectGizmo';
+import { StageZoomControls } from './StageZoomControls';
 import { ToolsHubDropdown } from './ToolsHubDropdown';
 import { ShortcutsHelpModal } from './ShortcutsHelpModal';
 import { QuickAddToolbar } from './QuickAddToolbar';
@@ -176,6 +177,35 @@ export default function StudioApp() {
   useEffect(() => { setTrusted(false); }, [compiled.requiresTrust ? compiled.code : '']);
 
   const notify = useCallback((message: string) => { setNotice(message); }, []);
+  const [stageZoom, setStageZoom] = useState(1);
+  const [stagePan, setStagePan] = useState({ x: 0, y: 0 });
+  const [stageDragging, setStageDragging] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const stageDragStart = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!stage.current) return;
+    if (document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => {});
+    } else {
+      void stage.current.requestFullscreen().catch(() => {});
+    }
+  }, []);
+
+  const handleResetZoom = useCallback(() => {
+    setStageZoom(1);
+    setStagePan({ x: 0, y: 0 });
+    notify('已重置画面缩放至 100%');
+  }, [notify]);
+
   const setAspectRatio = useCallback((width: number, height: number) => {
     setProject(prev => ({
       ...prev,
@@ -669,26 +699,81 @@ export default function StudioApp() {
                 />
               ))}
             </div>
+            <div className="stage-hud-group">
+              <StageZoomControls
+                zoom={stageZoom}
+                onZoomChange={z => {
+                  setStageZoom(z);
+                  if (z === 1) setStagePan({ x: 0, y: 0 });
+                }}
+                onResetZoom={handleResetZoom}
+                isFullscreen={isFullscreen}
+                onToggleFullscreen={toggleFullscreen}
+              />
+            </div>
           </div>
-          <div className="stage-shell" ref={stage} style={{ background: project.scene.background }}>
-            <StageGuidesOverlay
-              showSafeArea={showSafeArea}
-              showRuleOfThirds={showRuleOfThirds}
-              showOriginCrosshair={showOriginCrosshair}
-            />
-            <StageDirectGizmo
-              action={selectedManagedObject}
-              onChange={fields => {
-                if (!selectedManagedObject) return;
-                const next = updateAction(project, selectedManagedObject.id, fields);
-                setProject(next);
+          <div
+            className={`stage-shell ${stageDragging ? 'is-dragging' : ''}`}
+            ref={stage}
+            style={{
+              background: project.scene.background,
+              cursor: stageZoom > 1 ? (stageDragging ? 'grabbing' : 'grab') : undefined,
+            }}
+            onPointerDown={e => {
+              if (stageZoom <= 1 || (e.target as HTMLElement).closest('.stage-gizmo-reticle') || (e.target as HTMLElement).closest('.stage-gizmo-quick-bar')) return;
+              stageDragStart.current = { x: e.clientX, y: e.clientY, panX: stagePan.x, panY: stagePan.y };
+              setStageDragging(true);
+            }}
+            onPointerMove={e => {
+              if (!stageDragStart.current) return;
+              const dx = e.clientX - stageDragStart.current.x;
+              const dy = e.clientY - stageDragStart.current.y;
+              setStagePan({ x: stageDragStart.current.panX + dx, y: stageDragStart.current.panY + dy });
+            }}
+            onPointerUp={() => {
+              stageDragStart.current = null;
+              setStageDragging(false);
+            }}
+            onDoubleClick={e => {
+              if ((e.target as HTMLElement).closest('.stage-gizmo-reticle') || (e.target as HTMLElement).closest('.stage-gizmo-quick-bar')) return;
+              handleResetZoom();
+            }}
+          >
+            <div
+              className="stage-canvas-transformed"
+              style={{
+                transform: stageZoom !== 1 || stagePan.x !== 0 || stagePan.y !== 0
+                  ? `scale(${stageZoom}) translate(${stagePan.x}px, ${stagePan.y}px)`
+                  : undefined,
+                transformOrigin: 'center center',
+                transition: stageDragging ? 'none' : 'transform 0.15s ease-out',
+                width: '100%',
+                height: '100%',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
-            />
-            {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => { setVideoDuration(player.current?.duration || 0); setTime(0); }} onTimeUpdate={() => setTime(player.current?.currentTime || 0)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
-            {running && job?.posterUrl && <img className="live-render-frame" src={job.posterUrl} alt="Manim 正在生成的实际画面"/>}
-            {running && <div className="render-overlay"><Loader2 className="spin" size={14}/><span>{job?.message || '正在渲染…'}</span><button onClick={() => void cancel()} aria-label="停止渲染"><X size={14}/></button></div>}
-            {video && !currentVideo && !running && <button className="stale-preview" onClick={() => void render('preview')}>积木已修改 · 点击更新画面</button>}
-            {video && currentVideo && <div className="stage-watermark">{video.builtin ? '示例预览 · Manim 预渲染' : video.quality === 'final' ? '高清成片' : '真实 Manim 预览'}</div>}
+            >
+              <StageGuidesOverlay
+                showSafeArea={showSafeArea}
+                showRuleOfThirds={showRuleOfThirds}
+                showOriginCrosshair={showOriginCrosshair}
+              />
+              <StageDirectGizmo
+                action={selectedManagedObject}
+                onChange={fields => {
+                  if (!selectedManagedObject) return;
+                  const next = updateAction(project, selectedManagedObject.id, fields);
+                  setProject(next);
+                }}
+              />
+              {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => { setVideoDuration(player.current?.duration || 0); setTime(0); }} onTimeUpdate={() => setTime(player.current?.currentTime || 0)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
+              {running && job?.posterUrl && <img className="live-render-frame" src={job.posterUrl} alt="Manim 正在生成的实际画面"/>}
+              {running && <div className="render-overlay"><Loader2 className="spin" size={14}/><span>{job?.message || '正在渲染…'}</span><button onClick={() => void cancel()} aria-label="停止渲染"><X size={14}/></button></div>}
+              {video && !currentVideo && !running && <button className="stale-preview" onClick={() => void render('preview')}>积木已修改 · 点击更新画面</button>}
+              {video && currentVideo && <div className="stage-watermark">{video.builtin ? '示例预览 · Manim 预渲染' : video.quality === 'final' ? '高清成片' : '真实 Manim 预览'}</div>}
+            </div>
           </div>
           <div className="player-controls">
             <button className="icon-button" disabled={!video} title="退后 1 帧 (,)" aria-label="退后一帧" onClick={() => seek(Math.max(0, time - 1 / project.scene.fps))}><StepBack size={14}/></button>
