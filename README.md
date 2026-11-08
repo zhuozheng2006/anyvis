@@ -8,6 +8,8 @@ AnyVis v0.4.0 提供 Scratch 风格积木、基于开源 React Timeline Editor �
 
 [下载桌面测试包：macOS / Windows / Linux](docs/verification.md#最新桌面测试包) · [30分钟影片与可编辑工程](examples/geometry-topology/README.md)
 
+开发接手请先阅读 [Gemini 交接文档](GEMINI_HANDOFF.md)：当前状态、架构、待办优先级、复验命令与已知问题。
+
 ## 启动
 
 需要 **Node.js 22.18+**、npm，以及安装 Manim 的 Python 环境。本次原生渲染验证使用 **Manim CE 0.20.1 / Cairo / Python 3.12**；并未声称完成 0.22.1 或干净机器安装验收。
