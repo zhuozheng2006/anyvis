@@ -8,9 +8,9 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 
 | 项目 | 数量 | 核查方式 |
 | --- | ---: | --- |
-| 类 | 211 | 真实 Python 对象解析 |
-| 函数 | 116 | 真实 Python 对象解析 |
-| 实例方法 | 918 | 按实际声明类去重，继承路径可检索 |
+| 类 | 331 | 真实 Python 对象解析 |
+| 函数 | 267 | 真实 Python 对象解析 |
+| 实例方法 | 1,473 | 按实际声明类去重，继承路径可检索 |
 | 类方法 / 静态方法 | 18 / 33 | 保留绑定语义 |
 | 属性及自定义描述符 | 171 | 其中 128 项提供写入方式 |
 | 参数输入字段 | 9,136 | 原签名 + 未被中间构造器占用的继承参数 |
@@ -74,7 +74,7 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 - 配置与画框 fixture 新增 63 个独立 API；用非默认初始配置验证属性读写与尺寸、方向、路径，并断言配置复制后的修改不影响原对象。
 - 新增 17 块浮点颜色、绑定方法和动画回调工程，13.17 秒 / 316 帧全部解码，时间戳单调，红色像素确认浮点颜色真实进入视频。
 - 新增 77 个 OpenGL 对象状态 API：实际检查点数组、路径长度、边界框、复制隔离、颜色/透明度、更新器和曲面采样。通过禁用上下文创建确保状态 fixture 不依赖图形设备；报告明确 `renderValidated=false`。Manim 0.20.1 的 `get_arc_length` 在本机 NumPy 2.5.4 下使用 `np.sum(generator)` 报错，已用版本与能力探测限定的兼容处理修复，并验证采样参数转发、空路径、子类重写和既有修复保留。
-- 533 个入口专属于 OpenGL，已接入渲染器选择、编译、导出和 worker 路由，但本机 `glcontext` 无法导入 `egl`，**没有通过 OpenGL 原生渲染验收**。切换渲染器不能自动解决宿主环境缺少的后端。
+- 533 个入口专属于 OpenGL，已接入渲染器选择、编译、导出和 worker 路由，本机 `glcontext` 无法导入 `egl`，仍没有本机 OpenGL 渲染通过证据。Linux Xvfb/Mesa softpipe 的独立编译场景已真实绘制 12 帧并验证 160 px 位移，见[原生 CI](https://github.com/zhuozheng2006/anyvis/actions/runs/42444921112)。这是具体场景的像素测试，不是 533 项 OpenGL API 的逐项视觉验收；机器报告 `openGLBehaviorVerified=false` 保留此完整覆盖边界。切换渲染器不能自动解决宿主环境缺少的后端。
 - `manim.utils.testing.frames_comparison` 因当前环境没有 pytest 而无法导入，明确记录为不可用模块。CLI 入口、Sphinx 文档构建、私有名称和仅在运行时生成的动态成员不在该清单范围内。
 - 大部分 API 尚无逐项动画视觉验收；原生断言不等于所有参数组合、所有平台和所有渲染器均验证。自定义 Python 类型，以及 0.22.1 的新增与变更 API 仍需继续工作。
 
@@ -91,7 +91,7 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 | 静态方法 | 29 |
 | 类方法 | 12 |
 
-其中 825 项可用于通用渲染器，456 项 OpenGL 专属；862 项涉及本机权限标记。后续优先扩充 Mobject/VMobject 的变换与路径参数组合，再为 Scene、Camera、配置和文件类接口构建临时目录中的隔离 fixture；OpenGL 需先建立可用的真实上下文。权限标记不是排除项，只是要求测试避免改动用户环境。
+其中 825 项可用于通用渲染器，456 项 OpenGL 专属；862 项涉及本机权限标记。后续优先扩充 Mobject/VMobject 的变换与路径参数组合，再为 Scene、Camera、配置和文件类接口构建临时目录中的隔离 fixture；OpenGL 后续使用已验证的 Linux softpipe 渲染基线继续扩充场景。权限标记不是排除项，只是要求测试避免改动用户环境。
 
 ## 复现
 
@@ -125,4 +125,4 @@ Windows 可先在 PowerShell 设置 `$env:ANYVIS_API_REPORT='artifacts/api/nativ
 
 带逐项 outcomes 的证据，其 apiIds 必须与 verified 项完全一致；failed 项即使误写 passed=true 也被拒绝，fixture_gap 不计覆盖。六项证据校验回归包含畸形报告、失败、跳过和陈旧源码。
 
-独立像素测试 `npm run test:opengl-render` 实际运行编译出的场景；本机没有上下文时明确跳过，不计覆盖。Linux CI 使用 Xvfb/Mesa，并设置 `ANYVIS_REQUIRE_OPENGL=1`，上下文缺失或像素断言不满足均失败；其结果单独保存为 `opengl-render-evidence.json`，不将一次像素测试扩张为 533 个 OpenGL API 全部验收。
+独立像素测试 `npm run test:opengl-render` 实际运行编译出的场景；本机没有上下文时明确跳过，不计覆盖。Linux CI 使用 Xvfb/Mesa softpipe（默认 LLVMpipe 在首次网格绘制时崩溃），并设置 `ANYVIS_REQUIRE_OPENGL=1`，上下文缺失或像素断言不满足均失败；其结果单独保存为 `opengl-render-evidence.json`，不将一次像素测试扩张为 533 个 OpenGL API 全部验收。

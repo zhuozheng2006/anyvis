@@ -4,7 +4,11 @@
 
 十二组真实 Manim 证据合并 **1,012 / 2,293** 个独立入口，新增 77 个 OpenGL 对象状态 API，剩余 1,281 项。点数组、曲面采样、路径、复制隔离、样式和更新器均断言具体结果；状态测试不创建图形上下文，明确 `renderValidated=false`。
 
-修复 Manim 0.20.1 的 OpenGL 曲线长度在 NumPy 2.5.4 下使用 `np.sum(generator)` 报错，限定版本和实际能力探测，并覆盖其他版本、已修复实现、子类、空路径和采样参数。独立真实像素测试已加入 Linux Xvfb/Mesa CI，缺失上下文不得按通过处理；本机明确跳过，CI 结果另行补记。
+修复 Manim 0.20.1 的 OpenGL 曲线长度在 NumPy 2.5.4 下使用 `np.sum(generator)` 报错，限定版本和实际能力探测，并覆盖其他版本、已修复实现、子类、空路径和采样参数。独立真实像素测试在 Linux Xvfb/Mesa softpipe 中通过：320×180、12 fps、完整 12 帧，红方块质心位移 160.00 px，并检查面积、颜色、背景和中间位置。LLVMpipe 在首次 VAO 绘制崩溃，改用 softpipe 后保持原有断言全部通过；本机没有上下文，仍明确跳过。此次只验证一个具体渲染工程，不能声称全部 OpenGL API 均已视觉验收。
+
+本地 342 项应用测试、22 项原生测试、6 项证据校验、11 项桌面检查、真实 worker 渲染与生产构建通过。源码提交 `63ef59060de713c5589db09ed213c7e95eb977f9`，诊断提交 `7e96b4c24ea0a3bd27940bbe928b3daf59e38c49`，CI 驱动配置提交 `9d6fb478ceeb4ea8fca5cf16c3626d889ca62bac`。后两者不改变应用运行代码。
+
+[最终原生工作流](https://github.com/zhuozheng2006/anyvis/actions/runs/42444921112)全绿：22 项原生测试、1,012 项合并证据、OpenGL 像素测试、真实 worker/上传素材与混音、钢琴/无声导出；[机器证据附件](https://github.com/zhuozheng2006/anyvis/actions/runs/42444921112/artifacts/13603760388)。[三平台桌面工作流](https://github.com/zhuozheng2006/anyvis/actions/runs/42444633481)全部通过；对应安装包见文末。
 
 ## 场景与坐标系验证、原生兼容修复（2026-11-08）
 
@@ -174,14 +178,14 @@ PR #1 已获用户授权并合并，提交 `4173c5fd06fb1669cd86bf0c1369fec49273
 
 ## 最新桌面测试包
 
-**AnyVis v0.4.0**：[构建 42440905662](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662)，对应 `04c5d206550cb2a476326096f990e12030a5f8d5`，三平台构建与最终 ASAR 启动均通过。包含开源时间轴、对象管理器、图片与配音、SVG 尺寸修复、配音分割、默认钢琴与无配乐设置，服务重启后的会话恢复，以及本轮 API 图片渲染与复合片段删除修复。
+**AnyVis v0.4.0**：[构建 42444633481](https://github.com/zhuozheng2006/anyvis/actions/runs/42444633481)，对应 `7e96b4c24ea0a3bd27940bbe928b3daf59e38c49`，三平台构建与最终 ASAR 启动均通过。包含开源时间轴、对象管理器、图片与配音、SVG 尺寸修复、配音分割、默认钢琴与无配乐设置，服务重启后的会话恢复，以及 API 图片渲染、复合删除、点云取样、默认三维视角、前景对象单次更新和 OpenGL 曲线长度兼容修复。
 
 | 系统 | 安装包附件 | 实际启动验证 |
 | --- | --- | --- |
-| Apple Silicon Mac | [ARM64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662/artifacts/13601577386) | 通过 |
-| Intel Mac | [x64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662/artifacts/13601975289) | 仅构建，未在 Intel 运行 |
-| Windows x64 | [NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662/artifacts/13600689920) | 通过 |
-| Linux x64 | [AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42440905662/artifacts/13601124397) | 通过 |
+| Apple Silicon Mac | [ARM64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42444633481/artifacts/13603480710) | 通过 |
+| Intel Mac | [x64 DMG 与 ZIP](https://github.com/zhuozheng2006/anyvis/actions/runs/42444633481/artifacts/13603236588) | 仅构建，未在 Intel 运行 |
+| Windows x64 | [NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42444633481/artifacts/13603475520) | 通过 |
+| Linux x64 | [AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42444633481/artifacts/13603350659) | 通过 |
 
 每个平台执行 342 项应用测试、11 项桌面回归、准备目录和最终打包应用的 Electron 冒烟；实际操作 API Wait 搜索/添加、Circle 对象管理器、时间轴、只读代码，以及钢琴→无配乐→钢琴切换。附件保存 14 天（预计北京时间 2026-11-22 到期），需要 GitHub 登录。Python/Manim、字体和 LaTeX 仍需外部环境；macOS 尚未公证、Windows 尚未配置发行者签名，未运行安装向导。
 

@@ -10,7 +10,7 @@
 
 新增 _av_opengl_length_compat：Manim 0.20.1 的 OpenGLVMobject.get_arc_length 在当前 NumPy 2.5.4 下 np.sum(generator) 报错，版本/模块/能力探测后仅把输入物化成列表，保留采样参数、NumPy 返回与子类分派。不修改用户 Python 安装；已有正确实现、其他版本、空路径、非默认采样和重复初始化已回归。
 
-实际 OpenGL 像素验证为独立 fixture，Linux CI 增加 Xvfb/Mesa 并强制 ANYVIS_REQUIRE_OPENGL=1；本机因上下文缺失明确跳过。最终 CI 结果与发布提交见 verification.md 和 artifacts/v04-opengl-publication.json。
+实际 OpenGL 像素验证为独立 fixture，Linux CI 增加 Xvfb/Mesa 并强制 ANYVIS_REQUIRE_OPENGL=1；本机因上下文缺失明确跳过。最终原生 CI 42444921112 已成功：softpipe 绘制12帧/160px位移，媒体、钢琴和无声测试均通过；默认LLVMpipe曾在VAO.render崩溃，faulthandler定位后仅修改CI驱动。桌面CI 42444633481三平台全部成功。应用提交63ef590，诊断7e96b4c，CI配置9d6fb47；后两项不改变应用代码。最终链接见 verification.md 和 artifacts/v04-opengl-publication.json。
 
 ## 当前接续：935 项行为证据与三项兼容修复
 
