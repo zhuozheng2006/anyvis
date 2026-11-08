@@ -98,6 +98,153 @@ const configCases = [
   { id: 'manim._config.utils.ManimConfig.verbosity', target: 'cfg', mode: 'set', val: 'DEBUG', prop: 'verbosity' },
   { id: 'manim._config.utils.ManimConfig.media_dir', target: 'cfg', mode: 'set', val: 'custom_media', prop: 'media_dir' },
   { id: 'manim._config.utils.ManimConfig.images_dir', target: 'cfg', mode: 'set', val: 'custom_images', prop: 'images_dir' },
+
+  // Group H: Remaining ManimConfig properties (37)
+  { id: 'manim._config.utils.ManimConfig.assets_dir', target: 'cfg', exp: 'lambda s, ctx: s.assets_dir' },
+  { id: 'manim._config.utils.ManimConfig.custom_folders', target: 'cfg', exp: 'lambda s, ctx: s.custom_folders' },
+  { id: 'manim._config.utils.ManimConfig.enable_gui', target: 'cfg', exp: 'lambda s, ctx: s.enable_gui' },
+  { id: 'manim._config.utils.ManimConfig.enable_wireframe', target: 'cfg', exp: 'lambda s, ctx: s.enable_wireframe' },
+  { id: 'manim._config.utils.ManimConfig.ffmpeg_loglevel', target: 'cfg', exp: 'lambda s, ctx: s.ffmpeg_loglevel' },
+  { id: 'manim._config.utils.ManimConfig.frame_size', target: 'cfg', exp: 'lambda s, ctx: s.frame_size' },
+  { id: 'manim._config.utils.ManimConfig.gui_location', target: 'cfg', exp: 'lambda s, ctx: s.gui_location' },
+  { id: 'manim._config.utils.ManimConfig.input_file', target: 'cfg', exp: 'lambda s, ctx: s.input_file' },
+  { id: 'manim._config.utils.ManimConfig.log_dir', target: 'cfg', exp: 'lambda s, ctx: s.log_dir' },
+  { id: 'manim._config.utils.ManimConfig.media_embed', target: 'cfg', exp: 'lambda s, ctx: s.media_embed' },
+  { id: 'manim._config.utils.ManimConfig.notify_outdated_version', target: 'cfg', exp: 'lambda s, ctx: s.notify_outdated_version' },
+  { id: 'manim._config.utils.ManimConfig.partial_movie_dir', target: 'cfg', exp: 'lambda s, ctx: s.partial_movie_dir' },
+  { id: 'manim._config.utils.ManimConfig.plugins', target: 'cfg', exp: 'lambda s, ctx: s.plugins' },
+  { id: 'manim._config.utils.ManimConfig.preview', target: 'cfg', exp: 'lambda s, ctx: s.preview' },
+  { id: 'manim._config.utils.ManimConfig.preview_command', target: 'cfg', exp: 'lambda s, ctx: s.preview_command' },
+  { id: 'manim._config.utils.ManimConfig.progress_bar', target: 'cfg', exp: 'lambda s, ctx: s.progress_bar' },
+  { id: 'manim._config.utils.ManimConfig.quality', target: 'cfg', exp: 'lambda s, ctx: s.quality' },
+  { id: 'manim._config.utils.ManimConfig.renderer', target: 'cfg', exp: 'lambda s, ctx: s.renderer' },
+  { id: 'manim._config.utils.ManimConfig.save_pngs', target: 'cfg', exp: 'lambda s, ctx: s.save_pngs' },
+  { id: 'manim._config.utils.ManimConfig.save_sections', target: 'cfg', exp: 'lambda s, ctx: s.save_sections' },
+  { id: 'manim._config.utils.ManimConfig.scene_names', target: 'cfg', exp: 'lambda s, ctx: s.scene_names' },
+  { id: 'manim._config.utils.ManimConfig.sections_dir', target: 'cfg', exp: 'lambda s, ctx: s.sections_dir' },
+  { id: 'manim._config.utils.ManimConfig.seed', target: 'cfg', exp: 'lambda s, ctx: s.seed' },
+  { id: 'manim._config.utils.ManimConfig.show_in_file_browser', target: 'cfg', exp: 'lambda s, ctx: s.show_in_file_browser' },
+  { id: 'manim._config.utils.ManimConfig.tex_dir', target: 'cfg', exp: 'lambda s, ctx: s.tex_dir' },
+  { id: 'manim._config.utils.ManimConfig.tex_template', target: 'cfg', exp: 'lambda s, ctx: s.tex_template' },
+  { id: 'manim._config.utils.ManimConfig.tex_template_file', target: 'cfg', exp: 'lambda s, ctx: s.tex_template_file' },
+  { id: 'manim._config.utils.ManimConfig.text_dir', target: 'cfg', exp: 'lambda s, ctx: s.text_dir' },
+  { id: 'manim._config.utils.ManimConfig.transparent', target: 'cfg', exp: 'lambda s, ctx: s.transparent' },
+  { id: 'manim._config.utils.ManimConfig.use_projection_fill_shaders', target: 'cfg', exp: 'lambda s, ctx: s.use_projection_fill_shaders' },
+  { id: 'manim._config.utils.ManimConfig.use_projection_stroke_shaders', target: 'cfg', exp: 'lambda s, ctx: s.use_projection_stroke_shaders' },
+  { id: 'manim._config.utils.ManimConfig.video_dir', target: 'cfg', exp: 'lambda s, ctx: s.video_dir' },
+  { id: 'manim._config.utils.ManimConfig.window_monitor', target: 'cfg', exp: 'lambda s, ctx: s.window_monitor' },
+  { id: 'manim._config.utils.ManimConfig.window_position', target: 'cfg', exp: 'lambda s, ctx: s.window_position' },
+  { id: 'manim._config.utils.ManimConfig.window_size', target: 'cfg', exp: 'lambda s, ctx: s.window_size' },
+  { id: 'manim._config.utils.ManimConfig.write_all', target: 'cfg', exp: 'lambda s, ctx: s.write_all' },
+  { id: 'manim._config.utils.ManimConfig.write_to_movie', target: 'cfg', exp: 'lambda s, ctx: s.write_to_movie' },
+
+  // Group I: ManimConfig constructor, methods & logger/cli helpers (15)
+  {
+    id: 'manim._config.utils.ManimConfig',
+    kind: 'class',
+    factory: 'None, {}',
+    exp: 'lambda s, ctx: ManimConfig()',
+  },
+  {
+    id: 'manim._config.utils.ManimConfig.resolve_movie_file_extension',
+    target: 'cfg',
+    params: { is_transparent: false },
+    exp: 'lambda s, ctx: s.resolve_movie_file_extension(False)',
+  },
+  {
+    id: 'manim._config.utils.ManimConfig.update',
+    target: 'cfg',
+    params: { obj: { frame_rate: 30 } },
+    exp: 'lambda s, ctx: s.update({"frame_rate": 30})',
+  },
+  {
+    id: 'manim._config.utils.ManimConfig.digest_parser',
+    target: 'cfg',
+    params: { parser: { $ref: 'parser' } },
+    scope: ['subject', 'parser'],
+    factory: 'make_base_config(), {"parser": make_config_parser()}',
+    exp: 'lambda s, ctx: s.digest_parser(ctx["parser"])',
+  },
+  {
+    id: 'manim._config.utils.ManimConfig.digest_file',
+    target: 'cfg',
+    params: { filename: { $ref: 'cfg_path' } },
+    scope: ['subject', 'cfg_path'],
+    factory: 'make_base_config(), {"cfg_path": sample_cfg_path}',
+    exp: 'lambda s, ctx: s.digest_file(ctx["cfg_path"])',
+  },
+  {
+    id: 'manim._config.utils.ManimConfig.digest_args',
+    target: 'cfg',
+    params: { args: { $ref: 'cli_args' } },
+    scope: ['subject', 'cli_args'],
+    factory: 'make_base_config(), {"cli_args": make_dummy_args()}',
+    exp: 'lambda s, ctx: s.digest_args(ctx["cli_args"])',
+  },
+  {
+    id: 'manim._config.utils.config_file_paths',
+    kind: 'function',
+    factory: 'None, {}',
+    exp: 'lambda s, ctx: config_file_paths()',
+  },
+  {
+    id: 'manim._config.utils.make_config_parser',
+    kind: 'function',
+    factory: 'None, {}',
+    exp: 'lambda s, ctx: make_config_parser()',
+  },
+  {
+    id: 'manim._config.tempconfig',
+    kind: 'function',
+    params: { temp: { frame_rate: 15 } },
+    factory: 'None, {}',
+    exp: 'lambda s, ctx: tempconfig({"frame_rate": 15})',
+  },
+  {
+    id: 'manim._config.logger_utils.JSONFormatter',
+    kind: 'class',
+    factory: 'None, {}',
+    exp: 'lambda s, ctx: JSONFormatter()',
+  },
+  {
+    id: 'manim._config.logger_utils.JSONFormatter.format',
+    params: { record: { $ref: 'log_rec' } },
+    scope: ['subject', 'log_rec'],
+    factory: 'JSONFormatter(), {"log_rec": make_log_record()}',
+    exp: 'lambda s, ctx: s.format(ctx["log_rec"])',
+  },
+  {
+    id: 'manim._config.logger_utils.parse_theme',
+    kind: 'function',
+    params: { parser: { $ref: 'logger_sec' } },
+    scope: ['logger_sec'],
+    factory: 'None, {"logger_sec": make_config_parser()["logger"]}',
+    exp: 'lambda s, ctx: parse_theme(ctx["logger_sec"])',
+  },
+  {
+    id: 'manim._config.logger_utils.make_logger',
+    kind: 'function',
+    params: { parser: { $ref: 'logger_sec' }, verbosity: 'WARNING' },
+    scope: ['logger_sec'],
+    factory: 'None, {"logger_sec": make_config_parser()["logger"]}',
+    exp: 'lambda s, ctx: make_logger(ctx["logger_sec"], "WARNING")',
+  },
+  {
+    id: 'manim._config.logger_utils.set_file_logger',
+    kind: 'function',
+    params: { scene_name: 'TestScene', module_name: 'test_mod', log_dir: { $ref: 'log_dir_path' } },
+    scope: ['log_dir_path'],
+    factory: 'None, {"log_dir_path": sample_log_dir}',
+    exp: 'lambda s, ctx: set_file_logger("TestScene", "test_mod", ctx["log_dir_path"])',
+  },
+  {
+    id: 'manim._config.cli_colors.parse_cli_ctx',
+    kind: 'function',
+    params: { parser: { $ref: 'cli_ctx_sec' } },
+    scope: ['cli_ctx_sec'],
+    factory: 'None, {"cli_ctx_sec": make_config_parser()["CLI_CTX"]}',
+    exp: 'lambda s, ctx: parse_cli_ctx(ctx["cli_ctx_sec"])',
+  },
 ];
 
 test('native config and frame APIs match independent direct Python calls', { timeout: 120_000 }, async t => {
@@ -118,7 +265,7 @@ test('native config and frame APIs match independent direct Python calls', { tim
       assert.ok(entry, `Entry not found for ${c.id}`);
 
       const fields = {};
-      const isStaticOrClass = c.kind === 'class';
+      const isStaticOrClass = c.kind === 'class' || c.kind === 'function';
       if (!isStaticOrClass) {
         fields.receiver = 'subject';
       }
@@ -171,14 +318,40 @@ ${compiled.prelude.map(l => '    ' + l).join('\n')}
     const runner = `
 from manim import *
 import numpy as np
-import random, json
+import random, json, logging, argparse, tempfile
 from pathlib import Path
-from manim._config.utils import ManimConfig, ManimFrame
+from manim._config.utils import ManimConfig, ManimFrame, config_file_paths, make_config_parser
+from manim._config.logger_utils import JSONFormatter, parse_theme, make_logger, set_file_logger
+from manim._config.cli_colors import parse_cli_ctx
 
 ${API_RUNTIME}
 ${compiler.imports().join('\n')}
 
 results = []
+sample_log_dir = Path(tempfile.mkdtemp(prefix="anyvis_cfg_logs_"))
+sample_cfg_file = tempfile.NamedTemporaryFile("w", suffix=".cfg", delete=False)
+sample_cfg_file.write("[CLI]\\nframe_rate = 45\\n")
+sample_cfg_file.close()
+sample_cfg_path = sample_cfg_file.name
+
+def make_log_record():
+    return logging.LogRecord("manim", logging.INFO, "test.py", 10, "hello config", (), None)
+
+def make_dummy_args():
+    return argparse.Namespace(
+        file=Path("demo.py"),
+        config_file=None,
+        scene_names=["DemoScene"],
+        output_file="demo_out.mp4",
+        from_animation_number=(1, 5),
+        quality="low_quality",
+        resolution=(854, 480),
+        frame_rate=30.0,
+        custom_folders=False,
+        tex_template=None,
+        write_to_movie=False,
+        gui_location=(10, 20),
+    )
 
 def make_base_config():
     c = config.copy()
@@ -207,8 +380,25 @@ def compare_values(a, b):
         assert a.pixel_height == b.pixel_height
         assert a.frame_width == b.frame_width
         assert a.frame_height == b.frame_height
+    elif isinstance(a, TexTemplate) and isinstance(b, TexTemplate):
+        assert a.documentclass == b.documentclass
+    elif isinstance(a, JSONFormatter) and isinstance(b, JSONFormatter):
+        rec = make_log_record()
+        assert a.format(rec) == b.format(rec)
+    elif hasattr(a, "sections") and hasattr(b, "sections"):
+        assert a.sections() == b.sections()
+    elif hasattr(a, "styles") and hasattr(b, "styles"):
+        assert set(a.styles.keys()) == set(b.styles.keys())
+    elif isinstance(a, tuple) and isinstance(b, tuple) and len(a) == 3 and hasattr(a[0], "name"):
+        assert a[0].name == b[0].name
     elif isinstance(a, Path) or isinstance(b, Path):
         assert str(a) == str(b)
+    elif hasattr(a, "__enter__") and hasattr(b, "__enter__"):
+        with a:
+            fa = config.frame_rate
+        with b:
+            fb = config.frame_rate
+        assert fa == fb == 15.0
     elif hasattr(a, "value") and hasattr(b, "value"):
         assert a.value == b.value
     else:
@@ -236,6 +426,12 @@ def run_case(api_id, factory, expected_fn, compiled_probe, prop_name=None):
             act_res.pixel_width = before_width + 17
             assert act_sub.pixel_width == before_width, "copy must be independent"
             assert act_res.pixel_width == before_width + 17
+        if api_id.endswith("ManimConfig.update"):
+            assert act_sub.frame_rate == exp_sub.frame_rate == 30.0
+        if api_id.endswith("ManimConfig.resolve_movie_file_extension"):
+            assert act_sub.movie_file_extension == exp_sub.movie_file_extension
+        if api_id.endswith("set_file_logger"):
+            assert any(sample_log_dir.iterdir()), "set_file_logger must create log file"
         if prop_name is not None and exp_sub is not None and act_sub is not None:
             sub_exp_val = getattr(exp_sub, prop_name)
             sub_act_val = getattr(act_sub, prop_name)

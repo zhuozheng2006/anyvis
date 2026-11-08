@@ -180,3 +180,36 @@ export function duplicateAction(project: Project, id: string): { project: Projec
     action: clonedResult,
   };
 }
+export function scaleActionsDuration(project: Project, ids: string[], factor: number): Project {
+  if (!Number.isFinite(factor) || factor <= 0) {
+    throw Error('变速倍率必须为正数。');
+  }
+  const idSet = new Set(ids);
+  const allFlattened = flattenActions(project.actions);
+  const roots = allFlattened.filter(a => idSet.has(a.id));
+  const targetSubtreeIds = new Set(flattenActions(roots).map(a => a.id));
+  const fps = Math.max(1, project.scene.fps || 30);
+  const minDur = Math.max(0.05, 1 / fps);
+
+  let updatedCount = 0;
+  const nextActions = mapActions(project.actions, action => {
+    if (!targetSubtreeIds.has(action.id)) return action;
+    const currentDur = action.fields.duration;
+    if (typeof currentDur !== 'number' || currentDur <= 0) return action;
+    const raw = currentDur * factor;
+    const snapped = Math.min(120, Math.max(minDur, Math.round(raw * fps) / fps));
+    updatedCount += 1;
+    return {
+      ...action,
+      fields: {
+        ...action.fields,
+        duration: Number(snapped.toFixed(4)),
+      },
+    };
+  });
+
+  if (updatedCount === 0) {
+    throw Error('所选片段没有可缩放的动画时长。');
+  }
+  return { ...project, workspace: undefined, actions: nextActions };
+}

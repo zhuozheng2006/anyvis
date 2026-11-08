@@ -4,6 +4,7 @@ import { CURATED_BLOCK_CATALOG, BLOCK_CATALOG, getBlockDefinition } from './core
 import { flattenActions, duplicateAction, managedDefinition, managedObject, objectDependents, removeAction, updateAction } from './authoring';
 import { ActionInspector } from './ActionInspector';
 import { AssetShelf } from './AssetShelf';
+import { TrackerControlBar } from './TrackerControlBar';
 import './object-manager.css';
 
 export interface ObjectManagerProps {
@@ -377,6 +378,15 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
           </div>
         </div>
       )}
+
+      {/* ValueTracker Live Parameter Control Bar */}
+      <TrackerControlBar
+        project={project}
+        selectedId={selectedId}
+        onSelect={onSelect}
+        onChange={onChange}
+        onError={onError}
+      />
 
       {/* Bottom: Scratch-style Horizontal Cards Tray */}
       <div className="om-cards-tray">

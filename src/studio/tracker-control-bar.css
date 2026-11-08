@@ -1,0 +1,121 @@
+.tcb-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 10px;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.tcb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tcb-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.02em;
+}
+
+.tcb-add-btn {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tcb-add-btn:hover {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: rgba(52, 211, 153, 0.6);
+}
+
+.tcb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 88px;
+  overflow-y: auto;
+}
+
+.tcb-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(30, 41, 59, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  cursor: pointer;
+}
+
+.tcb-item-selected {
+  border-color: rgba(52, 211, 153, 0.55);
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.tcb-name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: #34d399;
+  min-width: 28px;
+}
+
+.tcb-slider {
+  flex: 1;
+  min-width: 60px;
+  height: 4px;
+  accent-color: #10b981;
+  cursor: pointer;
+}
+
+.tcb-num-input {
+  width: 54px;
+  padding: 2px 4px;
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #f1f5f9;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 4px;
+  text-align: right;
+}
+
+.tcb-anim-btn {
+  padding: 2px 6px;
+  font-size: 11px;
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.32);
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tcb-anim-btn:hover {
+  background: rgba(245, 158, 11, 0.24);
+}
+
+.tcb-del-btn {
+  padding: 1px 5px;
+  font-size: 11px;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tcb-del-btn:hover {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.14);
+}

@@ -18,7 +18,7 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 | 可核对的调用签名 | 2,117 | 参数名、种类、必填状态逐项核对 |
 | 没有可反射签名的类 | 5 | 提供显式位置参数列表和命名参数字典，不伪造签名 |
 | 旧清单缺失入口 | 0 | 与固定 gzip 库存逐项比较 |
-| 原生行为证据涉及的独立 API | 1,454 | 十二组真实 Manim 测试合并去重；状态、回调、动画与原生调用差分 |
+| 原生行为证据涉及的独立 API | 1,582 | 十二组真实 Manim 测试合并去重；状态、回调、动画与原生调用差分 |
 
 [机器可读核查报告](research/api-registry-verification.json) · [完整运行时目录](../src/studio/core/api-registry.json) · [以前的常用积木审计](research/curated-api-coverage.md)
 
@@ -64,7 +64,8 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 - 2,293 个入口和 2,765 个常量全部解析成功；2,117 项签名匹配，属性写入能力也经过核对。
 - 原生集成测试覆盖构造器、可变参数、位置专用/关键字专用参数、属性读写、类方法、返回值、曲线回调、updater、动态重绘、动画组合、上下文恢复及真实画面像素。测试中的固定断言代码只用于测量，不计为原生 API 实现。
 - [参数曲线工程与视频](../examples/api/README.md)由 21 个可编辑积木生成，实际视频 1280×720、24 fps、565 帧、23.54 秒；所有帧解码通过，并人工查看关键帧。
-- 十二组测试合并后，1,454 个不同入口已有运行证据，剩余未验证入口已降至 839 个（其中通用/Cairo 仅余 383 项，已覆盖全部通用/Cairo API 的 78.2%；OpenGL 专属 456 项）。只读差分测试 200 项全部通过。
+- 十二组测试合并后，1,582 个不同入口已有运行证据，剩余未验证入口已降至 711 个（其中通用/Cairo 仅余 255 项，已覆盖全部通用/Cairo API 的 85.5%；OpenGL 专属 456 项）。只读差分测试 200 项全部通过。
+- 本轮在 `api-config`（+52 项，实现 `manim._config.*` 100% 全覆盖）与 `api-families` 的 `camerasAndLifecycle`（+76 项新覆盖，合计本轮净增 128 个独立入口）中扩展行为测试，覆盖配置与日志系统全量属性/方法（`ManimConfig` 构造器及全部 37 项剩余属性、`resolve_movie_file_extension`、`update`、`digest_parser`、`digest_file`、`digest_args`、`config_file_paths`、`make_config_parser`、`tempconfig`、`JSONFormatter`、`JSONFormatter.format`、`parse_theme`、`make_logger`、`set_file_logger`、`parse_cli_ctx`）、全系列相机（`Camera` 及其 Cairo 上下文/路径/颜色/描边/填充/点云与背景色显示、`BackgroundColoredVMobjectDisplayer` 及其重置/显示/缩放匹配、`MappingCamera`、`OldMultiCamera`、`MovingCamera`、`MultiCamera`、`ThreeDCamera` 全套 RGBA/投影/捕获方法、`ImageMobjectFromCamera`）、动画生命周期与组合（`Add`、`Animation`、`Wait` 的 `begin`/`interpolate`/`update_mobjects`/`finish`/`clean_up_from_scene`、`Animation.set_default`、`ShowPartial`、`AnimationGroup`、`Succession`）以及分段、Pango 与图像/家族工具（`Section`、`MarkupUtils.validate`、`TextSetting`、`PangoUtils.str2style`/`str2weight`、`index_labels`、`print_family`、`extract_mobject_family_members`、`restructure_list_to_exclude_certain_family_members`、`get_json`、`change_to_rgba_array`、`invert_image`、`drag_pixels`），全部断言具体后置条件，0 失败。
 - 本轮在 `api-families` 中再新增 104 个独立入口的行为测试（新增 `textAndBraces` 与 `coreMobjectsAndUtils` 两大测试族），覆盖文字、数字与公式排版（`DecimalNumber` 及读写属性、`Integer`、`Variable`、`BulletedList`、`MathTex` 及其子部分检索/着色/透明度/排序、`MathTexPart`、`SingleStringMathTex`、`Tex`、`Title`、`MarkupText`、`Paragraph`、`Text`、`remove_invisible_chars`、`Code.get_styles_list`）、括号与横幅（`ArcBrace`、`Brace`、`BraceBetweenPoints`、`BraceLabel` 及其动画/切换/位移、`BraceText`、`ManimBanner` 及其创建/展开/缩放、`FullScreenRectangle`、`ScreenRectangle`）、核心基类与流线向量场（`Group`、`Mobject`、`CurvesAsSubmobjects`、`VGroup.add`、`VectorizedPoint`、`get_mobject_class`、`get_point_mobject_class`、`get_vectorized_mobject_class`、`ArrowVectorField`、`VectorField.fit_to_coordinate_system`、`VectorField.get_colored_background_image`、`StreamLines` 及其创建/启停动画）以及几何算法与模板工具（`polylabel`、`QuickHull`/`Facet`/`SubFacet`/`Horizon`/`QuickHullPoint`、`TexTemplate`/`TexFontTemplates`/`TexTemplateLibrary`/`tex_hash`、`not_quite_there`/`squish_rate_func`/`unit_interval`/`zero`、`DictAsObject`、`Percent`、`flatten_iterable_parameters`），全部断言具体后置条件，0 失败。
 - 本轮在 `api-families` 中新增 60 个独立入口的行为测试，覆盖几何标注与多边形（`AnnotationDot`、`ArcPolygonFromArcs`、`CubicBezier`、`CurvedDoubleArrow`、`LabeledDot`、`TangentialArc`、`TipableVMobject`、`Label`、`LabeledArrow`、`LabeledLine`、`LabeledPolygram`、`Polygram`、`Polygram.get_vertex_groups`、`RegularPolygram`、`Angle.from_three_points`、`Vector.coordinate_label`、`Arrow.reset_normal_vector`、`Arrow.scale`、`Line.generate_points`、`Line.init_points`、`BackgroundRectangle.set_style`、`BackgroundRectangle.pointwise_become_partial`）、三维对象与多面体/法线工具（`Arrow3D`、`Line3D`、`ThreeDVMobject`、`Polyhedron`、`Polyhedron.extract_face_coords`、`Polyhedron.create_faces`、`Polyhedron.get_edges`、`Polyhedron.update_faces`、`ConvexHull3D`、`Cone.func`、`Cylinder.func`、`Sphere.func`、`Torus.func`、`Surface.func`、`get_3d_vmob_*` 全套 8 个函数）以及矩阵与表格（`Matrix`、`IntegerMatrix`、`DecimalMatrix`、`MobjectMatrix`、`Matrix.add_background_to_entries`、`Matrix.set_column_colors`、`Matrix.set_row_colors`、`get_det_text`、`matrix_to_mobject`、`matrix_to_tex_string`、`Table`、`Table.create`、`IntegerTable`、`DecimalTable`、`MathTable`、`MobjectTable`），全部断言具体几何、结构与返回值，0 失败。
 - 本轮在 mutations fixture 中新增 82 个独立入口的行为测试，包括 VMobject 贝塞尔曲线拆分/平滑曲线追加/样式/采样函数/颜色更新、Mobject 径向渐变/深度拉伸与缩放/子对象重排/家族递归/点云对齐、Line3D/Surface/Cone/Cylinder/Cube/Prism 三维对象以及 Brace/Table 标注与表格操作，全部断言具体几何、结构与属性，0 失败、0 占位 gap。
@@ -83,18 +84,18 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 
 ## 下一批行为验证分母
 
-1,454 项证据之外的 839 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
+1,582 项证据之外的 711 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
 
 | 未取得行为证据的类型 | 数量 |
 | --- | ---: |
-| 实例方法 | 572 |
-| 类 | 96 |
-| 函数 | 79 |
-| 属性 | 65 |
-| 静态方法 | 20 |
-| 类方法 | 7 |
+| 实例方法 | 517 |
+| 类 | 81 |
+| 函数 | 64 |
+| 属性 | 26 |
+| 静态方法 | 17 |
+| 类方法 | 6 |
 
-其中 383 项可用于通用渲染器，456 项 OpenGL 专属。后续优先扩充 Camera、Scene、SVG 解析和配置类接口的隔离 fixture；OpenGL 后续使用已验证的 Linux softpipe 渲染基线继续扩充场景。权限标记不是排除项，只是要求测试避免改动用户环境。
+其中 255 项可用于通用渲染器，456 项 OpenGL 专属。后续优先扩充 Scene、CairoRenderer、SVG 解析和 VectorScene 的隔离 fixture；OpenGL 后续使用已验证的 Linux softpipe 渲染基线继续扩充场景。权限标记不是排除项，只是要求测试避免改动用户环境。
 
 ## 复现
 

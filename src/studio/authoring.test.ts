@@ -3,7 +3,7 @@ import { createAction } from './core/catalog';
 import { createEmptyProject } from './core/project';
 import { compileProject } from './core/compiler';
 import { getApiEntry } from './core/api-registry';
-import { actionDuration, appendAction, duplicateAction, managedObject, objectDependents, parallelWithNext, removeAction, removeActions, reorderAction, timelineClips, updateAction } from './authoring';
+import { actionDuration, appendAction, duplicateAction, managedObject, objectDependents, parallelWithNext, removeAction, removeActions, reorderAction, scaleActionsDuration, timelineClips, updateAction } from './authoring';
 describe('shared authoring projections', () => {
   it('keeps visual API constructors distinct from named method results', () => {
     expect(managedObject(createAction('circle'))).toBe(true);
@@ -115,5 +115,26 @@ describe('shared authoring projections', () => {
     expect(dupShift.action.fields.target).toBe('圆');
     expect(dupShift.action.fields.dx).toBe(2);
     expect(compileProject(dupShift.project).diagnostics).toEqual([]);
+  });
+  it('scales single, batch and compound action durations with frame-grid clamping', () => {
+    const c1 = createAction('circle', { name: '圆', duration: 2 });
+    const s1 = createAction('shift', { target: '圆', dx: 2, duration: 1.5 });
+    const seq = createAction('sequence');
+    const w1 = createAction('wait', { duration: 1 });
+    seq.children = [w1];
+    const p = { ...createEmptyProject(), actions: [c1, s1, seq] };
+
+    const faster = scaleActionsDuration(p, [c1.id, seq.id], 0.5);
+    expect(faster.actions[0].fields.duration).toBe(1);
+    expect(faster.actions[1].fields.duration).toBe(1.5);
+    expect(faster.actions[2].children?.[0].fields.duration).toBe(0.5);
+    expect(compileProject(faster).diagnostics).toEqual([]);
+
+    const slower = scaleActionsDuration(faster, [s1.id], 2);
+    expect(slower.actions[1].fields.duration).toBe(3);
+
+    const noDur = createAction('add', { target: '圆' });
+    const pNoDur = { ...createEmptyProject(), actions: [c1, noDur] };
+    expect(() => scaleActionsDuration(pNoDur, [noDur.id], 0.5)).toThrow('没有可缩放的动画时长');
   });
 });
