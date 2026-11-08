@@ -65,6 +65,9 @@ jobs:
       - name: Verify actual OpenGL pixels with Mesa
         env:
           LIBGL_ALWAYS_SOFTWARE: "1"
+          # LLVMpipe on this runner crashes inside VAO.render; use Mesa's
+          # non-JIT software driver and retain the same strict pixel assertions.
+          GALLIUM_DRIVER: softpipe
           ANYVIS_REQUIRE_OPENGL: "1"
         run: |
           export ANYVIS_PYTHON="$(command -v python)"
