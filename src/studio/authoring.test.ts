@@ -46,4 +46,29 @@ describe('shared authoring projections', () => {
     expect(compileProject(reordered).code.indexOf('Square(')).toBeLessThan(compileProject(reordered).code.indexOf('Circle('));
     expect(appendAction(p, 'circle', { name: 'a' }).action.fields.name).toBe('a 2');
   });
+  it('protects references outside a deleted compound clip, including API receivers', () => {
+    const circle = createAction('circle', { name: '主角', appear: 'none' });
+    const inner = createAction('sequence'); inner.children = [circle];
+    const outer = createAction('sequence'); outer.children = [inner];
+    const shift = createAction('shift', { target: '主角' });
+    const api = createAction(getApiEntry('Mobject.get_center')!.type, { receiver: '主角' });
+    for (const dependent of [shift, api]) {
+      const p = { ...createEmptyProject(), actions: [outer, dependent] };
+      expect(compileProject(p).diagnostics).toEqual([]);
+      expect(() => removeAction(p, outer.id)).toThrow('仍被');
+      expect(p.actions).toEqual([outer, dependent]);
+    }
+  });
+  it('allows deleting a compound clip together with its internal references', () => {
+    const circle = createAction('circle', { name: '主角', appear: 'none' });
+    const shift = createAction('shift', { target: '主角' });
+    const sequence = createAction('sequence'); sequence.children = [circle, shift];
+    const wait = createAction('wait', { duration: 2 });
+    const p = { ...createEmptyProject(), actions: [sequence, wait] };
+    expect(compileProject(p).diagnostics).toEqual([]);
+    const next = removeAction(p, sequence.id);
+    expect(next.actions).toEqual([wait]);
+    expect(compileProject(next).diagnostics).toEqual([]);
+    expect(p.actions[0].children).toEqual([circle, shift]);
+  });
 });

@@ -8,9 +8,9 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 
 | 项目 | 数量 | 核查方式 |
 | --- | ---: | --- |
-| 类 | 331 | 真实 Python 对象解析 |
-| 函数 | 267 | 真实 Python 对象解析 |
-| 实例方法 | 1,473 | 按实际声明类去重，继承路径可检索 |
+| 类 | 232 | 真实 Python 对象解析 |
+| 函数 | 123 | 真实 Python 对象解析 |
+| 实例方法 | 1,087 | 按实际声明类去重，继承路径可检索 |
 | 类方法 / 静态方法 | 18 / 33 | 保留绑定语义 |
 | 属性及自定义描述符 | 171 | 其中 128 项提供写入方式 |
 | 参数输入字段 | 9,136 | 原签名 + 未被中间构造器占用的继承参数 |
@@ -18,7 +18,7 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 | 可核对的调用签名 | 2,117 | 参数名、种类、必填状态逐项核对 |
 | 没有可反射签名的类 | 5 | 提供显式位置参数列表和命名参数字典，不伪造签名 |
 | 旧清单缺失入口 | 0 | 与固定 gzip 库存逐项比较 |
-| 原生行为证据涉及的独立 API | 662 | 六组真实 Manim 测试合并去重；状态、回调、动画与原生调用差分 |
+| 原生行为证据涉及的独立 API | 732 | 七组真实 Manim 测试合并去重；状态、回调、动画与原生调用差分 |
 
 [机器可读核查报告](research/api-registry-verification.json) · [完整运行时目录](../src/studio/core/api-registry.json) · [以前的常用积木审计](research/curated-api-coverage.md)
 
@@ -64,7 +64,8 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 - 2,293 个入口和 2,765 个常量全部解析成功；2,117 项签名匹配，属性写入能力也经过核对。
 - 原生集成测试覆盖构造器、可变参数、位置专用/关键字专用参数、属性读写、类方法、返回值、曲线回调、updater、动态重绘、动画组合、上下文恢复及真实画面像素。测试中的固定断言代码只用于测量，不计为原生 API 实现。
 - [参数曲线工程与视频](../examples/api/README.md)由 21 个可编辑积木生成，实际视频 1280×720、24 fps、565 帧、23.54 秒；所有帧解码通过，并人工查看关键帧。
-- 六组测试合并后，662 个不同入口已有运行证据，仍有 1,631 个入口未取得逐项行为证据。只读差分测试 200 项中 199 项通过，`NumberLine.get_labels` 的默认实例在直接 Manim 调用时抛出缺少 `default_numbers_to_display`，记录为 fixture gap，不计通过。
+- 七组测试合并后，732 个不同入口已有运行证据，仍有 1,561 个入口未取得逐项行为证据。只读差分测试 200 项中 199 项通过，`NumberLine.get_labels` 的默认实例在直接 Manim 调用时抛出缺少 `default_numbers_to_display`，记录为 fixture gap，不计通过。
+- 图片与相机 fixture 包含 74 个 API、75 组断言，新增 70 个此前未覆盖的入口。真实 Cairo/Pillow 像素、原始透明通道、取景边界和三维投影均检查具体结果；额外独立导出工程验证 API 创建的图片可显示并移动。修复 Pillow 13 兼容处理只覆盖上传图片积木而遗漏 API 图片的问题。
 - 配置与画框 fixture 新增 63 个独立 API；用非默认初始配置验证属性读写与尺寸、方向、路径，并断言配置复制后的修改不影响原对象。
 - 新增 17 块浮点颜色、绑定方法和动画回调工程，13.17 秒 / 316 帧全部解码，时间戳单调，红色像素确认浮点颜色真实进入视频。
 - 533 个入口专属于 OpenGL，已接入渲染器选择、编译、导出和 worker 路由，但本机 `glcontext` 无法导入 `egl`，**没有通过 OpenGL 原生渲染验收**。切换渲染器不能自动解决宿主环境缺少的后端。
@@ -73,18 +74,18 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 
 ## 下一批行为验证分母
 
-662 项证据之外的 1,631 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
+732 项证据之外的 1,561 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
 
 | 未取得行为证据的类型 | 数量 |
 | --- | ---: |
-| 实例方法 | 1,151 |
-| 类 | 234 |
+| 实例方法 | 1,087 |
+| 类 | 232 |
 | 函数 | 123 |
-| 属性 | 78 |
+| 属性 | 74 |
 | 静态方法 | 32 |
 | 类方法 | 13 |
 
-其中 1,098 项可用于通用渲染器，533 项 OpenGL 专属；1,047 项涉及本机权限标记。后续优先扩充 Mobject/VMobject 的变换与路径参数组合，再为 Scene、Camera、配置和文件类接口构建临时目录中的隔离 fixture；OpenGL 需先建立可用的真实上下文。权限标记不是排除项，只是要求测试避免改动用户环境。
+其中 1,028 项可用于通用渲染器，533 项 OpenGL 专属；985 项涉及本机权限标记。后续优先扩充 Mobject/VMobject 的变换与路径参数组合，再为 Scene、Camera、配置和文件类接口构建临时目录中的隔离 fixture；OpenGL 需先建立可用的真实上下文。权限标记不是排除项，只是要求测试避免改动用户环境。
 
 ## 复现
 
@@ -99,9 +100,10 @@ export ANYVIS_API_QUERIES_REPORT=artifacts/api/native-queries-evidence.json
 export ANYVIS_API_UTILITIES_REPORT=artifacts/api/native-utilities-evidence.json
 export ANYVIS_API_MUTATIONS_REPORT=artifacts/api/native-mutations-evidence.json
 export ANYVIS_API_CONFIG_REPORT=artifacts/api/native-config-evidence.json
+export ANYVIS_API_RASTER_REPORT=artifacts/api/native-raster-evidence.json
 npm run test:api-native
 python scripts/test_verify_api_registry.py
-python scripts/verify-api-registry.py --native-report "$ANYVIS_API_REPORT" --native-report "$ANYVIS_API_FAMILIES_REPORT" --native-report "$ANYVIS_API_QUERIES_REPORT" --native-report "$ANYVIS_API_UTILITIES_REPORT" --native-report "$ANYVIS_API_MUTATIONS_REPORT" --native-report "$ANYVIS_API_CONFIG_REPORT"
+python scripts/verify-api-registry.py --native-report "$ANYVIS_API_REPORT" --native-report "$ANYVIS_API_FAMILIES_REPORT" --native-report "$ANYVIS_API_QUERIES_REPORT" --native-report "$ANYVIS_API_UTILITIES_REPORT" --native-report "$ANYVIS_API_MUTATIONS_REPORT" --native-report "$ANYVIS_API_CONFIG_REPORT" --native-report "$ANYVIS_API_RASTER_REPORT"
 npm run build
 npm run test:desktop
 ```

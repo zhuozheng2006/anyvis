@@ -93,8 +93,15 @@ export function objectDependents(project: Project, id: string): string[] {
   return [...new Set(planObjectRename(project.actions, id, probe).filter(p => p.blockId !== id).map(p => p.blockId))];
 }
 export function removeAction(project: Project, id: string): Project {
-  const dependents = objectDependents(project, id);
-  if (dependents.length) throw Error(`此对象仍被 ${dependents.length} 个动作使用，请先修改或移除这些动作。`);
+  const source = flattenActions(project.actions).find(a => a.id === id);
+  const removed = source ? flattenActions([source]) : [];
+  const removedIds = new Set(removed.map(a => a.id));
+  // Deleting a compound clip also deletes its object definitions. References
+  // inside that same subtree disappear with it; surviving references must block
+  // the edit just as they do when deleting an individual object.
+  const dependents = new Set(removed.filter(a => getBlockDefinition(a.type)?.createsObject)
+    .flatMap(a => objectDependents(project, a.id)).filter(dependent => !removedIds.has(dependent)));
+  if (dependents.size) throw Error(`此片段中的对象仍被 ${dependents.size} 个动作使用，请先修改或移除这些动作。`);
   const remove = (actions: Action[]): Action[] => actions.filter(a => a.id !== id).map(a => ({ ...a, ...(a.children ? { children: remove(a.children) } : {}), ...(a.branches ? { branches: a.branches.map(remove) } : {}) }));
   return { ...project, workspace: undefined, actions: remove(project.actions) };
 }

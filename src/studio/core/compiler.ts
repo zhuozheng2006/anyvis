@@ -98,6 +98,9 @@ export function compileProject(input: Project | unknown): CompileResult {
   emit(`class AnyVisScene(${project.scene.dimension === '3d' ? 'ThreeDScene' : 'MovingCameraScene'}):`);
   emit('    def construct(self):');
   emit('        objects = {}');
+  // API constructors and callbacks can create images without an image_asset block.
+  // Apply the narrow Pillow compatibility fix once before any scene action.
+  if (usesApi || flattenHasImage(project.actions)) emit('        _anyvis_image_compat()');
   if (usesAudio) emit('        _av_audio_tracks = []');
   if (usesApi) {
     emit("        objects.update({'@scene': self, '@camera': self.camera, '@renderer': self.renderer})");
@@ -127,7 +130,6 @@ export function compileProject(input: Project | unknown): CompileResult {
     let reposition = false;
     switch (a.type) {
       case 'image_asset': {
-        stmt('_anyvis_image_compat()', a);
         const asset = project.assets?.find(item => item.id === str(a, 'asset') && item.kind === 'image');
         if (!asset) throw Error('请选择已上传的图片素材。');
         construction = `${asset.extension === 'svg' ? 'SVGMobject' : 'ImageMobject'}(${py(assetPath(asset))}).set_height(${num(a, 'height')}).set_opacity(${num(a, 'opacity')})`;
@@ -537,14 +539,14 @@ def _anyvis_finish_audio(scene, tracks):
         if not track['muted']:
             scene.renderer.file_writer.add_audio_segment(segment.apply_gain(track['gain']), time=track['start'])
 `);
-  if (flattenHasImage(project.actions)) emit(IMAGE_COMPAT);
+  if (usesApi || flattenHasImage(project.actions)) emit(IMAGE_COMPAT);
   return { code: lines.join('\n') + '\n', sourceMap, duration: uncertainDuration ? null : Math.max(duration, 0.1), diagnostics, requiresTrust };
 }
 
 function flattenHasImage(actions: Action[]): boolean {
   return actions.some(a => a.type === 'image_asset' || flattenHasImage(a.children || []) || (a.branches || []).some(flattenHasImage));
 }
-const IMAGE_COMPAT = `
+export const IMAGE_COMPAT = `
 def _anyvis_image_compat():
     # Manim 0.20.1 builds its transparent image canvas from a 2-D float array.
     # Pillow 13 rejects that invalid mode/dtype pair. Scope the correction to

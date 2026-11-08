@@ -172,6 +172,66 @@
       "manim.animation.updaters.mobject_update_utils.always_redraw",
       "manim.animation.updaters.update.UpdateFromAlphaFunc",
       "manim.animation.updaters.update.UpdateFromFunc",
+      "manim.camera.camera.Camera.adjust_out_of_range_points",
+      "manim.camera.camera.Camera.adjusted_thickness",
+      "manim.camera.camera.Camera.capture_mobject",
+      "manim.camera.camera.Camera.capture_mobjects",
+      "manim.camera.camera.Camera.convert_pixel_array",
+      "manim.camera.camera.Camera.display_image_mobject",
+      "manim.camera.camera.Camera.display_multiple_image_mobjects",
+      "manim.camera.camera.Camera.display_multiple_non_background_colored_vmobjects",
+      "manim.camera.camera.Camera.display_multiple_vectorized_mobjects",
+      "manim.camera.camera.Camera.display_vectorized",
+      "manim.camera.camera.Camera.get_coords_of_all_pixels",
+      "manim.camera.camera.Camera.get_fill_rgbas",
+      "manim.camera.camera.Camera.get_image",
+      "manim.camera.camera.Camera.get_mobjects_to_display",
+      "manim.camera.camera.Camera.get_stroke_rgbas",
+      "manim.camera.camera.Camera.get_thickening_nudges",
+      "manim.camera.camera.Camera.init_background",
+      "manim.camera.camera.Camera.is_in_frame",
+      "manim.camera.camera.Camera.make_background_from_func",
+      "manim.camera.camera.Camera.on_screen_pixels",
+      "manim.camera.camera.Camera.overlay_PIL_image",
+      "manim.camera.camera.Camera.overlay_rgba_array",
+      "manim.camera.camera.Camera.points_to_pixel_coords",
+      "manim.camera.camera.Camera.points_to_subpixel_coords",
+      "manim.camera.camera.Camera.reset",
+      "manim.camera.camera.Camera.reset_pixel_shape",
+      "manim.camera.camera.Camera.resize_frame_shape",
+      "manim.camera.camera.Camera.set_background",
+      "manim.camera.camera.Camera.set_background_from_func",
+      "manim.camera.camera.Camera.set_frame_to_background",
+      "manim.camera.camera.Camera.set_pixel_array",
+      "manim.camera.camera.Camera.thickened_coordinates",
+      "manim.camera.camera.Camera.transform_points_pre_display",
+      "manim.camera.camera.Camera.type_or_raise",
+      "manim.camera.moving_camera.MovingCamera.auto_zoom",
+      "manim.camera.moving_camera.MovingCamera.frame_center",
+      "manim.camera.moving_camera.MovingCamera.frame_height",
+      "manim.camera.moving_camera.MovingCamera.frame_width",
+      "manim.camera.moving_camera.MovingCamera.get_mobjects_indicating_movement",
+      "manim.camera.three_d_camera.ThreeDCamera.add_fixed_in_frame_mobjects",
+      "manim.camera.three_d_camera.ThreeDCamera.add_fixed_orientation_mobjects",
+      "manim.camera.three_d_camera.ThreeDCamera.frame_center",
+      "manim.camera.three_d_camera.ThreeDCamera.generate_rotation_matrix",
+      "manim.camera.three_d_camera.ThreeDCamera.get_focal_distance",
+      "manim.camera.three_d_camera.ThreeDCamera.get_gamma",
+      "manim.camera.three_d_camera.ThreeDCamera.get_phi",
+      "manim.camera.three_d_camera.ThreeDCamera.get_rotation_matrix",
+      "manim.camera.three_d_camera.ThreeDCamera.get_theta",
+      "manim.camera.three_d_camera.ThreeDCamera.get_value_trackers",
+      "manim.camera.three_d_camera.ThreeDCamera.get_zoom",
+      "manim.camera.three_d_camera.ThreeDCamera.project_point",
+      "manim.camera.three_d_camera.ThreeDCamera.project_points",
+      "manim.camera.three_d_camera.ThreeDCamera.remove_fixed_in_frame_mobjects",
+      "manim.camera.three_d_camera.ThreeDCamera.remove_fixed_orientation_mobjects",
+      "manim.camera.three_d_camera.ThreeDCamera.reset_rotation_matrix",
+      "manim.camera.three_d_camera.ThreeDCamera.set_focal_distance",
+      "manim.camera.three_d_camera.ThreeDCamera.set_gamma",
+      "manim.camera.three_d_camera.ThreeDCamera.set_phi",
+      "manim.camera.three_d_camera.ThreeDCamera.set_theta",
+      "manim.camera.three_d_camera.ThreeDCamera.set_zoom",
       "manim.data_structures.MethodWithArgs.args",
       "manim.data_structures.MethodWithArgs.kwargs",
       "manim.data_structures.MethodWithArgs.method",
@@ -450,8 +510,18 @@
       "manim.mobject.three_d.three_dimensions.Surface",
       "manim.mobject.three_d.three_dimensions.Torus",
       "manim.mobject.types.image_mobject.AbstractImageMobject.get_pixel_array",
+      "manim.mobject.types.image_mobject.AbstractImageMobject.reset_points",
+      "manim.mobject.types.image_mobject.AbstractImageMobject.set_color",
+      "manim.mobject.types.image_mobject.AbstractImageMobject.set_resampling_algorithm",
+      "manim.mobject.types.image_mobject.ImageMobject",
+      "manim.mobject.types.image_mobject.ImageMobject.fade",
       "manim.mobject.types.image_mobject.ImageMobject.get_pixel_array",
       "manim.mobject.types.image_mobject.ImageMobject.get_style",
+      "manim.mobject.types.image_mobject.ImageMobject.interpolate_color",
+      "manim.mobject.types.image_mobject.ImageMobject.set_color",
+      "manim.mobject.types.image_mobject.ImageMobject.set_opacity",
+      "manim.mobject.types.image_mobject.ImageMobjectFromCamera",
+      "manim.mobject.types.image_mobject.ImageMobjectFromCamera.add_display_frame",
       "manim.mobject.types.image_mobject.ImageMobjectFromCamera.get_pixel_array",
       "manim.mobject.types.point_cloud_mobject.PMobject.get_all_rgbas",
       "manim.mobject.types.point_cloud_mobject.PMobject.get_array_attrs",
@@ -717,7 +787,7 @@
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
           "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
-          "src/studio/core/compiler.ts": "663f52f77fc6f36c892569153c9a06625347044a5b247d45b304507d696aa8f6",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
           "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
           "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
@@ -770,7 +840,7 @@
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
           "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
-          "src/studio/core/compiler.ts": "663f52f77fc6f36c892569153c9a06625347044a5b247d45b304507d696aa8f6",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
           "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
           "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
@@ -5599,7 +5669,7 @@
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
           "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
-          "src/studio/core/compiler.ts": "663f52f77fc6f36c892569153c9a06625347044a5b247d45b304507d696aa8f6",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
           "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
           "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
@@ -6625,7 +6695,7 @@
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
           "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
-          "src/studio/core/compiler.ts": "663f52f77fc6f36c892569153c9a06625347044a5b247d45b304507d696aa8f6",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
           "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
           "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
@@ -7205,7 +7275,7 @@
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
           "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
-          "src/studio/core/compiler.ts": "663f52f77fc6f36c892569153c9a06625347044a5b247d45b304507d696aa8f6",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
           "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
           "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
@@ -7677,7 +7747,7 @@
           "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
           "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
           "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
-          "src/studio/core/compiler.ts": "663f52f77fc6f36c892569153c9a06625347044a5b247d45b304507d696aa8f6",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
           "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
           "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
           "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
@@ -8011,10 +8081,410 @@
           }
         ],
         "checks": "Behavioral evidence for ManimConfig and ManimFrame properties, methods and constructors comparing compiled API calls against native Python executions."
+      },
+      {
+        "fixture": "src/studio/core/api-raster.native.spec-node.mjs",
+        "sourceFiles": {
+          "package-lock.json": "21faf04dca675dd1e19d8272e3f05c0d4d5eab07d6ea2f17aba5f1409f8d8304",
+          "src/studio/core/api-compiler.ts": "6a4906ab0cfcfac2018dc16d1e9b9331e71e47fc3163505573544a99ee175786",
+          "src/studio/core/api-values.ts": "b681309a4e08d0d03a145c9eddf85a0d669e11870edbd41562a29ec14e12339f",
+          "src/studio/core/compiler.ts": "7168ba9eed67f046709dae90db82184378289c4dae3bb1e5d8ec73554a10cf9b",
+          "src/studio/core/expression.ts": "6438c5897d36a1768ea90bd485a5bfedd1b38f60c4e4c36c678f588b75d3e6d8",
+          "src/studio/core/api-catalog.ts": "d6a31c42fed1b7b080b10854090a66f44b944894008c59701de989c5a9b58ea7",
+          "src/studio/core/api-registry.ts": "5a2816eeb5b50fa988ceb41919c8e4a126a6b27e29ed8160b3b09fd108209b5b",
+          "src/studio/core/catalog.ts": "9bf3c574559ec58e5b1f2e82a5045a36f5ee7a395a704641fffa5ffa141983b6",
+          "src/studio/core/project.ts": "8d4198877077460fcabf28f3d2ee006959374c9bf6b96cf5500ca9dccc869ddb",
+          "src/studio/core/assets.ts": "ba34123127e7b547128dd531b8f850a83046d374181d5cbb7e067e66b4b4ec0a",
+          "src/studio/core/piano.ts": "86d3dcfca79dc3acf1a5d3d11ffb2f27acd3903f914e8a247012e5041e28fec8",
+          "src/studio/core/api-raster.native.spec-node.mjs": "2379bf4cb3046865a903dc3fa6896ea42b3a5b869abc0ed7aa27f8646538831d"
+        },
+        "registrySha256": "74440da4e8d89964ad5636a2dc4acb5080017731fda468aebcf81a71714fb328",
+        "passed": true,
+        "engineVersion": "0.20.1",
+        "renderer": "cairo",
+        "apiIds": [
+          "manim.camera.camera.Camera.adjust_out_of_range_points",
+          "manim.camera.camera.Camera.adjusted_thickness",
+          "manim.camera.camera.Camera.capture_mobject",
+          "manim.camera.camera.Camera.capture_mobjects",
+          "manim.camera.camera.Camera.convert_pixel_array",
+          "manim.camera.camera.Camera.display_image_mobject",
+          "manim.camera.camera.Camera.display_multiple_image_mobjects",
+          "manim.camera.camera.Camera.display_multiple_non_background_colored_vmobjects",
+          "manim.camera.camera.Camera.display_multiple_vectorized_mobjects",
+          "manim.camera.camera.Camera.display_vectorized",
+          "manim.camera.camera.Camera.get_coords_of_all_pixels",
+          "manim.camera.camera.Camera.get_fill_rgbas",
+          "manim.camera.camera.Camera.get_image",
+          "manim.camera.camera.Camera.get_mobjects_to_display",
+          "manim.camera.camera.Camera.get_stroke_rgbas",
+          "manim.camera.camera.Camera.get_thickening_nudges",
+          "manim.camera.camera.Camera.init_background",
+          "manim.camera.camera.Camera.is_in_frame",
+          "manim.camera.camera.Camera.make_background_from_func",
+          "manim.camera.camera.Camera.on_screen_pixels",
+          "manim.camera.camera.Camera.overlay_PIL_image",
+          "manim.camera.camera.Camera.overlay_rgba_array",
+          "manim.camera.camera.Camera.points_to_pixel_coords",
+          "manim.camera.camera.Camera.points_to_subpixel_coords",
+          "manim.camera.camera.Camera.reset",
+          "manim.camera.camera.Camera.reset_pixel_shape",
+          "manim.camera.camera.Camera.resize_frame_shape",
+          "manim.camera.camera.Camera.set_background",
+          "manim.camera.camera.Camera.set_background_from_func",
+          "manim.camera.camera.Camera.set_frame_to_background",
+          "manim.camera.camera.Camera.set_pixel_array",
+          "manim.camera.camera.Camera.thickened_coordinates",
+          "manim.camera.camera.Camera.transform_points_pre_display",
+          "manim.camera.camera.Camera.type_or_raise",
+          "manim.camera.moving_camera.MovingCamera.auto_zoom",
+          "manim.camera.moving_camera.MovingCamera.frame_center",
+          "manim.camera.moving_camera.MovingCamera.frame_height",
+          "manim.camera.moving_camera.MovingCamera.frame_width",
+          "manim.camera.moving_camera.MovingCamera.get_mobjects_indicating_movement",
+          "manim.camera.three_d_camera.ThreeDCamera.add_fixed_in_frame_mobjects",
+          "manim.camera.three_d_camera.ThreeDCamera.add_fixed_orientation_mobjects",
+          "manim.camera.three_d_camera.ThreeDCamera.frame_center",
+          "manim.camera.three_d_camera.ThreeDCamera.generate_rotation_matrix",
+          "manim.camera.three_d_camera.ThreeDCamera.get_focal_distance",
+          "manim.camera.three_d_camera.ThreeDCamera.get_gamma",
+          "manim.camera.three_d_camera.ThreeDCamera.get_phi",
+          "manim.camera.three_d_camera.ThreeDCamera.get_rotation_matrix",
+          "manim.camera.three_d_camera.ThreeDCamera.get_theta",
+          "manim.camera.three_d_camera.ThreeDCamera.get_value_trackers",
+          "manim.camera.three_d_camera.ThreeDCamera.get_zoom",
+          "manim.camera.three_d_camera.ThreeDCamera.project_point",
+          "manim.camera.three_d_camera.ThreeDCamera.project_points",
+          "manim.camera.three_d_camera.ThreeDCamera.remove_fixed_in_frame_mobjects",
+          "manim.camera.three_d_camera.ThreeDCamera.remove_fixed_orientation_mobjects",
+          "manim.camera.three_d_camera.ThreeDCamera.reset_rotation_matrix",
+          "manim.camera.three_d_camera.ThreeDCamera.set_focal_distance",
+          "manim.camera.three_d_camera.ThreeDCamera.set_gamma",
+          "manim.camera.three_d_camera.ThreeDCamera.set_phi",
+          "manim.camera.three_d_camera.ThreeDCamera.set_theta",
+          "manim.camera.three_d_camera.ThreeDCamera.set_zoom",
+          "manim.mobject.types.image_mobject.AbstractImageMobject.get_pixel_array",
+          "manim.mobject.types.image_mobject.AbstractImageMobject.reset_points",
+          "manim.mobject.types.image_mobject.AbstractImageMobject.set_color",
+          "manim.mobject.types.image_mobject.AbstractImageMobject.set_resampling_algorithm",
+          "manim.mobject.types.image_mobject.ImageMobject",
+          "manim.mobject.types.image_mobject.ImageMobject.fade",
+          "manim.mobject.types.image_mobject.ImageMobject.get_pixel_array",
+          "manim.mobject.types.image_mobject.ImageMobject.get_style",
+          "manim.mobject.types.image_mobject.ImageMobject.interpolate_color",
+          "manim.mobject.types.image_mobject.ImageMobject.set_color",
+          "manim.mobject.types.image_mobject.ImageMobject.set_opacity",
+          "manim.mobject.types.image_mobject.ImageMobjectFromCamera",
+          "manim.mobject.types.image_mobject.ImageMobjectFromCamera.add_display_frame",
+          "manim.mobject.types.image_mobject.ImageMobjectFromCamera.get_pixel_array"
+        ],
+        "outcomes": [
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobject.get_pixel_array",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.AbstractImageMobject.get_pixel_array",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobject.set_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.AbstractImageMobject.set_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobject.set_opacity",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobject.fade",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobject.get_style",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobject.interpolate_color",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.AbstractImageMobject.reset_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.AbstractImageMobject.set_resampling_algorithm",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobjectFromCamera",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobjectFromCamera.get_pixel_array",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.mobject.types.image_mobject.ImageMobjectFromCamera.add_display_frame",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.convert_pixel_array",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.set_pixel_array",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.set_background",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.set_frame_to_background",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.reset",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.init_background",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.reset_pixel_shape",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.resize_frame_shape",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.get_image",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.get_coords_of_all_pixels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.points_to_pixel_coords",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.points_to_subpixel_coords",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.on_screen_pixels",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.get_fill_rgbas",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.get_stroke_rgbas",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.get_mobjects_to_display",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.is_in_frame",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.transform_points_pre_display",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.type_or_raise",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.get_thickening_nudges",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.thickened_coordinates",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.adjust_out_of_range_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.adjusted_thickness",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.capture_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.capture_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.display_vectorized",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.display_multiple_vectorized_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.display_multiple_non_background_colored_vmobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.display_image_mobject",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.display_multiple_image_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.overlay_rgba_array",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.overlay_PIL_image",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.make_background_from_func",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.camera.Camera.set_background_from_func",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.moving_camera.MovingCamera.auto_zoom",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.moving_camera.MovingCamera.frame_width",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.moving_camera.MovingCamera.frame_height",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.moving_camera.MovingCamera.frame_center",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.moving_camera.MovingCamera.get_mobjects_indicating_movement",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.set_phi",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.get_phi",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.set_theta",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.get_theta",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.set_gamma",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.get_gamma",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.set_zoom",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.get_zoom",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.set_focal_distance",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.get_focal_distance",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.generate_rotation_matrix",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.get_rotation_matrix",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.reset_rotation_matrix",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.project_point",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.project_points",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.get_value_trackers",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.frame_center",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.add_fixed_in_frame_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.remove_fixed_in_frame_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.add_fixed_orientation_mobjects",
+            "status": "verified"
+          },
+          {
+            "apiId": "manim.camera.three_d_camera.ThreeDCamera.remove_fixed_orientation_mobjects",
+            "status": "verified"
+          }
+        ],
+        "checks": "Compiled registry calls with explicit RGBA, geometry, real Cairo/Pillow pixels, camera projection and framing assertions. Setup calls and abstract no-op APIs are not counted."
       }
     ]
   },
-  "entriesWithBehaviorEvidence": 662,
+  "entriesWithBehaviorEvidence": 732,
   "entriesWithoutBehaviorEvidence": [
     "manim._config.cli_colors.parse_cli_ctx",
     "manim._config.logger_utils.JSONFormatter",
@@ -8233,53 +8703,19 @@
     "manim.camera.camera.BackgroundColoredVMobjectDisplayer.resize_background_array",
     "manim.camera.camera.BackgroundColoredVMobjectDisplayer.resize_background_array_to_match",
     "manim.camera.camera.Camera",
-    "manim.camera.camera.Camera.adjust_out_of_range_points",
-    "manim.camera.camera.Camera.adjusted_thickness",
     "manim.camera.camera.Camera.apply_fill",
     "manim.camera.camera.Camera.apply_stroke",
     "manim.camera.camera.Camera.background_color",
     "manim.camera.camera.Camera.background_opacity",
     "manim.camera.camera.Camera.cache_cairo_context",
-    "manim.camera.camera.Camera.capture_mobject",
-    "manim.camera.camera.Camera.capture_mobjects",
-    "manim.camera.camera.Camera.convert_pixel_array",
-    "manim.camera.camera.Camera.display_image_mobject",
     "manim.camera.camera.Camera.display_multiple_background_colored_vmobjects",
-    "manim.camera.camera.Camera.display_multiple_image_mobjects",
-    "manim.camera.camera.Camera.display_multiple_non_background_colored_vmobjects",
     "manim.camera.camera.Camera.display_multiple_point_cloud_mobjects",
-    "manim.camera.camera.Camera.display_multiple_vectorized_mobjects",
     "manim.camera.camera.Camera.display_point_cloud",
-    "manim.camera.camera.Camera.display_vectorized",
     "manim.camera.camera.Camera.get_background_colored_vmobject_displayer",
     "manim.camera.camera.Camera.get_cached_cairo_context",
     "manim.camera.camera.Camera.get_cairo_context",
-    "manim.camera.camera.Camera.get_coords_of_all_pixels",
-    "manim.camera.camera.Camera.get_fill_rgbas",
-    "manim.camera.camera.Camera.get_image",
-    "manim.camera.camera.Camera.get_mobjects_to_display",
-    "manim.camera.camera.Camera.get_stroke_rgbas",
-    "manim.camera.camera.Camera.get_thickening_nudges",
-    "manim.camera.camera.Camera.init_background",
-    "manim.camera.camera.Camera.is_in_frame",
-    "manim.camera.camera.Camera.make_background_from_func",
-    "manim.camera.camera.Camera.on_screen_pixels",
-    "manim.camera.camera.Camera.overlay_PIL_image",
-    "manim.camera.camera.Camera.overlay_rgba_array",
-    "manim.camera.camera.Camera.points_to_pixel_coords",
-    "manim.camera.camera.Camera.points_to_subpixel_coords",
-    "manim.camera.camera.Camera.reset",
-    "manim.camera.camera.Camera.reset_pixel_shape",
-    "manim.camera.camera.Camera.resize_frame_shape",
-    "manim.camera.camera.Camera.set_background",
-    "manim.camera.camera.Camera.set_background_from_func",
     "manim.camera.camera.Camera.set_cairo_context_color",
     "manim.camera.camera.Camera.set_cairo_context_path",
-    "manim.camera.camera.Camera.set_frame_to_background",
-    "manim.camera.camera.Camera.set_pixel_array",
-    "manim.camera.camera.Camera.thickened_coordinates",
-    "manim.camera.camera.Camera.transform_points_pre_display",
-    "manim.camera.camera.Camera.type_or_raise",
     "manim.camera.mapping_camera.MappingCamera",
     "manim.camera.mapping_camera.MappingCamera.capture_mobjects",
     "manim.camera.mapping_camera.MappingCamera.points_to_pixel_coords",
@@ -8290,14 +8726,9 @@
     "manim.camera.mapping_camera.OldMultiCamera.set_pixel_array",
     "manim.camera.mapping_camera.SplitScreenCamera",
     "manim.camera.moving_camera.MovingCamera",
-    "manim.camera.moving_camera.MovingCamera.auto_zoom",
     "manim.camera.moving_camera.MovingCamera.cache_cairo_context",
     "manim.camera.moving_camera.MovingCamera.capture_mobjects",
-    "manim.camera.moving_camera.MovingCamera.frame_center",
-    "manim.camera.moving_camera.MovingCamera.frame_height",
-    "manim.camera.moving_camera.MovingCamera.frame_width",
     "manim.camera.moving_camera.MovingCamera.get_cached_cairo_context",
-    "manim.camera.moving_camera.MovingCamera.get_mobjects_indicating_movement",
     "manim.camera.multi_camera.MultiCamera",
     "manim.camera.multi_camera.MultiCamera.add_image_mobject_from_camera",
     "manim.camera.multi_camera.MultiCamera.capture_mobjects",
@@ -8305,32 +8736,11 @@
     "manim.camera.multi_camera.MultiCamera.reset",
     "manim.camera.multi_camera.MultiCamera.update_sub_cameras",
     "manim.camera.three_d_camera.ThreeDCamera",
-    "manim.camera.three_d_camera.ThreeDCamera.add_fixed_in_frame_mobjects",
-    "manim.camera.three_d_camera.ThreeDCamera.add_fixed_orientation_mobjects",
     "manim.camera.three_d_camera.ThreeDCamera.capture_mobjects",
-    "manim.camera.three_d_camera.ThreeDCamera.frame_center",
-    "manim.camera.three_d_camera.ThreeDCamera.generate_rotation_matrix",
     "manim.camera.three_d_camera.ThreeDCamera.get_fill_rgbas",
-    "manim.camera.three_d_camera.ThreeDCamera.get_focal_distance",
-    "manim.camera.three_d_camera.ThreeDCamera.get_gamma",
     "manim.camera.three_d_camera.ThreeDCamera.get_mobjects_to_display",
-    "manim.camera.three_d_camera.ThreeDCamera.get_phi",
-    "manim.camera.three_d_camera.ThreeDCamera.get_rotation_matrix",
     "manim.camera.three_d_camera.ThreeDCamera.get_stroke_rgbas",
-    "manim.camera.three_d_camera.ThreeDCamera.get_theta",
-    "manim.camera.three_d_camera.ThreeDCamera.get_value_trackers",
-    "manim.camera.three_d_camera.ThreeDCamera.get_zoom",
     "manim.camera.three_d_camera.ThreeDCamera.modified_rgbas",
-    "manim.camera.three_d_camera.ThreeDCamera.project_point",
-    "manim.camera.three_d_camera.ThreeDCamera.project_points",
-    "manim.camera.three_d_camera.ThreeDCamera.remove_fixed_in_frame_mobjects",
-    "manim.camera.three_d_camera.ThreeDCamera.remove_fixed_orientation_mobjects",
-    "manim.camera.three_d_camera.ThreeDCamera.reset_rotation_matrix",
-    "manim.camera.three_d_camera.ThreeDCamera.set_focal_distance",
-    "manim.camera.three_d_camera.ThreeDCamera.set_gamma",
-    "manim.camera.three_d_camera.ThreeDCamera.set_phi",
-    "manim.camera.three_d_camera.ThreeDCamera.set_theta",
-    "manim.camera.three_d_camera.ThreeDCamera.set_zoom",
     "manim.camera.three_d_camera.ThreeDCamera.transform_points_pre_display",
     "manim.constants.CapStyleType",
     "manim.constants.LineJointType",
@@ -9131,16 +9541,6 @@
     "manim.mobject.three_d.three_dimensions.ThreeDVMobject",
     "manim.mobject.three_d.three_dimensions.Torus.func",
     "manim.mobject.types.image_mobject.AbstractImageMobject",
-    "manim.mobject.types.image_mobject.AbstractImageMobject.reset_points",
-    "manim.mobject.types.image_mobject.AbstractImageMobject.set_color",
-    "manim.mobject.types.image_mobject.AbstractImageMobject.set_resampling_algorithm",
-    "manim.mobject.types.image_mobject.ImageMobject",
-    "manim.mobject.types.image_mobject.ImageMobject.fade",
-    "manim.mobject.types.image_mobject.ImageMobject.interpolate_color",
-    "manim.mobject.types.image_mobject.ImageMobject.set_color",
-    "manim.mobject.types.image_mobject.ImageMobject.set_opacity",
-    "manim.mobject.types.image_mobject.ImageMobjectFromCamera",
-    "manim.mobject.types.image_mobject.ImageMobjectFromCamera.add_display_frame",
     "manim.mobject.types.image_mobject.ImageMobjectFromCamera.interpolate_color",
     "manim.mobject.types.point_cloud_mobject.Mobject1D",
     "manim.mobject.types.point_cloud_mobject.Mobject1D.add_line",

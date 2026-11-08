@@ -52,10 +52,11 @@ jobs:
           ANYVIS_API_UTILITIES_REPORT: artifacts/api/native-utilities-evidence.json
           ANYVIS_API_MUTATIONS_REPORT: artifacts/api/native-mutations-evidence.json
           ANYVIS_API_CONFIG_REPORT: artifacts/api/native-config-evidence.json
+          ANYVIS_API_RASTER_REPORT: artifacts/api/native-raster-evidence.json
         run: |
           export ANYVIS_PYTHON="$(command -v python)"
           npm run test:api-native
-          xvfb-run -a python scripts/verify-api-registry.py --native-report artifacts/api/native-evidence.json --native-report artifacts/api/native-families-evidence.json --native-report artifacts/api/native-queries-evidence.json --native-report artifacts/api/native-utilities-evidence.json --native-report artifacts/api/native-mutations-evidence.json --native-report artifacts/api/native-config-evidence.json --output artifacts/api/native-coverage.json
+          xvfb-run -a python scripts/verify-api-registry.py --native-report artifacts/api/native-evidence.json --native-report artifacts/api/native-families-evidence.json --native-report artifacts/api/native-queries-evidence.json --native-report artifacts/api/native-utilities-evidence.json --native-report artifacts/api/native-mutations-evidence.json --native-report artifacts/api/native-config-evidence.json --native-report artifacts/api/native-raster-evidence.json --output artifacts/api/native-coverage.json
       - name: Run actual worker media integration
         run: |
           export ANYVIS_PYTHON="$(command -v python)"
