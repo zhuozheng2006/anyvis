@@ -137,6 +137,104 @@ export function createApiCompiler() {
 export const API_RUNTIME = `
 from pathlib import Path as _av_Path
 import inspect as _av_inspect
+def _av_point_cloud_compat():
+    # Manim CE 0.20.1 indexes PMobject.points with np.floor's float result.
+    # Probe without initializing a renderer; leave already-fixed versions and
+    # subclass overrides alone. Keep the intended discrete (floor) sampling.
+    import manim as _av_manim
+    from manim.mobject.types.point_cloud_mobject import PMobject as _av_PMobject
+    if _av_manim.__version__ != '0.20.1': return
+    original = _av_PMobject.point_from_proportion
+    if getattr(original, '_anyvis_integer_index', False): return
+    probe = object.__new__(_av_PMobject)
+    probe.points = np.array([[0., 0., 0.], [2., 0., 0.], [4., 0., 0.]])
+    try:
+        original(probe, 0.5)
+        return
+    except IndexError:
+        pass
+    except Exception:
+        return
+    def point_from_proportion(self, alpha):
+        if not isinstance(alpha, (int, float, np.integer, np.floating)) or not np.isfinite(alpha) or not 0 <= alpha <= 1:
+            raise ValueError('Point-cloud proportion must be a finite number between 0 and 1.')
+        count = self.get_num_points()
+        if count == 0:
+            raise ValueError('Cannot sample an empty point cloud.')
+        return self.points[int(np.floor(alpha * (count - 1)))]
+    point_from_proportion._anyvis_integer_index = True
+    _av_PMobject.point_from_proportion = point_from_proportion
+_av_point_cloud_compat()
+def _av_default_camera_compat():
+    # 0.20.1's constructor and default-orientation method use different names.
+    # Probe only that method, without creating a scene or rendering resources.
+    import manim as _av_manim
+    from manim.scene.three_d_scene import ThreeDScene as _av_ThreeDScene
+    if _av_manim.__version__ != '0.20.1': return
+    original = _av_ThreeDScene.set_to_default_angled_camera_orientation
+    if original.__module__ != 'manim.scene.three_d_scene': return
+    probe = object.__new__(_av_ThreeDScene)
+    probe.default_angled_camera_orientation_kwargs = {'phi': 0.7, 'theta': -0.4}
+    probe.set_camera_orientation = lambda **kwargs: None
+    try:
+        original(probe)
+        return
+    except AttributeError as error:
+        if error.name != 'default_camera_orientation_kwargs': return
+    except Exception:
+        return
+    def set_to_default_angled_camera_orientation(self, **kwargs):
+        if hasattr(self, 'default_camera_orientation_kwargs'):
+            return original(self, **kwargs)
+        settings = dict(self.default_angled_camera_orientation_kwargs)
+        settings.update(kwargs)
+        self.set_camera_orientation(**settings)
+    _av_ThreeDScene.set_to_default_angled_camera_orientation = set_to_default_angled_camera_orientation
+_av_default_camera_compat()
+def _av_foreground_compat():
+    # 0.20.1 adds a foreground object twice, which doubles updater execution.
+    # Preserve the final occurrence so foreground draw order stays on top.
+    import manim as _av_manim
+    from manim.scene.scene import Scene as _av_Scene
+    from types import SimpleNamespace as _av_Namespace
+    if _av_manim.__version__ != '0.20.1': return
+    original = _av_Scene.add
+    if original.__module__ != 'manim.scene.scene': return
+    probe = object.__new__(_av_Scene)
+    probe.mobjects, probe.moving_mobjects = [], []
+    probe.foreground_mobjects = [_av_manim.Mobject()]
+    probe.renderer = _av_Namespace(camera=_av_Namespace(use_z_index=False))
+    try:
+        with _av_manim.tempconfig({'renderer': 'cairo'}):
+            original(probe, *probe.foreground_mobjects)
+    except Exception:
+        return
+    if len({id(m) for m in probe.mobjects}) == len(probe.mobjects): return
+    def unique_family_last(scene, items):
+        seen, overlap, families = set(), False, []
+        for item in items:
+            family = item.get_family()
+            identities = {id(member) for member in family}
+            overlap = overlap or bool(seen & identities)
+            seen.update(identities)
+            families.append(family)
+        if not overlap: return items
+        kept = []
+        for item, family in zip(items, families):
+            # Match Scene's normal group-extraction semantics: later foreground
+            # children are extracted from earlier groups; independent groups stay.
+            kept = scene.get_restructured_mobject_list(kept, family)
+            kept.append(item)
+        return kept
+    def add(self, *mobjects):
+        result = original(self, *mobjects)
+        if _av_manim.config.renderer == _av_manim.RendererType.CAIRO:
+            self.mobjects = unique_family_last(self, self.mobjects)
+            self.foreground_mobjects = unique_family_last(self, self.foreground_mobjects)
+            self.moving_mobjects = unique_family_last(self, self.moving_mobjects)
+        return result
+    _av_Scene.add = add
+_av_foreground_compat()
 def _av_check_receiver(value, owner):
     if not isinstance(value, owner):
         raise TypeError(f"操作对象需要 {owner.__name__}，实际是 {type(value).__name__}")

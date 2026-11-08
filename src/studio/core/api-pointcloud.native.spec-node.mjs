@@ -58,6 +58,10 @@ add(pm + 'PMobject.interpolate_color', 's = cloud(); objects["a"] = cloud().set_
 add(pm + 'PMobject.pointwise_become_partial', 's = PMobject(); objects["a"] = cloud()', { mobject: ref('a'), a: 0.25, b: 0.75 },
   'eq(s.points,[[1,0,0],[2,0,0]]); close(s.rgbas,rgba[1:3])');
 add(pm + 'PMobject.get_mobject_type_class', '', {}, 'assert result is PMobject');
+for (const [alpha, x] of [[0,0], [0.2,0], [0.5,1], [0.999,2], [1,3]]) {
+  add(pm + 'PMobject.point_from_proportion', 's = cloud()', { alpha },
+    `close(result,[${x},0,0]); close(s.points,[[0,0,0],[1,0,0],[2,0,0],[3,0,0]])`);
+}
 
 add(pm + 'Mobject1D', '', { density: 4, stroke_width: 7 }, 'close(result.epsilon,0.25); assert result.density == 4; assert result.stroke_width == 7');
 add(pm + 'Mobject2D', '', { density: 8, color: '#204060' }, 'close(result.epsilon,0.125); assert result.density == 8; assert result.color == ManimColor("#204060")');
@@ -178,4 +182,82 @@ print("ANYVIS_POINTCLOUD " + json.dumps(results))
     t.diagnostic(`${apiIds.length} point-cloud/dictionary/vector-field APIs, ${outcomes.length} cases, ${failures.length} failures.`);
     assert.deepEqual(failures, []);
   } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('point-cloud compatibility validates bounds and preserves overrides and fixed implementations', { timeout: 60_000 }, async t => {
+  const health = await discoverPython();
+  if (!health.available) { t.skip('Manim required'); return; }
+  const directory = await mkdtemp(path.join(tmpdir(), 'anyvis-pointcloud-compat-'));
+  try {
+    const compiler = createApiCompiler();
+    const entry = getApiEntry(pm + 'PMobject.point_from_proportion');
+    const compiled = compiler.compile(createAction(entry.type, { receiver:'s', p_alpha:JSON.stringify(ref('alpha')) }), entry, new Set(['s','alpha']), {});
+    const nested = compiler.value(JSON.stringify({ $call: { api:'PMobject.point_from_proportion', receiver:ref('s'), args:[ref('alpha')] } }), new Set(['s','alpha']), {});
+    const script = path.join(directory, 'compat.py');
+    await writeFile(script, `from manim import *
+import numpy as np
+${API_RUNTIME}
+${compiler.imports().join('\n')}
+def sample(s, alpha):
+    objects = {"s":s,"alpha":alpha}
+${compiled.prelude.map(line=>'    '+line).join('\n')}
+    return ${compiled.expression}
+def nested_sample(s, alpha):
+    objects = {"s":s,"alpha":alpha}
+    return ${nested.code}
+cloud = PMobject().add_points([[-2,0,0],[0,1,0],[2,0,0]])
+for operation in (sample, nested_sample):
+    np.testing.assert_allclose(operation(cloud, 0),[-2,0,0])
+    np.testing.assert_allclose(operation(cloud, 0.5),[0,1,0])
+    np.testing.assert_allclose(operation(cloud, 1),[2,0,0])
+    for alpha in (-0.1, 1.1, float('nan'), float('inf'), '0.5'):
+        try:
+            operation(cloud,alpha)
+            raise AssertionError('Invalid proportion accepted')
+        except ValueError:
+            pass
+    try:
+        operation(PMobject(),0.5)
+        raise AssertionError('Empty cloud accepted')
+    except ValueError:
+        pass
+    np.testing.assert_allclose(operation(PMobject().add_points([[1,2,3]]),0.5),[1,2,3])
+# MoveAlongPath calls the path method internally, outside _av_invoke.
+dot = Dot()
+animation = MoveAlongPath(dot,cloud,rate_func=linear)
+animation.begin()
+for alpha, expected in [(0,[-2,0,0]),(0.5,[0,1,0]),(1,[2,0,0])]:
+    animation.interpolate(alpha)
+    np.testing.assert_allclose(dot.get_center(),expected,atol=1e-8)
+animation.finish()
+class CustomCloud(PMobject):
+    def point_from_proportion(self, alpha): return np.array([7,8,9])
+np.testing.assert_allclose(sample(CustomCloud(),0.5),[7,8,9])
+class PrefixCloud(PMobject):
+    def get_num_points(self): return 2
+prefix = PrefixCloud().add_points([[-2,0,0],[0,1,0],[2,0,0]])
+np.testing.assert_allclose(sample(prefix,1),[0,1,0])
+patched = PMobject.point_from_proportion
+_av_point_cloud_compat()
+assert PMobject.point_from_proportion is patched
+# A working upstream implementation must be left untouched, even at 0.20.1.
+def already_fixed(self, alpha): return self.points[int(alpha*(len(self.points)-1))]
+PMobject.point_from_proportion = already_fixed
+_av_point_cloud_compat()
+assert PMobject.point_from_proportion is already_fixed
+import manim
+version = manim.__version__
+def other_version_method(self, alpha): raise IndexError('different implementation')
+try:
+    manim.__version__ = '0.21.0'
+    PMobject.point_from_proportion = other_version_method
+    _av_point_cloud_compat()
+    assert PMobject.point_from_proportion is other_version_method
+finally:
+    manim.__version__ = version
+print('ANYVIS_POINTCLOUD_COMPAT_OK')
+`);
+    const output = await execute(health.python, [script], { cwd:directory, timeout:45_000, maxBuffer:1024*1024 });
+    assert.match(output.stdout,/ANYVIS_POINTCLOUD_COMPAT_OK/);
+  } finally { await rm(directory,{recursive:true,force:true}); }
 });

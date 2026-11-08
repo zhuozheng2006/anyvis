@@ -4,15 +4,19 @@
 
 当前开发版本 v0.4.0：开源 React Timeline Editor、对象管理、图片/音频上传与真实混音、素材 ZIP、三视图同步与共享撤销已实现。最新测试范围见 [验证记录](verification.md#v040-时间轴对象与素材2026-11-08)。当前本地没有 Git 元数据，使用 GitHub Git Data API 基于远端树增量提交。
 
-## 当前发布边界
+## 当前接续：935 项行为证据与三项兼容修复
 
-main 为 `04c5d206550cb2a476326096f990e12030a5f8d5`，含本轮两项应用修复并已通过原生与三平台 CI。830 项测试扩展提交 `f93b78a3b4b25bae114a8d3322aa54e6e3dffdc3` 已推到 `codex/api-evidence-830`，见[草稿 PR #1](https://github.com/zhuozheng2006/anyvis/pull/1)。直接推进 main 被自动审批审查拒绝（未识别本次具体发布授权），没有绕过；待用户确认后再合并。PR 的后续提交仅整理文档和已验证安装包链接，检查结果以 PR 页面为准。
+用户已明确允许合并并继续工作，PR #1 成功合并到 main：`4173c5fd06fb1669cd86bf0c1369fec49273dd0e`。前一轮自动审批阻断已解除，不需要再次请求 PR #1 的合并许可。
+
+本轮 API_RUNTIME 新增限定 Manim 0.20.1 且有能力探测的三项兼容处理：PMobject.point_from_proportion 使用整数 floor 索引并检查合法比例；ThreeDScene 默认朝向读取正确构造字段；Scene.add 处理重复根和跨根分组/前景的 family 重叠，按原生 get_restructured_mobject_list 提取重叠成员，保留独立组与前景层次。没有更改用户 Python 安装。既有正确实现、子类重写、版本门禁、None 返回、单次更新和输入边界均回归。
+
+新增 scene（55 API / 61 case）及 coordinates（49 API）fixture，pointcloud 增加一个取样 API。十一份证据重新运行，合并935项，剩余1358项含533个OpenGL。20项Node原生入口、342应用测试、6证据校验、11桌面检查、真实渲染/媒体集成及桌面资源准备通过。CI已加入两份新报告；发布提交和云端结果见验证记录及 artifacts/v04-scene-publication.json 检查点。
 
 ## 830 项行为证据检查点
 
 图片 API 渲染与复合删除修复已发布 `04c5d206550cb2a476326096f990e12030a5f8d5`（tree `d34ad9630e0dc1eb22ba9b06c61e43775ea2eeaf`），独立原生工作流 42440905788、三平台桌面 42440905662 全部通过。
 
-随后只扩充测试与证据校验：animation-state 新增57项、pointcloud新增41项，raster改非默认缩放/旋转断言，明确抽象入口的动态派发。九份原生报告重新运行合并为830项，16个Node原生入口通过；证据校验6项通过，拒绝 apiIds/outcomes 不一致与假通过。剩余1463项（含533 OpenGL），PMobject.point_from_proportion的上游浮点索引错误仍未修复、未计通过。具体源码和复现命令见覆盖文档。
+随后只扩充测试与证据校验：animation-state 新增57项、pointcloud新增41项，raster改非默认缩放/旋转断言，明确抽象入口的动态派发。九份原生报告重新运行合并为830项，16个Node原生入口通过；证据校验6项通过，拒绝 apiIds/outcomes 不一致与假通过。剩余1463项（含533 OpenGL），PMobject.point_from_proportion的上游浮点索引错误当时未修复，已在当前935项版本处理。具体源码和复现命令见覆盖文档。
 
 ## 最新接续：图片 API 与删除保护
 
