@@ -1,0 +1,176 @@
+.surface-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 18, 0.78);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.surface-modal {
+  width: min(1040px, 96vw);
+  max-height: 92vh;
+  background: #0d121f;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(56, 189, 248, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.surface-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #1e293b;
+  background: #0f172a;
+}
+
+.surface-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.surface-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.surface-close-btn:hover {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+.surface-body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(92vh - 130px);
+}
+
+.surface-stage-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.surface-canvas-container {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: radial-gradient(circle at 50% 50%, #0d1527 0%, #060a14 100%);
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  cursor: grab;
+}
+
+.surface-canvas-container:active {
+  cursor: grabbing;
+}
+
+.surface-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.surface-camera-hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.surface-camera-hud .hud-title {
+  color: #38bdf8;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.surface-camera-hud .hud-row {
+  display: flex;
+  gap: 8px;
+  color: #94a3b8;
+}
+
+.surface-camera-hud .hud-val {
+  color: #f1f5f9;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.surface-ctrl-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #0b101b;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.ambient-rotate-btn {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.ambient-rotate-btn:hover {
+  background: rgba(56, 189, 248, 0.22);
+}
+
+.ambient-rotate-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+}
+
+.surface-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-top: 1px solid #1e293b;
+  background: #0f172a;
+}

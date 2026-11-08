@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, Compass, Globe, Film, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, BarChart3, Sliders, Radio, Palette, Compass, Globe, Film, Box, Video, Captions, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -36,6 +36,9 @@ import { createColoredMathTexActions } from './tex-color';
 import { VectorFieldPlaygroundModal } from './VectorFieldPlaygroundModal';
 import { ComplexMappingModal } from './ComplexMappingModal';
 import { StoryboardModal } from './StoryboardModal';
+import { SurfacePlaygroundModal } from './SurfacePlaygroundModal';
+import { CameraDirectorModal } from './CameraDirectorModal';
+import { SubtitleSyncModal } from './SubtitleSyncModal';
 import './studio.css';
 import './studio-polish.css';
 
@@ -92,6 +95,9 @@ export default function StudioApp() {
   const [vectorFieldOpen, setVectorFieldOpen] = useState(false);
   const [complexMappingOpen, setComplexMappingOpen] = useState(false);
   const [storyboardOpen, setStoryboardOpen] = useState(false);
+  const [surfacePlaygroundOpen, setSurfacePlaygroundOpen] = useState(false);
+  const [cameraDirectorOpen, setCameraDirectorOpen] = useState(false);
+  const [subtitleSyncOpen, setSubtitleSyncOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
   const [saveError, setSaveError] = useState('');
@@ -486,6 +492,9 @@ export default function StudioApp() {
       <button className="header-button" title="2D 向量场与流线工作台" aria-label="2D 向量场与流线工作台" onClick={() => setVectorFieldOpen(true)}><Compass size={15}/><span>向量场</span></button>
       <button className="header-button" title="3B1B 复变函数与共形映射工作台" aria-label="3B1B 复变函数与共形映射工作台" onClick={() => setComplexMappingOpen(true)}><Globe size={15}/><span>复变共形</span></button>
       <button className="header-button" title="分镜剧本与多章节大纲" aria-label="分镜剧本与多章节大纲" onClick={() => setStoryboardOpen(true)}><Film size={15}/><span>分镜剧本</span></button>
+      <button className="header-button" title="3B1B 3D 参数曲面与视角工作台" aria-label="3B1B 3D 参数曲面与视角工作台" onClick={() => setSurfacePlaygroundOpen(true)}><Box size={15}/><span>3D 曲面</span></button>
+      <button className="header-button" title="运镜导演与动态取景器" aria-label="运镜导演与动态取景器" onClick={() => setCameraDirectorOpen(true)}><Video size={15}/><span>运镜导演</span></button>
+      <button className="header-button" title="字幕配音同步工作台" aria-label="字幕配音同步工作台" onClick={() => setSubtitleSyncOpen(true)}><Captions size={15}/><span>字幕配音</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -736,6 +745,30 @@ export default function StudioApp() {
             run: () => setStoryboardOpen(true),
           },
           {
+            id: 'open-surface-playground',
+            title: '3B1B 3D 参数曲面与视角工作台 (3D Parametric Surfaces)',
+            subtitle: '马鞍面、环面、莫比乌斯带等三维几何交互与 ThreeDScene 生成',
+            colour: '#38bdf8',
+            keywords: 'surface 3d threedscene parametric 曲面 三维 3b1b 视角 环面 莫比乌斯',
+            run: () => setSurfacePlaygroundOpen(true),
+          },
+          {
+            id: 'open-camera-director',
+            title: '运镜导演与动态取景器 (Camera Director & Viewfinder)',
+            subtitle: '平移聚焦缩放运镜序列、三分法则构图与 MovingCameraScene 生成',
+            colour: '#f59e0b',
+            keywords: 'camera moving director 运镜 摄像机 取景 构图 变焦 平移',
+            run: () => setCameraDirectorOpen(true),
+          },
+          {
+            id: 'open-subtitle-sync',
+            title: '字幕配音同步工作台 (Subtitles & Voiceover Sync)',
+            subtitle: '解说字幕时序编排、SRT 导入导出与自动淡入淡出动画',
+            colour: '#83c167',
+            keywords: 'subtitles captions srt 字幕 配音 口播 解说 旁白',
+            run: () => setSubtitleSyncOpen(true),
+          },
+          {
             id: 'export-py',
             title: '导出独立 Manim Python 脚本 (.py)',
             subtitle: '下载可直接由 manim 命令运行的源码',
@@ -935,6 +968,60 @@ export default function StudioApp() {
         try {
           setProject(nextProject);
           notify(`已同步分镜章节到时间轴智能标记`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <SurfacePlaygroundModal
+      isOpen={surfacePlaygroundOpen}
+      onClose={() => setSurfacePlaygroundOpen(false)}
+      project={project}
+      onApply={(nextProject, actionIds) => {
+        try {
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已切换至 3D 模式并插入参数曲面组件`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <CameraDirectorModal
+      isOpen={cameraDirectorOpen}
+      onClose={() => setCameraDirectorOpen(false)}
+      project={project}
+      onApply={(nextProject, actionIds) => {
+        try {
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入运镜序列动作`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <SubtitleSyncModal
+      isOpen={subtitleSyncOpen}
+      onClose={() => setSubtitleSyncOpen(false)}
+      project={project}
+      onApply={(nextProject, actionIds) => {
+        try {
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入解说字幕序列`);
         } catch (e) {
           notify((e as Error).message);
         }
