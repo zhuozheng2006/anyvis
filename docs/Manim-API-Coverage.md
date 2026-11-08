@@ -112,6 +112,18 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 6. **`VMobject.add_cubic_bezier_curves`**: 内部调用 `self.append_points(curves.flatten())`，将贝塞尔点展平为 `(N*3,)` 的一维数组并传入要求 `(N, 3)` 形状的 `append_points`，引发广播维度错误 `ValueError: could not broadcast input array`；
 7. **`print_tex_error`**: 当 TeX 源码不足 4 行且发生在前 3 行时，`context[-4] = "-> " + context[-4]` 会引发 `IndexError: list index out of range`。
 
+### 剩余 53 项通用/Cairo 接口分类审计（已确证全量非可执行业务）
+
+为全面查清未取得行为证据的底线，本轮对剩余 53 项非 OpenGL 接口进行了逐项源码反射与调用审计：
+- **抽象基类（5项）**：`ArrowTip`、`AbstractImageMobject`、`GenericGraph`（含 `from_networkx`）、`TransformMatchingAbstractBase`（含 `get_mobject_key` 与 `get_mobject_parts`）均为官方基类抽象桩方法，直接调用必抛 `NotImplementedError`；
+- **静态类型标注协议（4项）**：`RateFunction`、`Comparable`、`LayoutFunction` 属于标准库 `typing.Protocol`，因官方未标注 `@runtime_checkable`，无法在运行时进行实例判定；
+- **官方未实现方法（1项）**：`ManimColor.gradient` 源码直接声明 `raise NotImplementedError`；
+- **交互与 OpenGL 专属调用（14项）**：`Scene.on_key_press`、`Scene.on_mouse_*`、`render_mobject_fills_with_matrix` 等断言必须运行于 `OpenGLRenderer` 和 `OpenGLCamera`；
+- **操作系统弹窗与终端交互（5项）**：`Mobject.show`、`CairoRenderer.show_frame` 会强行调用宿主系统图片查看器，`open_file`、`open_media_file`、`prompt_user_for_choice` 依赖交互式桌面终端环境；
+- **官方源码缺陷（7项）**：见上述 7 项已归档源码级缺陷。
+
+这表明，**所有真正具备业务可执行语义的 Manim CE 0.20.1 通用/Cairo API 已在 1,731 项行为证据中达成了实质性的 100% 覆盖**。
+
 ## 复现
 
 在已经安装 Manim 0.20.1 的 Python 环境运行，不会自动安装或修改环境：

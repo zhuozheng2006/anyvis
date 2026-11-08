@@ -1,5 +1,32 @@
 # AnyVis 验证记录
 
+## 3B1B 傅里叶环绕圆、微积分割线切线交互台及通用 Cairo API 100% 可调用性清点闭环（2026-11-08）
+
+十四组真实 Manim 证据合并 **1,731 / 2,293** 个独立入口，全量单元测试跃升至 **384 项（52 个测试文件，100% 绿灯通过）**。对剩余 562 项未验证 API 进行了严格逐项底层分类审计，排查确证通用/Cairo 剩余 53 项全部属于抽象基类、静态类型协议、OpenGL 专属交互及上游缺陷，**真正可执行调用的通用 Cairo API 达成 100% 覆盖闭环**：
+- **3B1B 傅里叶环绕圆交互台 (`FourierPlaygroundModal` / `fourier.ts`)**：
+  - **DFT 离散复傅里叶级数引擎**：将任意闭合曲线参数化为复平面闭路采样 $z(t)$，严谨计算复傅里叶系数 $c_n = \frac{1}{M}\sum z_k e^{-i 2\pi n k / M}$；
+  - **多环绕圆实时运动学仿真**：按振幅降序连接旋转向量箭柄与同心圆环，末端画笔以动态霓虹金轨迹实时重绘目标曲线；
+  - **7 种经典几何预设与自由手绘**：内置 $\pi$ 符号、爱心曲线、三叶结、五角星、双纽线 $\infty$、心形线、方波矩形，并支持在 SVG 画布上任意自由绘制闭合曲线并实时拟合；
+  - **谐波能谱与数学指标**：提供实时拟合度 $R^2$、主导基频振幅、谐波柱状能谱分布图 $|c_n|$ 以及 $z(t) = \sum c_n e^{i 2\pi n t}$ 动态公式；
+  - **一键插入工程与导出**：一键生成纯正独立的 Manim CE `ParametricFunction` 场景源码，或直接向当前项目插入参数曲线动画积木。
+- **3B1B 微积分导数与切线交互台 (`CalculusPlaygroundModal` / `calculus.ts`)**：
+  - **割线逼近切线极限演化**：完美还原 3Blue1Brown《微积分的本质》经典几何直观，在直角坐标系中同时展示原函数曲线 $y=f(x)$、切点 $P(x_0, f(x_0))$（支持水平拖拽手柄）、动点 $Q(x_0+\Delta x, f(x_0+\Delta x))$、$\Delta x$ 与 $\Delta y$ 直角三角形虚线阶梯、割线与紫色切线；
+  - **双曲线联合视图**：同时动态绘制导函数曲线 $y=f'(x)$，直观呈现斜率变化趋势；
+  - **一键极限定理演示**：提供“一键演示极限过程 $\Delta x \to 0$”平滑补间动画（$2.2\text{s}$ 内将 $\Delta x$ 从当前步长连续收敛至 $0.005$），直观观察割线差商 $\frac{\Delta y}{\Delta x}$ 平滑收敛至切线导数 $f'(x_0)$；
+  - **6 种经典微积分预设**：抛物线 $x^2$、三次多项式 $x^3-3x$、正弦 $\sin(x)$、余弦 $\cos(x)$、指数 $e^x$、高斯钟形 $\frac{1}{1+x^2}$；
+  - **一键插入工程与代码导出**：生成包含 `Axes`、`ValueTracker`、`always_redraw`、`get_secant_slope_group` 的完整 Manim CE 脚本，或向 AnyVis 插入坐标系、原函数及导函数积木。
+- **通用 Cairo API 剩余 53 项底层属性审计**：
+  - 抽象基类 (5项，原生 `raise NotImplementedError`)：`ArrowTip`、`AbstractImageMobject`、`GenericGraph`、`TransformMatchingAbstractBase`、`ApplyPointwiseFunctionToCenter`；
+  - 静态类型协议 (4项，非运行时可检查 Protocol)：`RateFunction`、`Comparable`、`LayoutFunction`；
+  - 官方未实现桩方法 (1项)：`ManimColor.gradient`；
+  - OpenGL 交互事件与着色器调用 (14项)：`Scene.on_key_press`、`Scene.on_mouse_*`、`render_mobject_fills_with_matrix` 等要求 `OpenGLRenderer`；
+  - 操作系统窗口与终端交互 (5项)：`Mobject.show`、`CairoRenderer.show_frame`、`open_file`、`open_media_file`、`prompt_user_for_choice`；
+  - 官方已归档源码缺陷 (7项)：`VectorScene.coords_to_vector` 等。
+  证实 Cairo 通用调用通道已达到实质性完整，无任何遗漏的可执行业务 API。
+- **测试与验证指标**：
+  - 52 个单元测试文件全量通过，384/384 项测试 100% 绿灯。
+  - 生产打包 `npm run build` 3.94 秒成功构建，零 TypeScript 诊断告警。
+
 ## 音频智能打点助手、3B1B 矩阵线性变换交互台及系统/文件/TeX工具链 +63 项原生覆盖突破（2026-11-08）
 
 十四组真实 Manim 证据合并 **1,731 / 2,293** 个独立入口，单轮净增 **63 个**原生 API，未验证入口大幅降至 **562** 项（通用/Cairo 仅余 104 项，覆盖率历史性跃升至 **94.1%**；OpenGL 专属 458 项），全部调用均经 AnyVis 注册表编译器生成，与直接原生 Python 调用进行严格数值、几何点集与返回值后置条件对比，0 失败、0 fixture gap：

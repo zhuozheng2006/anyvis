@@ -1,0 +1,329 @@
+.calculus-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.78);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: calculus-fade-in 0.18s ease-out;
+}
+
+@keyframes calculus-fade-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.calculus-modal {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  width: 920px;
+  max-width: 96vw;
+  max-height: 94vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(56, 189, 248, 0.2);
+  color: #f1f5f9;
+  overflow: hidden;
+}
+
+.calculus-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+}
+
+.calculus-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.calculus-title-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.calculus-close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.calculus-close-btn:hover {
+  background: #334155;
+  color: #f8fafc;
+}
+
+.calculus-modal-body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+
+/* Canvas Area */
+.calculus-canvas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.calculus-canvas-wrap {
+  position: relative;
+  background: #090d16;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+
+.calculus-svg {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.calculus-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #1e293b;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.calculus-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.calculus-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Right Sidebar */
+.calculus-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.calculus-panel-section {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.calculus-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calculus-preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.calculus-preset-btn {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calculus-preset-btn:hover {
+  background: #1e293b;
+  border-color: #64748b;
+  color: #f8fafc;
+}
+
+.calculus-preset-btn.active {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #bae6fd;
+  font-weight: 600;
+}
+
+.calculus-slider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.calculus-slider {
+  width: 100%;
+  accent-color: #38bdf8;
+  cursor: pointer;
+}
+
+.calculus-animate-limit-btn {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.calculus-animate-limit-btn:hover {
+  background: linear-gradient(135deg, #0369a1, #0ea5e9);
+}
+
+/* Metric Cards */
+.calculus-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.calculus-metric-card {
+  background: #0f172a;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+}
+
+.calculus-metric-label {
+  font-size: 10px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.calculus-metric-value {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: ui-monospace, monospace;
+  margin-top: 2px;
+}
+
+.calculus-formula-box {
+  background: #090d16;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  color: #fde047;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* Modal Footer */
+.calculus-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #1e293b;
+  border-top: 1px solid #334155;
+}
+
+.calculus-footer-left {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.calculus-footer-right {
+  display: flex;
+  gap: 10px;
+}
+
+.calculus-btn-secondary {
+  background: #334155;
+  color: #f1f5f9;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.calculus-btn-secondary:hover {
+  background: #475569;
+}
+
+.calculus-btn-primary {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  color: #fff;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+  transition: all 0.15s;
+}
+
+.calculus-btn-primary:hover {
+  background: linear-gradient(135deg, #0369a1, #0ea5e9);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.5);
+}

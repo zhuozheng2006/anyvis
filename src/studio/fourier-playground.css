@@ -1,0 +1,379 @@
+.fourier-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.78);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fourier-fade-in 0.18s ease-out;
+}
+
+@keyframes fourier-fade-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.fourier-modal {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  width: 920px;
+  max-width: 96vw;
+  max-height: 94vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(168, 85, 247, 0.2);
+  color: #f1f5f9;
+  overflow: hidden;
+}
+
+.fourier-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+}
+
+.fourier-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.fourier-title-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+.fourier-close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.fourier-close-btn:hover {
+  background: #334155;
+  color: #f8fafc;
+}
+
+.fourier-modal-body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+
+/* Canvas Area */
+.fourier-canvas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fourier-canvas-wrap {
+  position: relative;
+  background: #090d16;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 2px 12px rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+
+.fourier-svg {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.fourier-canvas-hint {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  font-size: 11px;
+  color: #64748b;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 2px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* Controls under canvas */
+.fourier-playback-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1e293b;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+}
+
+.fourier-btn-icon {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.fourier-btn-icon:hover {
+  background: #2563eb;
+}
+
+.fourier-time-slider {
+  flex: 1;
+  accent-color: #a855f7;
+  cursor: pointer;
+}
+
+.fourier-time-label {
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  color: #cbd5e1;
+  min-width: 45px;
+}
+
+.fourier-speed-group {
+  display: flex;
+  gap: 2px;
+}
+
+.fourier-speed-btn {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.fourier-speed-btn.active {
+  background: #a855f7;
+  color: #fff;
+  border-color: #a855f7;
+}
+
+/* Right Panel */
+.fourier-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fourier-panel-section {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fourier-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fourier-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.fourier-preset-btn {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  padding: 6px 4px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.fourier-preset-btn:hover {
+  background: #1e293b;
+  border-color: #64748b;
+  color: #f8fafc;
+}
+
+.fourier-preset-btn.active {
+  background: rgba(168, 85, 247, 0.25);
+  border-color: #a855f7;
+  color: #e9d5ff;
+  font-weight: 600;
+}
+
+.fourier-slider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.fourier-num-slider {
+  width: 100%;
+  accent-color: #38bdf8;
+  cursor: pointer;
+}
+
+/* Metric Badges */
+.fourier-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.fourier-metric-card {
+  background: #0f172a;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+}
+
+.fourier-metric-label {
+  font-size: 10px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.fourier-metric-value {
+  font-size: 15px;
+  font-weight: 600;
+  font-family: ui-monospace, monospace;
+  color: #38bdf8;
+  margin-top: 2px;
+}
+
+/* Spectrum mini chart */
+.fourier-spectrum-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 52px;
+  padding: 4px;
+  background: #090d16;
+  border-radius: 4px;
+  border: 1px solid #1e293b;
+}
+
+.fourier-spectrum-bar {
+  flex: 1;
+  background: linear-gradient(to top, #6366f1, #a855f7);
+  border-radius: 1px;
+  min-height: 2px;
+  transition: height 0.15s ease;
+}
+
+/* Mathematical formula */
+.fourier-formula-box {
+  background: #090d16;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  color: #fde047;
+  text-align: center;
+}
+
+/* Modal Footer */
+.fourier-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #1e293b;
+  border-top: 1px solid #334155;
+}
+
+.fourier-footer-left {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.fourier-footer-right {
+  display: flex;
+  gap: 10px;
+}
+
+.fourier-btn-secondary {
+  background: #334155;
+  color: #f1f5f9;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.fourier-btn-secondary:hover {
+  background: #475569;
+}
+
+.fourier-btn-primary {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
+  transition: all 0.15s;
+}
+
+.fourier-btn-primary:hover {
+  background: linear-gradient(135deg, #6d28d9, #9333ea);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.5);
+}

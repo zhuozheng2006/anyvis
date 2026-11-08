@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Download, FilePlus2, FolderOpen, Grid, Activity, TrendingUp, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import CodeMirror from '@uiw/react-codemirror';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -21,6 +21,10 @@ import { COMMON_COLOURS } from './blocks/colour-field';
 import { computePresentationSteps } from './presentation';
 import { CommandPalette } from './CommandPalette';
 import { MatrixPlaygroundModal } from './MatrixPlaygroundModal';
+import { FourierPlaygroundModal } from './FourierPlaygroundModal';
+import { createFourierActions } from './fourier';
+import { CalculusPlaygroundModal } from './CalculusPlaygroundModal';
+import { createCalculusActions } from './calculus';
 import './studio.css';
 import './studio-polish.css';
 
@@ -68,6 +72,8 @@ export default function StudioApp() {
   const presentationVideoRef = useRef<HTMLVideoElement>(null);
   const presentationSteps = useMemo(() => computePresentationSteps(project), [project]);
   const [matrixPlaygroundOpen, setMatrixPlaygroundOpen] = useState(false);
+  const [fourierPlaygroundOpen, setFourierPlaygroundOpen] = useState(false);
+  const [calculusPlaygroundOpen, setCalculusPlaygroundOpen] = useState(false);
   const [notice, setNotice] = useState('');
   const [saved, setSaved] = useState(true);
   const [saveError, setSaveError] = useState('');
@@ -453,6 +459,8 @@ export default function StudioApp() {
       <div className="header-spacer"/>
       <button className="header-button" title="全局命令面板 · ⌘/Ctrl K" aria-label="全局命令面板" onClick={() => setCmdPaletteOpen(true)}><Search size={15}/><span>命令 ⌘K</span></button>
       <button className="header-button" title="3B1B 矩阵线性变换交互台" aria-label="3B1B 矩阵线性变换交互台" onClick={() => setMatrixPlaygroundOpen(true)}><Grid size={15}/><span>矩阵台</span></button>
+      <button className="header-button" title="3B1B 傅里叶环绕圆交互台" aria-label="3B1B 傅里叶环绕圆交互台" onClick={() => setFourierPlaygroundOpen(true)}><Activity size={15}/><span>傅里叶台</span></button>
+      <button className="header-button" title="3B1B 微积分导数与切线交互台" aria-label="3B1B 微积分导数与切线交互台" onClick={() => setCalculusPlaygroundOpen(true)}><TrendingUp size={15}/><span>微积分台</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
       <button className="header-button" title="示例库" aria-label="示例库" onClick={() => setModal('templates')}><LayoutGrid size={16}/><span>示例库</span></button>
       <button className="header-button" onClick={exportProject} title="保存项目文件 · ⌘/Ctrl S"><Save size={16}/><span>保存</span></button>
@@ -631,6 +639,22 @@ export default function StudioApp() {
             run: () => setMatrixPlaygroundOpen(true),
           },
           {
+            id: 'open-fourier-playground',
+            title: '3B1B 傅里叶环绕圆交互台 (Fourier Epicycles)',
+            subtitle: 'DFT 离散复傅里叶级数分解、多环绕圆仿真与参数曲线生成',
+            colour: '#a855f7',
+            keywords: 'fourier epicycles 傅里叶 环绕圆 级数 dft 3b1b 曲线',
+            run: () => setFourierPlaygroundOpen(true),
+          },
+          {
+            id: 'open-calculus-playground',
+            title: '3B1B 微积分导数与切线交互台 (Essence of Calculus)',
+            subtitle: '割线极限逼近切线、导函数动态几何与 ValueTracker 动画生成',
+            colour: '#38bdf8',
+            keywords: 'calculus derivative tangent secant 微积分 导数 切线 割线 极限定理 3b1b',
+            run: () => setCalculusPlaygroundOpen(true),
+          },
+          {
             id: 'export-py',
             title: '导出独立 Manim Python 脚本 (.py)',
             subtitle: '下载可直接由 manim 命令运行的源码',
@@ -662,6 +686,44 @@ export default function StudioApp() {
           setSelected(result.action.id);
           setSelectedIds([result.action.id]);
           notify(`已插入线性变换动画：ApplyMatrix(${matStr}, ${targetName})`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <FourierPlaygroundModal
+      isOpen={fourierPlaygroundOpen}
+      onClose={() => setFourierPlaygroundOpen(false)}
+      onInsertFourier={(coeffs, shapeName) => {
+        try {
+          const current = editor.current?.snapshot() || projectRef.current;
+          const { project: nextProject, actionIds } = createFourierActions(current, coeffs, shapeName);
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入“${shapeName}”参数曲线`);
+        } catch (e) {
+          notify((e as Error).message);
+        }
+      }}
+    />
+
+    <CalculusPlaygroundModal
+      isOpen={calculusPlaygroundOpen}
+      onClose={() => setCalculusPlaygroundOpen(false)}
+      onInsertCalculus={(preset, x0) => {
+        try {
+          const current = editor.current?.snapshot() || projectRef.current;
+          const { project: nextProject, actionIds } = createCalculusActions(current, preset, preset.name.split(' ')[0]);
+          setProject(nextProject);
+          if (actionIds[0]) {
+            setSelected(actionIds[0]);
+            setSelectedIds(actionIds);
+          }
+          notify(`已向动画编排插入“${preset.name}”及导函数曲线 (x₀=${x0.toFixed(2)})`);
         } catch (e) {
           notify((e as Error).message);
         }
