@@ -40,7 +40,7 @@ const n = (name: string, label: string, value = 1, min = -1000, max = 1000, step
     field.suffix = '次';
   }
   if (name === 'fill') field.label = '填充不透明度';
-  if (name === 'opacity') field.label = '不透明度';
+  if (name === 'opacity' && label === '透明度') field.label = '不透明度';
   return field;
 };
 const t = (name: string, label: string, value = ''): FieldDefinition => ({ name, label, type: 'text', default: value });
@@ -51,7 +51,7 @@ const c = (name = 'color', label = '颜色', value = '#60A5FA'): FieldDefinition
 const s = (name: string, label: string, value: string, options: [string, string][]): FieldDefinition => ({ name, label, type: 'select', default: value, options });
 const position = () => [n('x', '横坐标', 0, -100, 100), n('y', '纵坐标', 0, -100, 100), n('z', 'z 坐标', 0, -100, 100)];
 const duration = () => n('duration', '用时', 1, 0.05, 120, 0.1);
-const rate = () => s('easing', '节奏', 'smooth', [['平滑', 'smooth'], ['匀速', 'linear'], ['慢入', 'ease_in_sine'], ['慢出', 'ease_out_sine'], ['来回', 'there_and_back']]);
+const rate = () => s('easing', '节奏', 'smooth', [['平滑', 'smooth'], ['匀速', 'linear'], ['慢入', 'ease_in_sine'], ['慢出', 'ease_out_sine'], ['往返（回到起点）', 'there_and_back']]);
 const timing = () => [duration(), rate()];
 const appear = (kind = 'create') => [{ ...s('appear', '显示方式', kind, [['绘制动画', 'create'], ['淡入动画', 'fade'], ['书写动画', 'write'], ['直接显示（无动画）', 'none'], ['暂不显示', 'hidden']]), description: '绘制、淡入和书写会播放出场动画；直接显示不耗时；暂不显示只创建对象，可用作变形目标。' }, { ...duration(), description: '仅在选择绘制、淡入或书写动画时使用此时长。' }];
 const COLORS: Record<string, string> = { '图形': '#3B82F6', '文字公式': '#8B5CF6', '坐标函数': '#0D9488', '数据结构': '#4F46E5', '三维': '#6366F1', '动画': '#DB2777', '样式布局': '#D97706', '参数关系': '#059669', '编排': '#B45309', '高级': '#64748B' };
@@ -133,12 +133,12 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   animated('transform', '变成另一个形状', [o('destination', '目标形状', '正方形')], 'Transform 保留原对象名称及身份。目标建议选择“暂不显示”。'),
   animated('replacement_transform', '替换为另一个对象', [o('destination', '新对象', '正方形')], 'ReplacementTransform 将原对象从场景移除，后续应操作新对象。'),
   animated('matching_tex', '匹配公式变形', [o('destination', '新公式', '新公式', ['formula'])], '用 TransformMatchingTex 匹配公式片段，建议在 LaTeX 中用双花括号隔离符号。'),
-  animated('move', '移动到', position(), '让对象中心移动到指定舞台坐标。'),
-  animated('shift', '移动一段距离', [n('dx', '向右', 2), n('dy', '向上', 0), n('dz', '向前', 0)], '按向量平移对象。'),
+  animated('move', '移动到指定位置', position(), '让对象中心移动到指定舞台坐标。'),
+  animated('shift', '移动一段距离', [n('dx', '向右', 2), n('dy', '向上', 0), n('dz', '向前', 0)], '在当前位置上增加位移：水平距离为正向右、为负向左；竖直距离为正向上、为负向下。'),
   animated('rotate', '旋转', [n('angle', '角度（度）', 90, -3600, 3600), s('axis', '旋转轴', 'OUT', [['平面 / z 轴', 'OUT'], ['x 轴', 'RIGHT'], ['y 轴', 'UP']])], '绕对象中心旋转，角度单位是度。'),
-  animated('scale', '缩放', [n('factor', '倍数', 1.5, 0.01, 30)], '绕对象中心均匀缩放。'),
+  animated('scale', '缩放', [n('factor', '倍数', 1.5, 0.01, 30)], '相对于当前大小缩放：2 倍放大一倍，0.5 倍缩小一半。连续两次 2 倍会变为最初的 4 倍。'),
   animated('color', '改变颜色', [c('color', '变为', '#FBBF24')], '将对象颜色平滑变到目标颜色。'),
-  animated('opacity', '改变透明度', [n('opacity', '透明度', 0.3, 0, 1)], '设置整个对象的透明度。'),
+  animated('opacity', '改变不透明度', [n('opacity', '透明度', 0.3, 0, 1)], '改变对象的不透明度：0 完全透明，1 完全不透明。'),
   animated('indicate', '突出强调', [], '短暂放大和着色，结束恢复原尺寸与颜色。节奏控制强调的快慢，始终完成一次往返。'),
   animated('circumscribe', '圈出重点', [], '在对象周围画一个临时边框。'),
   animated('flash', '闪光强调', [], '在对象中心产生一圈闪光。'),
@@ -157,7 +157,7 @@ export const BLOCK_CATALOG: BlockDefinition[] = [
   animated('apply_matrix', '线性变换', [{ ...t('matrix', '变换矩阵', '[[1,1],[0,1]]'), editor: 'matrix', description: '填写 2×2 数值矩阵，对图形应用对应的二维线性变换。' }], '对对象应用二维线性变换，可用于网格、向量或图形。'),
   block('wait', '等待', '编排', [n('duration', '秒', 1, 0, 120)], '保持画面并继续运行动态关系；不等待观众输入。'),
   block('parallel', '同时执行', '编排', [], '内部动画同时开始。不同对象可以组合；同一对象的重叠动画会报错。', { container: 'parallel' }),
-  block('sequence', '一组步骤', '编排', [t('label', '段落名称', '')], '将多个步骤组织为可折叠段落，依次执行。', { container: 'sequence' }),
+  block('sequence', '依次执行一组动作', '编排', [t('label', '段落名称', '')], '将多个步骤组织为可折叠段落，依次执行。', { container: 'sequence' }),
   block('repeat', '重复执行', '编排', [n('count', '次数', 3, 1, 50, 1)], '依次重复内部动作；建议只重复已有对象的动画，不反复声明同名对象。', { container: 'repeat' }),
   block('code', 'Python 扩展', '高级', [{ ...t('code', 'Python', '# 在这里使用 self 和 objects\nself.wait(1)'), type: 'multiline' }], '高级扩展具备本机 Python 权限；仅在明确启用后运行。代码不会被计入原生积木覆盖。', { requiresTrust: true }),
 ];

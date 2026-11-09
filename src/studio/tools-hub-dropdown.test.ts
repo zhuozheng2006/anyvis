@@ -58,7 +58,7 @@ describe('ToolsHubDropdown', () => {
 
     const trigger = container.querySelector('.tools-hub-trigger') as HTMLButtonElement;
     expect(trigger).toBeDefined();
-    expect(trigger.textContent).toContain('数理动效工作台');
+    expect(trigger.textContent).toContain('创作工具');
     expect(trigger.textContent).toContain('19');
 
     // Mega menu should initially be closed

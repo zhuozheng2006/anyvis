@@ -178,7 +178,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
   );
 
   // Default to selecting the first object when selectedId is empty / not in objects
-  const effectiveSelectedId = selectedId || (objects.length > 0 ? objects[0].id : null);
+  const effectiveSelectedId = objects.some(object => object.id === selectedId) ? selectedId : objects[0]?.id ?? null;
 
   const selectedObject = useMemo(
     () => objects.find(o => o.id === effectiveSelectedId) || null,
@@ -333,6 +333,8 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
 
   const commonFields = useMemo(() => {
     const matched = nonAnimFields.filter(f => COMMON_FIELD_NAMES.has(f.name));
+    const priority = ['name','text','tex','radius','side','width','height','fill','opacity','color','x','y','z'];
+    matched.sort((a, b) => (priority.indexOf(a.name) < 0 ? 99 : priority.indexOf(a.name)) - (priority.indexOf(b.name) < 0 ? 99 : priority.indexOf(b.name)));
     return matched.length >= 2 ? matched : nonAnimFields.slice(0, 5);
   }, [nonAnimFields]);
 
@@ -340,6 +342,161 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
 
   return (
     <div className="om-container">
+      {/* Bottom: Scratch-style Horizontal Cards Tray */}
+      <div className="om-cards-tray">
+        <div className="om-cards-tray-header">
+          <div className="om-tray-title-group">
+            <span>对象 ({objects.length})</span>
+            {objects.length >= 3 && (
+              <div className="om-tray-filter-pills" role="group" aria-label="对象类型分类过滤">
+                <button
+                  type="button"
+                  className={`om-tray-pill ${trayFilter === 'all' ? 'active' : ''}`}
+                  aria-pressed={trayFilter === 'all'} onClick={() => setTrayFilter('all')}
+                >
+                  全部
+                </button>
+                <button
+                  type="button"
+                  className={`om-tray-pill ${trayFilter === 'shapes' ? 'active' : ''}`}
+                  aria-pressed={trayFilter === 'shapes'} onClick={() => setTrayFilter('shapes')}
+                >
+                  图形
+                </button>
+                <button
+                  type="button"
+                  className={`om-tray-pill ${trayFilter === 'text' ? 'active' : ''}`}
+                  aria-pressed={trayFilter === 'text'} onClick={() => setTrayFilter('text')}
+                >
+                  文字
+                </button>
+                <button
+                  type="button"
+                  className={`om-tray-pill ${trayFilter === 'axes' ? 'active' : ''}`}
+                  aria-pressed={trayFilter === 'axes'} onClick={() => setTrayFilter('axes')}
+                >
+                  坐标
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="om-tray-tools-group">
+            {objects.length >= 4 && (
+              <input
+                type="text"
+                className="om-tray-search-input"
+                placeholder="筛选..."
+                value={traySearch}
+                onChange={e => setTraySearch(e.target.value)}
+                aria-label="快速筛选对象角色"
+              />
+            )}
+            {onMusicSettings && (
+              <button
+                type="button"
+                className="om-shelf-open-btn"
+                aria-label="对象管理器默认配乐设置"
+                onClick={onMusicSettings}
+              >
+                ♫ {project.scene.backgroundMusic === 'piano' ? '钢琴' : '无配乐'}
+              </button>
+            )}
+            <button
+              type="button"
+              className="om-shelf-open-btn"
+              onClick={() => {
+                setAddTab('assets');
+                setIsAddModalOpen(true);
+              }}
+              aria-label="查看项目素材库"
+            >
+              📁 素材库 ({project.assets?.length || 0})
+            </button>
+          </div>
+        </div>
+        <div className="om-cards-scroll-area" role="region" aria-label="对象卡片列表">
+          {filteredTrayObjects.map(obj => {
+            const isSelected = obj.id === effectiveSelectedId;
+            const def = getBlockDefinition(obj.type);
+            const name = String(obj.fields.name || '未命名');
+            const label = def?.label || obj.type;
+            const idx = objects.findIndex(o => o.id === obj.id);
+
+            return (
+              <div
+                key={obj.id}
+                tabIndex={0}
+                role="button"
+                aria-pressed={isSelected}
+                aria-label={`选择对象 ${name}，类型 ${label}`}
+                className={`om-card ${isSelected ? 'om-card-selected' : ''}`}
+                onClick={() => onSelect(obj.id)}
+                onKeyDown={e => {
+                  if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    onSelect(obj.id);
+                  }
+                }}
+              >
+                <div className="om-card-actions">
+                  {idx > 0 && (
+                    <button
+                      type="button"
+                      className="om-card-layer-btn"
+                      title="提前创建（不改变画面叠放层级）"
+                      aria-label={`提前创建 ${name}`}
+                      onClick={e => handleMoveLayer(e, obj.id, -1)}
+                    >
+                      ◀
+                    </button>
+                  )}
+                  {idx < objects.length - 1 && (
+                    <button
+                      type="button"
+                      className="om-card-layer-btn"
+                      title="延后创建（不改变画面叠放层级）"
+                      aria-label={`延后创建 ${name}`}
+                      onClick={e => handleMoveLayer(e, obj.id, 1)}
+                    >
+                      ▶
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="om-card-del-btn"
+                    onClick={e => handleDelete(e, obj.id, name)}
+                    aria-label={`删除对象 ${name}`}
+                    title={`删除对象 ${name}`}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="om-card-icon">{renderObjectIcon(obj)}</div>
+                <div className="om-card-info">
+                  <span className="om-card-name" title={name}>
+                    {name}
+                  </span>
+                  <span className="om-card-type" title={label}>
+                    {label}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+
+          <button
+            type="button"
+            className="om-card-add-trigger"
+            onClick={() => setIsAddModalOpen(true)}
+            aria-label="添加新对象"
+            title="添加新对象"
+          >
+            <span className="om-card-add-plus">+</span>
+            <span>添加对象</span>
+          </button>
+        </div>
+      </div>
+
       {/* Top: Scratch-style Compact Properties Bar */}
       <div className="om-property-bar">
         {selectedObject ? (
@@ -399,7 +556,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
           </>
         ) : (
           <div className="om-prop-empty-bar">
-            <span>尚未选择对象，点击下方卡片选择或新建对象</span>
+            <span>尚未选择对象，点击上方卡片选择或新建对象</span>
           </div>
         )}
       </div>
@@ -445,7 +602,8 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
         </div>
       )}
 
-      {/* ValueTracker Live Parameter Control Bar */}
+      <details className="om-tracker-section">
+        <summary>动态参数与函数联动</summary>
       <TrackerControlBar
         project={project}
         selectedId={selectedId}
@@ -453,161 +611,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
         onChange={onChange}
         onError={onError}
       />
-
-      {/* Bottom: Scratch-style Horizontal Cards Tray */}
-      <div className="om-cards-tray">
-        <div className="om-cards-tray-header">
-          <div className="om-tray-title-group">
-            <span>对象角色 ({objects.length})</span>
-            {objects.length >= 3 && (
-              <div className="om-tray-filter-pills" role="tablist" aria-label="对象类型分类过滤">
-                <button
-                  type="button"
-                  className={`om-tray-pill ${trayFilter === 'all' ? 'active' : ''}`}
-                  onClick={() => setTrayFilter('all')}
-                >
-                  全部
-                </button>
-                <button
-                  type="button"
-                  className={`om-tray-pill ${trayFilter === 'shapes' ? 'active' : ''}`}
-                  onClick={() => setTrayFilter('shapes')}
-                >
-                  图形
-                </button>
-                <button
-                  type="button"
-                  className={`om-tray-pill ${trayFilter === 'text' ? 'active' : ''}`}
-                  onClick={() => setTrayFilter('text')}
-                >
-                  文字
-                </button>
-                <button
-                  type="button"
-                  className={`om-tray-pill ${trayFilter === 'axes' ? 'active' : ''}`}
-                  onClick={() => setTrayFilter('axes')}
-                >
-                  坐标
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="om-tray-tools-group">
-            {objects.length >= 4 && (
-              <input
-                type="text"
-                className="om-tray-search-input"
-                placeholder="筛选..."
-                value={traySearch}
-                onChange={e => setTraySearch(e.target.value)}
-                aria-label="快速筛选对象角色"
-              />
-            )}
-            {onMusicSettings && (
-              <button
-                type="button"
-                className="om-shelf-open-btn"
-                aria-label="对象管理器默认配乐设置"
-                onClick={onMusicSettings}
-              >
-                ♫ {project.scene.backgroundMusic === 'piano' ? '钢琴' : '无配乐'}
-              </button>
-            )}
-            <button
-              type="button"
-              className="om-shelf-open-btn"
-              onClick={() => {
-                setAddTab('assets');
-                setIsAddModalOpen(true);
-              }}
-              aria-label="查看项目素材库"
-            >
-              📁 素材库 ({project.assets?.length || 0})
-            </button>
-          </div>
-        </div>
-        <div className="om-cards-scroll-area" role="region" aria-label="对象卡片列表">
-          {filteredTrayObjects.map(obj => {
-            const isSelected = obj.id === effectiveSelectedId;
-            const def = getBlockDefinition(obj.type);
-            const name = String(obj.fields.name || '未命名');
-            const label = def?.label || obj.type;
-            const idx = objects.findIndex(o => o.id === obj.id);
-
-            return (
-              <div
-                key={obj.id}
-                tabIndex={0}
-                role="button"
-                aria-selected={isSelected}
-                aria-label={`选择对象 ${name}，类型 ${label}`}
-                className={`om-card ${isSelected ? 'om-card-selected' : ''}`}
-                onClick={() => onSelect(obj.id)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    onSelect(obj.id);
-                  }
-                }}
-              >
-                <div className="om-card-actions">
-                  {idx > 0 && (
-                    <button
-                      type="button"
-                      className="om-card-layer-btn"
-                      title="前移图层 (更早生成)"
-                      aria-label={`前移图层 ${name}`}
-                      onClick={e => handleMoveLayer(e, obj.id, -1)}
-                    >
-                      ◀
-                    </button>
-                  )}
-                  {idx < objects.length - 1 && (
-                    <button
-                      type="button"
-                      className="om-card-layer-btn"
-                      title="后移图层 (延后生成)"
-                      aria-label={`后移图层 ${name}`}
-                      onClick={e => handleMoveLayer(e, obj.id, 1)}
-                    >
-                      ▶
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    className="om-card-del-btn"
-                    onClick={e => handleDelete(e, obj.id, name)}
-                    aria-label={`删除对象 ${name}`}
-                    title={`删除对象 ${name}`}
-                  >
-                    ✕
-                  </button>
-                </div>
-                <div className="om-card-icon">{renderObjectIcon(obj)}</div>
-                <div className="om-card-info">
-                  <span className="om-card-name" title={name}>
-                    {name}
-                  </span>
-                  <span className="om-card-type" title={label}>
-                    {label}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-
-          <button
-            type="button"
-            className="om-card-add-trigger"
-            onClick={() => setIsAddModalOpen(true)}
-            aria-label="添加新对象"
-            title="添加新对象"
-          >
-            <span className="om-card-add-plus">+</span>
-            <span>添加对象</span>
-          </button>
-        </div>
-      </div>
+      </details>
 
       {/* Add Object Modal */}
       {isAddModalOpen && (

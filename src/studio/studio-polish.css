@@ -352,3 +352,76 @@
 .playback-rate-select:hover {
   border-color: #94a3b8;
 }
+
+/* Workspace: resizable panels and a stable object → properties reading order. */
+.studio-main.resizable-workspace { grid-template-columns: minmax(430px,var(--editor-size)) 12px minmax(350px,var(--sidebar-size)); gap: 0; padding: 14px 16px; }
+.resizable-workspace > .stage-column { display:grid; grid-template-rows:minmax(275px,var(--preview-size)) 12px minmax(235px,var(--inspector-size)) 24px; gap:0; overflow:hidden; }
+.resizable-workspace .preview-panel { display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+.resizable-workspace .preview-panel > :not(.stage-shell) { flex-shrink:0; }
+.resizable-workspace .stage-shell { flex:1; min-height:80px; height:auto; max-height:none; margin-top:8px; margin-bottom:8px; }
+.resizable-workspace .object-manager-panel { min-height:0; }
+.workspace-split { display:flex; align-items:center; justify-content:center; touch-action:none; user-select:none; border-radius:6px; outline-offset:-2px; }
+.workspace-split span { border-radius:8px; background:#cbd2df; transition:background .15s; }
+.split-columns { cursor:col-resize; }.split-columns span { width:3px;height:32px; }
+.split-rows { cursor:row-resize; }.split-rows span { height:3px;width:32px; }
+.workspace-split:hover,.workspace-split:focus-visible { background:#e5e1fa; outline:2px solid #a69be8; }
+.workspace-split:hover span,.workspace-split:focus-visible span { background:#7863d5; }
+.workspace-intro { height:auto; min-height:44px; padding:5px 10px; overflow:hidden; box-sizing:border-box; }
+.workspace-intro .quick-add-toolbar { min-width:0; width:100%; overflow-x:auto; background:transparent; border:0; box-shadow:none; padding:0; gap:5px; }
+.quick-add-label,.quick-add-btn { flex-shrink:0; white-space:nowrap; }
+.quick-add-btn { min-height:30px; }
+.studio-header .header-button { white-space:nowrap; }
+.studio-header .project-title { flex:1; min-width:100px; max-width:280px; }
+.studio-header .header-spacer { flex:0; }
+.om-container { flex:1; min-height:0; }
+.om-cards-tray { flex:0 0 auto; height:auto; min-height:0; border-top:0; border-bottom:1px solid #e4e8f0; }
+.om-cards-tray-header { height:auto; min-height:32px; flex-wrap:wrap; gap:6px; padding:5px 10px; }
+.om-tray-title-group,.om-tray-tools-group { flex-wrap:wrap; }
+.om-tray-search-input { height:24px; font-size:11px; }
+.om-cards-scroll-area { flex:none; height:85px; padding:6px 10px; }
+.om-card { height:68px; width:84px; }
+.om-card-add-trigger { height:68px; }
+.om-property-bar { flex:1; min-height:0; max-height:none; padding:6px 10px; }
+.om-prop-header-row { min-height:30px; }
+.om-prop-body-compact { flex:1; min-height:0; max-height:none; padding:6px 2px; }
+.om-prop-body-compact .ai-fields-container { gap:10px 12px; align-items:start; }
+.om-prop-body-compact .ai-fields-row { flex-direction:column; align-items:stretch; grid-column:span 3; gap:5px; }
+.om-prop-body-compact .ai-fields-row:is([data-field="name"],[data-field="text"],[data-field="tex"],[data-field="expression"],[data-field="color"]) { grid-column:span 6; }
+.om-prop-body-compact .ai-fields-row:is([data-field="x"],[data-field="y"],[data-field="z"]) { grid-column:span 2; }
+.om-prop-body-compact .ai-fields-label-row { width:100%; }
+.om-prop-body-compact :is(.ai-fields-input,.ai-fields-select) { height:30px; font-size:12px; border-radius:6px; }
+.om-prop-body-compact .ai-fields-color-group { flex-wrap:wrap; }
+.ai-position-tools { grid-column:1/-1; min-width:0; }
+.ai-position-tools summary,.om-tracker-section summary { cursor:pointer; padding:7px 2px; font-size:11px; color:#64748b; }
+.om-tracker-section { flex:none; padding:0 10px; background:#f8fafc; border-top:1px solid #e4e8f0; max-height:40%; overflow:auto; }
+.om-tracker-section .tracker-control-bar { margin:0; }
+@media (min-width:1191px) { .studio-header { gap:6px; padding:0 18px; } .studio-header .header-button { padding:7px 8px; } }
+@media (max-width:1190px) and (min-width:881px) { .studio-header .header-button span { display:inline; } .studio-header .header-button { padding:6px; font-size:11px; } .studio-header .project-title { max-width:190px; } }
+@media (max-width:880px) {
+ .studio-main.resizable-workspace { display:flex; padding:10px; gap:12px; }
+ .workspace-split { display:none; }
+ .resizable-workspace > .stage-column { display:flex; overflow:visible; gap:12px; }
+ .resizable-workspace .preview-panel { height:420px; flex:none; }
+ .resizable-workspace .object-manager-panel { height:470px; flex:none; }
+ .resizable-workspace .engine-status { min-height:24px; }
+ .studio-header { flex-wrap:wrap; height:auto; min-height:64px; padding:8px 10px; gap:5px; }
+ .studio-header .project-title { max-width:none; }
+ .studio-header .header-spacer,.studio-header .header-divider { display:none; }
+}
+@media (min-width:881px) and (max-height:700px) { .studio-app { min-height:700px; } body { overflow:auto; } }
+
+@media (max-width:1190px) { .studio-header .header-button[aria-label="全局快捷键速查中心"] span,.studio-header .header-button[aria-label="全局命令面板"] span { display:none; } }
+
+.resizable-workspace .stage-shell { container-type:size; }
+.resizable-workspace .stage-placeholder { min-height:0; height:100%; padding:12px; box-sizing:border-box; }
+@container (max-height:190px) { .stage-placeholder .stage-placeholder-icon { display:none; } .stage-placeholder p { margin:6px 0; } }
+@container (max-height:110px) { .stage-placeholder p { display:none; } .stage-placeholder strong { font-size:12px; } .stage-placeholder button { margin-top:6px; } }
+
+.studio-header .help-button { display:inline-flex; flex-shrink:0; }
+
+.stage-assist-menu { position:relative; color:#64748b; font-size:11px; }
+.stage-assist-menu summary { cursor:pointer; display:flex; align-items:center; gap:4px; border:1px solid #dce1ea; border-radius:5px; padding:4px 7px; background:white; list-style:none; white-space:nowrap; }
+.stage-assist-menu summary::-webkit-details-marker { display:none; }
+.stage-assist-menu[open] summary { color:#167e75; border-color:#8abeb3; }
+.stage-assist-popover { position:absolute; top:30px; left:0; z-index:20; display:grid; gap:12px; width:220px; padding:12px; border:1px solid #dce1ea; border-radius:8px; background:white; box-shadow:0 8px 24px #23324422; }
+.resizable-workspace .stage-hud-bar { overflow:visible; position:relative; z-index:5; justify-content:space-between; }

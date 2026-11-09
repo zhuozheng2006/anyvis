@@ -77,7 +77,7 @@ jobs:
             DRAFT_SHA=$(gh release view "$RELEASE_TAG" --json targetCommitish --jq .targetCommitish)
             test "$DRAFT_SHA" = "$RELEASE_SHA" || { echo 'Draft targets a different commit.'; exit 1; }
           else
-            gh release create "$RELEASE_TAG" --target "$RELEASE_SHA" --title "AnyVis $RELEASE_TAG · 稳定性与媒体流程修复" --notes-file release-notes.md --draft
+            gh release create "$RELEASE_TAG" --target "$RELEASE_SHA" --title "AnyVis $RELEASE_TAG" --notes-file release-notes.md --draft
           fi
           node --input-type=module <<'NODE'
           import { readFileSync } from 'node:fs';

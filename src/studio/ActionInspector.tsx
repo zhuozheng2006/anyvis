@@ -30,7 +30,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
 }) => {
   const definition = getBlockDefinition(action.type);
   const allFields = definition?.fields || [];
-  const targetFields = fields ? allFields.filter(f => fields.includes(f.name)) : allFields;
+  const targetFields = fields ? allFields.filter(f => fields.includes(f.name)).sort((a, b) => fields.indexOf(a.name) - fields.indexOf(b.name)) : allFields;
 
   // Local drafts for editable text/number/multiline/expression fields
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -526,28 +526,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
             }}
           />
         )}
-        {field.name === 'y' && targetFields.some(f => f.name === 'x') && (
-          <PositionPad
-            mode="position"
-            x={Number(action.fields.x ?? 0)}
-            y={Number(action.fields.y ?? 0)}
-            onChange={({ x: nextX, y: nextY }) => {
-              setDrafts(prev => ({ ...prev, x: String(nextX), y: String(nextY) }));
-              onChange({ x: nextX, y: nextY });
-            }}
-          />
-        )}
-        {field.name === 'dy' && targetFields.some(f => f.name === 'dx') && (
-          <PositionPad
-            mode="shift"
-            x={Number(action.fields.dx ?? 0)}
-            y={Number(action.fields.dy ?? 0)}
-            onChange={({ x: nextDx, y: nextDy }) => {
-              setDrafts(prev => ({ ...prev, dx: String(nextDx), dy: String(nextDy) }));
-              onChange({ dx: nextDx, dy: nextDy });
-            }}
-          />
-        )}
+
       </div>
     );
   };
@@ -622,6 +601,30 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
           </div>
         </div>
       )}
+      {(targetFields.some(f => f.name === 'x') || targetFields.some(f => f.name === 'dx')) && <details className="ai-position-tools"><summary>位置辅助 · 九宫格与拖动定位</summary>
+        {targetFields.some(f => f.name === 'y') && targetFields.some(f => f.name === 'x') && (
+          <PositionPad
+            mode="position"
+            x={Number(action.fields.x ?? 0)}
+            y={Number(action.fields.y ?? 0)}
+            onChange={({ x: nextX, y: nextY }) => {
+              setDrafts(prev => ({ ...prev, x: String(nextX), y: String(nextY) }));
+              onChange({ x: nextX, y: nextY });
+            }}
+          />
+        )}
+        {targetFields.some(f => f.name === 'dy') && targetFields.some(f => f.name === 'dx') && (
+          <PositionPad
+            mode="shift"
+            x={Number(action.fields.dx ?? 0)}
+            y={Number(action.fields.dy ?? 0)}
+            onChange={({ x: nextDx, y: nextDy }) => {
+              setDrafts(prev => ({ ...prev, dx: String(nextDx), dy: String(nextDy) }));
+              onChange({ dx: nextDx, dy: nextDy });
+            }}
+          />
+        )}
+      </details>}
     </div>
   );
 };

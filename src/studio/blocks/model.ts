@@ -1,3 +1,4 @@
+import { ACTION_GROUPS, actionGroup, essentialFields, blockFieldLabel } from './presentation';
 import * as Blockly from 'blockly/core';
 import * as Chinese from 'blockly/msg/zh-hans';
 import { BLOCK_CATALOG, CURATED_BLOCK_CATALOG, getBlockDefinition } from '../core/catalog';
@@ -98,7 +99,8 @@ export function setReferenceNames(workspace: Blockly.Workspace, actions: Action[
     return old?.blockId === object.blockId && old.kind === object.kind && old.connected === object.connected && old.enabled === object.enabled;
   })) return;
   referenceObjects.set(workspace, objects);
-  for (const block of blocks) for (const input of block.inputList) for (const field of input.fieldRow) {
+  const flyoutBlocks = workspace instanceof Blockly.WorkspaceSvg ? workspace.getFlyout()?.getWorkspace().getAllBlocks(false) || [] : [];
+  for (const block of [...blocks, ...flyoutBlocks]) for (const input of block.inputList) for (const field of input.fieldRow) {
     if (field instanceof ObjectReferenceField) field.refreshLabel();
   }
 }
@@ -184,7 +186,9 @@ class ObjectReferenceField extends Blockly.FieldDropdown {
   refreshLabel(): void {
     const previous = this.getText();
     if (this.definition && previous === referenceLabel(this, this.definition, this.getValue() || '')) return;
-    this.setValue(this.getValue(), false);
+    this.getOptions(false);
+    // Refresh the display label even when the stored value has not changed.
+    this.doValueUpdate_(this.getValue() || '');
     if (this.getText() !== previous) this.forceRerender();
   }
 }
@@ -192,7 +196,8 @@ class ObjectReferenceField extends Blockly.FieldDropdown {
 class AssetReferenceField extends Blockly.FieldDropdown {
   constructor(kind: 'image' | 'audio') {
     super(function (this: Blockly.FieldDropdown) {
-      const ws = this.getSourceBlock()?.workspace;
+      const source = this.getSourceBlock()?.workspace;
+      const ws = source?.isFlyout ? (source as Blockly.WorkspaceSvg).targetWorkspace : source;
       const assets = ws ? workspaceAssets.get(ws) || [] : [];
       const options: [string, string][] = [['选择已上传素材', ''], ...assets.filter(a => a.kind === kind).map(a => [a.name, a.id] as [string, string])];
       const current = this.getValue();
@@ -229,6 +234,12 @@ export function applyWorkspaceRename(workspace: Blockly.Workspace, event: Blockl
 }
 
 function makeField(field: FieldDefinition, definition: BlockDefinition): Blockly.Field {
+  const input = buildField(field, definition);
+  if (field.description) input.setTooltip(field.description);
+  return input;
+}
+
+function buildField(field: FieldDefinition, definition: BlockDefinition): Blockly.Field {
   if (field.name === 'asset' && ['image_asset', 'audio_play'].includes(definition.type)) return new AssetReferenceField(definition.type === 'image_asset' ? 'image' : 'audio');
   if (field.type === 'api-value') {
     const input: ApiValueField = new ApiValueField(field, () => [...referenceMap(input).values()].filter(o => o.connected && o.enabled && o.blockId !== input.getSourceBlock()?.id).map(o => o.name));
@@ -260,24 +271,6 @@ function makeField(field: FieldDefinition, definition: BlockDefinition): Blockly
   return input;
 }
 
-function conciseFields(definition: BlockDefinition): Set<string> {
-  // Blocks without a details toggle must never hide a field (notably the
-  // value/context fields of the small API helper blocks).
-  if (definition.fields.length <= 4) return new Set(definition.fields.map(f => f.name));
-  if (definition.apiId) {
-    const keys=definition.fields.filter(f=>['name','receiver','mode','setValue'].includes(f.name)||f.apiParameter?.required||f.apiParameter?.kind==='var_positional').map(f=>f.name);
-    for (const f of definition.fields) if(keys.length<5 && !keys.includes(f.name) && f.apiParameter && !['var_keyword','var_positional'].includes(f.apiParameter.kind)) keys.push(f.name);
-    return new Set(keys);
-  }
-  const names = definition.fields.map((field) => field.name);
-  // Catalog order describes the object: keep a formula's LaTeX, a matrix's
-  // values, or a surface's functions visible before generic placement fields.
-  const secondary = new Set(['x', 'y', 'z', 'appear', 'fill', 'easing']);
-  const chosen = names.filter((name) => !secondary.has(name)).slice(0, 4);
-  for (const name of names) if (chosen.length < 4 && !chosen.includes(name)) chosen.push(name);
-  return new Set(chosen);
-}
-
 function setDetails(block: ContainerBlock, definition: BlockDefinition, expanded: boolean): void {
   if (objectPresentation.has(block.workspace) && managedDefinition(definition)) {
     for (const field of definition.fields) block.getInput(`FIELD_${field.name}`)?.setVisible(['name', 'appear', 'duration', 'mode'].includes(field.name));
@@ -286,7 +279,7 @@ function setDetails(block: ContainerBlock, definition: BlockDefinition, expanded
     if (block instanceof Blockly.BlockSvg) void block.queueRender();
     return;
   }
-  const common = conciseFields(definition);
+  const common = essentialFields(definition);
   block.anyvisDetails = expanded;
   for (const field of definition.fields) {
     const input = block.getInput(`FIELD_${field.name}`);
@@ -305,9 +298,9 @@ function configureBranches(block: ContainerBlock, count: number): void {
   for (let index = 0; index < current; index++) if (block.getInput(`BRANCH_${index}`)) block.removeInput(`BRANCH_${index}`);
   block.anyvisBranchCount = count;
   if (count) {
-    for (let index = 0; index < count; index++) block.appendStatementInput(`BRANCH_${index}`).appendField(`分支 ${index + 1}`);
+    for (let index = 0; index < count; index++) block.appendStatementInput(`BRANCH_${index}`).appendField(`同时开始 · 第 ${index + 1} 路`);
   } else {
-    block.appendStatementInput('BODY').appendField('执行');
+    block.appendStatementInput('BODY').appendField(block.type === blockType('parallel') ? '一起开始' : '依次执行');
   }
 }
 
@@ -330,30 +323,30 @@ export function registerStudioBlocks(): void {
     Blockly.Blocks[blockType(definition.type)] = {
       init(this: ContainerBlock) {
         const objectCue = objectPresentation.has(this.workspace) && managedDefinition(definition);
-        const heading = this.appendDummyInput('HEADING').appendField(objectCue ? '对象出现 / 准备' : definition.label);
+        const heading = this.appendDummyInput('HEADING').appendField(objectCue ? `${definition.label} · ${definition.fields.some(field => field.name === 'appear') ? '出场设置' : '准备对象'}` : definition.label);
         if (definition.requires3d) heading.appendField(' · 3D');
         if (definition.fields.length > 4 && !objectCue) {
           heading.appendField(new Blockly.FieldDropdown([
-            ['常用参数', 'compact'], ['全部参数', 'expanded'],
+            ['基本设置', 'compact'], ['更多设置', 'expanded'],
           ], (value) => {
             setDetails(this, definition, value === 'expanded');
             return value;
           }), '__details');
         }
-        const common = objectCue ? new Set<string>() : conciseFields(definition);
+        const common = objectCue ? new Set<string>() : essentialFields(definition);
         let row: Blockly.Input | undefined;
         let fieldsInRow = 0;
         for (const field of definition.fields.filter((item) => common.has(item.name))) {
-          const wide = field.type === 'expression' || field.type === 'multiline'
+          const wide = field.type === 'object' || field.name === 'duration' || field.name === 'name' || field.type === 'expression' || field.type === 'multiline'
             || (field.type === 'text' && String(field.default).length > 14);
           if (!row || fieldsInRow >= 2 || wide) { row = this.appendDummyInput(`FIELD_${field.name}`); fieldsInRow = 0; }
-          row.appendField(field.label).appendField(makeField(field, definition), field.name);
+          row.appendField(blockFieldLabel(definition, field.name, field.label)).appendField(makeField(field, definition), field.name);
           if (field.suffix) row.appendField(field.suffix, `__unit_${field.name}`);
           fieldsInRow++;
           if (wide) row = undefined;
         }
         for (const field of definition.fields.filter((item) => !common.has(item.name))) {
-          const input = this.appendDummyInput(`FIELD_${field.name}`).appendField(field.label).appendField(makeField(field, definition), field.name);
+          const input = this.appendDummyInput(`FIELD_${field.name}`).appendField(blockFieldLabel(definition, field.name, field.label)).appendField(makeField(field, definition), field.name);
           if (field.suffix) input.appendField(field.suffix, `__unit_${field.name}`);
         }
         if (definition.createsObject) {
@@ -374,9 +367,12 @@ export function registerStudioBlocks(): void {
         this.setPreviousStatement(true);
         this.setNextStatement(true);
         this.setInputsInline(false);
-        this.setColour(definition.colour);
+        this.setColour(!definition.createsObject ? actionGroup(definition.type)?.colour || definition.colour : definition.colour);
         this.setTooltip(definition.tooltip);
         setDetails(this, definition, false);
+        for (const input of this.inputList) for (const field of input.fieldRow) {
+          if (field instanceof ObjectReferenceField) field.refreshLabel();
+        }
       },
       saveExtraState(this: ContainerBlock) {
         return { branchCount: this.anyvisBranchCount ?? 0, expanded: Boolean(this.anyvisDetails) };
@@ -508,13 +504,23 @@ export function createToolbox(query = '', animationOnly = false): Blockly.utils.
   const normalized = query.toLocaleLowerCase().trim();
   const candidates = (normalized ? BLOCK_CATALOG : CURATED_BLOCK_CATALOG).filter(d => !animationOnly || !managedDefinition(d));
   const definitions = normalized ? candidates.filter((definition) => [
-    definition.label, definition.type, definition.category, definition.tooltip, ...(definition.keywords ?? []),
+    definition.label, definition.type, definition.category, actionGroup(definition.type)?.name || '', definition.tooltip, ...(definition.keywords ?? []),
   ].join(' ').toLocaleLowerCase().includes(normalized)).slice(0, 60) : candidates;
   const categories = [...new Set(definitions.map((definition) => definition.category))];
   if (normalized) return { kind: 'categoryToolbox', contents: [{
     kind: 'category', name: definitions.length ? `搜索 · ${definitions.length}` : '没有找到', colour: '#635bdf',
     contents: definitions.length ? definitions.map((definition) => ({ kind: 'block', type: blockType(definition.type) })) : [{ kind: 'label', text: '试试：圆、公式、移动、参数' }],
   }] };
+  if (animationOnly) {
+    const grouped = new Set(ACTION_GROUPS.flatMap(group => group.types));
+    const groups = [...ACTION_GROUPS, { name: '高级扩展', colour: '#64748B', hint: 'Manim 接口与 Python 扩展', types: definitions.filter(definition => !grouped.has(definition.type)).map(definition => definition.type) }];
+    return { kind: 'categoryToolbox', contents: groups.map(group => ({
+      ...group, definitions: group.types.map(type => definitions.find(definition => definition.type === type)).filter((definition): definition is BlockDefinition => Boolean(definition)),
+    })).filter(group => group.definitions.length).map(group => ({
+      kind: 'category', name: group.name, colour: group.colour,
+      contents: [{ kind: 'label', text: group.hint }, ...group.definitions.map(definition => ({ kind: 'block', type: blockType(definition.type) }))],
+    })) };
+  }
   return { kind: 'categoryToolbox', contents: categories.map((category) => ({
     kind: 'category', name: category, colour: definitions.find((definition) => definition.category === category)!.colour,
     contents: definitions.filter((definition) => definition.category === category).map((definition) => ({ kind: 'block', type: blockType(definition.type) })),

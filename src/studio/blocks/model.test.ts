@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import * as Blockly from 'blockly/core';
 import { createAction, BLOCK_CATALOG } from '../core/catalog';
 import type { Project } from '../core/types';
-import { actionsToWorkspace, detachedBlockCount, loadProjectWorkspace, registerStudioBlocks, saveWorkspace, setObjectPresentation, setReferenceNames, workspaceToActions } from './model';
+import { actionsToWorkspace, createToolbox, detachedBlockCount, loadProjectWorkspace, registerStudioBlocks, saveWorkspace, setObjectPresentation, setReferenceNames, workspaceToActions } from './model';
 
 registerStudioBlocks();
 const workspaces: Blockly.Workspace[] = [];
@@ -109,4 +109,44 @@ it('shows compact object cues while preserving hidden geometry and uploaded asse
   const field = ws.getBlockById(play.id)!.getField('asset') as Blockly.FieldDropdown;
   expect(field.getOptions(false)).toContainEqual(['讲解.wav', 'b'.repeat(64)]);
   expect(workspaceToActions(ws)).toEqual(p.actions);
+});
+
+
+it('exposes complete movement coordinates and duration before opening more settings', () => {
+  for (const type of ['move', 'shift', 'grow_from_point']) {
+    const action = createAction(type);
+    const ws = workspace([action]);
+    const block = ws.getBlockById(action.id)!;
+    const coordinates = type === 'shift' ? ['dx','dy','dz'] : ['x','y','z'];
+    for (const name of ['target', ...coordinates, 'duration']) {
+      const input = block.inputList.find(input => input.fieldRow.some(field => field.name === name));
+      expect(input?.isVisible(), `${type}.${name}`).toBe(true);
+    }
+    block.setFieldValue('expanded', '__details');
+    block.setFieldValue('compact', '__details');
+    expect(workspaceToActions(ws)).toEqual([action]);
+  }
+});
+
+it('groups every available action once and supports searching by its purpose', () => {
+  const toolbox = createToolbox('', true) as { contents: { name: string; contents: { kind: string; type?: string }[] }[] };
+  const types = toolbox.contents.flatMap(group => group.contents.filter(item => item.kind === 'block').map(item => item.type));
+  expect(new Set(types).size).toBe(types.length);
+  expect(toolbox.contents.find(group => group.name === '移动与变形')?.contents).toContainEqual({ kind: 'block', type: 'anyvis2_move' });
+  for (const type of ['wait','sequence','parallel','repeat','audio_play','audio_stop','set_style','tracker','camera','code']) expect(types).toContain(`anyvis2_${type}`);
+  const search = createToolbox('退场', true) as typeof toolbox;
+  expect(search.contents[0].contents).toContainEqual({ kind: 'block', type: 'anyvis2_fade_out' });
+});
+
+
+it('shows a real choice prompt in the flyout when compatible objects already exist', () => {
+  const main = workspace([createAction('circle')]);
+  setReferenceNames(main, []);
+  const flyout = new Blockly.Workspace(); workspaces.push(flyout);
+  Object.defineProperty(flyout, 'isFlyout', { value: true });
+  Object.assign(flyout, { targetWorkspace: main });
+  const block = flyout.newBlock('anyvis2_move');
+  const field = block.getField('target') as Blockly.FieldDropdown;
+  expect(field.getText()).toBe('选择图形对象');
+  expect(field.getOptions(false)).toContainEqual(['圆','圆']);
 });

@@ -11,7 +11,7 @@ export const QuickAddToolbar: React.FC<QuickAddToolbarProps> = ({ onAdd }) => {
     <div className="quick-add-toolbar" role="toolbar" aria-label="快捷添加场景对象">
       <span className="quick-add-label">
         <Plus size={13} />
-        <span>快捷添加:</span>
+        <span>添加对象</span>
       </span>
 
       <button

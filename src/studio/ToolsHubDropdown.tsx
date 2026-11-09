@@ -106,7 +106,7 @@ export const ToolsHubDropdown: React.FC<ToolsHubDropdownProps> = ({
         aria-expanded={isOpen}
       >
         <Wand2 size={15} />
-        <span>数理动效工作台</span>
+        <span>创作工具</span>
         <span className="tools-hub-badge">19</span>
       </button>
 
