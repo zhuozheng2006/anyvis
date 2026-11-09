@@ -350,6 +350,19 @@ PR #1 已获用户授权并合并，提交 `4173c5fd06fb1669cd86bf0c1369fec49273
 
 ## 最新桌面测试包
 
+**AnyVis v0.5.1**：[GitHub Release](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.1)。本版提供公开下载的安装包及 SHA-256，包含截至 `d054291` 的六轮修复。对应[桌面构建](https://github.com/zhuozheng2006/anyvis/actions/runs/42642760269)和[原生 Manim 检查](https://github.com/zhuozheng2006/anyvis/actions/runs/42642760286)。
+
+| 系统 | 安装包 | 验证范围 |
+| --- | --- | --- |
+| Apple Silicon Mac | [DMG](https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-mac-arm64.dmg) / [ZIP](https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-mac-arm64.zip) | 构建及 ARM64 打包后启动 |
+| Intel Mac | [DMG](https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-mac-x64.dmg) / [ZIP](https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-mac-x64.zip) | 交叉构建，未在 Intel 机器启动 |
+| Windows x64 | [EXE](https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-win-x64.exe) | 构建及打包后启动 |
+| Linux x64 | [AppImage](https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-linux-x86_64.AppImage) / [DEB](https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-linux-amd64.deb) | 构建及打包后启动 |
+
+[SHA256SUMS.txt](https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/SHA256SUMS.txt)用于核对下载文件。桌面包仍需外部 Python/Manim、字体与 LaTeX 环境；macOS 未公证，Windows 无正式发行者签名，未人工运行各平台的安装向导。详细内容见[v0.5.1 发布说明](releases/v0.5.1.md)。
+
+## v0.4.0 历史桌面测试包
+
 **AnyVis v0.4.0**：[构建 42444633481](https://github.com/zhuozheng2006/anyvis/actions/runs/42444633481)，对应 `7e96b4c24ea0a3bd27940bbe928b3daf59e38c49`，三平台构建与最终 ASAR 启动均通过。包含开源时间轴、对象管理器、图片与配音、SVG 尺寸修复、配音分割、默认钢琴与无配乐设置，服务重启后的会话恢复，以及 API 图片渲染、复合删除、点云取样、默认三维视角、前景对象单次更新和 OpenGL 曲线长度兼容修复。
 
 | 系统 | 安装包附件 | 实际启动验证 |

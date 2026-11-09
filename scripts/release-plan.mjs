@@ -20,7 +20,7 @@ export function validateReleaseBuild(build, nativeRuns, repository) {
 
 export function expectedReleaseAssets(version) {
   if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error('Expected a stable semantic version.');
-  return ['mac-arm64.dmg', 'mac-arm64.zip', 'mac-x64.dmg', 'mac-x64.zip', 'win-x64.exe', 'linux-x64.AppImage', 'linux-x64.deb']
+  return ['mac-arm64.dmg', 'mac-arm64.zip', 'mac-x64.dmg', 'mac-x64.zip', 'win-x64.exe', 'linux-x86_64.AppImage', 'linux-amd64.deb']
     .map(suffix => `AnyVis-${version}-${suffix}`);
 }
 
@@ -28,7 +28,7 @@ export function selectReleaseAssets(version, files) {
   const expected = expectedReleaseAssets(version);
   const installers = files.filter(file => /\.(dmg|zip|exe|AppImage|deb)$/.test(file));
   if (installers.length !== expected.length || expected.some(name => installers.filter(file => path.basename(file) === name).length !== 1)) {
-    throw new Error('Expected exactly seven installers for this version, including both macOS architectures.');
+    throw new Error(`Expected exactly seven installers for this version, including both macOS architectures. Found: ${installers.map(file => path.basename(file)).join(', ')}`);
   }
   return expected.map(name => installers.find(file => path.basename(file) === name));
 }

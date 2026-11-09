@@ -40,6 +40,11 @@ jobs:
       - name: Verify desktop and native checks for the same commit
         id: plan
         run: node scripts/release-plan.mjs plan
+      - name: Preserve release tooling and notes from the dispatch commit
+        run: |
+          mkdir -p "$RUNNER_TEMP/anyvis-release"
+          cp scripts/release-plan.mjs "$RUNNER_TEMP/anyvis-release/"
+          cp -R docs/releases "$RUNNER_TEMP/anyvis-release/notes"
       - uses: actions/checkout@v7.0.1
         with:
           ref: ${{ steps.plan.outputs.sha }}
@@ -50,7 +55,7 @@ jobs:
         run: gh run download "$BUILD_RUN_ID" --pattern "AnyVis-*-$RELEASE_SHA" --dir release-downloads
       - name: Verify all platforms and calculate checksums
         id: assets
-        run: node scripts/release-plan.mjs assets
+        run: node "$RUNNER_TEMP/anyvis-release/release-plan.mjs" assets
       - name: Publish complete release
         env:
           RELEASE_SHA: ${{ steps.plan.outputs.sha }}
@@ -58,7 +63,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cp "docs/releases/$RELEASE_TAG.md" release-notes.md
+          cp "$RUNNER_TEMP/anyvis-release/notes/$RELEASE_TAG.md" release-notes.md
           printf '\nCommit: `%s`\n\n[Desktop build](https://github.com/%s/actions/runs/%s)\n' "$RELEASE_SHA" "$GH_REPO" "$BUILD_RUN_ID" >> release-notes.md
           if gh api "repos/$GH_REPO/git/ref/tags/$RELEASE_TAG" >/dev/null 2>&1; then
             TAG_SHA=$(gh api "repos/$GH_REPO/commits/$RELEASE_TAG" --jq .sha)

@@ -14,7 +14,11 @@ test('publishes only a successful main desktop build with matching native eviden
   }
 });
 test('rejects missing, duplicate, wrong-version and extra installers', () => {
-  const names = expectedReleaseAssets('0.5.1');
+  // Use the actual electron-builder names; Linux targets normalize arch names.
+  const names = ['AnyVis-0.5.1-mac-arm64.dmg', 'AnyVis-0.5.1-mac-arm64.zip',
+    'AnyVis-0.5.1-mac-x64.dmg', 'AnyVis-0.5.1-mac-x64.zip', 'AnyVis-0.5.1-win-x64.exe',
+    'AnyVis-0.5.1-linux-x86_64.AppImage', 'AnyVis-0.5.1-linux-amd64.deb'];
+  assert.deepEqual(expectedReleaseAssets('0.5.1'), names);
   const files = names.map(name => `artifacts/${name}`);
   assert.deepEqual(selectReleaseAssets('0.5.1', [...files, 'checks/smoke.json']), files);
   for (const invalid of [files.slice(1), [...files, files[0]], files.map(p => p.replace('0.5.1', '0.5.0')), [...files, 'other.exe']]) {
