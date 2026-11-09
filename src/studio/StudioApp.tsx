@@ -47,7 +47,7 @@ import { PolarParametricModal } from './PolarParametricModal';
 import { Vector3DPlaygroundModal } from './Vector3DPlaygroundModal';
 import { StageGuidesOverlay } from './StageGuidesOverlay';
 import { StageDirectGizmo } from './StageDirectGizmo';
-import { StageZoomControls } from './StageZoomControls';
+import { StageZoomControls, getNextZoomIn, getNextZoomOut } from './StageZoomControls';
 import { ToolsHubDropdown } from './ToolsHubDropdown';
 import { ShortcutsHelpModal } from './ShortcutsHelpModal';
 import { QuickAddToolbar } from './QuickAddToolbar';
@@ -204,6 +204,23 @@ export default function StudioApp() {
     setStageZoom(1);
     setStagePan({ x: 0, y: 0 });
     notify('已重置画面缩放至 100%');
+  }, [notify]);
+
+  const handleZoomIn = useCallback(() => {
+    setStageZoom(prev => {
+      const next = getNextZoomIn(prev);
+      notify(`画布缩放: ${Math.round(next * 100)}%`);
+      return next;
+    });
+  }, [notify]);
+
+  const handleZoomOut = useCallback(() => {
+    setStageZoom(prev => {
+      const next = getNextZoomOut(prev);
+      if (next === 1) setStagePan({ x: 0, y: 0 });
+      notify(`画布缩放: ${Math.round(next * 100)}%`);
+      return next;
+    });
   }, [notify]);
 
   const setAspectRatio = useCallback((width: number, height: number) => {
@@ -516,23 +533,37 @@ export default function StudioApp() {
       ) {
         return;
       }
-      if (e.key === '1') {
-        e.preventDefault();
-        switchView('blocks');
-      } else if (e.key === '2') {
-        e.preventDefault();
-        switchView('timeline');
-      } else if (e.key === '3') {
-        e.preventDefault();
-        switchView('code');
-      } else if (e.key === '?' || (e.shiftKey && e.key === '/')) {
-        e.preventDefault();
-        setShortcutsModalOpen(true);
+      if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+        if (e.key === '1') {
+          e.preventDefault();
+          switchView('blocks');
+        } else if (e.key === '2') {
+          e.preventDefault();
+          switchView('timeline');
+        } else if (e.key === '3') {
+          e.preventDefault();
+          switchView('code');
+        } else if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+          e.preventDefault();
+          setShortcutsModalOpen(true);
+        } else if (e.key === '+' || e.key === '=') {
+          e.preventDefault();
+          handleZoomIn();
+        } else if (e.key === '-' || e.key === '_') {
+          e.preventDefault();
+          handleZoomOut();
+        } else if (e.key === '0') {
+          e.preventDefault();
+          handleResetZoom();
+        } else if (e.key.toLowerCase() === 'f') {
+          e.preventDefault();
+          toggleFullscreen();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [switchView]);
+  }, [switchView, handleZoomIn, handleZoomOut, handleResetZoom, toggleFullscreen]);
 
   const importAI = async () => {
     setAiError('');

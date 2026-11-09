@@ -10,7 +10,16 @@ export interface StageZoomControlsProps {
   onToggleFullscreen(): void;
 }
 
-const ZOOM_STEPS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+export const ZOOM_STEPS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+
+export function getNextZoomIn(zoom: number): number {
+  return ZOOM_STEPS.find(step => step > zoom + 0.01) ?? Math.min(3, Math.round((zoom + 0.25) * 100) / 100);
+}
+
+export function getNextZoomOut(zoom: number): number {
+  const reversed = [...ZOOM_STEPS].reverse();
+  return reversed.find(step => step < zoom - 0.01) ?? Math.max(0.25, Math.round((zoom - 0.25) * 100) / 100);
+}
 
 export const StageZoomControls: React.FC<StageZoomControlsProps> = ({
   zoom,
@@ -20,14 +29,11 @@ export const StageZoomControls: React.FC<StageZoomControlsProps> = ({
   onToggleFullscreen,
 }) => {
   const handleZoomIn = () => {
-    const next = ZOOM_STEPS.find(step => step > zoom + 0.01) ?? Math.min(3, Math.round((zoom + 0.25) * 100) / 100);
-    onZoomChange(next);
+    onZoomChange(getNextZoomIn(zoom));
   };
 
   const handleZoomOut = () => {
-    const reversed = [...ZOOM_STEPS].reverse();
-    const next = reversed.find(step => step < zoom - 0.01) ?? Math.max(0.25, Math.round((zoom - 0.25) * 100) / 100);
-    onZoomChange(next);
+    onZoomChange(getNextZoomOut(zoom));
   };
 
   const percentText = `${Math.round(zoom * 100)}%`;
@@ -47,7 +53,7 @@ export const StageZoomControls: React.FC<StageZoomControlsProps> = ({
       <button
         type="button"
         className={`stage-zoom-pill ${Math.abs(zoom - 1) < 0.01 ? 'is-default' : 'is-modified'}`}
-        title="点击重置缩放比例至 100%"
+        title="点击重置缩放比例至 100% (快捷键: 0)"
         aria-label={`当前缩放比例 ${percentText}，点击重置为 100%`}
         onClick={onResetZoom}
       >
@@ -66,7 +72,7 @@ export const StageZoomControls: React.FC<StageZoomControlsProps> = ({
       <button
         type="button"
         className={`stage-zoom-btn ${isFullscreen ? 'active' : ''}`}
-        title={isFullscreen ? '退出全屏 (Esc)' : '舞台全屏预览'}
+        title={isFullscreen ? '退出全屏 (F / Esc)' : '舞台全屏预览 (F)'}
         aria-label={isFullscreen ? '退出全屏' : '舞台全屏预览'}
         onClick={onToggleFullscreen}
       >

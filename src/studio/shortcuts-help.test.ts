@@ -63,6 +63,9 @@ describe('ShortcutsHelpModal', () => {
     // Check some keys
     expect(container.textContent).toContain('Space');
     expect(container.textContent).toContain('Home');
+    expect(container.textContent).toContain('放大 / 缩小舞台画面');
+    expect(container.textContent).toContain('重置画面缩放至 100%');
+    expect(container.textContent).toContain('舞台全屏预览 / 退出全屏');
 
     // Click close button
     const closeBtn = container.querySelector('.shortcuts-close-btn') as HTMLButtonElement;

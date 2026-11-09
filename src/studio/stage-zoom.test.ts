@@ -2,7 +2,23 @@
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { StageZoomControls } from './StageZoomControls';
+import { StageZoomControls, getNextZoomIn, getNextZoomOut, ZOOM_STEPS } from './StageZoomControls';
+
+describe('StageZoomControls helpers', () => {
+  it('correctly calculates next zoom in and out steps', () => {
+    expect(ZOOM_STEPS).toEqual([0.5, 0.75, 1.0, 1.25, 1.5, 2.0]);
+    expect(getNextZoomIn(0.5)).toBe(0.75);
+    expect(getNextZoomIn(1.0)).toBe(1.25);
+    expect(getNextZoomIn(2.0)).toBe(2.25);
+    expect(getNextZoomIn(2.75)).toBe(3.0);
+    expect(getNextZoomIn(3.0)).toBe(3.0);
+
+    expect(getNextZoomOut(2.0)).toBe(1.5);
+    expect(getNextZoomOut(1.0)).toBe(0.75);
+    expect(getNextZoomOut(0.5)).toBe(0.25);
+    expect(getNextZoomOut(0.25)).toBe(0.25);
+  });
+});
 
 describe('StageZoomControls', () => {
   let container: HTMLDivElement;

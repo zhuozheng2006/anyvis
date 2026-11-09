@@ -105,7 +105,20 @@ jobs:
           xvfb-run -a desktop/node_modules/electron/dist/electron desktop-build/app --smoke-test "--smoke-result=$GITHUB_WORKSPACE/desktop-build/smoke-result.json" --smoke-timeout=60000
 
       - name: Build installers without publishing
-        run: node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never ${{ matrix.builder-args }}
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            echo "Packaging installers (attempt $i/3)..."
+            if node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --publish never ${{ matrix.builder-args }}; then
+              break
+            fi
+            if [ "$i" -eq 3 ]; then
+              echo "Installer packaging failed after 3 attempts."
+              exit 1
+            fi
+            echo "electron-builder failed on attempt $i, retrying in 15s..."
+            sleep 15
+          done
       - name: Check packaged ASAR application on macOS and Windows
         if: runner.os != 'Linux'
         run: node scripts/check-packaged-desktop.mjs

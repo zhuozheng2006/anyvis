@@ -82,6 +82,28 @@ export const ShortcutsHelpModal: React.FC<ShortcutsHelpModalProps> = ({
                 <kbd className="shortcut-kbd">Enter</kbd>
               </div>
             </div>
+            <div className="shortcut-item">
+              <span className="shortcut-label">放大 / 缩小舞台画面</span>
+              <div className="shortcut-keys">
+                <kbd className="shortcut-kbd">+</kbd>
+                <span>/</span>
+                <kbd className="shortcut-kbd">-</kbd>
+              </div>
+            </div>
+            <div className="shortcut-item">
+              <span className="shortcut-label">重置画面缩放至 100%</span>
+              <div className="shortcut-keys">
+                <kbd className="shortcut-kbd">0</kbd>
+              </div>
+            </div>
+            <div className="shortcut-item">
+              <span className="shortcut-label">舞台全屏预览 / 退出全屏</span>
+              <div className="shortcut-keys">
+                <kbd className="shortcut-kbd">F</kbd>
+                <span>或</span>
+                <kbd className="shortcut-kbd">Esc</kbd>
+              </div>
+            </div>
           </div>
 
           {/* Group 2: 工作区视图切换 */}
