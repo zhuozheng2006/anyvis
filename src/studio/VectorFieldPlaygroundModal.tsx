@@ -26,6 +26,7 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
   project,
   onApply,
 }) => {
+  const [applyError, setApplyError] = useState('');
   const [selectedPresetId, setSelectedPresetId] = useState<VectorFieldPresetId>('vortex');
   const [mode, setMode] = useState<'arrows' | 'streamlines'>('arrows');
   const [theme, setTheme] = useState<ColorTheme>('3b1b');
@@ -152,16 +153,21 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
   };
 
   const handleCopyPython = async () => {
-    const code = generateVectorFieldPythonCode(preset, bounds, mode);
+    const code = generateVectorFieldPythonCode(preset, bounds, mode, gridStep, theme);
     await navigator.clipboard.writeText(code);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleApplyToProject = () => {
-    const result = createVectorFieldActions(project, preset, bounds);
-    onApply(result.project, result.actionIds);
-    onClose();
+    setApplyError('');
+    try {
+      const result = createVectorFieldActions(project, preset, bounds, mode, gridStep, theme);
+      onApply(result.project, result.actionIds);
+      onClose();
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -177,6 +183,7 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
             </svg>
             2D 向量场与流线工作台 (Vector Field & Streamlines)
           </h2>
+          {applyError && <p role="alert" style={{ color: '#fca5a5' }}>{applyError}</p>}
           <button className="vector-field-close-btn" onClick={onClose} title="关闭">
             ✕
           </button>

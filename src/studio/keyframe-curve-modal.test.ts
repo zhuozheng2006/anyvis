@@ -64,9 +64,7 @@ describe('KeyframeCurveModal', () => {
       applyBtn?.click();
     });
 
-    expect(onApply).toHaveBeenCalledTimes(1);
-    const [rateFuncName, coords] = onApply.mock.calls[0];
-    expect(rateFuncName).toBe('smooth-3b1b');
-    expect(coords).toEqual([0.25, 0.1, 0.25, 1.0]);
+    expect(applyBtn?.disabled).toBe(true);
+    expect(onApply).not.toHaveBeenCalled();
   });
 });

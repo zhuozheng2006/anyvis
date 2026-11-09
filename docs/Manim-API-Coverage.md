@@ -1,8 +1,8 @@
 # Manim API 覆盖：入口、参数与运行证据
 
-AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有限清单的 **1,660 / 1,660 个入口均已接入**；扩展到公开子模块和自定义描述符后，共有 **2,293 个类、函数、方法或属性入口**，每一项都有独立的积木类型和参数字段。
+当前 AnyVis 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有限清单的 **1,660 / 1,660 个入口均已接入**；扩展到公开子模块和自定义描述符后，共有 **2,293 个类、函数、方法或属性入口**，每一项都有独立的积木类型和参数字段。
 
-这完成了该版本已发现清单的入口接入，**不等于全 Manim 功能或所有参数组合已完成运行验收**。特别是 0.22.1 尚未验证，OpenGL 在本机受环境限制，不能将“可以生成调用”写成“已经渲染通过”。
+这完成了该版本已发现清单的入口接入，**不等于全 Manim 功能或所有参数组合已完成运行验收**。其他 Manim 版本尚未验证，OpenGL 在本机受环境限制，不能将“可以生成调用”写成“已经渲染通过”。
 
 ## 实际数量与核查
 
@@ -18,7 +18,7 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 | 可核对的调用签名 | 2,117 | 参数名、种类、必填状态逐项核对 |
 | 没有可反射签名的类 | 5 | 提供显式位置参数列表和命名参数字典，不伪造签名 |
 | 旧清单缺失入口 | 0 | 与固定 gzip 库存逐项比较 |
-| 原生行为证据涉及的独立 API | 1,731 | 十四组真实 Manim 测试合并去重；状态、回调、动画、系统与文件工具与原生调用差分 |
+| 原生行为证据涉及的独立 API | 1,538 | 2026-11-09 重跑 12 份报告，指纹校验通过；剔除 193 项弱断言 |
 
 [机器可读核查报告](research/api-registry-verification.json) · [完整运行时目录](../src/studio/core/api-registry.json) · [以前的常用积木审计](research/curated-api-coverage.md)
 
@@ -64,15 +64,14 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 - 2,293 个入口和 2,765 个常量全部解析成功；2,117 项签名匹配，属性写入能力也经过核对。
 - 原生集成测试覆盖构造器、可变参数、位置专用/关键字专用参数、属性读写、类方法、返回值、曲线回调、updater、动态重绘、动画组合、上下文恢复及真实画面像素。测试中的固定断言代码只用于测量，不计为原生 API 实现。
 - [参数曲线工程与视频](../examples/api/README.md)由 21 个可编辑积木生成，实际视频 1280×720、24 fps、565 帧、23.54 秒；所有帧解码通过，并人工查看关键帧。
-- 十三组测试合并后，1,668 个不同入口已有运行证据，剩余未验证入口已降至 625 个（其中通用/Cairo 仅余 167 项，已覆盖全部通用/Cairo API 的 90.5%；OpenGL 专属 458 项）。只读差分测试 200 项全部通过。
-- 本轮在 `api-families` 中新增 3 个测试族（`svgMobjects`、`vectorAndZoomScenes`、`renderingAndFileWriter`，单轮净增 86 个独立入口，总数突破 1,668 项），覆盖：
-  1. SVG 与矢量路径解析族（`SVGMobject` 构造、`get_file_path`、`init_svg_mobject`、`generate_config_style_dict`、`modify_xml_tree`、`move_into_position`、`generate_mobject`、`get_mob_from_shape_element`、`get_mobjects_from`、`apply_style_to_mobject`、`handle_transform`、`rect_to_mobject`、`ellipse_to_mobject`、`line_to_mobject`、`polygon_to_mobject`、`polyline_to_mobject`、`path_to_mobject`、`text_to_mobject`，以及 `VMobjectFromSVGPath` 的 `handle_commands`、`init_points`、`generate_points`；Mobject 动画重载机制 `override_animate`、`add_animation_override`、`animation_override_for`、`set_default` 及 `save_image`）。
-  2. 向量空间与缩放场景族（`VectorScene` 的 `get_vector`、`get_basis_vector_labels`、`position_x_coordinate`、`position_y_coordinate`、`write_vector_coordinates`；`LinearTransformationScene` 的 `add_transformable_label`、`apply_function`、`apply_inverse`、`apply_inverse_transpose`、`apply_nonlinear_transformation`、`get_moving_mobject_movement`、`get_piece_movement`、`get_transformable_label_movement`、`get_vector_movement`、`update_default_configs`、`write_vector_coordinates`；`ZoomedScene` 构造、`setup`、`get_zoom_factor`、`activate_zooming`、`get_zoom_in_animation`、`get_zoomed_display_pop_out_animation`）。
-  3. 渲染管线与媒体输出族（`CairoRenderer` 构造、`get_frame`、`freeze_current_frame`、`init_scene`、`save_static_frame_data`、`update_frame`、`update_skipping_status`、`scene_finished`；矢量渲染辅助 `build_matrix_lists`、`triangulate_mobject`；`SceneFileWriter` 构造、`init_output_directories`、`get_resolution_directory`、`is_already_cached`、`init_audio`、`add_audio_segment`、`write_subcaption_file`、`next_section`、`finish_last_section`、`to_av_frame_rate`；Pango 文本转矢量 `MarkupUtils.text2svg`、`remove_last_M`；命令行与质量元数据 `QualityDict`、`VideoMetadata`、`capture`、`get_dir_layout`、`TexTemplate.from_file`；场景生命周期与交互事件 `Scene.setup`/`construct`/`tear_down`、`SceneInteractContinue`、`SceneInteractRerun`），全部断言具体数值、几何点集与返回值后置条件，0 失败。
-- 前期在 `api-config`（+52 项，实现 `manim._config.*` 100% 全覆盖）与 `api-families` 的 `camerasAndLifecycle`（+76 项新覆盖）中扩展行为测试，覆盖配置与日志系统全量属性/方法、全系列相机、动画生命周期与组合以及分段、Pango 与图像/家族工具，全部断言具体后置条件，0 失败。
-- 本轮在 `api-families` 中再新增 104 个独立入口的行为测试（新增 `textAndBraces` 与 `coreMobjectsAndUtils` 两大测试族），覆盖文字、数字与公式排版（`DecimalNumber` 及读写属性、`Integer`、`Variable`、`BulletedList`、`MathTex` 及其子部分检索/着色/透明度/排序、`MathTexPart`、`SingleStringMathTex`、`Tex`、`Title`、`MarkupText`、`Paragraph`、`Text`、`remove_invisible_chars`、`Code.get_styles_list`）、括号与横幅（`ArcBrace`、`Brace`、`BraceBetweenPoints`、`BraceLabel` 及其动画/切换/位移、`BraceText`、`ManimBanner` 及其创建/展开/缩放、`FullScreenRectangle`、`ScreenRectangle`）、核心基类与流线向量场（`Group`、`Mobject`、`CurvesAsSubmobjects`、`VGroup.add`、`VectorizedPoint`、`get_mobject_class`、`get_point_mobject_class`、`get_vectorized_mobject_class`、`ArrowVectorField`、`VectorField.fit_to_coordinate_system`、`VectorField.get_colored_background_image`、`StreamLines` 及其创建/启停动画）以及几何算法与模板工具（`polylabel`、`QuickHull`/`Facet`/`SubFacet`/`Horizon`/`QuickHullPoint`、`TexTemplate`/`TexFontTemplates`/`TexTemplateLibrary`/`tex_hash`、`not_quite_there`/`squish_rate_func`/`unit_interval`/`zero`、`DictAsObject`、`Percent`、`flatten_iterable_parameters`），全部断言具体后置条件，0 失败。
-- 本轮在 `api-families` 中新增 60 个独立入口的行为测试，覆盖几何标注与多边形（`AnnotationDot`、`ArcPolygonFromArcs`、`CubicBezier`、`CurvedDoubleArrow`、`LabeledDot`、`TangentialArc`、`TipableVMobject`、`Label`、`LabeledArrow`、`LabeledLine`、`LabeledPolygram`、`Polygram`、`Polygram.get_vertex_groups`、`RegularPolygram`、`Angle.from_three_points`、`Vector.coordinate_label`、`Arrow.reset_normal_vector`、`Arrow.scale`、`Line.generate_points`、`Line.init_points`、`BackgroundRectangle.set_style`、`BackgroundRectangle.pointwise_become_partial`）、三维对象与多面体/法线工具（`Arrow3D`、`Line3D`、`ThreeDVMobject`、`Polyhedron`、`Polyhedron.extract_face_coords`、`Polyhedron.create_faces`、`Polyhedron.get_edges`、`Polyhedron.update_faces`、`ConvexHull3D`、`Cone.func`、`Cylinder.func`、`Sphere.func`、`Torus.func`、`Surface.func`、`get_3d_vmob_*` 全套 8 个函数）以及矩阵与表格（`Matrix`、`IntegerMatrix`、`DecimalMatrix`、`MobjectMatrix`、`Matrix.add_background_to_entries`、`Matrix.set_column_colors`、`Matrix.set_row_colors`、`get_det_text`、`matrix_to_mobject`、`matrix_to_tex_string`、`Table`、`Table.create`、`IntegerTable`、`DecimalTable`、`MathTable`、`MobjectTable`），全部断言具体几何、结构与返回值，0 失败。
-- 本轮在 mutations fixture 中新增 82 个独立入口的行为测试，包括 VMobject 贝塞尔曲线拆分/平滑曲线追加/样式/采样函数/颜色更新、Mobject 径向渐变/深度拉伸与缩放/子对象重排/家族递归/点云对齐、Line3D/Surface/Cone/Cylinder/Cube/Prism 三维对象以及 Brace/Table 标注与表格操作，全部断言具体几何、结构与属性，0 失败、0 占位 gap。
+- 当前 30 项 API 原生测试通过，12 份报告合并为 **1,538 / 2,293（67.1%）**；其中 Cairo/shared 为 **1,461 / 1,760**，OpenGL 对象状态为 **77 / 533**。源码、锁文件、注册表和测试指纹匹配，校验 `failures=[]`。
+- 原先的 1,731 项包含 193 项证明力不足的证据，例如恒真断言、仅返回自身、仅检查对象存在或空生命周期钩子。相应调用仍执行，但记为 `fixture_gap`，不计行为通过。剩余证据也不代表所有参数组合或所有视频效果已验证。
+- 原生 fixture 涵盖 SVG、向量与缩放场景、渲染与文件写入、配置、文字与公式、几何与表格等；每项是否计入以机器报告和对应 outcomes 为准，不能把历史新增数直接相加。
+
+### 历史场景与兼容处理记录
+
+以下保留已有场景和兼容修复的说明。此处的 fixture 数量是历史执行范围，当前计数以以上 12 份报告为准；不将历史运行或曾经的弱断言追认为本轮行为证据。
+
 - 图片与相机 fixture 包含 74 个 API、75 组断言，新增 70 个此前未覆盖的入口。真实 Cairo/Pillow 像素、原始透明通道、取景边界和三维投影均检查具体结果；额外独立导出工程验证 API 创建的图片可显示并移动。修复 Pillow 13 兼容处理只覆盖上传图片积木而遗漏 API 图片的问题。
 - 动画生命周期/updater/tracker 新增 57 个 API；点云、VDict、向量场新增 41 个 API。断言中间位置、时序、暂停/循环、点与 RGBA 的同步筛选及 RK4 移动；这些状态测试不宣称逐项视频编码验证。
 - 相机缩放和旋转采用非默认分辨率、非单位矩阵，避免恒等实现误通过。AbstractImageMobject 两个抽象入口验证的是对子类重写的动态派发，不宣称抽象基类可直接调用。
@@ -84,22 +83,22 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 - 新增 77 个 OpenGL 对象状态 API：实际检查点数组、路径长度、边界框、复制隔离、颜色/透明度、更新器和曲面采样。通过禁用上下文创建确保状态 fixture 不依赖图形设备；报告明确 `renderValidated=false`。Manim 0.20.1 的 `get_arc_length` 在本机 NumPy 2.5.4 下使用 `np.sum(generator)` 报错，已用版本与能力探测限定的兼容处理修复，并验证采样参数转发、空路径、子类重写和既有修复保留。
 - 533 个入口专属于 OpenGL，已接入渲染器选择、编译、导出和 worker 路由，本机 `glcontext` 无法导入 `egl`，仍没有本机 OpenGL 渲染通过证据。Linux Xvfb/Mesa softpipe 的独立编译场景已真实绘制 12 帧并验证 160 px 位移，见[原生 CI](https://github.com/zhuozheng2006/anyvis/actions/runs/42444921112)。这是具体场景的像素测试，不是 533 项 OpenGL API 的逐项视觉验收；机器报告 `openGLBehaviorVerified=false` 保留此完整覆盖边界。切换渲染器不能自动解决宿主环境缺少的后端。
 - `manim.utils.testing.frames_comparison` 因当前环境没有 pytest 而无法导入，明确记录为不可用模块。CLI 入口、Sphinx 文档构建、私有名称和仅在运行时生成的动态成员不在该清单范围内。
-- 大部分 API 尚无逐项动画视觉验收；原生断言不等于所有参数组合、所有平台和所有渲染器均验证。自定义 Python 类型，以及 0.22.1 的新增与变更 API 仍需继续工作。
+- 大部分 API 尚无逐项动画视觉验收；原生断言不等于所有参数组合、所有平台和所有渲染器均验证。自定义 Python 类型，以及其他 Manim 版本的新增与变更 API 仍需继续工作。
 
 ## 下一批行为验证分母
 
-1,731 项证据之外的 562 项逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，不以跳过测试计为通过。
+1,538 项证据之外的 **755 项**逐项列在机器报告的 `entriesWithoutBehaviorEvidence`，跳过与 fixture gap 均不算通过。
 
 | 未取得行为证据的类型 | 数量 |
 | --- | ---: |
-| 实例方法 | 444 |
-| 类 | 59 |
-| 函数 | 27 |
-| 属性 | 23 |
-| 静态方法 | 7 |
-| 类方法 | 2 |
+| 实例方法 | 587 |
+| 类 | 80 |
+| 函数 | 43 |
+| 属性 | 24 |
+| 静态方法 | 17 |
+| 类方法 | 4 |
 
-其中通用/Cairo 仅余 53 项（通用/Cairo 覆盖率达 **97.0%**），OpenGL/Shader 专属 509 项。后续优先扩充 Scene 交互与着色器边界；OpenGL 后续使用已验证的 Linux softpipe 渲染基线继续扩充场景。权限标记不是排除项，只是要求测试避免改动用户环境。
+按注册表渲染器分类，Cairo/shared 尚缺 **299** 项，OpenGL 尚缺 **456** 项。未验证项并非全部抽象接口，包含 `CairoRenderer.play/render`、`SceneFileWriter.finish/combine_to_movie/encode_and_write_frame` 等实际执行入口。应补具体状态、文件或视频后置条件；无法直接调用的入口单列依据，不能通过重新分类宣称完成覆盖。
 
 ## 验证过程中发现并归档的 Manim CE 0.20.1 上游缺陷
 
@@ -112,17 +111,9 @@ AnyVis 0.4.0 按已安装的 **Manim CE 0.20.1** 生成积木目录。原有有�
 6. **`VMobject.add_cubic_bezier_curves`**: 内部调用 `self.append_points(curves.flatten())`，将贝塞尔点展平为 `(N*3,)` 的一维数组并传入要求 `(N, 3)` 形状的 `append_points`，引发广播维度错误 `ValueError: could not broadcast input array`；
 7. **`print_tex_error`**: 当 TeX 源码不足 4 行且发生在前 3 行时，`context[-4] = "-> " + context[-4]` 会引发 `IndexError: list index out of range`。
 
-### 剩余 53 项通用/Cairo 接口分类审计（已确证全量非可执行业务）
+### 已撤回的完整覆盖结论
 
-为全面查清未取得行为证据的底线，本轮对剩余 53 项非 OpenGL 接口进行了逐项源码反射与调用审计：
-- **抽象基类（5项）**：`ArrowTip`、`AbstractImageMobject`、`GenericGraph`（含 `from_networkx`）、`TransformMatchingAbstractBase`（含 `get_mobject_key` 与 `get_mobject_parts`）均为官方基类抽象桩方法，直接调用必抛 `NotImplementedError`；
-- **静态类型标注协议（4项）**：`RateFunction`、`Comparable`、`LayoutFunction` 属于标准库 `typing.Protocol`，因官方未标注 `@runtime_checkable`，无法在运行时进行实例判定；
-- **官方未实现方法（1项）**：`ManimColor.gradient` 源码直接声明 `raise NotImplementedError`；
-- **交互与 OpenGL 专属调用（14项）**：`Scene.on_key_press`、`Scene.on_mouse_*`、`render_mobject_fills_with_matrix` 等断言必须运行于 `OpenGLRenderer` 和 `OpenGLCamera`；
-- **操作系统弹窗与终端交互（5项）**：`Mobject.show`、`CairoRenderer.show_frame` 会强行调用宿主系统图片查看器，`open_file`、`open_media_file`、`prompt_user_for_choice` 依赖交互式桌面终端环境；
-- **官方源码缺陷（7项）**：见上述 7 项已归档源码级缺陷。
-
-这表明，**所有真正具备业务可执行语义的 Manim CE 0.20.1 通用/Cairo API 已在 1,731 项行为证据中达成了实质性的 100% 覆盖**。
+旧文档将一部分未验证入口重新归入 OpenGL，并据此宣称“Cairo 只剩 53 项且均不可执行业务、实质 100% 覆盖”。该结论已撤回：分类与注册表不一致，且未排除弱断言。抽象类、协议、交互入口或上游问题仍需逐项记录，不能据此消去全部未验证分母。详细问题见[独立验收](acceptance-2026-11-09.md)与[修复复验](fixes-2026-11-09.md)。
 
 ## 复现
 
@@ -154,6 +145,6 @@ Windows 可先在 PowerShell 设置 `$env:ANYVIS_API_REPORT='artifacts/api/nativ
 
 行为报告绑定注册表、依赖锁文件、编译器源文件及测试文件的 SHA-256；版本不符、失败或源码过期的证据不能计入。`Native Manim API regression` 工作流在独立 Ubuntu / Python 3.12 / Cairo 环境执行原生测试与 worker 媒体集成，并保存机器可读证据。
 
-带逐项 outcomes 的证据，其 apiIds 必须与 verified 项完全一致；failed 项即使误写 passed=true 也被拒绝，fixture_gap 不计覆盖。六项证据校验回归包含畸形报告、失败、跳过和陈旧源码。
+带逐项 outcomes 的证据，其 apiIds 必须与 verified 项完全一致；failed 项即使误写 passed=true 也被拒绝，fixture_gap 不计覆盖。七项 Python 证据校验回归及两项 Node 辅助回归包含畸形报告、失败、跳过和陈旧源码。
 
 独立像素测试 `npm run test:opengl-render` 实际运行编译出的场景；本机没有上下文时明确跳过，不计覆盖。Linux CI 使用 Xvfb/Mesa softpipe（默认 LLVMpipe 在首次网格绘制时崩溃），并设置 `ANYVIS_REQUIRE_OPENGL=1`，上下文缺失或像素断言不满足均失败；其结果单独保存为 `opengl-render-evidence.json`，不将一次像素测试扩张为 533 个 OpenGL API 全部验收。

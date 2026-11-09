@@ -70,16 +70,16 @@ describe('vector3d mathematical engine', () => {
     const codeAdd = generateVector3DManimCode(u, v, 'add');
     expect(codeAdd).toContain('ThreeDScene');
     expect(codeAdd).toContain('Arrow3D');
-    expect(codeAdd).toContain('sum_vec');
+    expect(codeAdd).toContain('结果向量');
 
     const codeDot = generateVector3DManimCode(u, v, 'dot');
-    expect(codeDot).toContain('arrow_proj');
-    expect(codeDot).toContain('\\vec{u} \\cdot \\vec{v}');
+    expect(codeDot).toContain('投影');
+    expect(codeDot).toContain('u · v');
 
     const codeCross = generateVector3DManimCode(u, v, 'cross');
-    expect(codeCross).toContain('arrow_cross');
+    expect(codeCross).toContain('结果向量');
     expect(codeCross).toContain('Polygon');
-    expect(codeCross).toContain('\\vec{u} \\times \\vec{v}');
+    expect(codeCross).toContain('u × v');
   });
 
   it('generates AnyVis project actions and configures 3D dimension', () => {
@@ -87,8 +87,8 @@ describe('vector3d mathematical engine', () => {
     const { project, actionCount } = createVector3DActions(initial, u, v, 'cross');
     expect(project.scene.dimension).toBe('3d');
     expect(actionCount).toBeGreaterThan(5);
-    expect(project.actions.some(a => a.type === 'three_d_axes_create')).toBe(true);
-    expect(project.actions.some(a => a.type === 'arrow_create')).toBe(true);
+    expect(project.actions.some(a => a.type === 'three_axes')).toBe(true);
+    expect(project.actions.some(a => String(a.fields.name).startsWith('向量u'))).toBe(true);
   });
 
   it('has presets defined properly', () => {
@@ -99,4 +99,9 @@ describe('vector3d mathematical engine', () => {
       expect(p.v).toBeDefined();
     }
   });
+});
+
+it('exports the selected orbit orientation instead of a fixed camera', () => {
+  const p = createVector3DActions(createEmptyProject(), { x: 1, y: 0, z: 0 }, { x: 0, y: 1, z: 0 }, 'cross', { azimuth: 80, elevation: 40 }).project;
+  expect(p.actions[0].fields).toMatchObject({ phi: 50, theta: -170, duration: 0 });
 });

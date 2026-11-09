@@ -17,7 +17,7 @@ import manim
 
 ROOT=Path(__file__).resolve().parents[1]
 EVIDENCE_SOURCES={
-    'package-lock.json',
+    'package-lock.json', 'scripts/api-evidence.mjs',
     'src/studio/core/api-compiler.ts', 'src/studio/core/api-values.ts',
     'src/studio/core/compiler.ts', 'src/studio/core/expression.ts',
     'src/studio/core/api-catalog.ts', 'src/studio/core/api-registry.ts',
@@ -50,6 +50,25 @@ def validate_native_evidence(native, registry_hash, ids, version, root=ROOT):
             verified={item['apiId'] for item in outcomes if item['status']=='verified'}
             if not isinstance(api_ids,list) or not all(isinstance(item,str) for item in api_ids) or set(api_ids)!=verified:
                 errors.append('Declared API coverage differs from verified outcomes.')
+    if 'families' in native:
+        families = native['families']
+        valid = isinstance(families, list) and all(
+            isinstance(family, dict) and family.get('passed') is True
+            and isinstance(family.get('cases'), list)
+            and all(isinstance(case, dict) and case.get('apiId') in ids
+                    and case.get('status') in ('verified', 'fixture_gap')
+                    for case in family['cases'])
+            for family in families)
+        if not valid:
+            errors.append('Malformed family evidence or missing per-case status.')
+        else:
+            verified = {case['apiId'] for family in families for case in family['cases'] if case['status'] == 'verified'}
+            if not isinstance(api_ids, list) or set(api_ids) != verified:
+                errors.append('Declared API coverage differs from verified family cases.')
+            for family in families:
+                expected_ids = {case['apiId'] for case in family['cases'] if case['status'] == 'verified'}
+                if set(family.get('apiIds', [])) != expected_ids:
+                    errors.append('Family API coverage differs from verified cases.')
     fixture=native.get('fixture')
     if fixture not in EVIDENCE_FIXTURES: errors.append('Unrecognized evidence fixture.')
     sources=native.get('sourceFiles',{})

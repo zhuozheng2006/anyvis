@@ -1,4 +1,4 @@
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment, behaviorEvidenceGap } from '../../../scripts/api-evidence.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
@@ -30,7 +30,9 @@ function fixture() {
     for (const key of Object.keys(params)) assert.ok(known.has(key), `${id}: unknown parameter ${key}`);
     project.actions.push(createAction(entry.type, { name, mode: 'store', ...Object.fromEntries(Object.entries(params).map(([k, v]) => [`p_${k}`, JSON.stringify(v)])), ...fields }));
     check(assertion.replaceAll('$result', `objects[${JSON.stringify(name)}]`));
-    ids.add(entry.id); evidence.push({ apiId: entry.id, parameters: Object.keys(params), mode: fields.mode || 'store', assertion });
+    const reason = behaviorEvidenceGap(entry.id, assertion, entry);
+    if (!reason) ids.add(entry.id);
+    evidence.push({ status: reason ? 'fixture_gap' : 'verified', ...(reason ? { reason } : {}), apiId: entry.id, parameters: Object.keys(params), mode: fields.mode || 'store', assertion });
   };
   return { project, api, check, ids, evidence };
 }
@@ -1030,7 +1032,7 @@ test('native API families have executable postconditions', { timeout: 300_000 },
         await writeFile(path.join(directory, 'test_icon.svg'), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" fill="red" /></svg>');
         const filename = path.join(directory, `${family}.py`);
         await writeFile(filename, c.code + '\nwith tempconfig({"write_to_movie":False,"save_last_frame":False,"renderer":"cairo","media_dir":"media","pixel_width":320,"pixel_height":180,"frame_rate":10,"progress_bar":"none","verbosity":"WARNING"}):\n    AnyVisScene().render()\nprint("ANYVIS_FAMILY_OK")\n');
-        const result = await execute(health.python, [filename], { cwd: directory, timeout: 35_000, maxBuffer: 1024 * 1024 });
+        const result = await execute(health.python, [filename], { env: nativeExecutionEnvironment(health.python), cwd: directory, timeout: 35_000, maxBuffer: 1024 * 1024 });
         assert.match(result.stdout, /ANYVIS_FAMILY_OK/);
         results.push({ family, passed: true, apiIds: [...f.ids].sort(), cases: f.evidence });
         t.diagnostic(`${family}: ${f.ids.size} distinct APIs, ${f.evidence.length} asserted calls`);

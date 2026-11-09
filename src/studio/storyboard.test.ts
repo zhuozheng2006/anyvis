@@ -9,6 +9,7 @@ import {
   type StoryboardChapter,
 } from './storyboard';
 import type { Project } from './core/types';
+import { createAction } from './core/catalog';
 
 describe('storyboard chapter management and video cues', () => {
   it('formats seconds into mm:ss timestamp format', () => {
@@ -25,8 +26,8 @@ describe('storyboard chapter management and video cues', () => {
       name: 'P1',
       scene: { dimension: '2d', background: '#000', width: 1920, height: 1080, fps: 60 },
       actions: [
-        { id: 'a1', type: 'create_text', fields: { startTime: 0, runTime: 3 } },
-        { id: 'a2', type: 'create_text', fields: { startTime: 12, runTime: 4 } },
+        createAction('wait', { duration: 3 }),
+        createAction('wait', { duration: 13 }),
       ],
     };
     expect(estimateProjectDuration(project)).toBe(16);
@@ -39,7 +40,7 @@ describe('storyboard chapter management and video cues', () => {
       name: 'P2',
       scene: { dimension: '2d', background: '#000', width: 1920, height: 1080, fps: 60 },
       actions: [
-        { id: 'a1', type: 'create_circle', fields: { startTime: 0, runTime: 5 } },
+        createAction('circle', { duration: 5 }),
       ],
     };
     const chapters = buildStoryboard(project);
@@ -66,9 +67,9 @@ describe('storyboard chapter management and video cues', () => {
         ],
       },
       actions: [
-        { id: 'a1', type: 'create_text', fields: { startTime: 1, runTime: 2 } },
-        { id: 'a2', type: 'create_plot', fields: { startTime: 6, runTime: 3 } },
-        { id: 'a3', type: 'create_plot', fields: { startTime: 14, runTime: 2 } },
+        createAction('text', { duration: 5 }),
+        createAction('wait', { duration: 7 }),
+        createAction('wait', { duration: 4 }),
       ],
     };
     const chapters = buildStoryboard(project);
@@ -187,4 +188,17 @@ describe('storyboard chapter management and video cues', () => {
     expect(updated.scene.markers![0].time).toBe(8);
     expect(updated.scene.markers![0].label).toBe('Scene 2');
   });
+});
+
+it('chapter markers do not extend a project or pretend to export its animations', () => {
+  const project = { schemaVersion: 2 as const, id: 'test', name: 'test', scene: { dimension: '2d' as const, width: 1920, height: 1080, fps: 30, background: '#000000', markers: [{id: 'late',time: 40,label:'late',color:'#ffffff'}] }, actions: [createAction('wait', { duration: 3.5 })] };
+  expect(estimateProjectDuration(project)).toBe(3.5);
+  const chapters = buildStoryboard(project);
+  expect(chapters).toHaveLength(1);
+  expect(chapters[0].endTime).toBe(3.5);
+  chapters[0].name = 'quote" and newline\n';
+  const python = generateManimSectionPythonCode(chapters, project);
+  expect(python).toContain('self.wait(3.5)');
+  expect(python).toContain('does not include project objects');
+  expect(python).toContain(JSON.stringify(chapters[0].name));
 });

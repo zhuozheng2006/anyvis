@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 import { describe, it, expect } from 'vitest';
 import {
   CALCULUS_PRESETS,
@@ -41,20 +42,20 @@ describe('calculus mathematical engine', () => {
     const sinPreset = CALCULUS_PRESETS.find(p => p.id === 'sine')!;
     const py = generateCalculusPythonCode(sinPreset, 1.0, 0.8);
 
-    expect(py).toContain('class CalculusTangentScene(Scene):');
+    expect(py).toContain('class CalculusTangentScene(MovingCameraScene):');
     expect(py).toContain('Axes(');
     expect(py).toContain('always_redraw');
-    expect(py).toContain('get_secant_slope_group');
+    expect(py).toContain('.set_value(0.01)');
 
     const p0 = createEmptyProject();
     const { project, actionIds } = createCalculusActions(p0, sinPreset, '正弦');
 
-    expect(project.actions.length).toBe(3);
-    expect(actionIds.length).toBe(3);
+    expect(compileProject(project).diagnostics).toEqual([]);
+    expect(actionIds.length).toBe(7);
     expect(project.actions[0].type).toBe('axes');
     expect(project.actions[1].type).toBe('function_plot');
-    expect(project.actions[2].type).toBe('function_plot');
-    expect(project.actions[1].fields.name).toBe('正弦');
-    expect(project.actions[2].fields.name).toBe('正弦_导函数');
+    expect(project.actions[2].type).toBe('tracker');
+    expect(String(project.actions[1].fields.name)).toMatch(/^正弦_/);
+    expect(project.actions.at(-1)?.fields.value).toBe(0.01);
   });
 });

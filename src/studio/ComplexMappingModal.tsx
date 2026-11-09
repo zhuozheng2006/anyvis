@@ -24,6 +24,7 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
   project,
   onApply,
 }) => {
+  const [applyError, setApplyError] = useState('');
   const [selectedPresetId, setSelectedPresetId] = useState<ComplexPresetId>('square');
   const [morphT, setMorphT] = useState<number>(1.0);
   const [gridSpacing, setGridSpacing] = useState<number>(0.5);
@@ -149,16 +150,21 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
   };
 
   const handleCopyPython = async () => {
-    const code = generateComplexMappingPythonCode(preset, bounds);
+    const code = generateComplexMappingPythonCode(preset, bounds, gridSpacing, morphT);
     await navigator.clipboard.writeText(code);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleApplyToProject = () => {
-    const result = createComplexMappingActions(project, preset, bounds);
-    onApply(result.project, result.actionIds);
-    onClose();
+    setApplyError('');
+    try {
+      const result = createComplexMappingActions(project, preset, bounds, gridSpacing, morphT);
+      onApply(result.project, result.actionIds);
+      onClose();
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -176,6 +182,7 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
             </svg>
             3B1B 复变函数与共形映射工作台 (Complex Analysis & Conformal Mapping)
           </h2>
+          {applyError && <p role="alert" style={{ color: '#fca5a5' }}>{applyError}</p>}
           <button className="complex-map-close-btn" onClick={onClose} title="关闭">
             ✕
           </button>

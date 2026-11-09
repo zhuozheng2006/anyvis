@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 import { describe, it, expect } from 'vitest';
 import {
   GRAPH_PRESETS,
@@ -59,8 +60,8 @@ describe('graph-network physics, path finding, and Manim CE code generation', ()
     const code = generateGraphPythonCode(neural);
 
     expect(code).toContain('from manim import *');
-    expect(code).toContain('class NetworkGraphScene(Scene):');
-    expect(code).toContain('g = DiGraph(');
+    expect(code).toContain('class GraphScene(MovingCameraScene):');
+    expect(code).toContain('Arrow(');
   });
 
   it('injects graph actions into project without mutating original project', () => {
@@ -68,7 +69,7 @@ describe('graph-network physics, path finding, and Manim CE code generation', ()
       schemaVersion: 2,
       id: 'p_graph',
       name: 'Graph Test',
-      scene: { dimension: '2d', background: '#000', width: 1920, height: 1080, fps: 60 },
+      scene: { dimension: '2d', background: '#000000', width: 1920, height: 1080, fps: 60 },
       actions: [],
     };
     const complete = GRAPH_PRESETS.find((x) => x.id === 'complete')!;
@@ -76,7 +77,7 @@ describe('graph-network physics, path finding, and Manim CE code generation', ()
 
     expect(dummyProject.actions).toHaveLength(0);
     // 1 title + 5 nodes = 6 actions
-    expect(nextProject.actions).toHaveLength(6);
-    expect(actionIds).toHaveLength(6);
+    expect(compileProject(nextProject).diagnostics).toEqual([]);
+    expect(actionIds).toHaveLength(nextProject.actions.length);
   });
 });

@@ -51,12 +51,12 @@ describe('AudioVisualizerModal', () => {
     expect(backdrop).not.toBeNull();
 
     // Check title
-    expect(container.textContent).toContain('音频响应式频谱与波形助手');
+    expect(container.textContent).toContain('合成频谱与波形预览');
     expect(container.textContent).toContain('3B1B 讲者声波 (Voice Bars)');
 
     // Trigger insert button
     const insertBtn = Array.from(container.querySelectorAll('button')).find(b =>
-      b.textContent?.includes('插入到动画编排')
+      b.textContent?.includes('插入暂不可用')
     );
     expect(insertBtn).toBeDefined();
 
@@ -64,9 +64,9 @@ describe('AudioVisualizerModal', () => {
       insertBtn?.click();
     });
 
-    expect(onInsert).toHaveBeenCalledTimes(1);
-    const [preset] = onInsert.mock.calls[0];
-    expect(preset.id).toBe('voice-bars');
-    expect(preset.barCount).toBe(32);
+    expect(insertBtn?.disabled).toBe(true);
+    expect(onInsert).not.toHaveBeenCalled();
+    expect(container.textContent).toContain('尚未接入音频分析');
+    expect(container.querySelector<HTMLButtonElement>('.audio-vis-btn-secondary')?.disabled).toBe(true);
   });
 });

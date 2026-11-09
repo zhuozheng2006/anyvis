@@ -24,6 +24,7 @@ export const GeometryPlaygroundModal: React.FC<GeometryPlaygroundModalProps> = (
   project,
   onApply,
 }) => {
+  const [applyError, setApplyError] = useState('');
   const [selectedPresetId, setSelectedPresetId] = useState<GeometryPresetId>('euler_line');
   const [A, setA] = useState<Point2D>([-2.4, -1.2]);
   const [B, setB] = useState<Point2D>([2.6, -1.2]);
@@ -106,9 +107,14 @@ export const GeometryPlaygroundModal: React.FC<GeometryPlaygroundModalProps> = (
   };
 
   const handleApplyToProject = () => {
-    const result = createGeometryActions(project, preset, A, B, C);
-    onApply(result.project, result.actionIds);
-    onClose();
+    setApplyError('');
+    try {
+      const result = createGeometryActions(project, preset, A, B, C);
+      onApply(result.project, result.actionIds);
+      onClose();
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -123,6 +129,7 @@ export const GeometryPlaygroundModal: React.FC<GeometryPlaygroundModalProps> = (
       <div className="geo-modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="geo-modal-header">
           <h3>📐 经典欧几里得几何与三角形四心画板 (Euclidean Geometry)</h3>
+          {applyError && <p role="alert" style={{ color: '#fca5a5' }}>{applyError}</p>}
           <button className="geo-close-btn" onClick={onClose} title="关闭">
             ✕
           </button>

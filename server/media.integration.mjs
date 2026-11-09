@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -12,6 +12,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { createAnyVisServer, discoverPython } from './server.mjs';
 import { createEmptyProject } from '../src/studio/core/project.ts';
 import { createAction } from '../src/studio/core/catalog.ts';
+import { nativeExecutionEnvironment } from '../scripts/api-evidence.mjs';
 const execute = promisify(execFile);
 function request(app, url, { method = 'GET', headers = {}, body } = {}) {
   return new Promise((resolve, reject) => {
@@ -23,7 +24,7 @@ function request(app, url, { method = 'GET', headers = {}, body } = {}) {
     app.server.emit('request', req, res);
   });
 }
-test('uploaded transparent images and trimmed voiceovers survive restart and render into real media', { timeout: 120_000 }, async t => {
+test('uploaded media survives restart and project ZIP reopening, then renders in worker and standalone Python', { timeout: 120_000 }, async t => {
   const health = await discoverPython(); if (!health.available) { t.skip(health.error); return; }
   const directory = await mkdtemp(path.join(tmpdir(), 'anyvis-media-'));
   let app;
@@ -69,6 +70,21 @@ with wave.open('voice.wav','wb') as f:
     await build({ entryPoints: [fileURLToPath(new URL('../src/studio/timeline-model.ts', import.meta.url))], outfile: timelineModule, bundle: true, platform: 'node', format: 'esm', logLevel: 'silent' });
     const { audioClips, splitAudioClip } = await import(pathToFileURL(timelineModule).href);
     project = splitAudioClip(project, audioClips(project)[0], .75).project;
+    project.scene.markers = [{ id: 'voice-cut', time: .75, label: '配音分割接缝', color: '#38bdf8' }];
+    const bundleModule = path.join(directory, 'bundle.mjs');
+    await build({ entryPoints: [fileURLToPath(new URL('../src/studio/media-bundle.ts', import.meta.url))], outfile: bundleModule, bundle: true, platform: 'node', format: 'esm', logLevel: 'silent' });
+    const { packProject, unpackProject } = await import(pathToFileURL(bundleModule).href);
+    const assetFiles = {};
+    for (const asset of project.assets) {
+      const response = await request(app, `/api/assets/${asset.id}/file`);
+      assert.equal(response.status, 200);
+      assetFiles[`assets/${asset.id}.${asset.extension}`] = response.bytes;
+    }
+    const archive = path.join(directory, 'project.anyvis.zip');
+    await writeFile(archive, packProject(project, assetFiles));
+    const reopened = unpackProject(await readFile(archive));
+    assert.deepEqual(reopened.project, JSON.parse(JSON.stringify(project)), 'Project metadata, markers and actions must survive reopening');
+    project = reopened.project;
     const submitted = await request(app, '/api/render', { method: 'POST', headers, body: { project, quality: 'preview', revision: 'media-fixture' } });
     assert.equal(submitted.status, 202, submitted.bytes.toString());
     let job;
@@ -78,9 +94,11 @@ with wave.open('voice.wav','wb') as f:
       await delay(100);
     }
     assert.equal(job.status, 'done', JSON.stringify(job));
+    // Audio projects deliberately retain WebM when native libx264 is unavailable.
+    assert.equal(job.format, health.nativeMp4 ? 'mp4' : 'webm');
     const media = await request(app, job.videoUrl); assert.equal(media.status, 200);
     const filename = path.join(directory, `result.${job.format}`); await writeFile(filename, media.bytes);
-    const { stdout } = await execute(health.python, ['-c', `import av,numpy as np,json,sys
+    const verifyVideo = `import av,numpy as np,json,sys
 filename=sys.argv[1]
 with av.open(filename) as c:
  assert len(c.streams.audio)==1
@@ -110,7 +128,19 @@ with av.open(filename) as c:
  chunk=samples[int(.6*rate):int(.9*rate)]; frequencies=np.fft.rfftfreq(len(chunk),1/rate)
  tone=float(frequencies[np.abs(np.fft.rfft(chunk)).argmax()]); assert abs(tone-660)<10,tone
  print(json.dumps({'frames':len(centers),'horizontalTravel':centers[-1]-centers[0],'rmsBefore':before,'rmsVoice':voice,'rmsAfter':after,'rmsCutSeam':seam,'toneHz':tone}))
-`, filename], { timeout: 20_000, maxBuffer: 1024 * 1024 });
-    t.diagnostic(stdout.trim());
+`;
+    const workerCheck = await execute(health.python, ['-c', verifyVideo, filename], { timeout: 20_000, maxBuffer: 1024 * 1024 });
+    t.diagnostic(`worker ${job.format}: ${workerCheck.stdout.trim()}`);
+    // The exported source must work independently of the worker and its asset cache.
+    const standalone = path.join(directory, 'standalone');
+    await mkdir(path.join(standalone, 'assets'), { recursive: true });
+    assert.ok(reopened.files['scene.py'], 'ZIP must include runnable source');
+    for (const [name, bytes] of Object.entries(reopened.files)) await writeFile(path.join(standalone, name), bytes);
+    await execute(health.python, ['-m', 'manim', 'render', '--format', 'webm', '--disable_caching', '--media_dir', 'media', 'scene.py', 'AnyVisScene'], {
+      cwd: standalone, env: nativeExecutionEnvironment(health.python), timeout: 60_000, maxBuffer: 2 * 1024 * 1024,
+    });
+    const standaloneFile = path.join(standalone, 'media', 'videos', 'scene', '360p24', 'AnyVisScene.webm');
+    const standaloneCheck = await execute(health.python, ['-c', verifyVideo, standaloneFile], { timeout: 20_000, maxBuffer: 1024 * 1024 });
+    t.diagnostic(`standalone WebM: ${standaloneCheck.stdout.trim()}`);
   } finally { if (app) await app.close(); if (process.env.ANYVIS_KEEP_MEDIA) t.diagnostic(directory); else await rm(directory, { recursive: true, force: true }); }
 });

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { Action, FieldValue } from './core/types';
 import { manimToStagePercent, stagePercentToManim, GIZMO_PALETTE } from './stage-direct-gizmo';
 import { STAGE_POSITION_PRESETS } from './PositionPad';
@@ -7,11 +7,32 @@ import './stage-direct-gizmo.css';
 export interface StageDirectGizmoProps {
   action: Action | null;
   onChange: (fields: Record<string, FieldValue>) => void;
+  frameAspect?: number;
 }
 
-export const StageDirectGizmo: React.FC<StageDirectGizmoProps> = ({ action, onChange }) => {
+export const StageDirectGizmo: React.FC<StageDirectGizmoProps> = ({ action, onChange, frameAspect = 16 / 9 }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [draft, setDraft] = useState<{ x: number; y: number } | null>(null);
+  const gesture = useRef<{ pointerId: number; actionId: string; clientX: number; clientY: number; x: number; y: number; width: number; height: number; latest: { x: number; y: number } } | null>(null);
   const dragContainerRef = useRef<HTMLDivElement | null>(null);
+  const [viewport, setViewport] = useState<{ width: number; height: number } | null>(null);
+  const halfWidth = 4 * frameAspect;
+  useEffect(() => {
+    const parent = dragContainerRef.current?.parentElement;
+    if (!parent) return;
+    const fit = () => {
+      const width = Math.min(parent.clientWidth, parent.clientHeight * frameAspect);
+      if (width > 0) setViewport({ width, height: width / frameAspect });
+    };
+    fit();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', fit);
+      return () => window.removeEventListener('resize', fit);
+    }
+    const observer = new ResizeObserver(fit);
+    observer.observe(parent);
+    return () => observer.disconnect();
+  }, [action?.id, frameAspect]);
 
   if (!action) return null;
 
@@ -22,38 +43,45 @@ export const StageDirectGizmo: React.FC<StageDirectGizmoProps> = ({ action, onCh
 
   if (!hasCoords && !hasColor) return null;
 
-  const curX = hasCoords ? (rawX as number) : 0;
-  const curY = hasCoords ? (rawY as number) : 0;
+  const curX = draft?.x ?? (hasCoords ? (rawX as number) : 0);
+  const curY = draft?.y ?? (hasCoords ? (rawY as number) : 0);
   const curColor = hasColor ? (action.fields.color as string) : '#58C4DD';
   const name = String(action.fields.name || '对象');
 
-  const { leftPercent, topPercent } = manimToStagePercent(curX, curY);
+  const { leftPercent, topPercent } = manimToStagePercent(curX, curY, halfWidth);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.stopPropagation();
+    if (e.button !== 0 || gesture.current) return;
+    const rect = dragContainerRef.current?.getBoundingClientRect();
+    if (!rect?.width || !rect.height) return;
+    e.preventDefault();
+    gesture.current = { pointerId: e.pointerId, actionId: action.id, clientX: e.clientX, clientY: e.clientY, x: curX, y: curY, width: rect.width, height: rect.height, latest: { x: curX, y: curY } };
     setIsDragging(true);
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-    const stageShell = (e.currentTarget as HTMLElement).closest('.stage-shell');
-    if (!stageShell) return;
-
-    const rect = stageShell.getBoundingClientRect();
-    const clientX = e.clientX;
-    const clientY = e.clientY;
-
-    const leftPct = ((clientX - rect.left) / rect.width) * 100;
-    const topPct = ((clientY - rect.top) / rect.height) * 100;
-
-    const { x, y } = stagePercentToManim(leftPct, topPct);
-    onChange({ x, y });
+    const start = gesture.current;
+    if (!start || start.pointerId !== e.pointerId) return;
+    e.stopPropagation();
+    // The overlay rect includes CSS zoom. Delta mapping also preserves the
+    // original grab offset and cancels pan, so pointerdown never relocates it.
+    const initial = manimToStagePercent(start.x, start.y, halfWidth);
+    start.latest = stagePercentToManim(initial.leftPercent + (e.clientX - start.clientX) / start.width * 100,
+      initial.topPercent + (e.clientY - start.clientY) / start.height * 100, 0.1, halfWidth);
+    setDraft(start.latest);
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (isDragging) {
+    const start = gesture.current;
+    if (start && start.pointerId === e.pointerId) {
+      e.stopPropagation();
+      if (e.clientX !== start.clientX || e.clientY !== start.clientY) handlePointerMove(e);
+      gesture.current = null;
       setIsDragging(false);
+      setDraft(null);
+      if (action.id === start.actionId && (start.latest.x !== start.x || start.latest.y !== start.y)) onChange(start.latest);
       try {
         (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
       } catch {
@@ -61,6 +89,8 @@ export const StageDirectGizmo: React.FC<StageDirectGizmoProps> = ({ action, onCh
       }
     }
   };
+
+  const cancelDrag = () => { gesture.current = null; setIsDragging(false); setDraft(null); };
 
   const handleApplyPreset = (presetX: number, presetY: number) => {
     onChange({ x: presetX, y: presetY });
@@ -75,6 +105,7 @@ export const StageDirectGizmo: React.FC<StageDirectGizmoProps> = ({ action, onCh
       className="stage-direct-gizmo-container"
       ref={dragContainerRef}
       data-testid="stage-direct-gizmo"
+      style={viewport ? { width: viewport.width, height: viewport.height, inset: '50% auto auto 50%', transform: 'translate(-50%, -50%)' } : undefined}
     >
       {/* 1. On-Canvas Position Reticle (Draggable) */}
       {hasCoords && (
@@ -84,6 +115,10 @@ export const StageDirectGizmo: React.FC<StageDirectGizmoProps> = ({ action, onCh
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
+          onPointerCancel={cancelDrag}
+          onLostPointerCapture={cancelDrag}
+          onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); cancelDrag(); } }}
+          tabIndex={0}
           role="slider"
           aria-label={`直接拖动调整 ${name} 舞台坐标`}
           aria-valuenow={curX}

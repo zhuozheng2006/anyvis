@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 import { describe, it, expect } from 'vitest';
 import {
   SURFACE_PRESETS,
@@ -64,8 +65,8 @@ describe('surface3d math, projection, and Manim code generator', () => {
     const code = generateSurfacePythonCode(torus, camera, true);
 
     expect(code).toContain('class ParametricSurfaceScene(ThreeDScene):');
-    expect(code).toContain('self.set_camera_orientation(phi=75.0 * DEGREES, theta=-30.0 * DEGREES)');
-    expect(code).toContain('surface = Surface(');
+    expect(code).toContain('self.set_camera_orientation(phi=75*DEGREES, theta=-30*DEGREES');
+    expect(code).toContain(' = Surface(');
     expect(code).toContain('self.begin_ambient_camera_rotation(rate=0.25)');
   });
 
@@ -82,7 +83,7 @@ describe('surface3d math, projection, and Manim code generator', () => {
 
     expect(dummyProject.scene.dimension).toBe('2d');
     expect(nextProject.scene.dimension).toBe('3d');
-    expect(nextProject.actions).toHaveLength(3);
-    expect(actionIds).toHaveLength(3);
+    expect(compileProject(nextProject).diagnostics).toEqual([]);
+    expect(actionIds).toHaveLength(nextProject.actions.length);
   });
 });

@@ -77,7 +77,7 @@ describe('SubtitleSyncModal', () => {
 
     // Trigger apply
     const applyBtn = Array.from(container.querySelectorAll('button')).find((b) =>
-      b.textContent?.includes('插入字幕到场景'),
+      b.textContent?.includes('追加字幕片段'),
     );
     expect(applyBtn).toBeDefined();
 

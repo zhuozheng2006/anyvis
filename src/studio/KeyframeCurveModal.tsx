@@ -519,9 +519,9 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
               {copied ? <Check size={14} color="#48bb78" /> : <Copy size={14} />}
               <span>{copied ? '已复制 Manim 代码' : '复制 Python 代码'}</span>
             </button>
-            <button className="keyframe-btn-primary" onClick={handleApply}>
+            <button className="keyframe-btn-primary" onClick={handleApply} disabled={x1 !== y1 || x2 !== y2} title="工程内暂支持匀速曲线；自定义贝塞尔可预览并导出 Python">
               {applied ? <Check size={14} /> : <Sparkles size={14} />}
-              <span>应用缓动曲线</span>
+              <span>应用缓动曲线（暂支持匀速）</span>
             </button>
           </div>
         </div>

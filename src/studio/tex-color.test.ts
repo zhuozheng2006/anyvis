@@ -37,9 +37,9 @@ describe('LaTeX color styler engine', () => {
     };
 
     const result = applyColorsToTex(raw, colorMap);
-    expect(result.coloredTex).toContain('\\color{#e2b340}{a}');
-    expect(result.coloredTex).toContain('\\color{#58c4dd}{b}');
-    expect(result.coloredTex).toContain('\\color{#83c167}{c}');
+    expect(result.coloredTex).toContain('{\\color[HTML]{E2B340}a}');
+    expect(result.coloredTex).toContain('{\\color[HTML]{58C4DD}b}');
+    expect(result.coloredTex).toContain('{\\color[HTML]{83C167}c}');
     expect(result.isolatedSubstrings).toEqual(expect.arrayContaining(['a', 'b', 'c']));
   });
 
@@ -52,9 +52,9 @@ describe('LaTeX color styler engine', () => {
     };
 
     const py = generateColoredMathTexPython(raw, colorMap);
-    expect(py).toContain('class ColoredTexScene(Scene):');
-    expect(py).toContain('MathTex(');
-    expect(py).toContain('set_color_by_tex');
+    expect(py).toContain('class AnyVisScene(MovingCameraScene):');
+    expect(py).toContain('.MathTex');
+    expect(py).toContain('color[HTML]');
     expect(py).toContain('Write(');
   });
 
@@ -70,6 +70,6 @@ describe('LaTeX color styler engine', () => {
     expect(actionIds.length).toBeGreaterThanOrEqual(1);
     const flattened = nextProject.actions;
     expect(flattened.some(a => String(a.fields.name || '').includes('彩色微积分公式'))).toBe(true);
-    expect(flattened.some(a => String(a.fields.text || '').includes('\\color'))).toBe(true);
+    expect(flattened.some(a => String(a.fields.p_tex_strings || '').includes('\\color'))).toBe(true);
   });
 });

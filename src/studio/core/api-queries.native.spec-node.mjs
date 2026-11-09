@@ -10,7 +10,7 @@ import { API_ENTRIES } from './api-registry.ts';
 import { createApiCompiler, API_RUNTIME } from './api-compiler.ts';
 import { createAction } from './catalog.ts';
 import { discoverPython } from '../../../server/server.mjs';
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment } from '../../../scripts/api-evidence.mjs';
 const execute = promisify(execFile);
 
 // Fixed native fixtures are the comparison oracle only; all observed calls are
@@ -124,7 +124,7 @@ test('native read APIs match independent direct Python calls', { timeout: 120_00
     const source = `from manim import *\nimport numpy as np\n${compiler.imports().join('\n')}\n${API_RUNTIME}\n${oracle}\nwith tempconfig({"renderer":"cairo","pixel_width":64,"pixel_height":64,"media_dir":"media","verbosity":"ERROR"}):\n${cases.join('\n').split('\n').map(l => '    ' + l).join('\n')}\nprint("ANYVIS_QUERIES "+json.dumps(results))\n`;
     const file = path.join(directory, 'queries.py'); await writeFile(file, source);
     await writeFile(path.join(directory, 'fixture.svg'), '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="25"/></svg>');
-    const result = await execute(health.python, [file], { cwd: directory, timeout: 100_000, maxBuffer: 2 * 1024 * 1024, env: { ...process.env, PATH: `${path.dirname(health.python)}:/Library/TeX/texbin:${process.env.PATH || ''}` } });
+    const result = await execute(health.python, [file], { env: nativeExecutionEnvironment(health.python), cwd: directory, timeout: 100_000, maxBuffer: 2 * 1024 * 1024 });
     const line = result.stdout.split('\n').find(l => l.startsWith('ANYVIS_QUERIES ')); assert.ok(line, result.stdout);
     const outcomes = [...JSON.parse(line.slice('ANYVIS_QUERIES '.length)), ...gaps];
     const failures = outcomes.filter(o => o.status === 'failed');

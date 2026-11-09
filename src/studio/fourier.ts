@@ -4,6 +4,7 @@
 
 import type { Project } from './core/types.ts';
 import { createAction } from './core/catalog.ts';
+import { appendPlaygroundActions, playgroundName, playgroundPolyline, emptyPlayground, playgroundPython } from './playground-actions.ts';
 
 export interface Point2D {
   x: number;
@@ -272,95 +273,20 @@ function samplePolyline(pts: Point2D[], targetCount: number): Point2D[] {
 /**
  * Generates standalone clean Python Manim CE code for Fourier series epicycles animation.
  */
-export function generateFourierPythonCode(
-  coeffs: FourierCoefficient[],
-  presetName = 'FourierCurve',
-  duration = 5.0
-): string {
-  // Use top 15 dominant harmonics in Python code for clarity and performance
-  const topCoeffs = coeffs.slice(0, 15);
-  const coeffRows = topCoeffs
-    .map(c => `        (${c.freq}, ${c.amp.toFixed(4)}, ${c.phase.toFixed(4)}),  # freq, amp, phase`)
-    .join('\n');
-
-  return `from manim import *
-import numpy as np
-
-class FourierEpicyclesScene(Scene):
-    def construct(self):
-        # 1. 傅里叶级数系数表 (freq, amplitude, phase)
-        coeffs = [
-${coeffRows}
-        ]
-
-        # 2. 傅里叶轨迹函数 z(t) = sum(amp * e^(i*(2*pi*freq*t + phase)))
-        def fourier_point(t):
-            x, y = 0.0, 0.0
-            for freq, amp, phase in coeffs:
-                angle = 2 * PI * freq * t + phase
-                x += amp * np.cos(angle)
-                y += amp * np.sin(angle)
-            return np.array([x, y, 0.0])
-
-        # 3. 动态画出傅里叶闭合曲线
-        curve = ParametricFunction(
-            fourier_point,
-            t_range=[0, 1],
-            color=YELLOW,
-            stroke_width=3.5,
-        )
-
-        title = Text("3B1B 傅里叶环绕级数 (${presetName})", font_size=32).to_edge(UP)
-        formula = MathTex(
-            r"f(t) \\approx \\sum_{n=-N}^{N} c_n e^{i 2\\pi n t}",
-            font_size=28,
-            color=BLUE_B
-        ).next_to(title, DOWN)
-
-        self.play(Write(title), FadeIn(formula))
-        self.play(Create(curve), run_time=${duration.toFixed(1)}, rate_func=linear)
-        self.wait(1.5)
-`;
+export function generateFourierPythonCode(coeffs: FourierCoefficient[], presetName = 'FourierCurve', duration = 5): string {
+  return playgroundPython(createFourierActions(emptyPlayground(), coeffs, presetName, duration), 'FourierEpicyclesScene');
 }
 
-/**
- * Generates AnyVis project actions to insert a parametric Fourier curve and Create animation.
- */
-export function createFourierActions(
-  project: Project,
-  coeffs: FourierCoefficient[],
-  name = '傅里叶曲线'
-): { project: Project; actionIds: string[] } {
-  // Build x(t) and y(t) expressions from top 6 dominant terms
-  const top = coeffs.slice(0, 6);
-  const xParts = top.map(c => {
-    const fStr = c.freq === 1 ? 't' : c.freq === -1 ? '-t' : `${c.freq}*t`;
-    return `${c.amp.toFixed(3)}*cos(6.283*${fStr}+${c.phase.toFixed(3)})`;
+export function createFourierActions(project: Project, coeffs: FourierCoefficient[], name = '傅里叶曲线', duration = 4): { project: Project; actionIds: string[] } {
+  if (!coeffs.length) throw new Error('请先绘制一条曲线。');
+  // Retain every selected harmonic. Sample at >= 12 points per highest-frequency period.
+  const steps = Math.max(240, 12 * Math.max(...coeffs.map(c => Math.abs(c.freq))));
+  const points = Array.from({length: steps + 1}, (_,i) => {
+    const p = evaluateFourier(coeffs, i/steps);
+    return [Number(p.x.toFixed(6)), Number(p.y.toFixed(6)), 0];
   });
-  const yParts = top.map(c => {
-    const fStr = c.freq === 1 ? 't' : c.freq === -1 ? '-t' : `${c.freq}*t`;
-    return `${c.amp.toFixed(3)}*sin(6.283*${fStr}+${c.phase.toFixed(3)})`;
-  });
-
-  const curveAction = createAction('parametric_curve', {
-    name,
-    xExpr: xParts.join('+'),
-    yExpr: yParts.join('+'),
-    zExpr: '0',
-    tMin: 0,
-    tMax: 1,
-    color: '#FBBF24',
-    appear: 'animate',
-    duration: 4.0,
-  });
-
-  const nextProject: Project = {
-    ...project,
-    actions: [...project.actions, curveAction],
-  };
-
-  return {
-    project: nextProject,
-    actionIds: [curveAction.id],
-  };
+  const curveName = playgroundName(name);
+  const actions = playgroundPolyline(curveName, points, '#FBBF24', false);
+  actions.push(createAction('create', { target: curveName, duration, easing: 'linear' }));
+  return appendPlaygroundActions(project, actions);
 }

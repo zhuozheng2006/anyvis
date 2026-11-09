@@ -1,4 +1,6 @@
 import type { Action, Project } from './core/types';
+import { flattenActions } from './authoring';
+import { getBlockDefinition } from './core/catalog';
 
 export type LayoutMode =
   | 'horizontal'
@@ -31,8 +33,9 @@ export interface MovableObject {
 export function getMovableObjects(project: Project): MovableObject[] {
   const movables: MovableObject[] = [];
 
-  for (const act of project.actions) {
+  for (const act of flattenActions(project.actions)) {
     if (
+      getBlockDefinition(act.type)?.createsObject &&
       act.fields &&
       typeof act.fields.x === 'number' &&
       typeof act.fields.y === 'number'
@@ -243,7 +246,7 @@ export function applyLayoutToProject(
   project: Project,
   newPositions: Map<string, [number, number]>,
 ): Project {
-  const updatedActions: Action[] = project.actions.map((act) => {
+  const apply = (actions: Action[]): Action[] => actions.map((act) => {
     if (newPositions.has(act.id)) {
       const [newX, newY] = newPositions.get(act.id)!;
       return {
@@ -255,11 +258,12 @@ export function applyLayoutToProject(
         },
       };
     }
-    return act;
+    return { ...act, ...(act.children ? { children: apply(act.children) } : {}), ...(act.branches ? { branches: act.branches.map(apply) } : {}) };
   });
 
   return {
     ...project,
-    actions: updatedActions,
+    workspace: undefined,
+    actions: apply(project.actions),
   };
 }

@@ -39,9 +39,9 @@ describe('subtitles SRT parsing, formatting, and action generation', () => {
   it('generates runnable Manim CE Python code for subtitles', () => {
     const code = generateSubtitlesPythonCode(DEFAULT_SUBTITLE_PRESET);
 
-    expect(code).toContain('class SubtitleNarrationScene(Scene):');
-    expect(code).toContain('self.play(FadeIn(');
-    expect(code).toContain('self.play(FadeOut(');
+    expect(code).toContain('class AnyVisScene(MovingCameraScene):');
+    expect(code).toContain('self.add(');
+    expect(code).toContain('self.remove(');
   });
 
   it('injects subtitle text actions into project', () => {
@@ -49,7 +49,7 @@ describe('subtitles SRT parsing, formatting, and action generation', () => {
       schemaVersion: 2,
       id: 'p_sub',
       name: 'Subtitle Test',
-      scene: { dimension: '2d', background: '#000', width: 1920, height: 1080, fps: 60 },
+      scene: { dimension: '2d', background: '#000000', width: 1920, height: 1080, fps: 60 },
       actions: [],
     };
 
@@ -58,9 +58,15 @@ describe('subtitles SRT parsing, formatting, and action generation', () => {
       DEFAULT_SUBTITLE_PRESET,
     );
 
-    expect(nextProject.actions).toHaveLength(DEFAULT_SUBTITLE_PRESET.length);
-    expect(actionIds).toHaveLength(DEFAULT_SUBTITLE_PRESET.length);
-    expect(nextProject.actions[0].type).toBe('create_text');
-    expect(nextProject.actions[0].fields.text).toBe(DEFAULT_SUBTITLE_PRESET[0].text);
+    expect(nextProject.actions.filter(a => a.type === 'text')).toHaveLength(DEFAULT_SUBTITLE_PRESET.length);
+    expect(actionIds).toHaveLength(nextProject.actions.length);
+    expect(nextProject.actions[0].type).toBe('wait');
+    expect(nextProject.actions.find(a => a.type === 'text')!.fields.text).toBe(DEFAULT_SUBTITLE_PRESET[0].text);
   });
+});
+
+it('preserves SRT millisecond precision and multiline captions across CRLF import', () => {
+  const items = parseSrt('1\r\n00:00:00,123 --> 00:00:02,345\r\nfirst line\r\nsecond line\r\n');
+  expect(items[0]).toMatchObject({ startTime: 0.123, endTime: 2.345, text: 'first line\nsecond line' });
+  expect(exportToSrt(items)).toContain('00:00:00,123 --> 00:00:02,345\nfirst line\nsecond line');
 });

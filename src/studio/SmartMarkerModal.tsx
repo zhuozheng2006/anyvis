@@ -68,12 +68,12 @@ export const SmartMarkerModal: React.FC<SmartMarkerModalProps> = ({
   };
 
   return (
-    <div className="smm-overlay" role="dialog" aria-modal="true" aria-label="智能节奏打点助手">
+    <div className="smm-overlay" role="dialog" aria-modal="true" aria-label="节奏标记助手">
       <div className="smm-modal">
         <div className="smm-header">
           <div className="smm-title">
             <Sparkles size={18} className="smm-icon" />
-            <span>智能节奏打点助手</span>
+            <span>节奏标记助手</span>
           </div>
           <button type="button" className="smm-close-btn" onClick={onClose} aria-label="关闭窗口">
             <X size={18} />
@@ -82,7 +82,7 @@ export const SmartMarkerModal: React.FC<SmartMarkerModalProps> = ({
 
         <div className="smm-body">
           <p className="smm-intro">
-            一键智能对齐配音停顿、背景音乐节拍或动作切换点，生成时间轴磁吸标记，助你精确卡点制作专业数学动画！
+            按设定间隔、BPM 或实际动作起点生成标记。间隔与 BPM 由你指定，此功能不分析音频中的停顿或节拍。
           </p>
 
           <div className="smm-mode-grid">
@@ -92,8 +92,8 @@ export const SmartMarkerModal: React.FC<SmartMarkerModalProps> = ({
               onClick={() => handleModeChange('speech')}
             >
               <Mic size={20} className="smm-mode-icon" />
-              <div className="smm-mode-label">语段停顿对齐</div>
-              <div className="smm-mode-desc">按讲解语速句子停顿节奏生成标记</div>
+              <div className="smm-mode-label">语段间隔</div>
+              <div className="smm-mode-desc">按设定秒数等间隔生成标记</div>
             </button>
 
             <button
@@ -102,7 +102,7 @@ export const SmartMarkerModal: React.FC<SmartMarkerModalProps> = ({
               onClick={() => handleModeChange('beat')}
             >
               <Music size={20} className="smm-mode-icon" />
-              <div className="smm-mode-label">音乐节拍律动</div>
+              <div className="smm-mode-label">BPM 辅助拍点</div>
               <div className="smm-mode-desc">基于 BPM 节奏点（四分音符）精准卡点</div>
             </button>
 

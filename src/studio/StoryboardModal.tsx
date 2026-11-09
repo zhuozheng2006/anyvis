@@ -181,7 +181,7 @@ export const StoryboardModal: React.FC<StoryboardModalProps> = ({
                       onChange={() => handleToggleSkip(c.id)}
                       style={{ accentColor: '#38bdf8' }}
                     />
-                    跳过渲染
+                    骨架中跳过动画
                   </label>
                   {c.startTime > 0 && (
                     <button
@@ -256,7 +256,7 @@ export const StoryboardModal: React.FC<StoryboardModalProps> = ({
 
           <div className="storyboard-export-tabs">
             <div className="export-tab-header">
-              <span className="export-tab-title">Manim CE self.next_section() 脚本结构</span>
+              <span className="export-tab-title">Manim 章节骨架（不含工程对象与动画）</span>
               <button className="export-copy-btn" onClick={handleCopyPython}>
                 {copiedPy ? '✓ 已复制' : '复制代码'}
               </button>
@@ -268,7 +268,7 @@ export const StoryboardModal: React.FC<StoryboardModalProps> = ({
         {/* Footer */}
         <div className="storyboard-footer">
           <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-            章节时间点将与主编辑区顶部时间轴智能标记实时保持双向同步
+            保存后将更新工程时间轴标记；章节骨架导出不包含工程动画。
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn-secondary" onClick={onClose}>

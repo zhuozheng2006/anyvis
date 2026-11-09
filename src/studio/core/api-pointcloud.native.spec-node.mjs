@@ -10,7 +10,7 @@ import { getApiEntry } from './api-registry.ts';
 import { createApiCompiler, API_RUNTIME } from './api-compiler.ts';
 import { createAction } from './catalog.ts';
 import { discoverPython } from '../../../server/server.mjs';
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment } from '../../../scripts/api-evidence.mjs';
 
 const execute = promisify(execFile);
 const ref = name => ({ $ref: name });
@@ -164,7 +164,7 @@ print("ANYVIS_POINTCLOUD " + json.dumps(results))
 `;
     const script = path.join(directory, 'pointcloud.py');
     await writeFile(script, runner);
-    const output = await execute(health.python, [script], { cwd: directory, timeout: 100_000, maxBuffer: 4 * 1024 * 1024 });
+    const output = await execute(health.python, [script], { env: nativeExecutionEnvironment(health.python), cwd: directory, timeout: 100_000, maxBuffer: 4 * 1024 * 1024 });
     const line = output.stdout.split('\n').find(row => row.startsWith('ANYVIS_POINTCLOUD '));
     assert.ok(line, output.stdout);
     const outcomes = JSON.parse(line.slice('ANYVIS_POINTCLOUD '.length));
@@ -257,7 +257,7 @@ finally:
     manim.__version__ = version
 print('ANYVIS_POINTCLOUD_COMPAT_OK')
 `);
-    const output = await execute(health.python, [script], { cwd:directory, timeout:45_000, maxBuffer:1024*1024 });
+    const output = await execute(health.python, [script], { env: nativeExecutionEnvironment(health.python), cwd:directory, timeout:45_000, maxBuffer:1024*1024 });
     assert.match(output.stdout,/ANYVIS_POINTCLOUD_COMPAT_OK/);
   } finally { await rm(directory,{recursive:true,force:true}); }
 });

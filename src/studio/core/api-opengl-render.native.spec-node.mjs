@@ -1,4 +1,4 @@
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment } from '../../../scripts/api-evidence.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
@@ -83,7 +83,7 @@ except Exception as error:
     result['attempts'].append({'backend':'import','error':type(error).__name__+': '+str(error)[:400]})
 print('ANYVIS_GL_PROBE '+json.dumps(result))
 `);
-    const probeOutput = await execute(health.python, [probePath], { cwd:directory, timeout:30_000, maxBuffer:1024*1024 });
+    const probeOutput = await execute(health.python, [probePath], { env: nativeExecutionEnvironment(health.python), cwd:directory, timeout:30_000, maxBuffer:1024*1024 });
     const probeLine = probeOutput.stdout.split('\n').find(line => line.startsWith('ANYVIS_GL_PROBE '));
     assert.ok(probeLine, probeOutput.stdout);
     const contextProbe = JSON.parse(probeLine.slice('ANYVIS_GL_PROBE '.length));
@@ -158,7 +158,7 @@ finally:
         context=getattr(renderer,'context',None)
         if context is not None: context.release()
 `);
-    const output = await execute(health.python, ['-X','faulthandler','-u',runnerPath], { cwd:directory, timeout:75_000, maxBuffer:4*1024*1024 });
+    const output = await execute(health.python, ['-X','faulthandler','-u',runnerPath], { env: nativeExecutionEnvironment(health.python), cwd:directory, timeout:75_000, maxBuffer:4*1024*1024 });
     const line = output.stdout.split('\n').find(row => row.startsWith(prefix));
     assert.ok(line, output.stdout);
     const metrics = JSON.parse(line.slice(prefix.length));

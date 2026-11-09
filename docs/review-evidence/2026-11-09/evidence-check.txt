@@ -1,0 +1,14 @@
+{
+  "entryCount": 2293,
+  "resolvedEntries": 2293,
+  "verifiedSignatures": 2117,
+  "parameterFields": 9136,
+  "properties": 171,
+  "writableProperties": 128,
+  "constants": 2765,
+  "resolvedConstants": 2765,
+  "previousBoundedInventory": 1660,
+  "previousInventoryMissing": [],
+  "entriesWithBehaviorEvidence": 1538,
+  "failures": []
+}

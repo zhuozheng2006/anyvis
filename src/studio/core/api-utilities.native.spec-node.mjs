@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { discoverPython } from '../../../server/server.mjs';
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment } from '../../../scripts/api-evidence.mjs';
 import { getApiEntry } from './api-registry.ts';
 import { createApiCompiler, API_RUNTIME } from './api-compiler.ts';
 import { createAction } from './catalog.ts';
@@ -223,7 +223,7 @@ test('numeric utilities and returned callbacks match native behavior', { timeout
     const file = path.join(directory, 'utilities.py');
     await writeFile(path.join(directory, 'fixture.py'), 'from manim import Scene\nMARKER=6*7\nclass FixtureScene(Scene):\n    pass\n');
     await writeFile(file, `from manim import *\nimport numpy as np\n${compiler.imports().join('\n')}\n${API_RUNTIME}\n${oracle}\n${probes.join('\n')}\nprint('ANYVIS_UTILITIES '+json.dumps(outcomes))\n`);
-    const { stdout } = await execute(health.python, [file], { cwd: directory, timeout: 100_000, maxBuffer: 2 * 1024 * 1024 });
+    const { stdout } = await execute(health.python, [file], { env: nativeExecutionEnvironment(health.python), cwd: directory, timeout: 100_000, maxBuffer: 2 * 1024 * 1024 });
     const line = stdout.split('\n').find(l => l.startsWith('ANYVIS_UTILITIES ')); assert.ok(line, stdout);
     const outcomes = JSON.parse(line.slice('ANYVIS_UTILITIES '.length));
     const failures = outcomes.filter(o => o.status !== 'verified');

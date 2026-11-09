@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 import { describe, it, expect } from 'vitest';
 import {
   POLAR_PARAMETRIC_PRESETS,
@@ -50,15 +51,15 @@ describe('polar-parametric', () => {
   it('generates runnable Manim CE Python code for presets', () => {
     const cardioidPreset = POLAR_PARAMETRIC_PRESETS.find((p) => p.id === 'cardioid')!;
     const cardCode = generatePolarParametricPythonCode(cardioidPreset, { a: 1.5 });
-    expect(cardCode).toContain('class CardioidScene(Scene):');
+    expect(cardCode).toContain('class ParametricCurveScene(MovingCameraScene):');
     expect(cardCode).toContain('from manim import *');
-    expect(cardCode).toContain('PolarPlane');
+    expect(cardCode).toContain('np.cos');
     expect(cardCode).toContain('ParametricFunction');
 
     const lissPreset = POLAR_PARAMETRIC_PRESETS.find((p) => p.id === 'lissajous')!;
     const lissCode = generatePolarParametricPythonCode(lissPreset, { a: 3, b: 4, delta: 0.5 });
-    expect(lissCode).toContain('class LissajousScene(Scene):');
-    expect(lissCode).toContain('Axes(');
+    expect(lissCode).toContain('class ParametricCurveScene(MovingCameraScene):');
+    expect(lissCode).toContain('np.sin');
   });
 
   it('creates project actions for polar/parametric curves', () => {
@@ -73,9 +74,9 @@ describe('polar-parametric', () => {
     const preset = POLAR_PARAMETRIC_PRESETS[0];
     const result = createPolarParametricActions(initialProject, preset, {});
 
-    expect(result.actionIds.length).toBe(2);
-    expect(result.project.actions.length).toBe(2);
-    expect(result.project.actions[0].type).toBe('create_text');
-    expect(result.project.actions[1].type).toBe('create_circle');
+    expect(result.actionIds.length).toBe(1);
+    expect(compileProject(result.project).diagnostics).toEqual([]);
+    expect(result.project.actions[0].type).toBe('parametric_curve');
+    expect(result.project.actions[0].fields.tMax).toBe(preset.tRange[1]);
   });
 });

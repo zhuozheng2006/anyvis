@@ -10,7 +10,7 @@ import { getApiEntry } from './api-registry.ts';
 import { createApiCompiler, API_RUNTIME } from './api-compiler.ts';
 import { createAction } from './catalog.ts';
 import { discoverPython } from '../../../server/server.mjs';
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment, behaviorEvidenceGap } from '../../../scripts/api-evidence.mjs';
 
 const execute = promisify(execFile);
 const ref = name => ({ $ref: name });
@@ -151,11 +151,11 @@ add('manim.animation.creation.UntypeWithCursor', 'txt = Text("Test"); cur = Rect
   'result.begin(); assert cur in txt.submobjects');
 add('manim.animation.creation.Write.begin', 's = Write(Square())', {}, 'assert hasattr(s, "starting_mobject")');
 add('manim.animation.creation.Write.finish', 's = Write(Square()); s.begin()', {}, 'assert not s.mobject.updating_suspended');
-add('manim.animation.creation.Write.reverse_submobjects', 's = Write(VGroup(Square(), Circle()))', {}, 'assert s.mobject[0] is not None');
+add('manim.animation.creation.Write.reverse_submobjects', 's = Write(VGroup(Square(), Circle())); before = list(s.mobject.submobjects)', {}, 'assert s.mobject.submobjects == before[::-1]');
 add('manim.animation.creation.DrawBorderThenFill.begin', 's = DrawBorderThenFill(Square())', {}, 'assert hasattr(s, "outline")');
 add('manim.animation.creation.DrawBorderThenFill.get_stroke_color', 's = DrawBorderThenFill(Square(stroke_color=BLUE)); objects["sq"] = Square(stroke_color=RED)', { vmobject: ref('sq') },
   'assert result == ManimColor(RED)');
-add('manim.animation.creation.DrawBorderThenFill.interpolate_submobject', 's = DrawBorderThenFill(Square()); s.begin(); objects.update(sub=Square(), start=Square(), out=Square())', { submobject: ref('sub'), starting_submobject: ref('start'), outline: ref('out'), alpha: 0.5 },
+add('manim.animation.creation.DrawBorderThenFill.interpolate_submobject', 's = DrawBorderThenFill(Square()); s.begin(); objects.update(sub=Square(fill_opacity=1), start=Square(fill_opacity=1), out=Square(fill_opacity=0))', { submobject: ref('sub'), starting_submobject: ref('start'), outline: ref('out'), alpha: 0.5 },
   'assert objects["sub"].get_fill_opacity() == 0');
 
 // Indication & Growing
@@ -208,10 +208,10 @@ add('manim.animation.speedmodifier.ChangeSpeed.clean_up_from_scene', 'sq = Squar
 add('manim.animation.transform.FadeTransform.begin', 's1 = Square(); s2 = Circle(); s = FadeTransform(s1, s2)', {}, 'assert hasattr(s, "target_mobject")');
 add('manim.animation.transform.FadeTransform.clean_up_from_scene', 's1 = Square(); s2 = Circle(); s = FadeTransform(s1, s2); sc = Scene(); sc.add(s.mobject); s.begin(); s.finish(); objects["sc"] = sc', { scene: ref('sc') },
   'assert s.mobject not in sc.mobjects and s.to_add_on_completion in sc.mobjects');
-add('manim.animation.transform.FadeTransform.ghost_to', 's = FadeTransform(Square(), Circle()); objects.update(s1=Square(), s2=Circle())', { source: ref('s1'), target: ref('s2') },
+add('manim.animation.transform.FadeTransform.ghost_to', 's = FadeTransform(Square(), Circle()); objects.update(s1=Square(fill_opacity=1), s2=Circle())', { source: ref('s1'), target: ref('s2') },
   'close(objects["s1"].get_fill_opacity(), 0)');
 add('manim.animation.transform.FadeTransformPieces.begin', 's = FadeTransformPieces(Square(), Circle())', {}, 'assert hasattr(s, "target_mobject")');
-add('manim.animation.transform.FadeTransformPieces.ghost_to', 's = FadeTransformPieces(Square(), Circle()); objects.update(s1=Square(), s2=Circle())', { source: ref('s1'), target: ref('s2') },
+add('manim.animation.transform.FadeTransformPieces.ghost_to', 's = FadeTransformPieces(Square(), Circle()); objects.update(s1=Square(fill_opacity=1), s2=Circle())', { source: ref('s1'), target: ref('s2') },
   'close(objects["s1"].get_fill_opacity(), 0)');
 add('manim.animation.transform.TransformAnimations', 'a1 = Animation(Square()); a2 = Animation(Square().shift(RIGHT)); objects.update(a1=a1, a2=a2)', { start_anim: ref('a1'), end_anim: ref('a2'), kwargs: { rate_func: { $api: 'linear' } } },
   'result.begin(); result.interpolate(0.5); close(result.mobject.get_center(), [0.5, 0, 0])');
@@ -308,10 +308,14 @@ with tempconfig({"renderer":"cairo","pixel_width":64,"pixel_height":32,"media_di
             results.append({"apiId":api_id,"status":"failed","reason":traceback.format_exc(limit=3)})
 print("ANYVIS_ANIMATION_STATE " + json.dumps(results))
 `);
-    const output = await execute(health.python,[script],{cwd:directory,timeout:100_000,maxBuffer:4*1024*1024});
+    const output = await execute(health.python,[script],{ env: nativeExecutionEnvironment(health.python),cwd:directory,timeout:100_000,maxBuffer:4*1024*1024});
     const line = output.stdout.split('\n').find(row=>row.startsWith('ANYVIS_ANIMATION_STATE ')); assert.ok(line,output.stdout);
     const outcomes = JSON.parse(line.slice('ANYVIS_ANIMATION_STATE '.length)); assert.equal(outcomes.length,cases.length);
-    const failures = outcomes.filter(row=>row.status!=='verified');
+    for (const [index, outcome] of outcomes.entries()) {
+      const reason = behaviorEvidenceGap(cases[index].id, cases[index].check, getApiEntry(cases[index].id));
+      if (outcome.status === 'verified' && reason) Object.assign(outcome, { status: 'fixture_gap', reason });
+    }
+    const failures = outcomes.filter(row=>row.status==='failed');
     const apiIds = [...new Set(outcomes.filter(row=>row.status==='verified').map(row=>row.apiId))].sort();
     const fixture = 'src/studio/core/api-animation-state.native.spec-node.mjs';
     const reportPath = process.env.ANYVIS_API_ANIMATION_STATE_REPORT || path.resolve('artifacts/api/native-animation-state-evidence.json');

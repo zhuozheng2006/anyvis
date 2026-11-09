@@ -21,6 +21,8 @@ import { COMMON_COLOURS } from './blocks/colour-field';
 import { computePresentationSteps } from './presentation';
 import { CommandPalette } from './CommandPalette';
 import { MatrixPlaygroundModal } from './MatrixPlaygroundModal';
+import { createMatrixActions } from './matrix-project';
+import { checkedEdit } from './timeline-model';
 import { FourierPlaygroundModal } from './FourierPlaygroundModal';
 import { createFourierActions } from './fourier';
 import { CalculusPlaygroundModal } from './CalculusPlaygroundModal';
@@ -751,22 +753,26 @@ export default function StudioApp() {
               cursor: stageZoom > 1 ? (stageDragging ? 'grabbing' : 'grab') : undefined,
             }}
             onPointerDown={e => {
-              if (stageZoom <= 1 || (e.target as HTMLElement).closest('.stage-gizmo-reticle') || (e.target as HTMLElement).closest('.stage-gizmo-quick-bar')) return;
+              if (stageZoom <= 1 || (e.target as HTMLElement).closest('.gizmo-reticle') || (e.target as HTMLElement).closest('.gizmo-quick-strip')) return;
               stageDragStart.current = { x: e.clientX, y: e.clientY, panX: stagePan.x, panY: stagePan.y };
+              e.currentTarget.setPointerCapture(e.pointerId);
               setStageDragging(true);
             }}
             onPointerMove={e => {
               if (!stageDragStart.current) return;
               const dx = e.clientX - stageDragStart.current.x;
               const dy = e.clientY - stageDragStart.current.y;
-              setStagePan({ x: stageDragStart.current.panX + dx, y: stageDragStart.current.panY + dy });
+              setStagePan({ x: stageDragStart.current.panX + dx / stageZoom, y: stageDragStart.current.panY + dy / stageZoom });
             }}
-            onPointerUp={() => {
+            onPointerUp={e => {
               stageDragStart.current = null;
               setStageDragging(false);
+              if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
             }}
+            onPointerCancel={() => { stageDragStart.current = null; setStageDragging(false); }}
+            onLostPointerCapture={() => { stageDragStart.current = null; setStageDragging(false); }}
             onDoubleClick={e => {
-              if ((e.target as HTMLElement).closest('.stage-gizmo-reticle') || (e.target as HTMLElement).closest('.stage-gizmo-quick-bar')) return;
+              if ((e.target as HTMLElement).closest('.gizmo-reticle') || (e.target as HTMLElement).closest('.gizmo-quick-strip')) return;
               handleResetZoom();
             }}
           >
@@ -792,6 +798,8 @@ export default function StudioApp() {
                 showOriginCrosshair={showOriginCrosshair}
               />
               <StageDirectGizmo
+                key={selectedManagedObject?.id}
+                frameAspect={project.scene.width / project.scene.height}
                 action={selectedManagedObject}
                 onChange={fields => {
                   if (!selectedManagedObject) return;
@@ -1146,9 +1154,8 @@ export default function StudioApp() {
       onInsertMatrix={matStr => {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
-          const lastVisual = flattenActions(current.actions).filter(managedObject).pop();
-          const targetName = lastVisual ? String(lastVisual.fields.name) : '平面';
-          const result = appendAction(current, 'apply_matrix', { matrix: matStr, target: targetName });
+          const result = createMatrixActions(current, matStr);
+          const targetName = result.targetName;
           setProject(result.project);
           setSelected(result.action.id);
           setSelectedIds([result.action.id]);
@@ -1166,7 +1173,7 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const { project: nextProject, actionIds } = createFourierActions(current, coeffs, shapeName);
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1184,8 +1191,8 @@ export default function StudioApp() {
       onInsertCalculus={(preset, x0) => {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
-          const { project: nextProject, actionIds } = createCalculusActions(current, preset, preset.name.split(' ')[0]);
-          setProject(nextProject);
+          const { project: nextProject, actionIds } = createCalculusActions(current, preset, preset.name.split(' ')[0], x0);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1204,7 +1211,7 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const { project: nextProject, actionIds } = createRiemannActions(current, preset, a, b, n, mode);
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1222,17 +1229,16 @@ export default function StudioApp() {
       onApplyRateFunc={(rateFuncName, coords) => {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
-          if (selected) {
-            const all = flattenActions(current.actions);
-            const target = all.find(a => a.id === selected);
-            if (target && !managedObject(target)) {
-              const updated = applyRateFuncToAction(target, rateFuncName, coords);
-              const mapActions = (acts: Action[]): Action[] =>
-                acts.map(a => (a.id === selected ? updated : { ...a, children: mapActions(a.children || []) }));
-              setProject({ ...current, actions: mapActions(current.actions) });
-            }
-          }
-          notify(`已应用缓动曲线 cubic-bezier(${coords.map(v => v.toFixed(2)).join(', ')})`);
+          const target = flattenActions(current.actions).find(a => a.id === selected);
+          if (!target) throw new Error('请先选择一个动画片段。');
+          const updated = applyRateFuncToAction(target, rateFuncName, coords);
+          const mapActions = (acts: Action[]): Action[] => acts.map(a => a.id === selected ? updated : {
+            ...a,
+            ...(a.children ? { children: mapActions(a.children) } : {}),
+            ...(a.branches ? { branches: a.branches.map(mapActions) } : {}),
+          });
+          setProject(checkedEdit(current, { ...current, workspace: undefined, actions: mapActions(current.actions) }));
+          notify('已应用匀速曲线');
         } catch (e) {
           notify((e as Error).message);
         }
@@ -1246,7 +1252,7 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const { project: nextProject, actionIds } = createAudioVisualizerActions(current, preset);
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1265,7 +1271,7 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const { project: nextProject, actionIds } = createColoredMathTexActions(current, rawTex, colorMap, name);
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1283,7 +1289,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1301,7 +1307,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1319,7 +1325,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           notify(`已同步分镜章节到时间轴智能标记`);
         } catch (e) {
           notify((e as Error).message);
@@ -1333,7 +1339,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1351,7 +1357,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1369,7 +1375,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1387,7 +1393,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1405,7 +1411,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1423,7 +1429,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1441,7 +1447,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1459,7 +1465,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);
@@ -1477,7 +1483,7 @@ export default function StudioApp() {
       project={project}
       onApply={(nextProject, actionIds) => {
         try {
-          setProject(nextProject);
+          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
           if (actionIds[0]) {
             setSelected(actionIds[0]);
             setSelectedIds(actionIds);

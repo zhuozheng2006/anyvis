@@ -1,0 +1,15 @@
+
+> anyvis@0.5.0 test:media
+> node --test --test-force-exit server/media.integration.mjs
+
+✔ uploaded media survives restart and project ZIP reopening, then renders in worker and standalone Python (3114.537917ms)
+ℹ worker webm: {"frames": 48, "horizontalTravel": 180.00222626998584, "rmsBefore": 0.0, "rmsVoice": 0.050699389838957436, "rmsAfter": 0.0, "rmsCutSeam": 0.05011890492542151, "toneHz": 660.0}
+ℹ standalone WebM: {"frames": 48, "horizontalTravel": 180.00222626998584, "rmsBefore": 0.0, "rmsVoice": 0.050699389838957436, "rmsAfter": 0.0, "rmsCutSeam": 0.05011890492542151, "toneHz": 660.0}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3204.460458

@@ -57,10 +57,10 @@ describe('riemann calculus engine', () => {
   it('generates valid standalone Manim CE Python code for Riemann rectangles', () => {
     const parabola = RIEMANN_PRESETS.find(p => p.id === 'parabola')!;
     const code = generateRiemannPythonCode(parabola, 0, 3, 20, 'mid');
-    expect(code).toContain('class RiemannSumScene(Scene):');
+    expect(code).toContain('class AnyVisScene(MovingCameraScene):');
     expect(code).toContain('Axes(');
-    expect(code).toContain('get_riemann_rectangles');
-    expect(code).toContain('get_area');
+    expect(code).toContain('Polygon');
+    expect(code).toContain('coords_to_point');
     expect(code).toContain('Create(');
   });
 

@@ -1,0 +1,17 @@
+
+> anyvis@0.5.0 test:music
+> node --test --test-force-exit server/music.integration.mjs src/studio/core/piano.native.spec-node.mjs
+
+✔ default piano is mixed into real video and none exports a genuinely silent video (2785.023291ms)
+ℹ {"music": "piano", "frames": 96, "rms": 0.015830492506890035, "peak": 0.07558774203062057}
+ℹ {"music": "none", "frames": 96, "audioStreams": 0}
+✔ procedural piano synthesizer generates valid AudioSegment with correct metrics (2781.345709ms)
+ℹ Piano synthesizer verified: Peak=0.5814, RMS=0.1371, 60s in 0.167s
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2875.938459

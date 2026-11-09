@@ -78,5 +78,19 @@ class EvidenceTests(unittest.TestCase):
                 report['outcomes'] = outcomes
                 self.assertTrue(self.errors(report))
 
+    def test_family_smoke_calls_do_not_count_as_coverage(self):
+        report = copy.deepcopy(self.report)
+        family = dict(passed=True, apiIds=[], cases=[dict(apiId='Circle', status='fixture_gap')])
+        report['families'] = [family]
+        self.assertTrue(self.errors(report))
+        report['apiIds'] = []
+        self.assertEqual(self.errors(report), [])
+        family['cases'][0]['status'] = 'verified'
+        self.assertTrue(self.errors(report))
+        report['apiIds'] = family['apiIds'] = ['Circle']
+        self.assertEqual(self.errors(report), [])
+        del family['cases'][0]['status']
+        self.assertTrue(self.errors(report))
+
 if __name__ == '__main__':
     unittest.main()

@@ -4,6 +4,7 @@
 
 import type { Project } from './core/types.ts';
 import { createAction } from './core/catalog.ts';
+import { appendPlaygroundActions, playgroundName, emptyPlayground, playgroundPython } from './playground-actions.ts';
 
 export interface CalculusPreset {
   id: string;
@@ -69,7 +70,7 @@ export const CALCULUS_PRESETS: CalculusPreset[] = [
   },
   {
     id: 'bell',
-    name: '高斯钟形 f(x) = 1/(1+x²)',
+    name: '洛伦兹钟形 f(x) = 1/(1+x²)',
     fnExpr: '1 / (1 + x^2)',
     derivativeExpr: '-2*x / (1 + x^2)^2',
     fn: (x: number) => 1 / (1 + x * x),
@@ -100,116 +101,23 @@ export function computeDerivative(fn: (x: number) => number, x0: number, h = 1e-
 /**
  * Generates standalone clean Python Manim CE code for Essence of Calculus secant-to-tangent animation.
  */
-export function generateCalculusPythonCode(
-  preset: CalculusPreset,
-  x0: number,
-  initialDx = 1.0
-): string {
-  return `from manim import *
-
-class CalculusTangentScene(Scene):
-    def construct(self):
-        # 1. 创建坐标系
-        axes = Axes(
-            x_range=[${preset.domain[0]}, ${preset.domain[1]}, 1],
-            y_range=[-3, 5, 1],
-            x_length=8,
-            y_length=5,
-            axis_config={"include_numbers": True, "tip_shape": StealthTip},
-        ).to_edge(LEFT, buff=0.8)
-
-        # 2. 原函数曲线 y = f(x)
-        graph = axes.plot(lambda x: ${preset.fnExpr.replace('^', '**').replace('exp', 'np.exp').replace('sin', 'np.sin').replace('cos', 'np.cos')}, color=BLUE, stroke_width=3.5)
-        graph_label = axes.get_graph_label(graph, label="f(x) = ${preset.fnExpr}", x_val=${preset.domain[1] * 0.75})
-
-        # 3. 动态切线与割线 ValueTracker
-        dx_tracker = ValueTracker(${initialDx.toFixed(2)})
-        x0 = ${x0.toFixed(2)}
-
-        # 点 P(x0, f(x0)) 与点 Q(x0 + dx, f(x0 + dx))
-        dot_p = always_redraw(lambda: Dot(axes.c2p(x0, graph.underlying_function(x0)), color=YELLOW))
-        dot_q = always_redraw(lambda: Dot(axes.c2p(x0 + dx_tracker.get_value(), graph.underlying_function(x0 + dx_tracker.get_value())), color=ORANGE))
-
-        # 割线连接 P 与 Q
-        secant_line = always_redraw(lambda: axes.get_secant_slope_group(
-            x=x0,
-            graph=graph,
-            dx=dx_tracker.get_value(),
-            dx_line_color=YELLOW,
-            df_line_color=GREEN,
-            secant_line_color=RED,
-            secant_line_length=4,
-        ))
-
-        # 标题与导数定义公式
-        title = Text("3B1B 微积分本质：割线逼近切线", font_size=28).to_edge(UP)
-        formula = MathTex(
-            r"f'(x_0) = \\lim_{\\Delta x \\to 0} \\frac{f(x_0 + \\Delta x) - f(x_0)}{\\Delta x}",
-            font_size=26,
-            color=YELLOW
-        ).next_to(title, DOWN)
-
-        # 4. 播放动画：先绘制函数与初始割线，再让 dx -> 0 演化为切线
-        self.play(Write(title), FadeIn(formula))
-        self.play(Create(axes), Create(graph), FadeIn(graph_label))
-        self.play(FadeIn(dot_p), FadeIn(dot_q), Create(secant_line))
-        self.wait(1)
-
-        # 极限演化：让 dx 连续逼近 0 (0.01)
-        self.play(dx_tracker.animate.set_value(0.01), run_time=3.5, rate_func=smooth)
-        self.wait(2)
-`;
+export function generateCalculusPythonCode(preset: CalculusPreset, x0: number, initialDx = 1): string {
+  return playgroundPython(createCalculusActions(emptyPlayground(), preset, '微积分曲线', x0, initialDx), 'CalculusTangentScene');
 }
 
-/**
- * Inserts actions for coordinate axes, curve and tangent line into AnyVis project.
- */
-export function createCalculusActions(
-  project: Project,
-  preset: CalculusPreset,
-  name = '微积分曲线'
-): { project: Project; actionIds: string[] } {
-  const axesAction = createAction('axes', {
-    name: '坐标系',
-    xMin: preset.domain[0],
-    xMax: preset.domain[1],
-    xStep: 1,
-    yMin: -3,
-    yMax: 5,
-    yStep: 1,
-    appear: 'create',
-    duration: 1.5,
-  });
-
-  const curveAction = createAction('function_plot', {
-    name,
-    axes: '坐标系',
-    expression: preset.fnExpr,
-    xMin: preset.domain[0],
-    xMax: preset.domain[1],
-    color: '#38BDF8',
-    appear: 'create',
-    duration: 2.0,
-  });
-
-  const derivAction = createAction('function_plot', {
-    name: `${name}_导函数`,
-    axes: '坐标系',
-    expression: preset.derivativeExpr,
-    xMin: preset.domain[0],
-    xMax: preset.domain[1],
-    color: '#FBBF24',
-    appear: 'create',
-    duration: 1.5,
-  });
-
-  const nextProject: Project = {
-    ...project,
-    actions: [...project.actions, axesAction, curveAction, derivAction],
-  };
-
-  return {
-    project: nextProject,
-    actionIds: [axesAction.id, curveAction.id, derivAction.id],
-  };
+export function createCalculusActions(project: Project, preset: CalculusPreset, name = '微积分曲线', x0 = preset.defaultX, initialDx = 1): { project: Project; actionIds: string[] } {
+  const axes = playgroundName('坐标系'), tracker = playgroundName('dx'), curve = playgroundName(name);
+  const at = String(x0), next = `(${at}+${tracker})`;
+  const f = (x: string) => preset.fnExpr.replace(/\bx\b/g, `(${x})`);
+  const slope = `((${f(next)})-(${f(at)}))/${tracker}`;
+  const actions = [
+    createAction('axes', {name: axes, xMin: preset.domain[0], xMax: preset.domain[1], yMin: -3, yMax: 5}),
+    createAction('function_plot', {name: curve, axes, expression: preset.fnExpr, xMin: preset.domain[0], xMax: preset.domain[1]}),
+    createAction('tracker', {name: tracker, value: initialDx}),
+    createAction('dynamic_dot', {name: playgroundName('切点'), axes, xExpr: at, yExpr: f(at)}),
+    createAction('dynamic_dot', {name: playgroundName('割点'), axes, xExpr: next, yExpr: f(next)}),
+    createAction('dynamic_line', {name: playgroundName('割线'), axes, x1Expr: `${at}-1`, y1Expr: `(${f(at)})-(${slope})`, x2Expr: `${at}+1`, y2Expr: `(${f(at)})+(${slope})`}),
+    createAction('animate_value', {target: tracker, value: 0.01, duration: 3.5}),
+  ];
+  return appendPlaygroundActions(project, actions);
 }

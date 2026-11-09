@@ -12,7 +12,7 @@ import { createAction } from './catalog.ts';
 import { IMAGE_COMPAT, compileProject } from './compiler.ts';
 import { createEmptyProject } from './project.ts';
 import { discoverPython } from '../../../server/server.mjs';
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment } from '../../../scripts/api-evidence.mjs';
 
 const execute = promisify(execFile);
 const ref = name => ({ $ref: name });
@@ -195,7 +195,7 @@ print("ANYVIS_RASTER " + json.dumps(results))
 `;
     const script = path.join(directory, 'raster.py');
     await writeFile(script, runner);
-    const output = await execute(health.python, [script], { cwd: directory, timeout: 100_000, maxBuffer: 4 * 1024 * 1024 });
+    const output = await execute(health.python, [script], { env: nativeExecutionEnvironment(health.python), cwd: directory, timeout: 100_000, maxBuffer: 4 * 1024 * 1024 });
     const line = output.stdout.split('\n').find(row => row.startsWith('ANYVIS_RASTER '));
     assert.ok(line, output.stdout);
     const outcomes = JSON.parse(line.slice('ANYVIS_RASTER '.length));
@@ -244,7 +244,7 @@ with tempconfig({"write_to_movie":False,"save_last_frame":False,"renderer":"cair
     assert 29 < ys.mean() < 35, ys.mean()
     print("ANYVIS_API_IMAGE_SCENE_OK")
 `);
-    const output = await execute(health.python, [script], { cwd: directory, timeout: 45_000, maxBuffer: 1024 * 1024 });
+    const output = await execute(health.python, [script], { env: nativeExecutionEnvironment(health.python), cwd: directory, timeout: 45_000, maxBuffer: 1024 * 1024 });
     assert.match(output.stdout, /ANYVIS_API_IMAGE_SCENE_OK/);
   } finally { await rm(directory, { recursive: true, force: true }); }
 });

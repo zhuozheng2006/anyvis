@@ -5,6 +5,7 @@ import { packProject, unpackProject } from './media-bundle';
 it('roundtrips the editable project, original media and runnable source together', () => {
   const asset = { id: 'a'.repeat(64), name: '主角.png', kind: 'image' as const, extension: 'png', width: 2, height: 2, bytes: 4 };
   const p = { ...createEmptyProject(), assets: [asset] }, path = `assets/${asset.id}.png`, image = new Uint8Array([1, 2, 3, 4]);
+  p.scene.markers = [{ id: 'chapter', time: 1.25, label: '证明开始', color: '#38bdf8' }];
   const unpacked = unpackProject(packProject(p, { [path]: image }));
   expect(unpacked.project).toEqual(p); expect(unpacked.files[path]).toEqual(image);
   expect(unpacked.files['scene.py']).toBeDefined();

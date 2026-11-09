@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
 import { StoryboardModal } from './StoryboardModal';
 import type { Project } from './core/types';
+import { createAction } from './core/catalog';
 
 // @ts-expect-error test flag
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
@@ -23,8 +24,8 @@ const dummyProject: Project = {
     ],
   },
   actions: [
-    { id: 'a1', type: 'create_text', fields: { startTime: 0, runTime: 3 } },
-    { id: 'a2', type: 'create_text', fields: { startTime: 5, runTime: 3 } },
+    createAction('text', { name: 'intro', duration: 4 }),
+    createAction('text', { name: 'explanation', duration: 3 }),
   ],
 };
 

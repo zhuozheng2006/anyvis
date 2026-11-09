@@ -2,12 +2,13 @@ import { MANIM_FRAME_HALF_WIDTH, MANIM_FRAME_HALF_HEIGHT, clampAndSnapCoord } fr
 
 export function manimToStagePercent(
   x: number,
-  y: number
+  y: number,
+  halfWidth = MANIM_FRAME_HALF_WIDTH,
 ): { leftPercent: number; topPercent: number } {
-  const clampedX = Math.max(-MANIM_FRAME_HALF_WIDTH, Math.min(MANIM_FRAME_HALF_WIDTH, x));
+  const clampedX = Math.max(-halfWidth, Math.min(halfWidth, x));
   const clampedY = Math.max(-MANIM_FRAME_HALF_HEIGHT, Math.min(MANIM_FRAME_HALF_HEIGHT, y));
 
-  const leftPercent = ((clampedX + MANIM_FRAME_HALF_WIDTH) / (2 * MANIM_FRAME_HALF_WIDTH)) * 100;
+  const leftPercent = ((clampedX + halfWidth) / (2 * halfWidth)) * 100;
   const topPercent = ((MANIM_FRAME_HALF_HEIGHT - clampedY) / (2 * MANIM_FRAME_HALF_HEIGHT)) * 100;
 
   return { leftPercent, topPercent };
@@ -16,16 +17,17 @@ export function manimToStagePercent(
 export function stagePercentToManim(
   leftPercent: number,
   topPercent: number,
-  step = 0.1
+  step = 0.1,
+  halfWidth = MANIM_FRAME_HALF_WIDTH,
 ): { x: number; y: number } {
   const ratioX = Math.max(0, Math.min(100, leftPercent)) / 100;
   const ratioY = Math.max(0, Math.min(100, topPercent)) / 100;
 
-  const rawX = (ratioX * 2 - 1) * MANIM_FRAME_HALF_WIDTH;
+  const rawX = (ratioX * 2 - 1) * halfWidth;
   const rawY = (1 - ratioY * 2) * MANIM_FRAME_HALF_HEIGHT;
 
   // Snap close to 0 if within snap threshold
-  let x = clampAndSnapCoord(rawX, MANIM_FRAME_HALF_WIDTH, step);
+  let x = clampAndSnapCoord(rawX, halfWidth, step);
   let y = clampAndSnapCoord(rawY, MANIM_FRAME_HALF_HEIGHT, step);
 
   if (Math.abs(x) < step * 0.75) x = 0;
