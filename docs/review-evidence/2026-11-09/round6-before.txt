@@ -1,0 +1,183 @@
+
+ RUN  v5.1.0 <repo>
+
+ ❯ src/studio/project-history.test.ts (2 tests | 1 failed) 7ms
+   × opens a same-ID backup with a fresh undo/redo history 5ms
+ ❯ src/studio/storage.test.ts (11 tests | 2 failed) 9ms
+   ❯ recoverable project persistence (11)
+     × recovers the first saved project after only its current-record write failed 5ms
+     × recovers a valid library entry when the current record is corrupt 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/studio/project-history.test.ts > opens a same-ID backup with a fresh undo/redo history
+AssertionError: expected { past: [ { …(5) }, { …(6) } ], …(2) } to deeply equal { past: [], present: { …(5) }, …(1) }
+
+- Expected
++ Received
+
+@@ -1,8 +1,52 @@
+  {
+    "future": [],
+-   "past": [],
++   "past": [
++     {
++       "actions": [],
++       "id": "ff5530be-4894-4041-a5ad-15078847bbe5",
++       "name": "未命名动画",
++       "scene": {
++         "background": "#0B1020",
++         "dimension": "2d",
++         "fps": 30,
++         "height": 1080,
++         "width": 1920,
++       },
++       "schemaVersion": 2,
++     },
++     {
++       "actions": [
++         {
++           "fields": {
++             "appear": "create",
++             "color": "#60A5FA",
++             "duration": 1,
++             "fill": 0.15,
++             "name": "圆",
++             "radius": 1,
++             "x": 0,
++             "y": 0,
++             "z": 0,
++           },
++           "id": "c80bdc5d-eb25-4834-99b2-af27b115db9d",
++           "type": "circle",
++         },
++       ],
++       "id": "ff5530be-4894-4041-a5ad-15078847bbe5",
++       "name": "未命名动画",
++       "scene": {
++         "background": "#0B1020",
++         "dimension": "2d",
++         "fps": 30,
++         "height": 1080,
++         "width": 1920,
++       },
++       "schemaVersion": 2,
++       "workspace": undefined,
++     },
++   ],
+    "present": {
+      "actions": [],
+      "id": "ff5530be-4894-4041-a5ad-15078847bbe5",
+      "name": "重新打开的备份",
+      "scene": {
+
+ ❯ src/studio/project-history.test.ts:13:17
+     11|   const backup = { ...original, name: '重新打开的备份' };
+     12|   state = projectHistory(state, { type: 'replace', value: backup });
+     13|   expect(state).toEqual({ past: [], present: backup, future: [] });
+       |                 ^
+     14|   expect(projectHistory(state, { type: 'undo' })).toBe(state);
+     15|   expect(projectHistory(state, { type: 'redo' })).toBe(state);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/studio/storage.test.ts > recoverable project persistence > recovers the first saved project after only its current-record write failed
+AssertionError: expected undefined to deeply equal { schemaVersion: 2, …(4) }
+
+- Expected:
+{
+  "actions": [
+    {
+      "fields": {
+        "appear": "create",
+        "color": "#60A5FA",
+        "duration": 1,
+        "fill": 0.15,
+        "name": "圆",
+        "radius": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+      },
+      "id": "ae62149c-9577-466b-bf50-3cb16b8c22b5",
+      "type": "circle",
+    },
+  ],
+  "id": "3a29fd09-3a47-4736-bbb9-7336bd5ae4d7",
+  "name": "未命名动画",
+  "scene": {
+    "background": "#0B1020",
+    "dimension": "2d",
+    "fps": 30,
+    "height": 1080,
+    "width": 1920,
+  },
+  "schemaVersion": 2,
+}
+
++ Received:
+undefined
+
+ ❯ src/studio/storage.test.ts:36:27
+     34|     storage.failKey = CURRENT;
+     35|     expect(() => saveProject(project)).toThrow('Storage full');
+     36|     expect(readCurrent()).toEqual(project);
+       |                           ^
+     37|   });
+     38|   it('recovers a valid library entry when the current record is corrup…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/studio/storage.test.ts > recoverable project persistence > recovers a valid library entry when the current record is corrupt
+AssertionError: expected undefined to deeply equal { schemaVersion: 2, …(4) }
+
+- Expected:
+{
+  "actions": [
+    {
+      "fields": {
+        "appear": "create",
+        "color": "#60A5FA",
+        "duration": 1,
+        "fill": 0.15,
+        "name": "圆",
+        "radius": 1,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+      },
+      "id": "62933891-24df-4add-9c44-472524404618",
+      "type": "circle",
+    },
+  ],
+  "id": "6dc7b8d5-5ba3-4b7b-9ba5-14fa7146cc24",
+  "name": "未命名动画",
+  "scene": {
+    "background": "#0B1020",
+    "dimension": "2d",
+    "fps": 30,
+    "height": 1080,
+    "width": 1920,
+  },
+  "schemaVersion": 2,
+}
+
++ Received:
+undefined
+
+ ❯ src/studio/storage.test.ts:41:27
+     39|     const project = example(); saveProject(project);
+     40|     storage.setItem(CURRENT, '{broken');
+     41|     expect(readCurrent()).toEqual(project);
+       |                           ^
+     42|     storage.setItem(CURRENT, JSON.stringify({ schemaVersion: 2 }));
+     43|     expect(readCurrent()).toEqual(project);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 10 passed (13)
+   Start at  23:10:38
+   Duration  171ms (transform 46%, import 44%, tests 8%, worker 2%)
+

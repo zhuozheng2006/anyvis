@@ -1,0 +1,88 @@
+name: Publish tested desktop release
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: Successful Desktop packages run ID for the release commit
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: desktop-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      BUILD_RUN_ID: ${{ inputs.build_run_id }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: '24'
+      - name: Test release validation
+        run: node --test scripts/release-plan.test.mjs
+      - name: Verify desktop and native checks for the same commit
+        id: plan
+        run: node scripts/release-plan.mjs plan
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ steps.plan.outputs.sha }}
+          persist-credentials: false
+      - name: Download tested installers
+        env:
+          RELEASE_SHA: ${{ steps.plan.outputs.sha }}
+        run: gh run download "$BUILD_RUN_ID" --pattern "AnyVis-*-$RELEASE_SHA" --dir release-downloads
+      - name: Verify all platforms and calculate checksums
+        id: assets
+        run: node scripts/release-plan.mjs assets
+      - name: Publish complete release
+        env:
+          RELEASE_SHA: ${{ steps.plan.outputs.sha }}
+          RELEASE_TAG: ${{ steps.assets.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp "docs/releases/$RELEASE_TAG.md" release-notes.md
+          printf '\nCommit: `%s`\n\n[Desktop build](https://github.com/%s/actions/runs/%s)\n' "$RELEASE_SHA" "$GH_REPO" "$BUILD_RUN_ID" >> release-notes.md
+          if gh api "repos/$GH_REPO/git/ref/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            TAG_SHA=$(gh api "repos/$GH_REPO/commits/$RELEASE_TAG" --jq .sha)
+            test "$TAG_SHA" = "$RELEASE_SHA" || { echo 'Tag points to a different commit.'; exit 1; }
+          fi
+          if gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft > release-is-draft.txt 2>/dev/null; then
+            if [ "$(cat release-is-draft.txt)" != true ]; then
+              echo 'This version is already published; refusing to replace its binaries.'
+              exit 1
+            fi
+            DRAFT_SHA=$(gh release view "$RELEASE_TAG" --json targetCommitish --jq .targetCommitish)
+            test "$DRAFT_SHA" = "$RELEASE_SHA" || { echo 'Draft targets a different commit.'; exit 1; }
+          else
+            gh release create "$RELEASE_TAG" --target "$RELEASE_SHA" --title "AnyVis $RELEASE_TAG · 稳定性与媒体流程修复" --notes-file release-notes.md --draft
+          fi
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const assets = JSON.parse(readFileSync('release-assets.json', 'utf8'));
+          execFileSync('gh', ['release', 'upload', process.env.RELEASE_TAG, ...assets, '--clobber'], { stdio: 'inherit' });
+          const release = JSON.parse(execFileSync('gh', ['release', 'view', process.env.RELEASE_TAG, '--json', 'assets']));
+          const names = assets.map(file => file.split('/').at(-1));
+          if (release.assets.length !== names.length || names.some(name => !release.assets.some(asset => asset.name === name && asset.size > 0))) {
+            throw new Error('Release assets did not match the verified installer set.');
+          }
+          NODE
+          gh release edit "$RELEASE_TAG" --notes-file release-notes.md --draft=false --latest

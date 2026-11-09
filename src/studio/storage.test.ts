@@ -29,6 +29,23 @@ beforeEach(() => { storage = new MemoryStorage(); vi.stubGlobal('localStorage', 
 afterEach(() => vi.unstubAllGlobals());
 
 describe('recoverable project persistence', () => {
+  it('recovers the first saved project after only its current-record write failed', () => {
+    const project = example();
+    storage.failKey = CURRENT;
+    expect(() => saveProject(project)).toThrow('Storage full');
+    expect(readCurrent()).toEqual(project);
+  });
+  it('recovers a valid library entry when the current record is corrupt', () => {
+    const project = example(); saveProject(project);
+    storage.setItem(CURRENT, '{broken');
+    expect(readCurrent()).toEqual(project);
+    storage.setItem(CURRENT, JSON.stringify({ schemaVersion: 2 }));
+    expect(readCurrent()).toEqual(project);
+  });
+  it('does not invent a recovered project when neither record is valid', () => {
+    storage.setItem(CURRENT, '{broken'); storage.setItem(LIBRARY, '[null]');
+    expect(readCurrent()).toBeUndefined();
+  });
   it('keeps chapter markers through autosave and reopening from the project list', () => {
     const project = updateProjectChapters(example(), [{
       id: 'chapter-2', index: 2, name: '曲面的局部结构', startTime: 12.5,

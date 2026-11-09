@@ -2,6 +2,20 @@ import { expect, it } from 'vitest';
 import { createEmptyProject } from './core/project';
 import { appendAction, updateAction } from './authoring';
 import { projectHistory, type ProjectHistory } from './project-history';
+it('opens a same-ID backup with a fresh undo/redo history', () => {
+  const original = createEmptyProject();
+  let state: ProjectHistory = { past: [], present: original, future: [] };
+  state = projectHistory(state, { type: 'edit', value: appendAction(original, 'circle').project });
+  state = projectHistory(state, { type: 'edit', value: appendAction(state.present, 'square').project });
+  state = projectHistory(state, { type: 'undo' });
+  const backup = { ...original, name: '重新打开的备份' };
+  state = projectHistory(state, { type: 'replace', value: backup });
+  expect(state).toEqual({ past: [], present: backup, future: [] });
+  expect(projectHistory(state, { type: 'undo' })).toBe(state);
+  expect(projectHistory(state, { type: 'redo' })).toBe(state);
+  state = projectHistory(state, { type: 'edit', value: appendAction(backup, 'circle').project });
+  expect(projectHistory(state, { type: 'undo' }).present).toEqual(backup);
+});
 it('undoes cross-view edits together without recording workspace-only synchronization', () => {
   let state: ProjectHistory = { past: [], present: createEmptyProject(), future: [] };
   state = projectHistory(state, { type: 'edit', value: appendAction(state.present, 'circle').project });

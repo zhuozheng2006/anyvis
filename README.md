@@ -1,5 +1,7 @@
 # AnyVis
 
+> **v0.5.1 / 第六轮**：[恢复可靠性与发布记录](docs/recovery-release-2026-11-09.md)，641 项应用测试、11 项桌面测试及 2 项发布校验测试通过。[Release 与安装包](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.1)。
+
 > **第五轮改进**：[素材操作、草稿保存与真实界面验收](docs/media-workflow-2026-11-09.md)，637 项应用测试、11 项桌面测试通过；图片上传、配音裁剪、ZIP 重开和高清 MP4 导出完成端到端验证。
 
 > **第四轮优化**：[按需加载与体积对比](docs/performance-2026-11-09.md)，628 项应用测试通过；此前修复已合并至 `main`。
@@ -10,7 +12,7 @@
 
 **用 Scratch 风格积木与专业视听工作台制作真实 Manim 数学动画。**
 
-AnyVis **v0.5.0** 是专为数学与计算机科学动画创作者打造的现代化套件。融合 Scratch 风格积木、专业级视频剪辑时间轴（NLE）、19 款交互式数理动效工作台、舞台直接操纵标靶与只读 Python 代码生成器。支持图片素材与讲解配音、波形可视化、自动舒缓钢琴配乐、广播级取景标线、全套快捷键与真实 Manim 视频极速导出。浏览器 + 本地服务及 Electron 桌面版（macOS / Windows / Linux）共享完全一致的创作模型。[编辑器设计方案](docs/editor-timeline-design.md) · [开发交接文档](GEMINI_HANDOFF.md)
+AnyVis **v0.5.1** 是专为数学与计算机科学动画创作者打造的现代化套件。融合 Scratch 风格积木、专业级视频剪辑时间轴（NLE）、19 款交互式数理动效工作台、舞台直接操纵标靶与只读 Python 代码生成器。支持图片素材与讲解配音、波形可视化、自动舒缓钢琴配乐、广播级取景标线、全套快捷键与真实 Manim 视频极速导出。浏览器 + 本地服务及 Electron 桌面版（macOS / Windows / Linux）共享完全一致的创作模型。[编辑器设计方案](docs/editor-timeline-design.md) · [开发交接文档](GEMINI_HANDOFF.md)
 
 ![AnyVis Studio 时间轴与配音](docs/screenshots/studio-timeline-v0.4.jpg)
 

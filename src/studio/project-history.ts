@@ -1,8 +1,9 @@
 import type { Project } from './core/types';
 export interface ProjectHistory { past: Project[]; present: Project; future: Project[] }
-export type HistoryAction = { type: 'edit'; value: Project | ((p: Project) => Project) } | { type: 'undo' } | { type: 'redo' };
+export type HistoryAction = { type: 'edit'; value: Project | ((p: Project) => Project) } | { type: 'replace'; value: Project } | { type: 'undo' } | { type: 'redo' };
 const content = (p: Project) => JSON.stringify([p.id, p.name, p.scene, p.actions, p.assets]);
 export function projectHistory(state: ProjectHistory, action: HistoryAction): ProjectHistory {
+  if (action.type === 'replace') return { past: [], present: action.value, future: [] };
   if (action.type === 'undo') {
     if (!state.past.length) return state;
     return { past: state.past.slice(0, -1), present: state.past.at(-1)!, future: [state.present, ...state.future] };

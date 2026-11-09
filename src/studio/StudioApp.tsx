@@ -360,7 +360,7 @@ export default function StudioApp() {
     requestCounter.current++; pendingFinal.current = false;
     if (previous?.id && ['running', 'queued'].includes(previous.status)) void api(`/api/jobs/${previous.id}`, { method: 'DELETE' }).catch(() => {});
     aiAbort.current?.abort(); aiAbort.current = null; setAiLoading(false); setAiCandidate(null);
-    setProject(next); setSelected(null); setSelectedIds([]); setTrusted(false); setVideo(builtinPreview(next, revisionOf(next))); setJob(null); setRenderError('');
+    dispatchProject({ type: 'replace', value: next }); setSelected(null); setSelectedIds([]); setTrusted(false); setVideo(builtinPreview(next, revisionOf(next))); setJob(null); setRenderError('');
     setTime(0); setVideoDuration(0); setPlaying(false); setModal(null); setEditorTab('blocks');
     return true;
   }, [notify]);

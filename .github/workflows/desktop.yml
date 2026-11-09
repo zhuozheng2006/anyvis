@@ -75,6 +75,8 @@ jobs:
         run: npm run install:runtime --prefix desktop
       - name: Run application tests
         run: npm test
+      - name: Check release artifact validation
+        run: node --test scripts/release-plan.test.mjs
       - name: Check desktop lifecycle and isolated engine bundle
         run: npm run test:desktop
       - name: Prepare bundled desktop application

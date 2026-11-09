@@ -22,11 +22,16 @@ export function readProjects(): SavedProject[] {
   } catch { return []; }
 }
 export function readCurrent(): Project | undefined {
+  const projects = readProjects();
   try {
     const current = validateProject(JSON.parse(localStorage.getItem(CURRENT) || 'null'));
     // A previous quota failure may have saved the newer version only to the library.
-    return readProjects().find(item => item.project.id === current.id)?.project || current;
-  } catch { return undefined; }
+    return projects.find(item => item.project.id === current.id)?.project || current;
+  } catch {
+    // The library is written first, including on the very first save. Recover it
+    // when the second write failed or the independent current record is damaged.
+    return projects[0]?.project;
+  }
 }
 export function saveProject(project: Project) {
   const valid = validateProject({ ...project, name: project.name.trim() ? project.name : '未命名动画' });

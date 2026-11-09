@@ -1,0 +1,16 @@
+
+> anyvis@0.5.1 test
+> vitest run
+
+
+ RUN  v5.1.0 <repo>
+
+
+ Test Files  106 passed (106)
+      Tests  641 passed (641)
+   Start at  23:12:56
+   Duration  3.08s (environment 36%, tests 28%, import 28%, transform 7%, worker 1%)
+
+    Isolate  106 workers spawned · ~213ms startup each (spawn + environment, per file)
+             at least ~1.12s faster with isolate: false — reuses workers across files instead of one per file
+
