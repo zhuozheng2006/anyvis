@@ -143,12 +143,15 @@ with av.open(filename) as c:
     await mkdir(path.join(standalone, 'assets'), { recursive: true });
     assert.ok(reopened.files['scene.py'], 'ZIP must include runnable source');
     for (const [name, bytes] of Object.entries(reopened.files)) await writeFile(path.join(standalone, name), bytes);
-    await execute(health.python, ['-m', 'manim', 'render', '--format', 'webm', '--disable_caching', '--media_dir', 'media', 'scene.py', 'AnyVisScene'], {
+    // PyAV wheels differ: Linux commonly has libx264 but no libvorbis,
+    // whereas this project's Conda runtime uses VP9/Vorbis without libx264.
+    const standaloneFormat = health.nativeMp4 ? 'mp4' : 'webm';
+    await execute(health.python, ['-m', 'manim', 'render', '--format', standaloneFormat, '--disable_caching', '--media_dir', 'media', 'scene.py', 'AnyVisScene'], {
       cwd: standalone, env: nativeExecutionEnvironment(health.python), timeout: 60_000, maxBuffer: 2 * 1024 * 1024,
     });
-    const standaloneFile = path.join(standalone, 'media', 'videos', 'scene', '360p24', 'AnyVisScene.webm');
+    const standaloneFile = path.join(standalone, 'media', 'videos', 'scene', '360p24', `AnyVisScene.${standaloneFormat}`);
     const standaloneCheck = await execute(health.python, ['-c', verifyVideo, standaloneFile], { timeout: 20_000, maxBuffer: 1024 * 1024 });
-    t.diagnostic(`standalone WebM: ${standaloneCheck.stdout.trim()}`);
+    t.diagnostic(`standalone ${standaloneFormat}: ${standaloneCheck.stdout.trim()}`);
     await execute(health.python, ['-c', `import av,importlib.util,sys
 from pathlib import Path
 spec=importlib.util.spec_from_file_location('worker',sys.argv[1]);worker=importlib.util.module_from_spec(spec);spec.loader.exec_module(worker)
@@ -158,6 +161,6 @@ source=Path(sys.argv[2]);target=source.with_name('missing-aac.mp4');before=sourc
 assert worker.transcode(av,source,target,24,lambda _:None)==source
 assert not target.exists() and source.read_bytes()==before
 `, fileURLToPath(new URL('./worker.py', import.meta.url)), standaloneFile], { timeout: 20_000 });
-    t.diagnostic('Missing AAC encoder retains the complete WebM without writing a silent MP4.');
+    t.diagnostic('Missing AAC encoder retains the original video and soundtrack without writing a silent MP4.');
   } finally { if (app) await app.close(); if (process.env.ANYVIS_KEEP_MEDIA) t.diagnostic(directory); else await rm(directory, { recursive: true, force: true }); }
 });
