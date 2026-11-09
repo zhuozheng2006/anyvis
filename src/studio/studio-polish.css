@@ -425,3 +425,6 @@
 .stage-assist-menu[open] summary { color:#167e75; border-color:#8abeb3; }
 .stage-assist-popover { position:absolute; top:30px; left:0; z-index:20; display:grid; gap:12px; width:220px; padding:12px; border:1px solid #dce1ea; border-radius:8px; background:white; box-shadow:0 8px 24px #23324422; }
 .resizable-workspace .stage-hud-bar { overflow:visible; position:relative; z-index:5; justify-content:space-between; }
+.studio-header .tools-hub-container { flex-shrink:0; }
+.studio-header .tools-hub-trigger { white-space:nowrap; }
+@media (max-width:1000px) { .studio-header .header-button span { display:none; } }
