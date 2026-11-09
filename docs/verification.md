@@ -350,7 +350,7 @@ PR #1 已获用户授权并合并，提交 `4173c5fd06fb1669cd86bf0c1369fec49273
 
 ## 最新桌面测试包
 
-**AnyVis v0.5.1**：[GitHub Release](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.1)。本版提供公开下载的安装包及 SHA-256，包含截至 `d054291` 的六轮修复。对应[桌面构建](https://github.com/zhuozheng2006/anyvis/actions/runs/42642760269)和[原生 Manim 检查](https://github.com/zhuozheng2006/anyvis/actions/runs/42642760286)。
+**AnyVis v0.5.1**：[GitHub Release](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.1)。本版提供公开下载的安装包及 SHA-256，包含截至 `8a790eb` 的六轮修复。对应[桌面构建](https://github.com/zhuozheng2006/anyvis/actions/runs/42644038028)和[原生 Manim 检查](https://github.com/zhuozheng2006/anyvis/actions/runs/42644038093)。
 
 | 系统 | 安装包 | 验证范围 |
 | --- | --- | --- |

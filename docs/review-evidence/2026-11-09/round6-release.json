@@ -1,0 +1,77 @@
+{
+  "release": {
+    "tag": "v0.5.1",
+    "publishedAt": "2026-11-09T15:29:51Z",
+    "url": "https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.1",
+    "target": "8a790ebace3070bf1ed54ea4179e4642a3820872",
+    "draft": false,
+    "prerelease": false
+  },
+  "workflows": [
+    {
+      "name": "Native Manim API regression",
+      "id": 42644038093,
+      "conclusion": "success"
+    },
+    {
+      "name": "Desktop packages",
+      "id": 42644038028,
+      "conclusion": "success"
+    },
+    {
+      "name": "Publish tested desktop release",
+      "id": 42645096926,
+      "conclusion": "success"
+    }
+  ],
+  "assets": [
+    {
+      "name": "AnyVis-0.5.1-linux-amd64.deb",
+      "size": 129824816,
+      "sha256": "sha256:7b66e9cde5a0815cf44e1063a52eee862fd639fb807ff861f44d56a8e34011fd",
+      "url": "https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-linux-amd64.deb"
+    },
+    {
+      "name": "AnyVis-0.5.1-linux-x86_64.AppImage",
+      "size": 174935999,
+      "sha256": "sha256:61287e5228056416ba8e804cbd06a5feec97fad3948ed00539f6404100de620c",
+      "url": "https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-linux-x86_64.AppImage"
+    },
+    {
+      "name": "AnyVis-0.5.1-mac-arm64.dmg",
+      "size": 167674531,
+      "sha256": "sha256:5b5d9ec4d387784f59c52a49411af59b297910175a55bf9f2b814836d56af0e4",
+      "url": "https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-mac-arm64.dmg"
+    },
+    {
+      "name": "AnyVis-0.5.1-mac-arm64.zip",
+      "size": 162115846,
+      "sha256": "sha256:8ba36207d5ad103d814a1bcaec1d0236242f38914c4ca3bd7b85ebb241b3aa9c",
+      "url": "https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-mac-arm64.zip"
+    },
+    {
+      "name": "AnyVis-0.5.1-mac-x64.dmg",
+      "size": 174645276,
+      "sha256": "sha256:300d52ba0d8dc49cef190532d1da1428e117c55cc511673d25afbf3a5dd96080",
+      "url": "https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-mac-x64.dmg"
+    },
+    {
+      "name": "AnyVis-0.5.1-mac-x64.zip",
+      "size": 169114941,
+      "sha256": "sha256:067cfeeec2a2f461ebe7cf38fef19fcc5dde56fe41eab3c564c1bd0440dc53e3",
+      "url": "https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-mac-x64.zip"
+    },
+    {
+      "name": "AnyVis-0.5.1-win-x64.exe",
+      "size": 154690316,
+      "sha256": "sha256:e23ba6d06a92ac7d669a04cab8c4abf6b18e22870af476d8a759311183e22ea6",
+      "url": "https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/AnyVis-0.5.1-win-x64.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 655,
+      "sha256": "sha256:90ad5c9ef97d7872bab08bbbf510aa6d8d71644e50eda511d753cbd1d86a8b2b",
+      "url": "https://github.com/zhuozheng2006/anyvis/releases/download/v0.5.1/SHA256SUMS.txt"
+    }
+  ]
+}

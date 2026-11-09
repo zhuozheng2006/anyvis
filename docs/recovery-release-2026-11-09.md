@@ -30,3 +30,15 @@
 [v0.5.1 发布说明](releases/v0.5.1.md)明确安装依赖、签名状态和功能边界。有效 API 行为证据仍为 1,538 / 2,293，未验证 755；本轮不增加该数字。
 
 首次发布运行在附件完整性校验处拦截：electron-builder 对 Linux 目标分别使用 `x86_64.AppImage` 与 `amd64.deb` 命名，初版脚本误用 `x64`。已按真实构建日志修正并加入独立文件名 fixture；没有绕过附件检查，也没有公开缺失附件的版本。发布工具和说明取自触发提交，安装包及应用版本仍取自验证通过的指定构建。
+
+第二次发布已通过安装包与校验和检查，但因目标旧提交与默认分支存在工作流差异，GitHub 在创建 Release 时返回 403。后续发布改为当前 main 的已验证构建，不扩大令牌权限。此限制参考 [GitHub Release API](https://docs.github.com/en/rest/releases/releases#create-a-release)；使用该流程时优先选择当前 main 的成功构建。
+
+## 最终发布结果
+
+北京时间 2026-11-09，[v0.5.1](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.1) 已公开并设为 Latest，标签对应 `8a790ebace3070bf1ed54ea4179e4642a3820872`。七份安装包与 `SHA256SUMS.txt` 共八份附件齐全；源码 ZIP/TAR 为 GitHub 另外生成的附件。文件大小、SHA-256 和下载地址保存在[发布证据](review-evidence/2026-11-09/round6-release.json)。
+
+- [三平台桌面构建 42644038028](https://github.com/zhuozheng2006/anyvis/actions/runs/42644038028)：全部成功。
+- [原生 Manim 回归 42644038093](https://github.com/zhuozheng2006/anyvis/actions/runs/42644038093)：成功。
+- [正式发布 42645096926](https://github.com/zhuozheng2006/anyvis/actions/runs/42645096926)：成功。
+
+发布后的文档整理提交只更新下载入口和证据，不改变安装包所含应用代码。没有保留待合并 PR。
