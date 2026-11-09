@@ -94,20 +94,24 @@ with wave.open('voice.wav','wb') as f:
       await delay(100);
     }
     assert.equal(job.status, 'done', JSON.stringify(job));
-    // Audio projects deliberately retain WebM when native libx264 is unavailable.
-    assert.equal(job.format, health.nativeMp4 ? 'mp4' : 'webm');
+    assert.equal(job.format, health.capabilities.mp4Audio ? 'mp4' : 'webm');
     const media = await request(app, job.videoUrl); assert.equal(media.status, 200);
     const filename = path.join(directory, `result.${job.format}`); await writeFile(filename, media.bytes);
     const verifyVideo = `import av,numpy as np,json,sys
 filename=sys.argv[1]
 with av.open(filename) as c:
  assert len(c.streams.audio)==1
- centers=[]; blue=[]
+ if filename.endswith('.mp4'):
+  assert c.streams.video[0].codec_context.name=='h264'
+  assert c.streams.audio[0].codec_context.name=='aac'
+ centers=[]; blue=[]; times=[]
  for frame in c.decode(video=0):
+  times.append(float(frame.time))
   pixels=frame.to_ndarray(format='rgb24'); mask=(pixels[:,:,0]>180)&(pixels[:,:,1]<80)&(pixels[:,:,2]<80)
   blue.append(int(((pixels[:,:,2]>180)&(pixels[:,:,0]<80)&(pixels[:,:,1]<80)).sum()))
   if mask.any(): centers.append(float(np.where(mask)[1].mean()))
- assert len(centers)>=47 and centers[-1]-centers[0]>140, centers
+ assert len(centers)==48 and centers[-1]-centers[0]>140, centers
+ np.testing.assert_allclose(np.diff(times),1/24,atol=.001)
  assert min(blue)>10, blue
 with av.open(filename) as c:
  stream=c.streams.audio[0]; rate=stream.rate; samples=np.zeros(rate*3); cursor=None
@@ -127,7 +131,10 @@ with av.open(filename) as c:
  seam=rms(.72,.78); assert .035<seam<.09,seam
  chunk=samples[int(.6*rate):int(.9*rate)]; frequencies=np.fft.rfftfreq(len(chunk),1/rate)
  tone=float(frequencies[np.abs(np.fft.rfft(chunk)).argmax()]); assert abs(tone-660)<10,tone
- print(json.dumps({'frames':len(centers),'horizontalTravel':centers[-1]-centers[0],'rmsBefore':before,'rmsVoice':voice,'rmsAfter':after,'rmsCutSeam':seam,'toneHz':tone}))
+ active=np.flatnonzero(np.abs(samples)>.02)
+ onset,offset=float(active[0]/rate),float((active[-1]+1)/rate)
+ assert abs(onset-.5)<.025 and abs(offset-1)<.025,(onset,offset)
+ print(json.dumps({'frames':len(centers),'horizontalTravel':centers[-1]-centers[0],'rmsBefore':before,'rmsVoice':voice,'rmsAfter':after,'rmsCutSeam':seam,'toneHz':tone,'onsetSeconds':onset,'offsetSeconds':offset}))
 `;
     const workerCheck = await execute(health.python, ['-c', verifyVideo, filename], { timeout: 20_000, maxBuffer: 1024 * 1024 });
     t.diagnostic(`worker ${job.format}: ${workerCheck.stdout.trim()}`);
@@ -142,5 +149,15 @@ with av.open(filename) as c:
     const standaloneFile = path.join(standalone, 'media', 'videos', 'scene', '360p24', 'AnyVisScene.webm');
     const standaloneCheck = await execute(health.python, ['-c', verifyVideo, standaloneFile], { timeout: 20_000, maxBuffer: 1024 * 1024 });
     t.diagnostic(`standalone WebM: ${standaloneCheck.stdout.trim()}`);
+    await execute(health.python, ['-c', `import av,importlib.util,sys
+from pathlib import Path
+spec=importlib.util.spec_from_file_location('worker',sys.argv[1]);worker=importlib.util.module_from_spec(spec);spec.loader.exec_module(worker)
+original_has_encoder=worker.has_encoder
+worker.has_encoder=lambda av,name: False if name=='aac' else original_has_encoder(av,name)
+source=Path(sys.argv[2]);target=source.with_name('missing-aac.mp4');before=source.read_bytes()
+assert worker.transcode(av,source,target,24,lambda _:None)==source
+assert not target.exists() and source.read_bytes()==before
+`, fileURLToPath(new URL('./worker.py', import.meta.url)), standaloneFile], { timeout: 20_000 });
+    t.diagnostic('Missing AAC encoder retains the complete WebM without writing a silent MP4.');
   } finally { if (app) await app.close(); if (process.env.ANYVIS_KEEP_MEDIA) t.diagnostic(directory); else await rm(directory, { recursive: true, force: true }); }
 });

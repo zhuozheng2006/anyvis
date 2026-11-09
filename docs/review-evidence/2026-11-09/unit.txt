@@ -6,11 +6,11 @@
  RUN  v5.1.0 /Users/zane/Documents/ChatGPT/AnyVis
 
 
- Test Files  103 passed (103)
-      Tests  621 passed (621)
-   Start at  19:28:15
-   Duration  3.01s (tests 32%, import 31%, environment 30%, transform 6%, worker 1%)
+ Test Files  104 passed (104)
+      Tests  623 passed (623)
+   Start at  20:14:59
+   Duration  2.92s (environment 33%, tests 32%, import 29%, transform 5%, worker 1%)
 
-    Isolate  103 workers spawned · ~187ms startup each (spawn + environment, per file)
-             at least ~947ms faster with isolate: false — reuses workers across files instead of one per file
+    Isolate  104 workers spawned · ~182ms startup each (spawn + environment, per file)
+             at least ~932ms faster with isolate: false — reuses workers across files instead of one per file
 

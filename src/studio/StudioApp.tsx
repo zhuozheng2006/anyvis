@@ -55,15 +55,11 @@ import { ShortcutsHelpModal } from './ShortcutsHelpModal';
 import { QuickAddToolbar } from './QuickAddToolbar';
 import './studio.css';
 import './studio-polish.css';
+import { revisionOf } from './render-revision';
 
 type Modal = 'templates' | 'projects' | 'settings' | 'help' | 'ai' | 'export' | null;
 const fmt = (seconds: number) => `${Math.floor(seconds / 60)}:${Math.floor(seconds % 60).toString().padStart(2, '0')}`;
 function allActions(actions: Action[]): Action[] { return actions.flatMap(a => [a, ...allActions(a.children || []), ...(a.branches || []).flatMap(allActions)]); }
-function revisionOf(project: Project) {
-  const value = JSON.stringify([project.scene, project.actions, project.assets]);
-  let hash = 2166136261; for (let i = 0; i < value.length; i++) hash = Math.imul(hash ^ value.charCodeAt(i), 16777619);
-  return `${project.id}:${(hash >>> 0).toString(16)}`;
-}
 function initialProject(): Project { return readCurrent() || withDefaultMusic(getTemplate('first-animation') || createEmptyProject()); }
 
 const MATH_THEMES = [

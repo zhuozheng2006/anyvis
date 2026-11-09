@@ -7,6 +7,8 @@ describe('native reference preview validity', () => {
     expect(builtinPreview(project, 'a')?.format).toBe('webm');
     project.name = 'My copy'; project.workspace = { selection: 'test' };
     expect(builtinPreview(project, 'b')?.revision).toBe('b');
+    project.scene.markers = [{ id: 'chapter', time: 0, label: '开场' }];
+    expect(builtinPreview(project, 'markers')?.revision).toBe('markers');
     project.actions[0].fields.text = 'New content';
     expect(builtinPreview(project, 'c')).toBeNull();
   });

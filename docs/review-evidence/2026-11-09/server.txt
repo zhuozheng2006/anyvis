@@ -2,12 +2,12 @@
 > anyvis@0.5.0 test:server
 > node --test server/server.test.mjs
 
-✔ video byte ranges support seeking and reject malformed or impossible ranges (0.946834ms)
-✔ desktop injects runtime and static paths without falling back from an explicit Python (48.558833ms)
-✔ closing the desktop service kills an unfinished runtime probe (44.97575ms)
-✔ a listen failure aborts the in-flight runtime probe before rejecting startup (3.801542ms)
-✔ closing or reconnecting the service cancels an active AI request immediately (8.477875ms)
-✔ local API blocks cross-site execution, DNS-rebinding hosts and missing session tokens (1.637208ms)
+✔ video byte ranges support seeking and reject malformed or impossible ranges (0.621833ms)
+✔ desktop injects runtime and static paths without falling back from an explicit Python (36.85775ms)
+✔ closing the desktop service kills an unfinished runtime probe (36.211125ms)
+✔ a listen failure aborts the in-flight runtime probe before rejecting startup (1.507584ms)
+✔ closing or reconnecting the service cancels an active AI request immediately (6.751542ms)
+✔ local API blocks cross-site execution, DNS-rebinding hosts and missing session tokens (1.092083ms)
 ℹ tests 6
 ℹ suites 0
 ℹ pass 6
@@ -15,4 +15,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 236.01475
+ℹ duration_ms 167.10725

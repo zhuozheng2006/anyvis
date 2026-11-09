@@ -14,7 +14,7 @@ Each render runs a separate Python process and uses Manim Cairo. Preview lowers 
 
 This is a local desktop/development service, not a multi-user sandbox. Ordinary projects are validated and compiled on the server; the API does not accept raw Python as its input. Python extension blocks require `trustCode: true`. Trusted Python runs with the current user's process permissions.
 
-`worker.py` detects codecs. Where Manim's required `libx264` is missing, it renders genuine Manim VP9 WebM and re-encodes those frames to H.264 with the installed `libopenh264`. If H.264 is unavailable or WebM contains audio that cannot safely be preserved by the fallback, the result stays WebM. The actual format is reported; no silent audio removal takes place. Rendering and exporting use the same native scene implementation.
+`worker.py` detects codecs. Where Manim's required `libx264` is missing, it renders genuine Manim VP9 WebM and re-encodes those frames to H.264 with the installed `libopenh264`. A single mixed soundtrack is resampled to 48 kHz and encoded as AAC alongside H.264; a sample clock preserves the initial audio offset without accumulating WebM timestamp quantization. If H.264 or the required AAC encoder is unavailable, or an unexpected multiple-audio-stream file is encountered, the result stays WebM. Health reports `capabilities.mp4Audio` separately from video-only MP4 capability. The actual format is reported; no silent audio removal takes place. Rendering and exporting use the same native scene implementation.
 
 ## API
 
