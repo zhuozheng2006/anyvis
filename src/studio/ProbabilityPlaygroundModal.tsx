@@ -24,6 +24,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
   project,
   onApply,
 }) => {
+  const [applyError, setApplyError] = useState('');
   const [selectedPresetId, setSelectedPresetId] = useState<DistributionKind>('normal');
   const [params, setParams] = useState<Record<string, number>>({ mu: 0, sigma: 1.0 });
   const [intervalA, setIntervalA] = useState<number>(-1.0);
@@ -96,9 +97,14 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
   };
 
   const handleApplyToProject = () => {
-    const result = createProbabilityActions(project, preset, params);
-    onApply(result.project, result.actionIds);
-    onClose();
+    setApplyError('');
+    try {
+      const result = createProbabilityActions(project, preset, params);
+      onApply(result.project, result.actionIds);
+      onClose();
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -136,6 +142,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
             </svg>
             概率分布与中心极限定理交互台 (Probability & CLT Playground)
           </h2>
+          {applyError && <p role="alert" style={{ color: '#fca5a5' }}>{applyError}</p>}
           <button className="prob-close-btn" onClick={onClose} title="关闭">
             ✕
           </button>

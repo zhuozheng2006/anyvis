@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 import { describe, it, expect } from 'vitest';
 import {
   computeDft,
@@ -66,17 +67,17 @@ describe('fourier epicycles mathematical engine', () => {
     const coeffs = computeDft(piPts, 12);
 
     const pyCode = generateFourierPythonCode(coeffs, 'Pi');
-    expect(pyCode).toContain('class FourierEpicyclesScene(Scene):');
-    expect(pyCode).toContain('ParametricFunction');
-    expect(pyCode).toContain('t_range=[0, 1]');
+    expect(pyCode).toContain('class FourierEpicyclesScene(MovingCameraScene):');
+    expect(pyCode).toContain('set_points_as_corners');
+    expect(pyCode).toContain('rate_functions.linear');
 
     const p0 = createEmptyProject();
     const { project, actionIds } = createFourierActions(p0, coeffs, '测试傅里叶');
 
-    expect(project.actions.length).toBe(1);
-    expect(actionIds.length).toBe(1);
-    expect(project.actions[0].type).toBe('parametric_curve');
-    expect(project.actions[0].fields.name).toBe('测试傅里叶');
-    expect(String(project.actions[0].fields.xExpr)).toContain('cos');
+    expect(compileProject(project).diagnostics).toEqual([]);
+    expect(actionIds.length).toBe(3);
+    expect(String(project.actions[0].type)).toMatch(/^api_/);
+    expect(String(project.actions[0].fields.name)).toMatch(/^测试傅里叶_/);
+    expect(JSON.parse(String(project.actions[1].fields.p_points))).toHaveLength(241);
   });
 });

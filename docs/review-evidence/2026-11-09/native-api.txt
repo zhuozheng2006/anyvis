@@ -1,0 +1,68 @@
+
+> anyvis@0.5.0 test:api-native
+> node --test src/studio/core/api.native.spec-node.mjs src/studio/core/api-families.native.spec-node.mjs src/studio/core/api-queries.native.spec-node.mjs src/studio/core/api-utilities.native.spec-node.mjs src/studio/core/api-mutations.native.spec-node.mjs src/studio/core/api-config.native.spec-node.mjs src/studio/core/api-raster.native.spec-node.mjs src/studio/core/api-animation-state.native.spec-node.mjs src/studio/core/api-pointcloud.native.spec-node.mjs src/studio/core/api-scene.native.spec-node.mjs src/studio/core/api-coordinates.native.spec-node.mjs src/studio/core/api-opengl-state.native.spec-node.mjs
+
+✔ native animation lifecycle, updaters and trackers change observable state (4424.312917ms)
+ℹ 120 animation-state APIs, 142 cases, 0 failures.
+✔ native config and frame APIs match independent direct Python calls (1710.244333ms)
+ℹ 115 native config/frame APIs verified; 0 explicit fixture gaps; 0 adapter failures.
+✔ native coordinate, curve and graph APIs preserve geometry (11833.657209ms)
+ℹ 87 coordinate/curve/graph APIs, 98 cases, 0 failures.
+▶ native API families have executable postconditions
+  ✔ geometry (4053.042375ms)
+  ✔ transforms (565.23775ms)
+  ✔ vectorPaths (548.218542ms)
+  ✔ colorsAndRates (557.362875ms)
+  ✔ animations (676.487542ms)
+  ✔ coordinatesAnd3d (1097.951959ms)
+  ✔ matricesAndTables (5426.924125ms)
+  ✔ textAndBraces (3237.951083ms)
+  ✔ coreMobjectsAndUtils (539.369417ms)
+  ✔ camerasAndLifecycle (518.099709ms)
+  ✔ svgMobjects (520.255708ms)
+  ✔ vectorAndZoomScenes (2365.486084ms)
+  ✔ renderingAndFileWriter (545.31825ms)
+  ✔ systemAndFileUtilities (1034.363167ms)
+✔ native API families have executable postconditions (22562.372667ms)
+ℹ geometry: 66 distinct APIs, 75 asserted calls
+ℹ transforms: 35 distinct APIs, 36 asserted calls
+ℹ vectorPaths: 23 distinct APIs, 24 asserted calls
+ℹ colorsAndRates: 65 distinct APIs, 245 asserted calls
+ℹ animations: 43 distinct APIs, 172 asserted calls
+ℹ coordinatesAnd3d: 44 distinct APIs, 53 asserted calls
+ℹ matricesAndTables: 13 distinct APIs, 18 asserted calls
+ℹ textAndBraces: 37 distinct APIs, 45 asserted calls
+ℹ coreMobjectsAndUtils: 49 distinct APIs, 68 asserted calls
+ℹ camerasAndLifecycle: 37 distinct APIs, 87 asserted calls
+ℹ svgMobjects: 16 distinct APIs, 41 asserted calls
+ℹ vectorAndZoomScenes: 7 distinct APIs, 37 asserted calls
+ℹ renderingAndFileWriter: 17 distinct APIs, 44 asserted calls
+ℹ systemAndFileUtilities: 41 distinct APIs, 104 asserted calls
+✔ native mutations match independent direct Python calls (4794.758958ms)
+ℹ 171 native mutations verified; 0 explicit fixture gaps; 0 adapter failures.
+✔ OpenGL object state APIs work without creating a rendering context (1677.957833ms)
+ℹ 77 OpenGL state APIs, 77 cases, 0 failures.
+✔ OpenGL length compatibility preserves sampling, overrides and working native implementations (1308.081542ms)
+✔ native point-cloud, dictionary and vector-field APIs preserve concrete state (1638.2065ms)
+ℹ 42 point-cloud/dictionary/vector-field APIs, 50 cases, 0 failures.
+✔ point-cloud compatibility validates bounds and preserves overrides and fixed implementations (1304.268041ms)
+✔ native read APIs match independent direct Python calls (7288.581459ms)
+ℹ 200 native queries verified; 0 explicit fixture gaps; 0 adapter failures.
+✔ native image and camera APIs preserve pixels, alpha, projection and framing (1698.223083ms)
+ℹ 74 image/camera APIs, 75 cases, 0 failures.
+✔ standalone API-only image scene renders and moves without an upload block (1324.751792ms)
+✔ native scene membership, playback, updates and camera controls (4427.670958ms)
+ℹ 80 scene APIs, 86 cases, 0 failures.
+✔ scene compatibility probes preserve other versions, fixed methods and subclass overrides (1136.421916ms)
+✔ numeric utilities and returned callbacks match native behavior (1679.19625ms)
+ℹ 147 scenarios; 131 distinct verified utilities; 0 failures.
+✔ native API behavior: arguments, objects, methods, callbacks, properties, contexts and real frames (1745.151375ms)
+ℹ Verified 29 distinct registry APIs with native assertions and frame pixels.
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22695.016958

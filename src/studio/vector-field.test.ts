@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 import { describe, it, expect } from 'vitest';
 import {
   VECTOR_FIELD_PRESETS,
@@ -79,12 +80,12 @@ describe('vector-field core math and generators', () => {
 
     const arrowCode = generateVectorFieldPythonCode(dipole, bounds, 'arrows');
     expect(arrowCode).toContain('from manim import *');
-    expect(arrowCode).toContain('ArrowVectorField(');
-    expect(arrowCode).toContain('class VectorFieldScene(Scene):');
+    expect(arrowCode).toContain('Arrow(');
+    expect(arrowCode).toContain('class VectorFieldScene(MovingCameraScene):');
 
     const streamCode = generateVectorFieldPythonCode(dipole, bounds, 'streamlines');
-    expect(streamCode).toContain('StreamLines(');
-    expect(streamCode).toContain('stream_lines.create()');
+    expect(streamCode).toContain('set_points_as_corners');
+    expect(streamCode).toContain('MoveAlongPath(');
   });
 
   it('injects vector field actions into project without mutating original project', () => {
@@ -99,7 +100,7 @@ describe('vector-field core math and generators', () => {
     const { project: nextProject, actionIds } = createVectorFieldActions(dummyProject, vortex, vortex.defaultBounds);
 
     expect(dummyProject.actions).toHaveLength(0);
-    expect(nextProject.actions).toHaveLength(3);
-    expect(actionIds).toHaveLength(3);
+    expect(compileProject(nextProject).diagnostics).toEqual([]);
+    expect(actionIds).toHaveLength(nextProject.actions.length);
   });
 });

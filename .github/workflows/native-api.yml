@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['src/studio/core/**', 'server/**', 'scripts/**', 'package*.json', '.github/workflows/native-api.yml']
+    paths: ['src/studio/**', 'server/**', 'scripts/**', 'package*.json', '.github/workflows/native-api.yml']
   pull_request:
-    paths: ['src/studio/core/**', 'server/**', 'scripts/**', 'package*.json', '.github/workflows/native-api.yml']
+    paths: ['src/studio/**', 'server/**', 'scripts/**', 'package*.json', '.github/workflows/native-api.yml']
 
 permissions:
   contents: read
@@ -62,6 +62,15 @@ jobs:
           export ANYVIS_PYTHON="$(command -v python)"
           npm run test:api-native
           xvfb-run -a python scripts/verify-api-registry.py --native-report artifacts/api/native-evidence.json --native-report artifacts/api/native-families-evidence.json --native-report artifacts/api/native-queries-evidence.json --native-report artifacts/api/native-utilities-evidence.json --native-report artifacts/api/native-mutations-evidence.json --native-report artifacts/api/native-config-evidence.json --native-report artifacts/api/native-raster-evidence.json --native-report artifacts/api/native-animation-state-evidence.json --native-report artifacts/api/native-pointcloud-evidence.json --native-report artifacts/api/native-scene-evidence.json --native-report artifacts/api/native-coordinates-evidence.json --native-report artifacts/api/native-opengl-state-evidence.json --output artifacts/api/native-coverage.json
+      - name: Verify editor and workbench semantics in Manim
+        env:
+          ANYVIS_REQUIRE_MANIM: "1"
+        run: |
+          export ANYVIS_PYTHON="$(command -v python)"
+          node --test scripts/api-evidence.spec-node.mjs
+          node --test src/studio/core/editor-semantics.native.spec-node.mjs
+          node --test src/studio/core/workbench-semantics.native.spec-node.mjs
+          node --test src/studio/playground.native.spec-node.mjs
       - name: Verify actual OpenGL pixels with Mesa
         env:
           LIBGL_ALWAYS_SOFTWARE: "1"

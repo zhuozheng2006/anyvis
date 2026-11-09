@@ -1,0 +1,70 @@
+✔ native editor cuts preserve linear motion and copied sequences move their own objects (1282.992209ms)
+ℹ Manim 0.20.1: five interpolation samples match at absolute tolerance 1e-10; copied circles both end at [2, 0, 0]. No video/pixel or API coverage claim.
+✔ workbench output constructs native vectors, quadrature, colored formulas, subtitles and camera paths (8683.335583ms)
+ℹ Manim 0.20.1: 19 real compiled construct/interpolation cases. Colored MathTex retains the existing trust requirement. No audio analysis or video claim.
+PASS surface:saddle 481
+PASS surface:paraboloid 481
+PASS surface:torus 565
+PASS surface:mobius 757
+PASS surface:sphere 481
+PASS surface:ripple 565
+PASS surface:monkey 405
+PASS polar:cardioid 1
+PASS polar:rose_curve 1
+PASS polar:archimedes_spiral 1
+PASS polar:log_spiral 1
+PASS polar:lissajous 1
+PASS polar:cycloid 1
+PASS polar:astroid 1
+PASS polar:butterfly 1
+PASS probability:normal 9
+PASS probability:binomial 43
+PASS probability:poisson 27
+PASS probability:exponential 7
+PASS geometry:euler_line 15
+PASS geometry:pythagoras 10
+PASS geometry:incircle 13
+PASS geometry:circumcircle 10
+PASS geometry:curvature 4
+PASS complex:square 18
+PASS complex:cube 16
+PASS complex:exp 18
+PASS complex:inv 22
+PASS complex:mobius 22
+PASS complex:joukowsky 22
+PASS field:vortex:arrows 336
+PASS field:vortex:streamlines 36
+PASS field:dipole:arrows 286
+PASS field:dipole:streamlines 42
+PASS field:saddle:arrows 336
+PASS field:saddle:streamlines 36
+PASS field:vanderpol:arrows 336
+PASS field:vanderpol:streamlines 36
+PASS field:pendulum:arrows 440
+PASS field:pendulum:streamlines 40
+PASS field:quadrupole:arrows 240
+PASS field:quadrupole:streamlines 34
+PASS graph:complete 25
+PASS graph:petersen 45
+PASS graph:neural 67
+PASS graph:tree 32
+PASS graph:bipartite 21
+PASS graph:cube 44
+PASS calculus:quadratic 21
+PASS calculus:cubic 19
+PASS calculus:sine 21
+PASS calculus:cosine 21
+PASS calculus:exponential 19
+PASS calculus:bell 21
+PASS fourier:60-harmonics 1
+TOTAL 55
+
+✔ workbench insertion runs native Manim and produces geometry and non-background pixels (10684.816459ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10789.860916

@@ -223,7 +223,7 @@ export const TimelineMarkerBar: React.FC<TimelineMarkerBarProps> = ({
             type="button"
             className="tmb-smart-btn"
             onClick={onOpenSmartMarker}
-            title="智能节奏打点助手（基于配音停顿、音乐律动或镜头换镜）"
+            title="按设定间隔、BPM 或动作边界生成标记，不分析音频"
             aria-label="打开智能打点助手"
           >
             <Sparkles size={11} /> 智能打点

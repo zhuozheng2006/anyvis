@@ -1,4 +1,5 @@
 import type { Action } from './core/types';
+import { getBlockDefinition } from './core/catalog';
 
 export interface EasingPreset {
   id: string;
@@ -183,9 +184,17 @@ def custom_bezier_rate_func(t: float) -> float:
     if t >= 1.0:
         return 1.0
     
-    # 4 control points along progression: P0=(0,0), P1=(x1,y1), P2=(x2,y2), P3=(1,1)
-    pts = [0.0, ${y1.toFixed(4)}, ${y2.toFixed(4)}, 1.0]
-    return bezier(pts)(t)
+    # CSS-style easing uses y at the parameter whose x equals elapsed time.
+    x_curve = bezier([0.0, ${x1}, ${x2}, 1.0])
+    y_curve = bezier([0.0, ${y1}, ${y2}, 1.0])
+    lo, hi = 0.0, 1.0
+    for _ in range(50):
+        u = (lo + hi) / 2
+        if x_curve(u) < t:
+            lo = u
+        else:
+            hi = u
+    return y_curve((lo + hi) / 2)
 
 # Example Usage in Scene:
 # self.play(mobject.animate.shift(RIGHT * 3), run_time=1.5, rate_func=custom_bezier_rate_func)
@@ -197,15 +206,12 @@ def custom_bezier_rate_func(t: float) -> float:
  */
 export function applyRateFuncToAction(
   action: Action,
-  rateFuncName: string,
+  _rateFuncName: string,
   bezierCoords: [number, number, number, number]
 ): Action {
-  return {
-    ...action,
-    fields: {
-      ...action.fields,
-      rate_func: rateFuncName,
-      bezier_coords: bezierCoords.join(','),
-    },
-  };
+  if (!getBlockDefinition(action.type)?.fields.some(f => f.name === 'easing')) throw new Error('请选择支持节奏设置的动画片段。');
+  if (!bezierCoords.every(Number.isFinite) || bezierCoords[0] !== bezierCoords[1] || bezierCoords[2] !== bezierCoords[3]) {
+    throw new Error('自定义贝塞尔曲线目前支持预览和 Python 导出；工程内暂仅支持应用匀速曲线。');
+  }
+  return { ...action, fields: { ...action.fields, easing: 'linear' } };
 }

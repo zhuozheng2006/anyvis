@@ -22,6 +22,7 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
   project,
   onApply,
 }) => {
+  const [applyError, setApplyError] = useState('');
   const [selectedPresetId, setSelectedPresetId] = useState<PolarParametricPresetId>('rose_curve');
   const [params, setParams] = useState<Record<string, number>>({ a: 2.2, k: 4 });
   const [progress, setProgress] = useState<number>(0.75);
@@ -82,9 +83,14 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
   };
 
   const handleApplyToProject = () => {
-    const result = createPolarParametricActions(project, preset, params);
-    onApply(result.project, result.actionIds);
-    onClose();
+    setApplyError('');
+    try {
+      const result = createPolarParametricActions(project, preset, params);
+      onApply(result.project, result.actionIds);
+      onClose();
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -104,6 +110,7 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
       <div className="polar-modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="polar-modal-header">
           <h3>🌀 极坐标与参数方程曲线动画交互台 (Polar & Parametric Curves)</h3>
+          {applyError && <p role="alert" style={{ color: '#fca5a5' }}>{applyError}</p>}
           <button className="polar-close-btn" onClick={onClose} title="关闭">
             ✕
           </button>

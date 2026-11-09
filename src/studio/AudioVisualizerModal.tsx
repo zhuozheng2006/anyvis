@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Radio, X, Check, Copy, Sparkles, Play, Pause } from 'lucide-react';
+import { Radio, X, Copy, Sparkles, Play, Pause } from 'lucide-react';
 import {
   AUDIO_VISUALIZER_PRESETS,
   type AudioVisualizerPreset,
   simulateAudioFrequencies,
-  generateAudioVisualizerPythonCode,
+  AUDIO_VISUALIZER_LIMITATION,
 } from './audio-visualizer';
 import './audio-visualizer.css';
 
@@ -20,13 +20,10 @@ const CANVAS_HEIGHT = 360;
 export const AudioVisualizerModal: React.FC<AudioVisualizerModalProps> = ({
   isOpen,
   onClose,
-  onInsertAudioVisualizer,
 }) => {
   const [activePreset, setActivePreset] = useState<AudioVisualizerPreset>(AUDIO_VISUALIZER_PRESETS[0]);
   const [barCount, setBarCount] = useState(activePreset.barCount);
   const [position, setPosition] = useState<'bottom' | 'center' | 'top'>(activePreset.position);
-  const [copied, setCopied] = useState(false);
-  const [inserted, setInserted] = useState(false);
   const [playing, setPlaying] = useState(true);
   const [simTime, setSimTime] = useState(0);
 
@@ -61,37 +58,6 @@ export const AudioVisualizerModal: React.FC<AudioVisualizerModalProps> = ({
   const amplitudes = useMemo(() => {
     return simulateAudioFrequencies(simTime, barCount, activePreset.type);
   }, [simTime, barCount, activePreset.type]);
-
-  // Python code copy
-  const handleCopyCode = async () => {
-    const code = generateAudioVisualizerPythonCode({
-      ...activePreset,
-      barCount,
-      position,
-    });
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // ignore
-    }
-  };
-
-  // Insert into project
-  const handleInsert = () => {
-    if (!onInsertAudioVisualizer) return;
-    onInsertAudioVisualizer({
-      ...activePreset,
-      barCount,
-      position,
-    });
-    setInserted(true);
-    setTimeout(() => {
-      setInserted(false);
-      onClose();
-    }, 450);
-  };
 
   if (!isOpen) return null;
 
@@ -217,8 +183,8 @@ export const AudioVisualizerModal: React.FC<AudioVisualizerModalProps> = ({
         <div className="audio-vis-header">
           <div className="audio-vis-title">
             <Radio size={18} color="#e2b340" />
-            <span>音频响应式频谱与波形助手 (Audio Visualizer)</span>
-            <span className="audio-vis-badge">Audio Reactive</span>
+            <span>合成频谱与波形预览 (Audio Visualizer)</span>
+            <span className="audio-vis-badge">模拟示例</span>
           </div>
           <button className="audio-vis-close-btn" onClick={onClose} aria-label="关闭">
             <X size={18} />
@@ -334,16 +300,16 @@ export const AudioVisualizerModal: React.FC<AudioVisualizerModalProps> = ({
         {/* Footer */}
         <div className="audio-vis-footer">
           <div style={{ fontSize: 11, color: '#8892b0' }}>
-            提示：可为教师讲解配音或钢琴背景音乐增添生动的音频动态波形
+            {AUDIO_VISUALIZER_LIMITATION}
           </div>
           <div className="audio-vis-action-btn-row">
-            <button className="audio-vis-btn-secondary" onClick={handleCopyCode}>
-              {copied ? <Check size={14} color="#48bb78" /> : <Copy size={14} />}
-              <span>{copied ? '已复制 Manim 代码' : '复制 Python 代码'}</span>
+            <button className="audio-vis-btn-secondary" disabled title={AUDIO_VISUALIZER_LIMITATION}>
+              <Copy size={14} />
+              <span>导出暂不可用</span>
             </button>
-            <button className="audio-vis-btn-primary" onClick={handleInsert}>
-              {inserted ? <Check size={14} /> : <Sparkles size={14} />}
-              <span>插入到动画编排</span>
+            <button className="audio-vis-btn-primary" disabled title={AUDIO_VISUALIZER_LIMITATION}>
+              <Sparkles size={14} />
+              <span>插入暂不可用</span>
             </button>
           </div>
         </div>

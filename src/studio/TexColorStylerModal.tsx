@@ -227,7 +227,7 @@ export const TexColorStylerModal: React.FC<TexColorStylerModalProps> = ({
         {/* Footer */}
         <div className="tex-styler-footer">
           <div style={{ fontSize: 11, color: '#8892b0' }}>
-            提示：如同 3Blue1Brown 教学，为公式中关键变量赋予色彩可大幅降低观众理解认知负荷
+            彩色公式使用 MathTex 扩展；渲染时需要现有的可信扩展授权，并需安装 LaTeX。
           </div>
           <div className="tex-styler-action-btn-row">
             <button className="tex-styler-btn-secondary" onClick={handleCopyCode}>

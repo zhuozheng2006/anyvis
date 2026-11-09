@@ -82,7 +82,7 @@ it('cuts only the audible range and rejects endpoints or nested cues', () => {
 it('splits wait and animation clips at the playhead with proportional parameter subdivision', () => {
   const c = createAction('circle', { name: 'c' });
   const w = createAction('wait', { duration: 4 });
-  const s = createAction('shift', { target: 'c', duration: 2, dx: 4, dy: 2 });
+  const s = createAction('shift', { target: 'c', duration: 2, dx: 4, dy: 2, easing: 'linear' });
   const p = { ...createEmptyProject(), actions: [c, w, s] };
 
   // Wait clip split: circle is 1s, wait is 1s -> 5s. Split at t = 2.5s (1.5s into wait)
@@ -106,4 +106,50 @@ it('splits wait and animation clips at the playhead with proportional parameter 
   // Boundary error checking: wait is from 1s to 5s
   expect(() => splitActionClip(p, waitClip, 1)).toThrow('一帧');
   expect(() => splitActionClip(p, waitClip, 5)).toThrow('一帧');
+});
+it('rejects cuts that would compound scale, change rotation pivots or restart easing', () => {
+  const c = createAction('circle', { name: 'c', appear: 'none' });
+  for (const action of [
+    createAction('scale', { target: 'c', factor: 2, duration: 2, easing: 'linear' }),
+    createAction('rotate', { target: 'c', angle: 90, duration: 2, easing: 'linear' }),
+    createAction('fade_out', { target: 'c', duration: 2 }),
+    ...['smooth', 'there_and_back', 'ease_in_sine', 'ease_out_sine'].map(easing => createAction('shift', { target: 'c', dx: 4, duration: 2, easing })),
+  ]) {
+    const p = { ...createEmptyProject(), actions: [c, action] };
+    const before = JSON.stringify(p);
+    expect(() => splitActionClip(p, timelineClips(p.actions)[1], 1)).toThrow(/匀速|节奏/);
+    expect(JSON.stringify(p)).toBe(before);
+  }
+});
+it('preserves linear motion at intermediate times, including tiny displacements', () => {
+  const c = createAction('circle', { name: 'c', appear: 'none' });
+  const action = createAction('shift', { target: 'c', dx: 0.00001, dy: -2.1234567, dz: 3.3333333, duration: 2, easing: 'linear' });
+  const p = { ...createEmptyProject(), actions: [c, action] };
+  const next = splitActionClip(p, timelineClips(p.actions)[1], 0.5).project;
+  const pieces = next.actions.slice(1);
+  for (const time of [0.25, 0.5, 0.75, 1.25, 2]) {
+    for (const axis of ['dx', 'dy', 'dz']) {
+      let elapsed = time;
+      const actual = pieces.reduce((position, piece) => {
+        const duration = Number(piece.fields.duration);
+        const progress = Math.max(0, Math.min(1, elapsed / duration));
+        elapsed -= duration;
+        return position + Number(piece.fields[axis]) * progress;
+      }, 0);
+      expect(actual).toBeCloseTo(Number(action.fields[axis]) * time / 2, 12);
+    }
+  }
+  expect(compileProject(next).diagnostics).toEqual([]);
+  expect(compileProject(next).duration).toBe(compileProject(p).duration);
+});
+it('preserves total duration and the later action start for off-frame timing', () => {
+  const before = createAction('wait', { duration: 0.07 });
+  const cut = createAction('wait', { duration: 0.97 });
+  const after = createAction('wait', { duration: 2 });
+  const p = { ...createEmptyProject(), actions: [before, cut, after] };
+  const next = splitActionClip(p, timelineClips(p.actions)[1], 0.4).project;
+  expect(next.actions[1].fields.duration).toBeCloseTo(0.33, 12);
+  expect(next.actions[2].fields.duration).toBeCloseTo(0.64, 12);
+  expect(timelineClips(next.actions).find(c => c.action.id === after.id)?.start).toBeCloseTo(1.04, 12);
+  expect(compileProject(next).duration).toBeCloseTo(compileProject(p).duration!, 12);
 });

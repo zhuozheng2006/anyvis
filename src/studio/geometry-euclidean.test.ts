@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 import { describe, it, expect } from 'vitest';
 import {
   dist2D,
@@ -84,20 +85,20 @@ describe('geometry-euclidean', () => {
   it('generates runnable Manim CE Python code for presets', () => {
     const eulerPreset = GEOMETRY_PRESETS.find((p) => p.id === 'euler_line')!;
     const eulerCode = generateGeometryPythonCode(eulerPreset, [-2, -1], [2, -1], [0, 2]);
-    expect(eulerCode).toContain('class EulerLineScene(Scene):');
+    expect(eulerCode).toContain('class GeometryScene(MovingCameraScene):');
     expect(eulerCode).toContain('from manim import *');
-    expect(eulerCode).toContain('Circumcenter');
-    expect(eulerCode).toContain('Centroid');
-    expect(eulerCode).toContain('Orthocenter');
+    expect(eulerCode).toContain('外接圆');
+    expect(eulerCode).toContain('Text("G"');
+    expect(eulerCode).toContain('Text("H"');
 
     const pythPreset = GEOMETRY_PRESETS.find((p) => p.id === 'pythagoras')!;
     const pythCode = generateGeometryPythonCode(pythPreset, [-2, -1], [2, -1], [0, 2]);
-    expect(pythCode).toContain('class PythagorasScene(Scene):');
-    expect(pythCode).toContain('a^2 + b^2 = c^2');
+    expect(pythCode).toContain('class GeometryScene(MovingCameraScene):');
+    expect(pythCode).toContain('边上正方形');
 
     const circPreset = GEOMETRY_PRESETS.find((p) => p.id === 'circumcircle')!;
     const circCode = generateGeometryPythonCode(circPreset, [-2, -1], [2, -1], [0, 2]);
-    expect(circCode).toContain('class EuclideanGeometryScene(Scene):');
+    expect(circCode).toContain('class GeometryScene(MovingCameraScene):');
   });
 
   it('creates geometry actions and appends to project', () => {
@@ -113,9 +114,9 @@ describe('geometry-euclidean', () => {
     const result = createGeometryActions(initialProject, preset, preset.initialA, preset.initialB, preset.initialC);
 
     expect(result.actionIds.length).toBeGreaterThan(0);
-    expect(result.project.actions.length).toBe(3);
+    expect(compileProject(result.project).diagnostics).toEqual([]);
     const titleAction = result.project.actions[0];
-    expect(titleAction.type).toBe('create_text');
-    expect(titleAction.fields.text).toBe(preset.name);
+    expect(titleAction.type).toMatch(/^api_/);
+    expect(result.project.actions.some(a => a.type === 'circle')).toBe(true);
   });
 });

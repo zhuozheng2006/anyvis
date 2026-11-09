@@ -47,7 +47,7 @@ describe('camera-director framing, interpolation, and script generation', () => 
     // At t = 3 (midpoint of transition 2 -> 4) -> smoothstep(0.5) = 0.5
     const poseMid = interpolateCameraPose(shots, 3.0);
     expect(poseMid.x).toBeCloseTo(5.0, 2);
-    expect(poseMid.zoom).toBeCloseTo(1.5, 2);
+    expect(poseMid.zoom).toBeCloseTo(4 / 3, 8);
 
     // At t = 4 -> S2
     const poseEnd = interpolateCameraPose(shots, 4.0);
@@ -58,9 +58,10 @@ describe('camera-director framing, interpolation, and script generation', () => 
   it('generates runnable Manim CE Python code for MovingCameraScene', () => {
     const code = generateCameraDirectorPythonCode(DEFAULT_CAMERA_SHOTS);
 
-    expect(code).toContain('class CinematicCameraScene(MovingCameraScene):');
-    expect(code).toContain('self.camera.frame.animate.move_to(');
-    expect(code).toContain('rate_func=smooth');
+    expect(code).toContain('class AnyVisScene(MovingCameraScene):');
+    expect(code).toContain('.Transform');
+    expect(code).toContain('rate_func');
+    expect(code).toContain('smooth');
   });
 
   it('creates camera movement actions in project', () => {
@@ -68,14 +69,14 @@ describe('camera-director framing, interpolation, and script generation', () => 
       schemaVersion: 2,
       id: 'p_cam',
       name: 'Cam Test',
-      scene: { dimension: '2d', background: '#000', width: 1920, height: 1080, fps: 60 },
+      scene: { dimension: '2d', background: '#000000', width: 1920, height: 1080, fps: 60 },
       actions: [],
     };
 
     const { project: nextProject, actionIds } = createCameraDirectorActions(dummyProject, DEFAULT_CAMERA_SHOTS);
 
-    expect(nextProject.actions).toHaveLength(DEFAULT_CAMERA_SHOTS.length);
-    expect(actionIds).toHaveLength(DEFAULT_CAMERA_SHOTS.length);
-    expect(nextProject.actions[0].type).toBe('camera_move');
+    expect(nextProject.actions.length).toBeGreaterThan(DEFAULT_CAMERA_SHOTS.length);
+    expect(actionIds).toHaveLength(nextProject.actions.length);
+    expect(nextProject.actions[0].fields.receiver).toBe('@frame');
   });
 });

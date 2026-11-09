@@ -1,4 +1,4 @@
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment } from '../../../scripts/api-evidence.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
@@ -100,7 +100,7 @@ print("ANYVIS_API_OK")`);
     const c=compileProject(p);assert.deepEqual(c.diagnostics.filter(d=>d.severity==='error'),[]);
     const filename=path.join(directory,'scene.py');
     await writeFile(filename,c.code+'\nwith tempconfig({"write_to_movie":False,"save_last_frame":False,"renderer":"cairo","media_dir":"media","pixel_width":320,"pixel_height":180,"frame_rate":10,"progress_bar":"none","verbosity":"WARNING"}):\n    AnyVisScene().render()\n');
-    const result=await execute(health.python,[filename],{cwd:directory,timeout:45_000,maxBuffer:1024*1024});
+    const result=await execute(health.python,[filename],{ env: nativeExecutionEnvironment(health.python),cwd:directory,timeout:45_000,maxBuffer:1024*1024});
     assert.match(result.stdout,/ANYVIS_API_OK/);t.diagnostic(`Verified ${used.size} distinct registry APIs with native assertions and frame pixels.`);
     if(process.env.ANYVIS_API_REPORT){
       const registry=await readFile(new URL('./api-registry.json',import.meta.url));

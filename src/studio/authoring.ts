@@ -136,17 +136,25 @@ export function duplicateAction(project: Project, id: string): { project: Projec
       .filter(a => getBlockDefinition(a.type)?.createsObject)
       .map(a => String(a.fields.name))
   );
+  const renames: { id: string; name: string }[] = [];
   const cloneNode = (node: Action): Action => {
     const fresh = createAction(node.type, { ...node.fields });
     if (getBlockDefinition(node.type)?.createsObject && typeof fresh.fields.name === 'string') {
-      const base = fresh.fields.name.replace(/\s+\d+$/, '');
-      let candidate = `${base} 2`;
+      const tracker = node.type === 'tracker';
+      const base = fresh.fields.name.replace(tracker ? /_\d+$/ : /\s+\d+$/, '');
+      const candidateFor = (suffix: number) => {
+        const ending = `${tracker ? '_' : ' '}${suffix}`;
+        return `${base.slice(0, (tracker ? 31 : 100) - ending.length)}${ending}`;
+      };
       let suffix = 2;
+      let candidate = candidateFor(suffix);
       while (usedNames.has(candidate)) {
         suffix += 1;
-        candidate = `${base} ${suffix}`;
+        candidate = candidateFor(suffix);
       }
-      fresh.fields.name = candidate;
+      // Keep the old name until the whole clone exists so semantic renaming can
+      // update its references, including forward/nested API references.
+      renames.push({ id: fresh.id, name: candidate });
       usedNames.add(candidate);
     }
     if (node.children) fresh.children = node.children.map(cloneNode);
@@ -159,7 +167,12 @@ export function duplicateAction(project: Project, id: string): { project: Projec
     const out: Action[] = [];
     for (const item of items) {
       if (item.id === id) {
-        const copy = cloneNode(item);
+        let copy = cloneNode(item);
+        let clonedProject = { ...project, actions: [copy] };
+        // Limit renaming to the copied subtree: outside users of the original
+        // object and external references used by the copy must remain untouched.
+        for (const rename of renames) clonedProject = renameProjectObject(clonedProject, rename.id, rename.name);
+        copy = clonedProject.actions[0];
         clonedResult = copy;
         out.push(item, copy);
       } else {

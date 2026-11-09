@@ -1,4 +1,6 @@
 import type { Project, TimelineMarker } from './core/types';
+import { timelineClips } from './authoring';
+import { audioClips } from './timeline-model';
 
 export type SmartMarkerMode = 'speech' | 'beat' | 'cuts' | 'interval';
 
@@ -33,7 +35,7 @@ export function generateSmartMarkers(project: Project, config: SmartMarkerConfig
   const items: MarkerPreviewItem[] = [];
 
   if (config.mode === 'speech') {
-    // Speech phrase pauses: generates markers at natural conversational phrasing
+    // User-specified cadence, not detected speech pauses.
     const phraseInterval = Math.max(0.5, config.cadenceSeconds || 3.0);
     let t = phraseInterval;
     let count = 1;
@@ -65,22 +67,16 @@ export function generateSmartMarkers(project: Project, config: SmartMarkerConfig
     }
   } else if (config.mode === 'cuts') {
     // Visual scene cuts: creates a marker at the start of each top-level action/animation
-    let currentTime = 0;
     let cutIndex = 1;
-    for (const action of project.actions) {
-      const dur = typeof action.fields?.duration === 'number'
-        ? action.fields.duration
-        : (action.type === 'wait' && typeof action.fields?.duration === 'number' ? action.fields.duration : 1.0);
-      
-      const snapped = Number((Math.round(currentTime * fps) / fps).toFixed(4));
-      const actionName = (action.fields?.name as string) || (action.fields?.target as string) || action.type;
-      items.push({
-        time: snapped,
-        label: `${prefix} ${cutIndex} (${actionName})`,
-        color,
+    for (const clip of timelineClips(project.actions)) {
+      if (clip.start === null) break;
+      const action = clip.action;
+      const snapped = Number((Math.round(clip.start * fps) / fps).toFixed(4));
+      const actionName = String(action.fields.name || action.fields.target || action.type);
+      // Declarations at the same instant share one marker.
+      if (!items.some(item => item.time === snapped)) items.push({
+        time: snapped, label: `${prefix} ${cutIndex++} (${actionName})`, color,
       });
-      currentTime += dur;
-      cutIndex++;
     }
   } else if (config.mode === 'interval') {
     // Custom equal intervals
@@ -136,11 +132,9 @@ function getDefaultPrefix(mode: SmartMarkerMode): string {
 }
 
 function calculateTotalDuration(project: Project): number {
-  let visualDur = 0;
-  for (const a of project.actions) {
-    const dur = typeof a.fields?.duration === 'number' ? a.fields.duration : 1.0;
-    visualDur += dur;
-  }
-  const voiceoverDur = project.assets?.filter(a => a.kind === 'audio').reduce((max, a) => Math.max(max, a.duration || 0), 0) || 0;
-  return Math.max(visualDur, voiceoverDur, 6.0);
+  const visual = timelineClips(project.actions);
+  const audio = audioClips(project);
+  const visualEnd = Math.max(0, ...visual.map(c => c.start === null ? 0 : c.start + (c.duration ?? 0)));
+  const audioEnd = Math.max(0, ...audio.map(c => c.start === null ? 0 : c.start + c.duration));
+  return Math.max(visualEnd, audioEnd);
 }

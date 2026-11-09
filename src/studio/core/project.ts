@@ -1,10 +1,24 @@
 import { getBlockDefinition } from './catalog.ts';
-import type { Action, Project } from './types.ts';
+import type { Action, Project, TimelineMarker } from './types.ts';
 import { validateAssets } from './assets.ts';
 export const DEFAULT_SCENE: Project['scene'] = { dimension: '2d', background: '#0B1020', width: 1920, height: 1080, fps: 30 };
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const finite = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 const fail = (message: string): never => { throw new Error(message); };
+function validateMarkers(value: unknown): TimelineMarker[] {
+  if (!Array.isArray(value)) return fail('时间轴标记必须是数组。');
+  const ids = new Set<string>();
+  return value.map(raw => {
+    if (!record(raw)) return fail('时间轴标记必须是对象。');
+    const { id, time, label, color } = raw;
+    if (typeof id !== 'string' || !id || id.length > 128 || ids.has(id)) return fail('时间轴标记 ID 缺失或重复。');
+    if (!finite(time) || time < 0) return fail('时间轴标记时间必须为非负有限数值。');
+    if (typeof label !== 'string' || label.length > 4000) return fail('时间轴标记名称必须为不超过 4000 字符的文本。');
+    if (color !== undefined && (typeof color !== 'string' || !/^#[\da-fA-F]{6}$/.test(color))) return fail('时间轴标记颜色需要六位十六进制颜色。');
+    ids.add(id);
+    return { id, time, label, ...(color !== undefined ? { color: color as string } : {}) };
+  });
+}
 export function createEmptyProject(): Project {
   return { schemaVersion: 2, id: crypto.randomUUID(), name: '未命名动画', scene: { ...DEFAULT_SCENE }, actions: [] };
 }
@@ -70,5 +84,5 @@ export function validateProject(value: unknown): Project {
     });
   };
   const actions = visit(p.actions, 0);
-  return { schemaVersion: 2, id: p.id as string, name: p.name as string, scene: { dimension: scene.dimension as '2d' | '3d', ...(scene.renderer ? {renderer:scene.renderer as 'cairo'|'opengl'} : {}), ...(scene.backgroundMusic !== undefined ? {backgroundMusic:scene.backgroundMusic as 'piano'|'none'} : {}), ...(scene.musicGainDb !== undefined ? {musicGainDb:scene.musicGainDb as number} : {}), background: scene.background as string, width: scene.width as number, height: scene.height as number, fps: scene.fps as number }, actions, ...(p.assets !== undefined ? { assets: validateAssets(p.assets) } : {}), ...(p.workspace !== undefined ? { workspace: p.workspace } : {}) };
+  return { schemaVersion: 2, id: p.id as string, name: p.name as string, scene: { dimension: scene.dimension as '2d' | '3d', ...(scene.renderer ? {renderer:scene.renderer as 'cairo'|'opengl'} : {}), ...(scene.backgroundMusic !== undefined ? {backgroundMusic:scene.backgroundMusic as 'piano'|'none'} : {}), ...(scene.musicGainDb !== undefined ? {musicGainDb:scene.musicGainDb as number} : {}), ...(scene.markers !== undefined ? { markers: validateMarkers(scene.markers) } : {}), background: scene.background as string, width: scene.width as number, height: scene.height as number, fps: scene.fps as number }, actions, ...(p.assets !== undefined ? { assets: validateAssets(p.assets) } : {}), ...(p.workspace !== undefined ? { workspace: p.workspace } : {}) };
 }

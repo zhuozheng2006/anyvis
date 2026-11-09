@@ -10,7 +10,7 @@ import { getApiEntry } from './api-registry.ts';
 import { createApiCompiler, API_RUNTIME } from './api-compiler.ts';
 import { createAction } from './catalog.ts';
 import { discoverPython } from '../../../server/server.mjs';
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment } from '../../../scripts/api-evidence.mjs';
 
 const execute = promisify(execFile);
 
@@ -342,11 +342,10 @@ print("ANYVIS_MUTATIONS " + json.dumps(results))
     const pyFile = path.join(directory, 'mutations.py');
     await writeFile(pyFile, runner);
 
-    const result = await execute(health.python, [pyFile], {
-      cwd: directory,
+    const result = await execute(health.python, [pyFile], { cwd: directory,
       timeout: 100_000,
       maxBuffer: 2 * 1024 * 1024,
-      env: { ...process.env, PATH: `${path.dirname(health.python)}:/Library/TeX/texbin:${process.env.PATH || ''}` }
+      env: nativeExecutionEnvironment(health.python)
     });
 
     const line = result.stdout.split('\n').find(l => l.startsWith('ANYVIS_MUTATIONS '));

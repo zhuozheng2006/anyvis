@@ -109,15 +109,18 @@ def health():
         emit("health", available=x264 or vp9, version=manim.__version__, pythonVersion=sys.version.split()[0],
              latex=bool(shutil.which("latex") and shutil.which("dvisvgm")), chineseFont=chinese,
              codec="libx264" if x264 else "libopenh264" if vp9 and openh264 else "vp9" if vp9 else None,
-             nativeMp4=x264, renderer="cairo", capabilities={"mp4": x264 or (vp9 and openh264), "webm": vp9, "formulas": bool(shutil.which("latex") and shutil.which("dvisvgm")), "threeD": True})
+             nativeMp4=x264, renderer="cairo", capabilities={"mp4": x264 or (vp9 and openh264), "mp4Audio": x264 or (vp9 and openh264 and has_encoder(av, "aac")), "webm": vp9, "formulas": bool(shutil.which("latex") and shutil.which("dvisvgm")), "threeD": True})
     except Exception as error:
         emit("health", available=False, error=str(error), pythonVersion=sys.version.split()[0])
 
 
 def transcode(av, source, destination, fps, progress):
-    """Preserve rendered frames. Keep WebM when its audio cannot be copied safely."""
+    """Stream rendered frames and the mixed soundtrack into H.264/AAC MP4."""
     with av.open(str(source)) as incoming:
-        if incoming.streams.audio:
+        # Manim produces a single mixed soundtrack. Preserve the original file
+        # if this runtime cannot encode it, rather than dropping any audio.
+        audio = incoming.streams.audio[0] if incoming.streams.audio else None
+        if len(incoming.streams.audio) > 1 or (audio is not None and not has_encoder(av, "aac")):
             return source
         original = incoming.streams.video[0]
         with av.open(str(destination), mode="w", options={"movflags": "+faststart"}) as outgoing:
@@ -125,13 +128,45 @@ def transcode(av, source, destination, fps, progress):
             encoded.width, encoded.height = original.width, original.height
             encoded.pix_fmt = "yuv420p"
             encoded.bit_rate = max(2_000_000, original.width * original.height * fps // 12)
-            for index, frame in enumerate(incoming.decode(original)):
-                frame = frame.reformat(format="yuv420p")
-                frame.pts, frame.time_base = index, Fraction(1, fps)
-                for packet in encoded.encode(frame):
+            soundtrack = None
+            if audio is not None:
+                soundtrack = outgoing.add_stream("aac", rate=48000)
+                soundtrack.layout = audio.codec_context.layout.name
+                soundtrack.bit_rate = 192000
+                resampler = av.AudioResampler(format="fltp", layout=soundtrack.layout, rate=48000)
+            index, audio_cursor = 0, None
+
+            def write_audio(frame):
+                nonlocal audio_cursor
+                frame.pts, frame.time_base = audio_cursor, Fraction(1, 48000)
+                audio_cursor += frame.samples
+                for packet in soundtrack.encode(frame):
                     outgoing.mux(packet)
-                if index and index % (fps * 2) == 0:
-                    progress(index)
+
+            streams = [original] + ([audio] if audio is not None else [])
+            for packet in incoming.demux(*streams):
+                for frame in packet.decode():
+                    if packet.stream == original:
+                        frame = frame.reformat(format="yuv420p")
+                        frame.pts, frame.time_base = index, Fraction(1, fps)
+                        for output_packet in encoded.encode(frame):
+                            outgoing.mux(output_packet)
+                        index += 1
+                        if index % (fps * 2) == 0:
+                            progress(index)
+                    else:
+                        if audio_cursor is None:
+                            audio_cursor = round(float(frame.time or 0) * 48000)
+                        # WebM timestamps are millisecond-quantized; decoded PCM
+                        # is continuous. Use a sample clock after the first PTS.
+                        frame.pts = None
+                        for resampled in resampler.resample(frame):
+                            write_audio(resampled)
+            if soundtrack is not None:
+                for resampled in resampler.resample(None):
+                    write_audio(resampled)
+                for packet in soundtrack.encode():
+                    outgoing.mux(packet)
             for packet in encoded.encode():
                 outgoing.mux(packet)
     return destination

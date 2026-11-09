@@ -1,12 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { generateSmartMarkers } from './smart-marker';
 import type { Project } from './core/types';
+import { createAction } from './core/catalog';
+import { createEmptyProject } from './core/project';
 
 describe('smart-marker', () => {
   const baseProject: Project = {
-    schemaVersion: 1,
+    ...createEmptyProject(),
     name: '测试工程',
     scene: {
+      ...createEmptyProject().scene,
       width: 1920,
       height: 1080,
       fps: 30,
@@ -16,9 +19,9 @@ describe('smart-marker', () => {
       ]
     },
     actions: [
-      { id: 'a1', type: 'circle', fields: { name: '圆', duration: 2.0 } },
-      { id: 'a2', type: 'wait', fields: { duration: 1.5 } },
-      { id: 'a3', type: 'square', fields: { name: '方', duration: 2.5 } }
+      createAction('circle', { name: '圆', duration: 2.0 }),
+      createAction('wait', { duration: 1.5 }),
+      createAction('square', { name: '方', duration: 2.5 })
     ]
   };
 
@@ -75,4 +78,12 @@ describe('smart-marker', () => {
     const hasOriginal = markers.some(m => m.id === 'm1');
     expect(hasOriginal).toBe(true);
   });
+});
+
+ it('uses parallel and repeat timing, ignores unused source audio, and stops at unknown time', () => {
+  const group = createAction('parallel'); group.children = [createAction('wait', { duration: 2 }), createAction('wait', { duration: 4 })];
+  const repeat = createAction('repeat', { count: 3 }); repeat.children = [createAction('wait', { duration: 2 })];
+  const p = { ...createEmptyProject(), actions: [createAction('circle', { appear: 'none' }), group, repeat, createAction('code'), createAction('wait')] };
+  expect(generateSmartMarkers(p, { mode: 'cuts', replaceExisting: true }).map(m => m.time)).toEqual([0, 4, 10]);
+  expect(generateSmartMarkers(p, { mode: 'interval', cadenceSeconds: 2, replaceExisting: true }).map(m => m.time)).toEqual([2, 4, 6, 8, 10]);
 });

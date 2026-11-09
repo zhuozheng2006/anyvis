@@ -10,7 +10,7 @@ import { getApiEntry } from './api-registry.ts';
 import { createApiCompiler, API_RUNTIME } from './api-compiler.ts';
 import { createAction } from './catalog.ts';
 import { discoverPython } from '../../../server/server.mjs';
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment, behaviorEvidenceGap } from '../../../scripts/api-evidence.mjs';
 
 const execute = promisify(execFile);
 const ref = name => ({ $ref: name });
@@ -288,12 +288,16 @@ print("ANYVIS_COORDINATES " + json.dumps(results))
 `;
     const script = path.join(directory, 'coordinates.py');
     await writeFile(script, runner);
-    const output = await execute(health.python, [script], { cwd: directory, timeout: 100_000, maxBuffer: 4 * 1024 * 1024 });
+    const output = await execute(health.python, [script], { env: nativeExecutionEnvironment(health.python), cwd: directory, timeout: 100_000, maxBuffer: 4 * 1024 * 1024 });
     const line = output.stdout.split('\n').find(row => row.startsWith('ANYVIS_COORDINATES '));
     assert.ok(line, output.stdout);
     const outcomes = JSON.parse(line.slice('ANYVIS_COORDINATES '.length));
     assert.equal(outcomes.length, cases.length);
-    const failures = outcomes.filter(row => row.status !== 'verified');
+    for (const [index, outcome] of outcomes.entries()) {
+      const reason = behaviorEvidenceGap(cases[index].id, cases[index].check, getApiEntry(cases[index].id));
+      if (outcome.status === 'verified' && reason) Object.assign(outcome, { status: 'fixture_gap', reason });
+    }
+    const failures = outcomes.filter(row => row.status === 'failed');
     const apiIds = [...new Set(outcomes.filter(row => row.status === 'verified').map(row => row.apiId))].sort();
     const fixture = 'src/studio/core/api-coordinates.native.spec-node.mjs';
     const reportPath = process.env.ANYVIS_API_COORDINATES_REPORT || path.resolve('artifacts/api/native-coordinates-evidence.json');

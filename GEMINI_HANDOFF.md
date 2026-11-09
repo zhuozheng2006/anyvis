@@ -1,6 +1,8 @@
 # AnyVis → Gemini 开发交接
 
-> **接手前先读 [2026-11-09 独立验收报告](docs/acceptance-2026-11-09.md)。** 本文件中的旧完成度与覆盖结论须以新报告为准；当前仍有阻塞缺陷，尚未完成修复后的复验。
+> **后续修复已完成三轮复验**：[2026-11-09 修复报告](docs/fixes-2026-11-09.md)，623 项应用测试、30 项 API 原生测试及新增 Manim 检查通过；功能限制与完整覆盖缺口仍需明确区分。
+
+> **2026-11-09 独立验收**：[验收报告与修复清单](docs/acceptance-2026-11-09.md)。此前的全覆盖与完成度声明须以独立验收和后续修复复验为准。
 
 更新：2026-11-09（北京时间）。本文件是接手入口；历史验证过程见 [验证记录](docs/verification.md)，产品交互约定见 [编辑器设计](docs/editor-timeline-design.md)。
 
@@ -9,11 +11,11 @@
 AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器制作真实 Manim 动画的应用，有浏览器本地服务和 Electron 桌面版。开发版本 **0.5.0**。不要重写项目或换掉现有时间轴库，接着补功能、做真实验证、发现问题后修复。
 
 - 仓库：<https://github.com/zhuozheng2006/anyvis>，主分支 `main`。
-- 本次交接前主分支：`20f588cb37c5ce9d724495e86d0b30c946eaec79`；交接文档提交会在它之后。开始工作时重新读取当前 HEAD，勿硬编码旧 HEAD 推送。
+- 本轮本地 Git 基线为 `fd46a5c`；前两轮修复已提交开发分支 `codex/verified-studio-fixes-20261109` 的 `c73e6e8`，后续通过 [PR #2](https://github.com/zhuozheng2006/anyvis/pull/2) 更新。尚未合并主分支或发布安装器；开始工作时重新读取远端分支，勿用本地旧 HEAD 覆盖远端。
 - 本机工作区：`/Users/zane/Documents/ChatGPT/AnyVis`。
-- 本地工作区完整关联 Git 仓库（分支 `main`，远端 `origin`），提交和推送可直接使用原生 Git 操作。
-- 已接入 Manim CE **0.20.1** 的 **2,293 个 API 入口**；**1,731 个**有原生行为证据，**562 个**尚无逐项行为证据（其中通用/Cairo 仅余 53 项，覆盖率达 97.0%；OpenGL 专属 509 项；已确证剩余 53 项通用接口全部属于抽象基类、静态类型协议、OpenGL 专属交互或上游缺陷，真正可执行调用的通用 Cairo API 达成 100% 覆盖闭环）。入口可生成调用不等于行为、参数组合或视觉结果全部正确。
-- 552 项应用测试（96 个测试文件）、30 项原生测试运行、6 项证据校验、11 项桌面检查通过。原生 worker、上传图片/配音、钢琴/无声真实视频回归通过。
+- 本地工作区关联 Git 仓库；提交前保留并核对全部已有修改，遵循当前环境的 Git 写入权限。
+- Manim CE **0.20.1** 注册 **2,293** 个入口；2026-11-09 清理弱断言并重跑 12 份证据后，当前有效计数 **1,538**，未验证 **755**。Cairo/shared 为 **1,461 / 1,760**（剩余 299），OpenGL 对象状态为 **77 / 533**（剩余 456）。旧 **1,731** 数字排除了 193 个证明力不足条目，不能宣称 Cairo 100% 或完整 API 覆盖。
+- 最新代码修复与实测见 [修复复验记录](docs/fixes-2026-11-09.md)。完整 API 原生测试 30/30、辅助 Node 2/2、Python 证据校验 7/7；当前 12 份证据指纹通过。桌面/媒体历史结果不得冒充本轮复验。
 - 最新三平台桌面构建通过。Linux **Mesa softpipe** 已实际绘制并验证一个 OpenGL 场景；本机 Mac 的 OpenGL 上下文仍不可用。
 - 当前没有待合并的 PR #1：它已获用户许可并成功合并。不存在需要再次询问的旧合并阻塞。
 
@@ -87,8 +89,8 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 - 舞台画布自由缩放、拖拽平移与沉浸全屏 (`StageZoomControls` / `stage-zoom.css`)：舞台 HUD 新增交互式缩放控制胶囊与原生全屏切换（`0.5x ~ 2.0x`，支持快捷键 `+`/`-` 步进、双击或点击百分比药丸秒级重置 100%、放大状态鼠标平移抓手画布与沉浸全屏预览），彻底解决复杂数学公式细小角标与微小几何网格难于精确对准与检查的问题。
 - 时间轴动作语义分类配色与视觉标签 (`timeline-category.ts` / `timeline.css`)：对标 DaVinci Resolve / Premiere Pro 与 Motion Canvas 工业级剪辑色彩语言，将动画片段自动归类为入场（翡翠绿 `#10b981`）、变换动效（蓝宝石 `#3b82f6`）、视觉强调（琥珀金 `#f59e0b`）、退场（玫瑰红 `#f43f5e`）、停顿（石板灰 `#94a3b8`）、配音（青碧 `#14b8a6`）、配乐（香槟金 `#d4b481`）与运镜（星空紫 `#a855f7`），片段左侧带有 3px 类别色带与紧凑分类徽标，并在工具栏提供“分类色彩 / 轨道色彩”一键瞬时切换。
 - 属性检视器数值拖拽微调、方向键步进、一键重置默认与 LaTeX 极速复制 (`ActionInspector.tsx` / `object-manager.css`)：对标 Figma 与 Blender，数字字段支持鼠标横向拖拽（↔）无级调节（Shift 加速 10x，Alt 微调 0.1x）以及上下方向键步进；所有属性偏离默认值时自动在标签旁显露“↺ 重置”图标按钮，一键撤销误调；针对公式对象提供 1-click “📋 复制” LaTeX 按钮，极大降低参数调校与公式迁移的操作摩擦。
-- 系统、文件与 TeX 工具链全量覆盖 (`systemAndFileUtilities`, +63 项原生 API，达 1,731 项)：涵盖文件操作底层、异常与弃用装饰器、代码高亮、字体注册、进阶分段与视频输出、TeX 全自动排错洞察等 14 组测试族。
-- 深度排查并记录 7 处 Manim CE 0.20.1 原生源码缺陷（`VectorScene`、`SpecialThreeDScene`、`ApplyPointwiseFunctionToCenter`、`SplitScreenCamera`、`VMobject.add_cubic_bezier_curves` 及 `print_tex_error`），并审计确证剩余 53 项通用/Cairo 接口全部属于非业务可调用项（抽象类、静态 Protocol、OpenGL 专属交互、桌面弹窗），真正可执行通用 Cairo API 达成 100% 覆盖。
+- 系统、文件与 TeX 工具链已加入测试，但其中只调用、不验证副作用的条目已降为 fixture_gap；不再将它们计作行为覆盖。
+- 曾记录部分 Manim 上游限制；这些限制不能支持“其余 Cairo 全不可调用”的结论。具体未验证入口以当前机器报告为准。
 - CI 自动化与桌面端打包健壮性：修复 Linux GitHub 2-core runner 运行 ASAR 封装应用时偶发看门狗超时的问题，支持 `--smoke-timeout` 参数并将打包环境等待提升至 120s（外部看门狗 150s），在 Electron 宿主注入阶段性诊断日志打点（`Session / Mount / API / Video / Restart / Storage`），Linux/Windows/macOS 打包发布 100% 绿灯。
 - 前端构建代码分包优化（`vite.config.ts`）：按 `api-registry`、`vendor-blockly`、`vendor-codemirror`、`vendor-math`、`vendor-three`、`vendor-timeline` 等模块拆分，`StudioApp.js` 主入口体积从 3,453 kB 降至 330 kB。
 - 空格播放、逐帧定位、Home/End、Shift + 方向键、吸附快捷键；长代码滚动修复。
@@ -158,9 +160,9 @@ AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器�
 
 ## 6. API 覆盖如何继续
 
-权威文件是 [机器报告](docs/research/api-registry-verification.json) 与 [覆盖说明](docs/Manim-API-Coverage.md)。当前 12 份原生报告合并去重为 1,094 项，不能把各 fixture 的数量直接相加。
+权威文件是 [机器报告](docs/research/api-registry-verification.json) 与 [覆盖说明](docs/Manim-API-Coverage.md)。当前 12 份原生报告合并去重为 1,538 项，不能把各 fixture 的数量直接相加。
 
-剩余入口：743 项通用/Cairo，456 项 OpenGL；按种类是实例方法 768、类 207、函数 116、属性 69、静态方法 29、类方法 10。机器报告 `entriesWithoutBehaviorEvidence` 给出每一项 ID。
+剩余入口：299 项通用/Cairo，456 项 OpenGL；按种类是实例方法 587、类 80、函数 43、属性 24、静态方法 17、类方法 4。机器报告 `entriesWithoutBehaviorEvidence` 给出每一项 ID。
 
 接下来的首批任务建议：
 
@@ -288,4 +290,4 @@ LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=softpipe ANYVIS_REQUIRE_OPENGL=1 \
 
 给 Gemini 的最短启动指令：
 
-> 请先读仓库根目录 GEMINI_HANDOFF.md，再检查当前源码与 main 差异。从已有 1,094 项行为证据的基线继续推进 AnyVis，不重写架构。优先补真实 API 行为验证并修复发现的问题，同时按既定对象管理器/积木/时间轴/只读代码设计改善体验。只统计有具体断言的通过项，改编译器后重跑源码绑定证据；发布后检查 CI 和远端文件一致性。
+> 请先读仓库根目录 GEMINI_HANDOFF.md，再检查当前源码与 main 差异。从已有 1,538 项行为证据的基线继续推进 AnyVis，不重写架构。优先补真实 API 行为验证并修复发现的问题，同时按既定对象管理器/积木/时间轴/只读代码设计改善体验。只统计有具体断言的通过项，改编译器后重跑源码绑定证据；发布后检查 CI 和远端文件一致性。

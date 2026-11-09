@@ -25,6 +25,7 @@ export const GraphPlaygroundModal: React.FC<GraphPlaygroundModalProps> = ({
   project,
   onApply,
 }) => {
+  const [applyError, setApplyError] = useState('');
   const [selectedPresetId, setSelectedPresetId] = useState<GraphPresetId>('complete');
   const [vertices, setVertices] = useState<GraphVertex[]>([]);
   const [edges, setEdges] = useState<GraphEdge[]>([]);
@@ -138,16 +139,21 @@ export const GraphPlaygroundModal: React.FC<GraphPlaygroundModalProps> = ({
   };
 
   const handleCopyPython = async () => {
-    const code = generateGraphPythonCode(preset);
+    const code = generateGraphPythonCode({ ...preset, vertices, edges });
     await navigator.clipboard.writeText(code);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleApplyToProject = () => {
-    const result = createGraphActions(project, preset);
-    onApply(result.project, result.actionIds);
-    onClose();
+    setApplyError('');
+    try {
+      const result = createGraphActions(project, { ...preset, vertices, edges });
+      onApply(result.project, result.actionIds);
+      onClose();
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -167,6 +173,7 @@ export const GraphPlaygroundModal: React.FC<GraphPlaygroundModalProps> = ({
             </svg>
             图论网络与拓扑交互台 (Graph Theory & Network Topology)
           </h2>
+          {applyError && <p role="alert" style={{ color: '#fca5a5' }}>{applyError}</p>}
           <button className="graph-close-btn" onClick={onClose} title="关闭">
             ✕
           </button>

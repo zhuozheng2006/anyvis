@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 // @vitest-environment jsdom
 import React, { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
@@ -90,7 +91,8 @@ describe('VectorFieldPlaygroundModal', () => {
     expect(onApply).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
     const [appliedProject, actionIds] = onApply.mock.calls[0];
-    expect(appliedProject.actions.length).toBe(3);
-    expect(actionIds.length).toBe(3);
+    expect(compileProject(appliedProject).diagnostics).toEqual([]);
+    expect(appliedProject.actions.filter((a: {type:string}) => a.type === 'arrow').length).toBeGreaterThan(20);
+    expect(actionIds.length).toBe(appliedProject.actions.length);
   });
 });

@@ -1,4 +1,8 @@
 import type { Action, Project } from './core/types';
+import { createAction } from './core/catalog';
+import { compileProject } from './core/compiler';
+import { createEmptyProject } from './core/project';
+import { appendPlaygroundActions, playgroundApi, playgroundName } from './playground-actions';
 
 export interface Vector3D {
   x: number;
@@ -7,6 +11,8 @@ export interface Vector3D {
 }
 
 export type Vector3DOperation = 'add' | 'dot' | 'cross';
+export interface Vector3DView { azimuth: number; elevation: number; }
+const DEFAULT_VECTOR_VIEW: Vector3DView = { azimuth: 35, elevation: 25 };
 
 export interface Vector3DPreset {
   id: string;
@@ -148,313 +154,38 @@ export function project3DTo2D(
   return { x: screenX, y: screenY, depth: y2 };
 }
 
-export function generateVector3DManimCode(
-  u: Vector3D,
-  v: Vector3D,
-  operation: Vector3DOperation
-): string {
-  const { degrees } = angle3D(u, v);
-  const angStr = degrees.toFixed(1);
-
-  let opCode = '';
-  if (operation === 'add') {
-    const sum = add3D(u, v);
-    opCode = `
-        # 向量相加 (平行四边形法则)
-        sum_vec = [${sum.x}, ${sum.y}, ${sum.z}]
-        arrow_sum = Arrow3D(
-            start=ORIGIN,
-            end=axes.c2p(*sum_vec),
-            color=YELLOW,
-            thickness=0.03
-        )
-        
-        # 辅助虚线
-        line_u_sum = DashedLine(axes.c2p(*u_coords), axes.c2p(*sum_vec), color=WHITE, stroke_opacity=0.5)
-        line_v_sum = DashedLine(axes.c2p(*v_coords), axes.c2p(*sum_vec), color=WHITE, stroke_opacity=0.5)
-        
-        formula = MathTex(r"\\vec{u} + \\vec{v} = \\begin{bmatrix} ${sum.x.toFixed(1)} \\\\ ${sum.y.toFixed(1)} \\\\ ${sum.z.toFixed(1)} \\end{bmatrix}", color=YELLOW).to_corner(UL)
-        
-        self.play(FadeIn(line_u_sum), FadeIn(line_v_sum))
-        self.play(Create(arrow_sum), Write(formula))`;
-  } else if (operation === 'dot') {
-    const dotVal = dot3D(u, v).toFixed(2);
-    const proj = project3D(u, v);
-    opCode = `
-        # 内积与投影
-        proj_coords = [${proj.x.toFixed(2)}, ${proj.y.toFixed(2)}, ${proj.z.toFixed(2)}]
-        arrow_proj = Arrow3D(
-            start=ORIGIN,
-            end=axes.c2p(*proj_coords),
-            color=GREEN,
-            thickness=0.035
-        )
-        drop_line = DashedLine(axes.c2p(*u_coords), axes.c2p(*proj_coords), color=GRAY, stroke_opacity=0.7)
-        
-        formula = MathTex(
-            r"\\vec{u} \\cdot \\vec{v} = |\\vec{u}||\\vec{v}|\\cos(${angStr}^\\circ) = ${dotVal}",
-            color=GREEN
-        ).to_corner(UL)
-        
-        self.play(Create(drop_line))
-        self.play(Create(arrow_proj), Write(formula))`;
-  } else {
-    const cross = cross3D(u, v);
-    const area = magnitude3D(cross).toFixed(2);
-    opCode = `
-        # 叉乘与张成平行四边形
-        cross_coords = [${cross.x.toFixed(2)}, ${cross.y.toFixed(2)}, ${cross.z.toFixed(2)}]
-        arrow_cross = Arrow3D(
-            start=ORIGIN,
-            end=axes.c2p(*cross_coords),
-            color=PURPLE_B,
-            thickness=0.035
-        )
-        
-        # 张成的空间平行四边形
-        sum_vec = [${u.x + v.x}, ${u.y + v.y}, ${u.z + v.z}]
-        poly = Polygon(
-            axes.c2p(0, 0, 0),
-            axes.c2p(*u_coords),
-            axes.c2p(*sum_vec),
-            axes.c2p(*v_coords),
-            color=PURPLE,
-            fill_opacity=0.35,
-            stroke_width=1.5
-        )
-        
-        formula = MathTex(
-            r"\\vec{w} = \\vec{u} \\times \\vec{v} = \\begin{bmatrix} ${cross.x.toFixed(1)} \\\\ ${cross.y.toFixed(1)} \\\\ ${cross.z.toFixed(1)} \\end{bmatrix},\\; \\text{面积} = ${area}",
-            color=PURPLE_B
-        ).to_corner(UL)
-        
-        self.play(FadeIn(poly))
-        self.play(Create(arrow_cross), Write(formula))`;
-  }
-
-  return `from manim import *
-
-class Vector3DScene(ThreeDScene):
-    def construct(self):
-        self.set_camera_orientation(phi=65 * DEGREES, theta=-45 * DEGREES)
-        self.begin_ambient_camera_rotation(rate=0.1)
-
-        axes = ThreeDAxes(
-            x_range=[-3, 3, 1],
-            y_range=[-3, 3, 1],
-            z_range=[-3, 3, 1],
-            x_length=6,
-            y_length=6,
-            z_length=6
-        )
-        self.play(Create(axes))
-
-        u_coords = [${u.x}, ${u.y}, ${u.z}]
-        v_coords = [${v.x}, ${v.y}, ${v.z}]
-
-        arrow_u = Arrow3D(start=ORIGIN, end=axes.c2p(*u_coords), color=BLUE, thickness=0.03)
-        arrow_v = Arrow3D(start=ORIGIN, end=axes.c2p(*v_coords), color=RED, thickness=0.03)
-        
-        label_u = MathTex(r"\\vec{u}", color=BLUE).next_to(axes.c2p(*u_coords), UP)
-        label_v = MathTex(r"\\vec{v}", color=RED).next_to(axes.c2p(*v_coords), RIGHT)
-
-        self.play(Create(arrow_u), Write(label_u))
-        self.play(Create(arrow_v), Write(label_v))
-${opCode}
-        self.wait(2)
-`;
+export function generateVector3DManimCode(u: Vector3D, v: Vector3D, operation: Vector3DOperation, view: Vector3DView = DEFAULT_VECTOR_VIEW): string {
+  return compileProject(createVector3DActions(createEmptyProject(), u, v, operation, view).project).code;
 }
 
-export function createVector3DActions(
-  project: Project,
-  u: Vector3D,
-  v: Vector3D,
-  operation: Vector3DOperation
-): { project: Project; actionCount: number } {
-  const actions: Action[] = [];
-  const uid = () => 'vec3d_' + Math.random().toString(36).slice(2, 9);
-
-  // 1. Create 3D Axes
-  const axesId = uid();
-  actions.push({
-    id: axesId,
-    type: 'three_d_axes_create',
-    fields: {
-      name: 'axes3d',
-      x_min: -3,
-      x_max: 3,
-      y_min: -3,
-      y_max: 3,
-      z_min: -3,
-      z_max: 3,
-    },
-  });
-
-  // 2. Play creation animation for axes
-  actions.push({
-    id: uid(),
-    type: 'animate_create',
-    fields: {
-      target: 'axes3d',
-      duration: 1.0,
-    },
-  });
-
-  // 3. Create Vector u
-  const uId = uid();
-  actions.push({
-    id: uId,
-    type: 'arrow_create',
-    fields: {
-      name: 'vec_u',
-      start: '0,0,0',
-      end: `${u.x},${u.y},${u.z}`,
-      color: '#38bdf8',
-    },
-  });
-
-  // 4. Create Vector v
-  const vId = uid();
-  actions.push({
-    id: vId,
-    type: 'arrow_create',
-    fields: {
-      name: 'vec_v',
-      start: '0,0,0',
-      end: `${v.x},${v.y},${v.z}`,
-      color: '#f43f5e',
-    },
-  });
-
-  // 5. Fade in vectors
-  actions.push({
-    id: uid(),
-    type: 'animate_fade_in',
-    fields: {
-      target: 'vec_u',
-      duration: 0.8,
-    },
-  });
-  actions.push({
-    id: uid(),
-    type: 'animate_fade_in',
-    fields: {
-      target: 'vec_v',
-      duration: 0.8,
-    },
-  });
-
-  // 6. Operation-specific result
-  if (operation === 'add') {
-    const sum = add3D(u, v);
-    actions.push({
-      id: uid(),
-      type: 'arrow_create',
-      fields: {
-        name: 'vec_sum',
-        start: '0,0,0',
-        end: `${sum.x},${sum.y},${sum.z}`,
-        color: '#facc15',
-      },
-    });
-    actions.push({
-      id: uid(),
-      type: 'animate_create',
-      fields: {
-        target: 'vec_sum',
-        duration: 1.0,
-      },
-    });
-    actions.push({
-      id: uid(),
-      type: 'tex_create',
-      fields: {
-        name: 'sum_label',
-        text: `\\vec{u} + \\vec{v} = (${sum.x.toFixed(1)}, ${sum.y.toFixed(1)}, ${sum.z.toFixed(1)})`,
-        color: '#facc15',
-        scale: 0.8,
-      },
-    });
-  } else if (operation === 'dot') {
-    const dotVal = dot3D(u, v);
-    const proj = project3D(u, v);
-    actions.push({
-      id: uid(),
-      type: 'arrow_create',
-      fields: {
-        name: 'vec_proj',
-        start: '0,0,0',
-        end: `${proj.x.toFixed(2)},${proj.y.toFixed(2)},${proj.z.toFixed(2)}`,
-        color: '#4ade80',
-      },
-    });
-    actions.push({
-      id: uid(),
-      type: 'animate_create',
-      fields: {
-        target: 'vec_proj',
-        duration: 1.0,
-      },
-    });
-    actions.push({
-      id: uid(),
-      type: 'tex_create',
-      fields: {
-        name: 'dot_label',
-        text: `\\vec{u} \\cdot \\vec{v} = ${dotVal.toFixed(2)}`,
-        color: '#4ade80',
-        scale: 0.8,
-      },
-    });
-  } else {
-    const cross = cross3D(u, v);
-    actions.push({
-      id: uid(),
-      type: 'arrow_create',
-      fields: {
-        name: 'vec_cross',
-        start: '0,0,0',
-        end: `${cross.x.toFixed(2)},${cross.y.toFixed(2)},${cross.z.toFixed(2)}`,
-        color: '#c084fc',
-      },
-    });
-    actions.push({
-      id: uid(),
-      type: 'animate_create',
-      fields: {
-        target: 'vec_cross',
-        duration: 1.0,
-      },
-    });
-    actions.push({
-      id: uid(),
-      type: 'tex_create',
-      fields: {
-        name: 'cross_label',
-        text: `\\vec{w} = \\vec{u} \\times \\vec{v} = (${cross.x.toFixed(1)}, ${cross.y.toFixed(1)}, ${cross.z.toFixed(1)})`,
-        color: '#c084fc',
-        scale: 0.8,
-      },
-    });
-  }
-
-  // 7. Wait 2 seconds
-  actions.push({
-    id: uid(),
-    type: 'wait',
-    fields: {
-      duration: 2.0,
-    },
-  });
-
-  const nextProject: Project = {
-    ...project,
-    scene: {
-      ...project.scene,
-      dimension: '3d',
-    },
-    actions: [...project.actions, ...actions],
+export function createVector3DActions(project: Project, u: Vector3D, v: Vector3D, operation: Vector3DOperation, view: Vector3DView = DEFAULT_VECTOR_VIEW): { project: Project; actionCount: number } {
+  if (![u.x, u.y, u.z, v.x, v.y, v.z].every(Number.isFinite)) throw Error('向量分量必须为有限数值。');
+  if (!['add', 'dot', 'cross'].includes(operation)) throw Error('未知向量运算。');
+  if (![view.azimuth, view.elevation].every(Number.isFinite) || Math.abs(view.elevation) > 90) throw Error('预览视角无效。');
+  // Match the SVG yaw/pitch orientation: camera theta = -90 - yaw,
+  // phi = 90 - elevation. Manim retains its native perspective projection.
+  const theta = -90 - ((view.azimuth % 360) + 360) % 360;
+  const actions: Action[] = [createAction('camera', { phi: 90 - view.elevation, theta, zoom: 0.9, duration: 0 }), createAction('three_axes', { name: playgroundName('三维坐标系'), range: 3, length: 6 })];
+  const point = (v: Vector3D) => [v.x, v.y, v.z];
+  const arrow = (label: string, v: Vector3D, color: string) => {
+    const name = playgroundName(label);
+    // Arrow3D cannot represent a zero-length vector. A colored point at the
+    // origin is its honest degenerate representation, with value in the label.
+    actions.push(magnitude3D(v) < 1e-12
+      ? playgroundApi('Dot3D', name, { point: [0, 0, 0], radius: 0.04, color }, { mode: 'show' })
+      : playgroundApi('Arrow3D', name, { start: [0, 0, 0], end: point(v), color }, { mode: 'store' }));
+    if (magnitude3D(v) >= 1e-12) actions.push(createAction('create', { target: name, duration: 0.8 }));
   };
-
-  return { project: nextProject, actionCount: actions.length };
+  arrow('向量u', u, '#38bdf8'); arrow('向量v', v, '#f43f5e');
+  const result = operation === 'add' ? add3D(u, v) : operation === 'dot' ? project3D(u, v) : cross3D(u, v);
+  const color = operation === 'add' ? '#facc15' : operation === 'dot' ? '#4ade80' : '#c084fc';
+  if (operation === 'cross' && magnitude3D(result) > 1e-12) {
+    actions.push(playgroundApi('Polygon', playgroundName('张成面积'), { vertices: [[0, 0, 0], point(u), point(add3D(u, v)), point(v)], color, fill_opacity: 0.3, stroke_width: 1 }, { mode: 'show' }));
+  }
+  arrow(operation === 'dot' ? '投影' : '结果向量', result, color);
+  const text = operation === 'dot' ? `u · v = ${dot3D(u, v).toFixed(2)}` : `${operation === 'add' ? 'u + v' : 'u × v'} = (${result.x.toFixed(2)}, ${result.y.toFixed(2)}, ${result.z.toFixed(2)})`;
+  const label = playgroundName('向量运算结果');
+  actions.push(createAction('text', { name: label, text, color, fontSize: 28, y: 3.2, maxWidth: 12, appear: 'hidden' }), createAction('fixed_in_frame', { target: label }), createAction('wait', { duration: 2 }));
+  const next = appendPlaygroundActions(project, actions, '3d');
+  return { project: next.project, actionCount: actions.length };
 }

@@ -1,4 +1,8 @@
 import type { Project, Action } from './core/types';
+import { createAction } from './core/catalog';
+import { compileProject } from './core/compiler';
+import { createEmptyProject } from './core/project';
+import { appendPlaygroundActions, playgroundApi, playgroundName } from './playground-actions';
 
 export type RiemannMode = 'left' | 'right' | 'mid' | 'trapezoid';
 
@@ -211,181 +215,25 @@ export function computeRiemannSum(
   };
 }
 
-/**
- * Generates standalone, runnable Manim CE Python code for 3B1B-style Riemann sum visualization.
- */
-export function generateRiemannPythonCode(
-  preset: RiemannPreset,
-  a: number,
-  b: number,
-  n: number,
-  mode: RiemannMode = 'mid'
-): string {
-  const modeParam = mode === 'left' ? 'input_sample_type="left"' : mode === 'right' ? 'input_sample_type="right"' : 'input_sample_type="center"';
-
-  return `from manim import *
-import numpy as np
-
-class RiemannSumScene(Scene):
-    """
-    3Blue1Brown-style Riemann Sum & Definite Integral Visualization.
-    Function: ${preset.latex}
-    Interval: [${a.toFixed(2)}, ${b.toFixed(2)}], Partitions: n = ${n}
-    """
-    def construct(self):
-        # 1. 建立坐标系
-        axes = Axes(
-            x_range=[${preset.xRange[0]}, ${preset.xRange[1]}, 1],
-            y_range=[${preset.yRange[0]}, ${preset.yRange[1]}, ${(preset.yRange[1] - preset.yRange[0]) > 6 ? 2 : 1}],
-            x_length=9,
-            y_length=5.5,
-            axis_config={"color": BLUE_B, "stroke_width": 2},
-            tips=True,
-        ).shift(DOWN * 0.5)
-        labels = axes.get_axis_labels(x_label="x", y_label="f(x)")
-
-        # 2. 绘制原函数曲线
-        curve = axes.plot(
-            lambda x: ${preset.fnStr},
-            color=YELLOW,
-            stroke_width=3.5,
-        )
-        curve_label = MathTex("${preset.latex}", color=YELLOW).to_corner(UL).shift(RIGHT * 0.5)
-
-        # 3. 初始粗分划黎曼矩形群 (n = 6)
-        dx_init = ${(b - a) / 6}
-        rects_coarse = axes.get_riemann_rectangles(
-            curve,
-            x_range=[${a.toFixed(2)}, ${b.toFixed(2)}],
-            dx=dx_init,
-            ${modeParam},
-            color=[BLUE, TEAL],
-            stroke_width=1,
-            stroke_color=WHITE,
-            fill_opacity=0.6,
-        )
-
-        # 4. 目标分划黎曼矩形群 (n = ${n})
-        dx_fine = ${(b - a) / n}
-        rects_fine = axes.get_riemann_rectangles(
-            curve,
-            x_range=[${a.toFixed(2)}, ${b.toFixed(2)}],
-            dx=dx_fine,
-            ${modeParam},
-            color=[TEAL, GREEN_C],
-            stroke_width=0.5,
-            stroke_color=WHITE,
-            fill_opacity=0.7,
-        )
-
-        # 5. 精确光滑积分区域 (dx -> 0)
-        area_exact = axes.get_area(
-            curve,
-            x_range=[${a.toFixed(2)}, ${b.toFixed(2)}],
-            color=[GREEN, YELLOW],
-            opacity=0.5,
-        )
-
-        # 6. 数学公式与定积分符号
-        formula = MathTex(
-            r"\\int_{${a.toFixed(1)}}^{${b.toFixed(1)}} " + r"${preset.latex.replace('f(x) = ', '')} \\, dx",
-            color=GREEN_B,
-        ).to_corner(UR).shift(LEFT * 0.5)
-
-        # 7. 动画演示序列
-        self.play(Create(axes), Write(labels), run_time=1.2)
-        self.play(Create(curve), Write(curve_label), run_time=1.5)
-        self.wait(0.5)
-
-        # 引入粗分划矩形
-        self.play(Create(rects_coarse), run_time=1.8)
-        self.wait(1.0)
-
-        # 极限细分过程 (n: 6 -> ${n})
-        self.play(
-            Transform(rects_coarse, rects_fine),
-            run_time=2.2,
-            rate_func=smooth,
-        )
-        self.wait(0.8)
-
-        # 最终平滑过渡到定积分连续面积与积分表达式
-        self.play(
-            Transform(rects_coarse, area_exact),
-            Write(formula),
-            run_time=1.8,
-        )
-        self.wait(2.0)
-`;
+/** Export exactly the same geometry and selected quadrature rule as insertion. */
+export function generateRiemannPythonCode(preset: RiemannPreset, a: number, b: number, n: number, mode: RiemannMode = 'mid'): string {
+  return compileProject(createRiemannActions(createEmptyProject(), preset, a, b, n, mode).project).code;
 }
 
-/**
- * Creates AnyVis project actions for inserting the Riemann coordinate axes, curve, and area.
- */
-export function createRiemannActions(
-  project: Project,
-  preset: RiemannPreset,
-  a: number,
-  b: number,
-  n: number,
-  mode: RiemannMode = 'mid'
-): { project: Project; actionIds: string[] } {
-  const ts = Date.now().toString(36).slice(-4);
-  const axesName = `坐标系_黎曼_${ts}`;
-  const curveName = `原函数_${preset.id}_${ts}`;
-  const areaName = `定积分面积_${preset.id}_${ts}`;
-
-  const axesAction: Action = {
-    id: `action_axes_${ts}`,
-    type: 'create_axes',
-    fields: {
-      name: axesName,
-      xMin: preset.xRange[0],
-      xMax: preset.xRange[1],
-      xStep: 1,
-      yMin: preset.yRange[0],
-      yMax: preset.yRange[1],
-      yStep: 1,
-    },
-    children: [],
-  };
-
-  const curveAction: Action = {
-    id: `action_curve_${ts}`,
-    type: 'create_plot',
-    fields: {
-      name: curveName,
-      receiver: axesName,
-      fn: preset.fnStr,
-      xMin: a,
-      xMax: b,
-      color: '#e2b340',
-    },
-    children: [],
-  };
-
-  const areaAction: Action = {
-    id: `action_area_${ts}`,
-    type: 'create_plot',
-    fields: {
-      name: areaName,
-      receiver: axesName,
-      fn: preset.fnStr,
-      xMin: a,
-      xMax: b,
-      color: '#58c4dd',
-      opacity: 0.5,
-      note: `黎曼和分划: n=${n}, mode=${mode}`,
-    },
-    children: [],
-  };
-
-  const nextActions = [...project.actions, axesAction, curveAction, areaAction];
-  return {
-    project: {
-      ...project,
-      actions: nextActions,
-    },
-    actionIds: [axesAction.id, curveAction.id, areaAction.id],
-  };
+export function createRiemannActions(project: Project, preset: RiemannPreset, a: number, b: number, n: number, mode: RiemannMode = 'mid'): { project: Project; actionIds: string[] } {
+  if (![a, b, n].every(Number.isFinite) || a >= b || n < 1 || n > 200 || !Number.isInteger(n)) throw Error('积分区间需要左端小于右端，分划数须为 1–200 的整数。');
+  if (!['left', 'right', 'mid', 'trapezoid'].includes(mode)) throw Error('未知积分近似方法。');
+  if (preset.id === 'reciprocal' && a <= 0 && b >= 0) throw Error('积分区间不能跨越 1/x 在 0 处的奇点。');
+  const result = computeRiemannSum(preset.fn, a, b, n, mode);
+  if (!Number.isFinite(result.sum) || result.rectangles.some(r => !Number.isFinite(r.height))) throw Error('积分采样包含非有限值。');
+  const axes = playgroundName('坐标系_黎曼'), curve = playgroundName('原函数');
+  const actions: Action[] = [createAction('axes', { name: axes, xMin: preset.xRange[0], xMax: preset.xRange[1], yMin: preset.yRange[0], yMax: preset.yRange[1], xLength: 9, yLength: 5.5 }), createAction('function_plot', { name: curve, axes, expression: preset.fnStr.replace(/np\./g, '').replace(/\*\*/g, '^'), xMin: a, xMax: b, color: '#e2b340' })];
+  const c2p = (x: number, y: number) => ({ $call: { api: 'CoordinateSystem.coords_to_point', receiver: { $ref: axes }, args: [x, y] } });
+  for (const rectangle of result.rectangles) {
+    const hLeft = mode === 'trapezoid' ? rectangle.heightLeft! : rectangle.height;
+    const hRight = mode === 'trapezoid' ? rectangle.heightRight! : rectangle.height;
+    actions.push(playgroundApi('Polygon', playgroundName(mode === 'trapezoid' ? '梯形' : '黎曼矩形'), { vertices: [c2p(rectangle.xLeft, 0), c2p(rectangle.xRight, 0), c2p(rectangle.xRight, hRight), c2p(rectangle.xLeft, hLeft)], color: '#58c4dd', fill_opacity: 0.55, stroke_width: 0.5 }, { mode: 'show' }));
+  }
+  actions.push(createAction('text', { name: playgroundName('积分近似值'), text: `${mode} · n=${n} · S=${result.sum.toFixed(6)}`, fontSize: 26, y: 3.4, maxWidth: 12, appear: 'none' }), createAction('wait', { duration: 2 }));
+  return appendPlaygroundActions(project, actions);
 }

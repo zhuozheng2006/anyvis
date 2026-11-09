@@ -16,13 +16,13 @@ const dummyProject: Project = {
   actions: [
     {
       id: 'a1',
-      type: 'create_circle',
+      type: 'circle',
       fields: { name: 'Dot_1', x: -2, y: 1, radius: 0.5 },
       children: [],
     },
     {
       id: 'a2',
-      type: 'create_circle',
+      type: 'circle',
       fields: { name: 'Dot_2', x: 2, y: -1, radius: 0.5 },
       children: [],
     },

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { createAction } from './core/catalog';
 import {
   EASING_PRESETS,
   sampleCubicBezier,
@@ -57,16 +58,10 @@ describe('easing curve engine', () => {
     expect(py).toContain('bezier');
   });
 
-  it('applies custom rate function to action fields safely', () => {
-    const action = {
-      id: 'act_1',
-      type: 'move_to',
-      fields: { target: 'dot1', rate_func: 'linear' },
-      children: [],
-    };
-
-    const updated = applyRateFuncToAction(action, 'custom_bezier', [0.34, 1.56, 0.64, 1]);
-    expect(updated.fields.rate_func).toBe('custom_bezier');
-    expect(updated.fields.bezier_coords).toBe('0.34,1.56,0.64,1');
+  it('applies supported linear easing and rejects unsupported custom curves instead of silently ignoring them', () => {
+    const action = createAction('shift');
+    expect(applyRateFuncToAction(action, 'linear', [0, 0, 1, 1]).fields.easing).toBe('linear');
+    expect(() => applyRateFuncToAction(action, 'custom', [0.34, 1.56, 0.64, 1])).toThrow('Python');
+    expect(() => applyRateFuncToAction(createAction('wait'), 'linear', [0, 0, 1, 1])).toThrow('动画');
   });
 });

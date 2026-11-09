@@ -23,6 +23,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
   project,
   onApply,
 }) => {
+  const [generationError, setGenerationError] = useState('');
   const [shots, setShots] = useState<CameraShot[]>(DEFAULT_CAMERA_SHOTS);
   const [selectedShotId, setSelectedShotId] = useState<string>('shot_1');
   const [playbackTime, setPlaybackTime] = useState<number>(0);
@@ -71,8 +72,8 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
 
   // Viewfinder box in scene units
   const currentBox = useMemo(
-    () => getViewfinderBox(currentPose.x, currentPose.y, currentPose.zoom),
-    [currentPose],
+    () => getViewfinderBox(currentPose.x, currentPose.y, currentPose.zoom, 8 * project.scene.width / project.scene.height),
+    [currentPose, project.scene.width, project.scene.height],
   );
 
   // Scene coordinates to SVG coordinates
@@ -120,16 +121,26 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
   };
 
   const handleCopyPython = async () => {
+    setGenerationError('');
+    try {
     const code = generateCameraDirectorPythonCode(shots);
     await navigator.clipboard.writeText(code);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
+    } catch (error) {
+      setGenerationError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleApplyToProject = () => {
+    setGenerationError('');
+    try {
     const result = createCameraDirectorActions(project, shots);
     onApply(result.project, result.actionIds);
     onClose();
+    } catch (error) {
+      setGenerationError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -356,7 +367,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
 
                   <div className="shot-params-grid">
                     <div className="shot-param-item">
-                      <span>时刻:</span>
+                      <span>到达时刻:</span>
                       <input
                         type="number"
                         step="0.5"
@@ -373,7 +384,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                         type="number"
                         step="0.2"
                         min="0.2"
-                        value={s.duration}
+                        title="第一镜头为初始构图；其余时长是到达前的过渡时长" value={s.duration}
                         onChange={(e) =>
                           handleUpdateShot(s.id, { duration: parseFloat(e.target.value) || 1 })
                         }
@@ -425,15 +436,16 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
 
         {/* Footer */}
         <div className="camera-footer">
+          {generationError && <div role="alert" style={{ color: '#ef4444' }}>{generationError}</div>}
           <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-            黄色虚线框显示实时摄影机取景构图视口（符合三分法则构图线）
+            运镜追加在现有动画之后；时刻表示本片段内的到达时间，第一个镜头为初始构图。
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn-secondary" onClick={handleCopyPython}>
               {isCopied ? '✓ 已复制 Python 代码' : '复制代码 (Manim CE)'}
             </button>
             <button className="btn-primary" onClick={handleApplyToProject}>
-              插入到当前场景
+              追加运镜片段
             </button>
           </div>
         </div>

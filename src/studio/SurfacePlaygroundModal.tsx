@@ -24,6 +24,7 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
   project,
   onApply,
 }) => {
+  const [applyError, setApplyError] = useState('');
   const [selectedPresetId, setSelectedPresetId] = useState<SurfacePresetId>('saddle');
   const [camera, setCamera] = useState<CameraOrientation>({
     phi: 70,
@@ -124,9 +125,14 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
   };
 
   const handleApplyToProject = () => {
-    const result = createSurfaceActions(project, preset);
-    onApply(result.project, result.actionIds);
-    onClose();
+    setApplyError('');
+    try {
+      const result = createSurfaceActions(project, preset, camera, ambientRotating);
+      onApply(result.project, result.actionIds);
+      onClose();
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -144,6 +150,7 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
             </svg>
             3B1B 三维参数曲面与视角工作台 (3D Parametric Surfaces & Camera Orbit)
           </h2>
+          {applyError && <p role="alert" style={{ color: '#fca5a5' }}>{applyError}</p>}
           <button className="surface-close-btn" onClick={onClose} title="关闭">
             ✕
           </button>

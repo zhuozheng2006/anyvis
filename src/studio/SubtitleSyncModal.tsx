@@ -23,6 +23,7 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
   project,
   onApply,
 }) => {
+  const [generationError, setGenerationError] = useState('');
   const [subtitles, setSubtitles] = useState<SubtitleItem[]>(DEFAULT_SUBTITLE_PRESET);
   const [playbackTime, setPlaybackTime] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -64,9 +65,9 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
   }, [isOpen, isPlaying, maxTime]);
 
   // Currently active subtitle
-  const activeSubtitle = useMemo(() => {
-    return subtitles.find(
-      (s) => playbackTime >= s.startTime && playbackTime <= s.endTime,
+  const activeSubtitles = useMemo(() => {
+    return subtitles.filter(
+      (s) => playbackTime >= s.startTime && playbackTime < s.endTime,
     );
   }, [subtitles, playbackTime]);
 
@@ -119,16 +120,26 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
   };
 
   const handleCopyPython = async () => {
+    setGenerationError('');
+    try {
     const code = generateSubtitlesPythonCode(subtitles);
     await navigator.clipboard.writeText(code);
     setIsCopiedPy(true);
     setTimeout(() => setIsCopiedPy(false), 2000);
+    } catch (error) {
+      setGenerationError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleApplyToProject = () => {
+    setGenerationError('');
+    try {
     const result = createSubtitleActions(project, subtitles);
     onApply(result.project, result.actionIds);
     onClose();
+    } catch (error) {
+      setGenerationError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -160,22 +171,23 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
               </div>
 
               {/* Active Subtitle Overlay */}
-              {activeSubtitle ? (
+              {activeSubtitles.length ? activeSubtitles.map(activeSubtitle => (
                 <div
+                  key={activeSubtitle.id}
                   className="subtitles-preview-box"
                   style={{
-                    bottom: activeSubtitle.position === 'top' ? 'auto' : 24,
+                    bottom: activeSubtitle.position === 'top' || activeSubtitle.position === 'center' ? 'auto' : 24,
                     top: activeSubtitle.position === 'top' ? 24 : activeSubtitle.position === 'center' ? '45%' : 'auto',
                   }}
                 >
                   <div
                     className="subtitles-preview-pill"
-                    style={{ color: activeSubtitle.color || '#ffffff' }}
+                    style={{ color: activeSubtitle.color || '#ffffff', whiteSpace: 'pre-wrap' }}
                   >
                     {activeSubtitle.text}
                   </div>
                 </div>
-              ) : (
+              )) : (
                 <div className="subtitles-preview-box" style={{ opacity: 0.35 }}>
                   <span style={{ fontSize: '0.8rem', color: '#64748b' }}>[暂无当前时刻字幕]</span>
                 </div>
@@ -242,7 +254,7 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
             {/* Subtitles List */}
             <div className="subtitles-list">
               {subtitles.map((sub, idx) => {
-                const isSelected = activeSubtitle?.id === sub.id;
+                const isSelected = activeSubtitles.some(active => active.id === sub.id);
                 return (
                   <div
                     key={sub.id}
@@ -325,8 +337,9 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
 
         {/* Footer */}
         <div className="subtitles-footer">
+          {generationError && <div role="alert" style={{ color: '#ef4444' }}>{generationError}</div>}
           <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-            支持导入标准 .srt 字幕文件并一键生成动画文字编排动作
+            字幕追加在现有动画之后；起止时间从追加片段开头计，支持重叠字幕。
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn-secondary" onClick={handleCopySrt}>
@@ -336,7 +349,7 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
               {isCopiedPy ? '✓ 已复制 Python 代码' : '复制代码 (Manim CE)'}
             </button>
             <button className="btn-primary" onClick={handleApplyToProject}>
-              插入字幕到场景
+              追加字幕片段
             </button>
           </div>
         </div>

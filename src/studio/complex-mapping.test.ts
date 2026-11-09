@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 import { describe, it, expect } from 'vitest';
 import {
   cAdd,
@@ -98,8 +99,8 @@ describe('complex-mapping core math and conformal transformations', () => {
     const code = generateComplexMappingPythonCode(squarePreset, { min: -2, max: 2 });
 
     expect(code).toContain('from manim import *');
-    expect(code).toContain('ComplexPlane(');
-    expect(code).toContain('plane.animate.apply_complex_function(');
+    expect(code).toContain('set_points_as_corners');
+    expect(code).toContain('Transform(');
   });
 
   it('injects complex mapping actions into project without mutating original project', () => {
@@ -118,7 +119,7 @@ describe('complex-mapping core math and conformal transformations', () => {
     );
 
     expect(dummyProject.actions).toHaveLength(0);
-    expect(nextProject.actions).toHaveLength(3);
-    expect(actionIds).toHaveLength(3);
+    expect(compileProject(nextProject).diagnostics).toEqual([]);
+    expect(actionIds).toHaveLength(nextProject.actions.length);
   });
 });

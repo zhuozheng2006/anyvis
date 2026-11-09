@@ -11,9 +11,9 @@ import type { Project } from './core/types';
 
 describe('auto-layout', () => {
   const dummyObjects: MovableObject[] = [
-    { actionId: 'act_1', name: 'circle_1', type: 'create_circle', x: 0, y: 0 },
-    { actionId: 'act_2', name: 'square_1', type: 'create_square', x: 2, y: 1 },
-    { actionId: 'act_3', name: 'text_1', type: 'create_text', x: -2, y: -1 },
+    { actionId: 'act_1', name: 'circle_1', type: 'circle', x: 0, y: 0 },
+    { actionId: 'act_2', name: 'square_1', type: 'square', x: 2, y: 1 },
+    { actionId: 'act_3', name: 'text_1', type: 'text', x: -2, y: -1 },
   ];
 
   it('extracts movable objects from project actions', () => {
@@ -25,7 +25,7 @@ describe('auto-layout', () => {
       actions: [
         {
           id: 'a1',
-          type: 'create_circle',
+          type: 'circle',
           fields: { name: 'c1', x: 1.5, y: 2.0, radius: 1 },
           children: [],
         },
@@ -37,7 +37,7 @@ describe('auto-layout', () => {
         },
         {
           id: 'a3',
-          type: 'create_text',
+          type: 'text',
           fields: { text: 'Hello', x: -1.0, y: 0.5 },
           children: [],
         },
@@ -192,7 +192,7 @@ describe('auto-layout', () => {
       actions: [
         {
           id: 'act_1',
-          type: 'create_circle',
+          type: 'circle',
           fields: { x: 0, y: 0, radius: 1 },
           children: [],
         },

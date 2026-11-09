@@ -75,7 +75,7 @@ describe('CameraDirectorModal', () => {
 
     // Trigger apply
     const applyBtn = Array.from(container.querySelectorAll('button')).find((b) =>
-      b.textContent?.includes('插入到当前场景'),
+      b.textContent?.includes('追加运镜片段'),
     );
     expect(applyBtn).toBeDefined();
 

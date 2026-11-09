@@ -1,4 +1,8 @@
-import type { Project, Action } from './core/types';
+import type { Project } from './core/types';
+import { createAction } from './core/catalog';
+import { compileProject } from './core/compiler';
+import { createEmptyProject } from './core/project';
+import { appendPlaygroundActions, playgroundApi, playgroundName } from './playground-actions';
 
 export interface ColorSwatch {
   name: string;
@@ -141,7 +145,8 @@ export function applyColorsToTex(
   const texToColorMap: Record<string, string> = {};
 
   for (const [key, color] of Object.entries(colorMap)) {
-    if (color && color !== '#ffffff') {
+    if (color && !/^#[0-9a-f]{6}$/i.test(color)) throw Error('公式颜色必须为六位十六进制颜色。');
+    if (key && color && color.toLowerCase() !== '#ffffff') {
       isolatedSubstrings.push(key);
       texToColorMap[key] = color;
     }
@@ -163,7 +168,7 @@ export function applyColorsToTex(
     );
     coloredTex = raw.replace(pattern, match => {
       const color = texToColorMap[match];
-      return color ? `\\color{${color}}{${match}}` : match;
+      return color ? `{\\color[HTML]{${color.slice(1).toUpperCase()}}${match}}` : match;
     });
   }
 
@@ -174,89 +179,22 @@ export function applyColorsToTex(
   };
 }
 
-/**
- * Generates standalone Python code for Manim CE colored MathTex scene
- */
-export function generateColoredMathTexPython(
-  raw: string,
-  colorMap: Record<string, string>
-): string {
-  const { isolatedSubstrings, texToColorMap } = applyColorsToTex(raw, colorMap);
-
-  const substringsStr = JSON.stringify(isolatedSubstrings);
-  const colorStatements = Object.entries(texToColorMap)
-    .map(([key, hex]) => {
-      const swatch = PALETTE_3B1B.find(s => s.hex.toLowerCase() === hex.toLowerCase());
-      const colorVal = swatch ? swatch.manimName : `"${hex}"`;
-      return `        formula.set_color_by_tex("${key}", ${colorVal})`;
-    })
-    .join('\n');
-
-  return `from manim import *
-
-class ColoredTexScene(Scene):
-    """
-    3Blue1Brown-style Colored MathTex Formula.
-    Formula: ${raw}
-    """
-    def construct(self):
-        # 1. 声明并隔离着色关键词
-        formula = MathTex(
-            r"${raw}",
-            substrings_to_isolate=${substringsStr},
-        ).scale(1.5)
-
-        # 2. 为对应变量及符号应用专属色彩
-${colorStatements || '        # (No custom colors specified)'}
-
-        # 3. 经典 3B1B 手写书写动画
-        self.play(Write(formula), run_time=2.0)
-        self.wait(1.5)
-
-        # 4. 重点变量脉冲放大动画
-        if len(${substringsStr}) > 0:
-            target_sub = formula.get_part_by_tex("${isolatedSubstrings[0] || ''}")
-            if target_sub:
-                self.play(
-                    target_sub.animate.scale(1.25),
-                    rate_func=there_and_back,
-                    run_time=1.0,
-                )
-                self.wait(1.0)
-`;
+/** Export the same MathTex construction as insertion, preserving TeX colors. */
+export function generateColoredMathTexPython(raw: string, colorMap: Record<string, string>): string {
+  return compileProject(createColoredMathTexActions(createEmptyProject(), raw, colorMap).project).code;
 }
 
-/**
- * Creates AnyVis project actions for inserting the colored MathTex object into the scene
- */
-export function createColoredMathTexActions(
-  project: Project,
-  raw: string,
-  colorMap: Record<string, string>,
-  name: string = '彩色公式'
-): { project: Project; actionIds: string[] } {
-  const ts = Date.now().toString(36).slice(-4);
+export function createColoredMathTexActions(project: Project, raw: string, colorMap: Record<string, string>, name = '彩色公式'): { project: Project; actionIds: string[] } {
   const { coloredTex } = applyColorsToTex(raw, colorMap);
-  const formulaName = `${name}_${ts}`;
-
-  const mathAction: Action = {
-    id: `action_mathtex_${ts}`,
-    type: 'create_math_tex',
-    fields: {
-      name: formulaName,
-      text: coloredTex,
-      color: '#ffffff',
-      scale: 1.2,
-      note: `3B1B 专属配色公式: ${raw}`,
-    },
-    children: [],
-  };
-
-  return {
-    project: {
-      ...project,
-      actions: [...project.actions, mathAction],
-    },
-    actionIds: [mathAction.id],
-  };
+  const formulaName = playgroundName(name.slice(0, 80));
+  const template = playgroundName('公式配色模板');
+  // The curated formula block applies a uniform .set_color after construction.
+  // MathTex API keeps scoped inline TeX colors intact.
+  return appendPlaygroundActions(project, [
+    playgroundApi('TexTemplate', template, {}, { mode: 'store' }),
+    playgroundApi('TexTemplate.add_to_preamble', playgroundName('加载公式配色'), { txt: '\\usepackage{xcolor}' }, { receiver: template, mode: 'store' }),
+    playgroundApi('MathTex', formulaName, { tex_strings: [coloredTex], font_size: 58, kwargs: { tex_template: { $ref: template } } }, { mode: 'store' }),
+    createAction('write', { target: formulaName, duration: 2 }),
+    createAction('wait', { duration: 1.5 }),
+  ]);
 }

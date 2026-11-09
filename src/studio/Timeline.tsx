@@ -46,12 +46,12 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
   const selectedIdSet = useMemo(() => new Set(selectedIds), [selectedIds]);
 
   const handleSelectIds = useCallback((ids: string[]) => {
+    // Notify the primary item first: existing parents may reset their selection
+    // in onSelect. The complete selection must be the final update.
+    onSelect(ids[0] ?? '');
     if (onSelectIds) onSelectIds(ids);
     else setInternalSelectedIds(ids);
-    if (ids.length === 1) onSelect(ids[0]);
-    else if (ids.length === 0) onSelect('');
-    else if (!ids.includes(selectedId ?? '')) onSelect(ids[0]);
-  }, [onSelectIds, onSelect, selectedId]);
+  }, [onSelectIds, onSelect]);
 
   const primarySelectedId = selectedIds[0] ?? selectedId;
   const selected = flattenActions(project.actions).find(a => a.id === primarySelectedId);
@@ -123,10 +123,10 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
     selectedClip &&
     selectedClip.start !== null &&
     selectedClip.duration !== null &&
-    selectedClip.duration > 2 / fps &&
+    selectedClip.duration >= 2 / fps - 1e-8 &&
     time > selectedClip.start + 1 / fps - 1e-8 &&
     time < selectedClip.start + selectedClip.duration - 1 / fps + 1e-8 &&
-    (selectedClip.action.type === 'wait' || typeof selectedClip.action.fields.duration === 'number')
+    (selectedClip.action.type === 'wait' || (selectedClip.action.type === 'shift' && selectedClip.action.fields.easing === 'linear'))
   );
   const handleSplitVisual = () => {
     if (!selectedClip || !canSplitVisual) return;
@@ -157,35 +157,33 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       });
     };
     const handleWindowMouseUp = (e: MouseEvent) => {
-      setBox(prev => {
-        if (!prev) return null;
-        if (prev.active) {
-          const boxLeft = Math.min(prev.startX, prev.currentX);
-          const boxRight = Math.max(prev.startX, prev.currentX);
-          const boxTop = Math.min(prev.startY, prev.currentY);
-          const boxBottom = Math.max(prev.startY, prev.currentY);
+      const prev = box;
+      if (prev.active) {
+        const boxLeft = Math.min(prev.startX, prev.currentX);
+        const boxRight = Math.max(prev.startX, prev.currentX);
+        const boxTop = Math.min(prev.startY, prev.currentY);
+        const boxBottom = Math.max(prev.startY, prev.currentY);
 
-          const actionEls = surface.current?.querySelectorAll<HTMLElement>('.timeline-editor-action');
-          const hitIds: string[] = [];
-          actionEls?.forEach(el => {
-            const elRect = el.getBoundingClientRect();
-            const intersects = !(elRect.right < boxLeft || elRect.left > boxRight || elRect.bottom < boxTop || elRect.top > boxBottom);
-            if (intersects) {
-              const id = el.querySelector('[data-action-id]')?.getAttribute('data-action-id') || el.getAttribute('data-action-id');
-              if (id && id !== musicId) {
-                hitIds.push(resolveId(id));
-              }
+        const actionEls = surface.current?.querySelectorAll<HTMLElement>('.timeline-editor-action');
+        const hitIds: string[] = [];
+        actionEls?.forEach(el => {
+          const elRect = el.getBoundingClientRect();
+          const intersects = !(elRect.right < boxLeft || elRect.left > boxRight || elRect.bottom < boxTop || elRect.top > boxBottom);
+          if (intersects) {
+            const id = el.querySelector('[data-action-id]')?.getAttribute('data-action-id') || el.getAttribute('data-action-id');
+            if (id && id !== musicId) {
+              hitIds.push(resolveId(id));
             }
-          });
-          const uniqueHits = Array.from(new Set(hitIds));
-          if (e.shiftKey || e.metaKey || e.ctrlKey) {
-            handleSelectIds(Array.from(new Set([...selectedIds, ...uniqueHits])));
-          } else {
-            handleSelectIds(uniqueHits);
           }
+        });
+        const uniqueHits = Array.from(new Set(hitIds));
+        if (e.shiftKey || e.metaKey || e.ctrlKey) {
+          handleSelectIds(Array.from(new Set([...selectedIds, ...uniqueHits])));
+        } else {
+          handleSelectIds(uniqueHits);
         }
-        return null;
-      });
+      }
+      setBox(null);
     };
     window.addEventListener('mousemove', handleWindowMouseMove);
     window.addEventListener('mouseup', handleWindowMouseUp);
@@ -249,7 +247,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       <span className="tl-timecode">{timecode(time, project.scene.fps)}</span><small className="tl-fps">{project.scene.fps} FPS</small><div className="tl-spacer"/>
       <button aria-label="磁性吸附" aria-pressed={snapping} title="吸附片段边缘与帧网格（S）" onClick={() => setSnapping(v => !v)}><Magnet size={15}/></button>
       <button aria-label="添加时间轴标记" title="在当前播放头处添加时间标记（M）" onClick={handleAddMarker}><Bookmark size={14}/> 标记</button>
-      <button aria-label="智能节奏打点" title="基于配音停顿、音乐节拍或动作切换自动生成标记" onClick={() => setSmartMarkerOpen(true)}><Sparkles size={14}/> 智能打点</button>
+      <button aria-label="节奏标记助手" title="按设定间隔、BPM 或实际动作起点生成标记" onClick={() => setSmartMarkerOpen(true)}><Sparkles size={14}/> 节奏标记</button>
       <button aria-label="设置默认配乐" title={musicEnabled ? '自动钢琴配乐' : '当前无默认配乐'} onClick={onMusicSettings}><Music2 size={14}/> 配乐</button>
       <button
         type="button"
@@ -470,7 +468,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
           <button onClick={() => handleSelectIds([])}><X size={14}/> 取消选择</button>
         </div>
       ) : selected ? <><div className="tl-selection-heading"><strong>{selectedAudio ? '配音' : actionLabel(selected)} <span>{selectedAudio ? String(selected.fields.name) : actionTrack(selected)}</span></strong><span>{(selectedAudio?.start ?? selectedClip?.start) == null ? '开始时间待定' : `开始 ${timecode((selectedAudio?.start ?? selectedClip?.start)!, project.scene.fps)}`}</span><div className="tl-spacer"/>
-        {selectedAudio ? <><button aria-label="在播放头处分割配音" disabled={!selectedAudio.editable || selectedAudio.start === null} onClick={() => mutate(() => { const result = splitAudioClip(project, selectedAudio, time); handleSelectIds([result.id]); return result.project; })}><Scissors size={14}/> 分割</button><button aria-label="配音静音" aria-pressed={selected.fields.muted === 'yes'} onClick={() => mutate(() => updateAction(project, selected.id, { muted: selected.fields.muted === 'yes' ? 'no' : 'yes' }))}>{selected.fields.muted === 'yes' ? <VolumeX size={14}/> : <Volume2 size={14}/>} 静音</button></> : <><button aria-label="加速所选片段 2x" title="将所选片段时长缩短为 0.5 倍（2x 加速）" disabled={!selectedClip?.duration} onClick={() => mutate(() => scaleActionsDuration(project, [selected.id], 0.5))}>2x</button><button aria-label="减速所选片段 0.5x" title="将所选片段时长延长为 2 倍（0.5x 减速）" disabled={!selectedClip?.duration} onClick={() => mutate(() => scaleActionsDuration(project, [selected.id], 2))}>0.5x</button><button aria-label="在播放头处分割动画片段" title="在播放头处分割当前动画或等待片段（C）" disabled={!canSplitVisual} onClick={handleSplitVisual}><Scissors size={14}/> 分割</button><button aria-label="片段前移" disabled={!selectedClip || selectedClip.index === 0} onClick={() => shiftOrder(-1)}><ArrowLeft size={14}/></button><button aria-label="片段后移" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => shiftOrder(1)}><ArrowRight size={14}/></button><button title="与后一个片段同时执行" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => mutate(() => checkedEdit(project, parallelWithNext(project, selected.id)))}><Layers3 size={14}/> 并行</button></>}
+        {selectedAudio ? <><button aria-label="在播放头处分割配音" disabled={!selectedAudio.editable || selectedAudio.start === null} onClick={() => mutate(() => { const result = splitAudioClip(project, selectedAudio, time); handleSelectIds([result.id]); return result.project; })}><Scissors size={14}/> 分割</button><button aria-label="配音静音" aria-pressed={selected.fields.muted === 'yes'} onClick={() => mutate(() => updateAction(project, selected.id, { muted: selected.fields.muted === 'yes' ? 'no' : 'yes' }))}>{selected.fields.muted === 'yes' ? <VolumeX size={14}/> : <Volume2 size={14}/>} 静音</button></> : <><button aria-label="加速所选片段 2x" title="将所选片段时长缩短为 0.5 倍（2x 加速）" disabled={!selectedClip?.duration} onClick={() => mutate(() => scaleActionsDuration(project, [selected.id], 0.5))}>2x</button><button aria-label="减速所选片段 0.5x" title="将所选片段时长延长为 2 倍（0.5x 减速）" disabled={!selectedClip?.duration} onClick={() => mutate(() => scaleActionsDuration(project, [selected.id], 2))}>0.5x</button><button aria-label="在播放头处分割动画片段" title="支持等待和匀速位移；其他动画暂不支持等价切分（C）" disabled={!canSplitVisual} onClick={handleSplitVisual}><Scissors size={14}/> 分割</button><button aria-label="片段前移" disabled={!selectedClip || selectedClip.index === 0} onClick={() => shiftOrder(-1)}><ArrowLeft size={14}/></button><button aria-label="片段后移" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => shiftOrder(1)}><ArrowRight size={14}/></button><button title="与后一个片段同时执行" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => mutate(() => checkedEdit(project, parallelWithNext(project, selected.id)))}><Layers3 size={14}/> 并行</button></>}
         <button aria-label="复制所选片段" title="复制当前所选片段（D）" onClick={() => mutate(() => { const result = duplicateAction(project, selected.id); handleSelectIds([result.action.id]); return result.project; })}><Copy size={14}/> 复制</button><button onClick={() => onShowBlocks(selected.id)}>积木</button><button aria-label="删除所选片段" onClick={() => mutate(() => removeAction(project, selected.id))}><Trash2 size={14}/></button></div>
         <ActionInspector key={selected.id} action={selected} actions={project.actions} assets={project.assets} fields={managedObject(selected) ? ['appear', 'duration', 'mode'].filter(name => definition?.fields.some(f => f.name === name)) : undefined} onChange={fields => mutate(() => updateAction(project, selected.id, fields))} onError={onError}/>
         {definition?.container && <p className="tl-note">复合片段包含内部动作，双击打开积木。</p>}</> : <p className="tl-note">选择片段编辑参数。动画按顺序联动，可组合并行；配音独立放置和裁剪。按住 Shift / Cmd 多选或框选。</p>}

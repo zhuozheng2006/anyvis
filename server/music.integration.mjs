@@ -41,6 +41,7 @@ test('default piano is mixed into real video and none exports a genuinely silent
         await delay(100);
       }
       assert.equal(job.status, 'done', JSON.stringify(job));
+      assert.equal(job.format, (music === 'none' ? health.capabilities.mp4 : health.capabilities.mp4Audio) ? 'mp4' : 'webm');
       assert.ok(Math.abs(job.duration - 4) < .1, JSON.stringify(job));
       const media = await request(app, job.videoUrl), filename = path.join(directory, `${music}.${job.format}`);
       assert.equal(media.status, 200); await writeFile(filename, media.bytes);

@@ -1,0 +1,16 @@
+
+> anyvis@0.5.0 test:media
+> node --test --test-force-exit server/media.integration.mjs
+
+✔ uploaded media survives restart and project ZIP reopening, then renders in worker and standalone Python (3428.838833ms)
+ℹ worker mp4: {"frames": 48, "horizontalTravel": 180.03998850297432, "rmsBefore": 0.0, "rmsVoice": 0.050683342675548644, "rmsAfter": 0.0, "rmsCutSeam": 0.05010858697593694, "toneHz": 660.0, "onsetSeconds": 0.503, "offsetSeconds": 1.0003333333333333}
+ℹ standalone webm: {"frames": 48, "horizontalTravel": 180.00222626998584, "rmsBefore": 0.0, "rmsVoice": 0.050699389838957436, "rmsAfter": 0.0, "rmsCutSeam": 0.05011890492542151, "toneHz": 660.0, "onsetSeconds": 0.503, "offsetSeconds": 1.0003333333333333}
+ℹ Missing AAC encoder retains the original video and soundtrack without writing a silent MP4.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3515.191083

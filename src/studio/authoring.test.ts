@@ -137,4 +137,50 @@ describe('shared authoring projections', () => {
     const pNoDur = { ...createEmptyProject(), actions: [c1, noDur] };
     expect(() => scaleActionsDuration(pNoDur, [noDur.id], 0.5)).toThrow('没有可缩放的动画时长');
   });
+  it('rewrites only cloned internal object references, including nested API values and member lists', () => {
+    const external = createAction('circle', { name: '外部', appear: 'none' });
+    const circle = createAction('circle', { name: '圆', appear: 'none' });
+    const group = createAction('group', { name: '组合', members: '圆,外部' });
+    const move = createAction('shift', { target: '圆', dx: 2 });
+    const api = createAction(getApiEntry('Mobject.move_to')!.type, {
+      receiver: '外部', mode: 'store',
+      p_point_or_mobject: JSON.stringify({ $call: { api: 'Mobject.get_center', receiver: { $ref: '圆' }, args: [] } }),
+    });
+    const literal = createAction('text', { name: '标签', text: '圆', appear: 'none' });
+    const nested = createAction('sequence'); nested.children = [group, move, api, literal];
+    const sequence = createAction('sequence'); sequence.children = [circle, nested];
+    const p = { ...createEmptyProject(), actions: [external, sequence, createAction('shift', { target: '圆' })] };
+    const original = JSON.stringify(p);
+    const copied = duplicateAction(p, sequence.id);
+    const [copiedCircle, copiedNested] = copied.action.children!;
+    const [copiedGroup, copiedMove, copiedApi, copiedLiteral] = copiedNested.children!;
+    expect(copiedCircle.fields.name).toBe('圆 2');
+    expect(copiedGroup.fields.members).toBe('圆 2,外部');
+    expect(copiedMove.fields.target).toBe('圆 2');
+    expect(copiedApi.fields.receiver).toBe('外部');
+    expect(JSON.parse(String(copiedApi.fields.p_point_or_mobject)).$call.receiver).toEqual({ $ref: '圆 2' });
+    expect(copiedLiteral.fields.text).toBe('圆');
+    expect(copied.project.actions.at(-1)!.fields.target).toBe('圆');
+    expect(compileProject(p).diagnostics).toEqual([]);
+    expect(compileProject(copied.project).diagnostics).toEqual([]);
+    expect(JSON.stringify(p)).toBe(original);
+  });
+  it('duplicates tracker references with valid unique identifiers and preserves external parameters', () => {
+    const external = createAction('tracker', { name: 'other', value: 2 });
+    const tracker = createAction('tracker', { name: 'speed', value: 1 });
+    const dot = createAction('dynamic_dot', { name: '动点', xExpr: 'speed + other', yExpr: 'speed * 2', zExpr: '0' });
+    const change = createAction('animate_value', { target: 'speed', value: 3 });
+    const sequence = createAction('sequence'); sequence.children = [tracker, dot, change];
+    const p = { ...createEmptyProject(), actions: [external, sequence] };
+    const copied = duplicateAction(p, sequence.id);
+    expect(copied.action.children![0].fields.name).toBe('speed_2');
+    expect(copied.action.children![1].fields.xExpr).toBe('speed_2 + other');
+    expect(copied.action.children![1].fields.yExpr).toBe('speed_2 * 2');
+    expect(copied.action.children![2].fields.target).toBe('speed_2');
+    expect(compileProject(copied.project).diagnostics).toEqual([]);
+    const again = duplicateAction(copied.project, copied.action.id);
+    expect(again.action.children![0].fields.name).toBe('speed_3');
+    expect(again.action.children![1].fields.xExpr).toBe('speed_3 + other');
+    expect(compileProject(again.project).diagnostics).toEqual([]);
+  });
 });

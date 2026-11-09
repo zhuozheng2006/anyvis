@@ -10,7 +10,7 @@ import { getApiEntry } from './api-registry.ts';
 import { createApiCompiler, API_RUNTIME } from './api-compiler.ts';
 import { createAction } from './catalog.ts';
 import { discoverPython } from '../../../server/server.mjs';
-import { apiEvidenceSources } from '../../../scripts/api-evidence.mjs';
+import { apiEvidenceSources, nativeExecutionEnvironment } from '../../../scripts/api-evidence.mjs';
 
 const execute = promisify(execFile);
 const ref = name => ({ $ref: name });
@@ -172,7 +172,7 @@ with tempconfig({"renderer":"cairo","pixel_width":64,"pixel_height":32,"frame_wi
             results.append({"apiId":api_id,"status":"failed","reason":traceback.format_exc(limit=3)})
 print("ANYVIS_SCENE "+json.dumps(results))
 `);
-    const output=await execute(health.python,[script],{cwd:directory,timeout:100_000,maxBuffer:4*1024*1024});
+    const output=await execute(health.python,[script],{ env: nativeExecutionEnvironment(health.python),cwd:directory,timeout:100_000,maxBuffer:4*1024*1024});
     const line=output.stdout.split('\n').find(row=>row.startsWith('ANYVIS_SCENE '));assert.ok(line,output.stdout);
     const outcomes=JSON.parse(line.slice('ANYVIS_SCENE '.length));assert.equal(outcomes.length,cases.length);
     const failures=outcomes.filter(row=>row.status!=='verified');
@@ -270,7 +270,7 @@ with tempconfig({"renderer":"cairo","pixel_width":64,"pixel_height":32,"write_to
     assert legacy.default_camera_orientation_kwargs=={'phi':0.2,'theta':0.6}
 print('ANYVIS_SCENE_COMPAT_OK')
 `);
-    const output=await execute(health.python,[script],{cwd:directory,timeout:45_000,maxBuffer:1024*1024});
+    const output=await execute(health.python,[script],{ env: nativeExecutionEnvironment(health.python),cwd:directory,timeout:45_000,maxBuffer:1024*1024});
     assert.match(output.stdout,/ANYVIS_SCENE_COMPAT_OK/);
   }finally{await rm(directory,{recursive:true,force:true});}
 });

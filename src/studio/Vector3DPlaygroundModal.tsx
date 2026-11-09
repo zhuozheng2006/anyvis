@@ -29,6 +29,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
   project,
   onApply,
 }) => {
+  const [generationError, setGenerationError] = useState('');
   const [selectedPresetId, setSelectedPresetId] = useState<string>('ortho-basis');
   const [u, setU] = useState<Vector3D>({ x: 2, y: 0, z: 0 });
   const [v, setV] = useState<Vector3D>({ x: 0, y: 2, z: 0 });
@@ -66,8 +67,8 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
 
   // Manim Python Code
   const manimCode = useMemo(() => {
-    return generateVector3DManimCode(u, v, operation);
-  }, [u, v, operation]);
+    return generateVector3DManimCode(u, v, operation, { azimuth, elevation });
+  }, [u, v, operation, azimuth, elevation]);
 
   // 3D Canvas Geometry Projection
   const canvasWidth = 440;
@@ -147,10 +148,15 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
   };
 
   const handleApply = () => {
-    const { project: nextProject, actionCount } = createVector3DActions(project, u, v, operation);
+    setGenerationError('');
+    try {
+    const { project: nextProject, actionCount } = createVector3DActions(project, u, v, operation, { azimuth, elevation });
     const addedIds = nextProject.actions.slice(-actionCount).map(a => a.id);
     onApply(nextProject, addedIds);
     onClose();
+    } catch (error) {
+      setGenerationError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleCopyCode = async () => {
@@ -166,7 +172,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
   if (!isOpen) return null;
 
   return (
-    <div className="vector3d-modal-backdrop" onClick={onClose}>
+    <div className="vector3d-modal-backdrop" role="dialog" aria-modal="true" onClick={onClose}>
       <div className="vector3d-modal-window" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="vector3d-header">
@@ -537,6 +543,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
 
         {/* Footer Actions */}
         <div className="vector3d-footer">
+          {generationError && <div role="alert" style={{ color: '#ef4444' }}>{generationError}</div>}
           <span className="footer-summary">
             三维模式 · 包含 ThreeDAxes、Arrow3D 及数学公式注释
           </span>

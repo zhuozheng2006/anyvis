@@ -1,3 +1,4 @@
+import { compileProject } from './core/compiler.ts';
 import { describe, it, expect } from 'vitest';
 import {
   DISTRIBUTION_PRESETS,
@@ -79,12 +80,12 @@ describe('probability distributions math, CDF, and Manim CE code generator', () 
     const normal = DISTRIBUTION_PRESETS.find((p) => p.id === 'normal')!;
     const normalCode = generateProbabilityPythonCode(normal, { mu: 0, sigma: 1.0 });
 
-    expect(normalCode).toContain('class NormalDistributionScene(Scene):');
-    expect(normalCode).toContain('axes.get_area(curve');
+    expect(normalCode).toContain('class DistributionScene(MovingCameraScene):');
+    expect(normalCode).toContain('.plot(lambda x:');
 
     const binom = DISTRIBUTION_PRESETS.find((p) => p.id === 'binomial')!;
     const binomCode = generateProbabilityPythonCode(binom, { n: 20, p: 0.5 });
-    expect(binomCode).toContain('class BinomialDistributionScene(Scene):');
+    expect(binomCode).toContain('class DistributionScene(MovingCameraScene):');
   });
 
   it('injects probability distribution actions into project without mutating original project', () => {
@@ -92,14 +93,14 @@ describe('probability distributions math, CDF, and Manim CE code generator', () 
       schemaVersion: 2,
       id: 'p_prob',
       name: 'Prob Test',
-      scene: { dimension: '2d', background: '#000', width: 1920, height: 1080, fps: 60 },
+      scene: { dimension: '2d', background: '#000000', width: 1920, height: 1080, fps: 60 },
       actions: [],
     };
     const normal = DISTRIBUTION_PRESETS.find((p) => p.id === 'normal')!;
     const { project: nextProject, actionIds } = createProbabilityActions(dummyProject, normal, { mu: 0, sigma: 1 });
 
     expect(dummyProject.actions).toHaveLength(0);
-    expect(nextProject.actions).toHaveLength(3);
-    expect(actionIds).toHaveLength(3);
+    expect(compileProject(nextProject).diagnostics).toEqual([]);
+    expect(actionIds).toHaveLength(nextProject.actions.length);
   });
 });

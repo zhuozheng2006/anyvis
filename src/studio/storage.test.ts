@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAction } from './core/catalog';
 import { createEmptyProject } from './core/project';
+import { updateProjectChapters } from './storyboard';
 import { readCurrent, readProjects, saveLatestProject, saveProject, readDefaultMusic, saveDefaultMusic, withDefaultMusic } from './storage';
 
 const CURRENT = 'anyvis.studio.v2.current';
@@ -28,6 +29,19 @@ beforeEach(() => { storage = new MemoryStorage(); vi.stubGlobal('localStorage', 
 afterEach(() => vi.unstubAllGlobals());
 
 describe('recoverable project persistence', () => {
+  it('keeps chapter markers through autosave and reopening from the project list', () => {
+    const project = updateProjectChapters(example(), [{
+      id: 'chapter-2', index: 2, name: '曲面的局部结构', startTime: 12.5,
+      endTime: 20, duration: 7.5, skipAnimations: false, actionCount: 1, summaryText: '',
+    }]);
+    saveProject(project);
+    expect(readCurrent()?.scene.markers).toEqual(project.scene.markers);
+    expect(readProjects()[0].project.scene.markers).toEqual(project.scene.markers);
+    const reopened = readCurrent()!;
+    reopened.scene.markers![0].label = '重命名章节';
+    saveProject(reopened);
+    expect(readCurrent()?.scene.markers?.[0].label).toBe('重命名章节');
+  });
   it('defaults new works to piano and remembers an explicit silent preference', () => {
     const old = example();
     expect(readDefaultMusic()).toBe('piano');
