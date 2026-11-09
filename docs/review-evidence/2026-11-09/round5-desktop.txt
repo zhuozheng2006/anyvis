@@ -1,0 +1,23 @@
+
+> anyvis@0.5.0 test:desktop
+> node --test desktop/host.spec-node.mjs desktop/packaging.spec-node.mjs
+
+✔ only the fixed application origins and safe external HTTPS links are permitted (0.430084ms)
+✔ Python settings persist atomically, ignore unrelated keys and preserve the previous value on invalid input (4.152875ms)
+✔ corrupt saved settings fall back without destroying the file before an explicit save (0.910459ms)
+✔ the desktop owns its ephemeral service and closes it before a settings restart (0.483833ms)
+✔ quitting during an unfinished startup closes the late service instead of resurrecting it (0.121083ms)
+✔ failed startup can be retried and exposes a useful error state (0.085416ms)
+✔ protocol follows only the currently owned loopback service, retains the stable origin and forwards video ranges (10.191833ms)
+✔ protocol forwards token and JSON body, blocks oversized or escaping requests and serves only settings assets (1.796333ms)
+✔ normal application quit closes windows before waiting for requests and engine cleanup (1.48325ms)
+✔ desktop forwards binary media uploads without relaxing the JSON request limit (2.375958ms)
+✔ prepared engine has no source/runtime-package imports and runs from an isolated staged application (120.53325ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 168.105625

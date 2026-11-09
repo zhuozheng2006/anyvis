@@ -3,6 +3,8 @@ import type { MediaAsset, Project } from './core/types';
 import { uploadAsset } from './api';
 import { createAction, getBlockDefinition } from './core/catalog';
 import { appendAction, flattenActions } from './authoring';
+import { validateProject } from './core/project';
+import { checkedEdit } from './timeline-model';
 import './media-assets.css';
 
 export interface AssetShelfProps {
@@ -50,6 +52,17 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
   onErrorRef.current = onError;
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const reportError = (error: unknown) => {
+    const message = error instanceof Error ? error.message : '素材操作失败';
+    setUploadError(message);
+    onErrorRef.current(message);
+  };
+  const commitProject = (next: Project) => {
+    const validated = checkedEdit(projectRef.current, validateProject(next));
+    onProjectChangeRef.current(validated);
+    setUploadError(null);
+  };
+  const openFileChooser = () => { if (!uploadPending.current) fileInputRef.current?.click(); };
 
   const assets = project.assets || [];
   const imageAssets = assets.filter(a => a.kind === 'image');
@@ -90,18 +103,16 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
           appear: 'none'
         });
         nextProject = { ...pWithImg, actions: [action, ...pWithImg.actions.filter(a => a.id !== action.id)] };
-        onProjectChangeRef.current(nextProject);
+        commitProject(nextProject);
         if (onSelectObject) onSelectObject(action.id);
         if (onClose) onClose();
       } else {
         // Audio asset saved to project.assets; user can add to track via button
-        onProjectChangeRef.current(nextProject);
+        commitProject(nextProject);
       }
     } catch (err: unknown) {
       if (!isMountedRef.current || projectRef.current.id !== targetProjectId) return;
-      const msg = err instanceof Error ? err.message : '素材上传失败';
-      setUploadError(msg);
-      onErrorRef.current(msg);
+      reportError(err);
     } finally {
       uploadPending.current = false;
       if (isMountedRef.current) {
@@ -129,48 +140,52 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
   };
 
   const handleUseImage = (asset: MediaAsset) => {
-    const latestProject = projectRef.current;
-    const baseName = asset.name.replace(/\.[^.]+$/, '').replace(/[\r\n\0,，]/g, ' ').replace(/^@+/, '').trim().slice(0, 80) || '图片';
-    const { project: nextProject, action } = appendAction(latestProject, 'image_asset', {
-      name: baseName,
-      asset: asset.id,
-      appear: 'none'
-    });
-    onProjectChangeRef.current({ ...nextProject, actions: [action, ...nextProject.actions.filter(a => a.id !== action.id)] });
-    if (onSelectObject) onSelectObject(action.id);
-    if (onClose) onClose();
+    try {
+      const latestProject = projectRef.current;
+      const baseName = asset.name.replace(/\.[^.]+$/, '').replace(/[\r\n\0,，]/g, ' ').replace(/^@+/, '').trim().slice(0, 80) || '图片';
+      const { project: nextProject, action } = appendAction(latestProject, 'image_asset', {
+        name: baseName,
+        asset: asset.id,
+        appear: 'none'
+      });
+      commitProject({ ...nextProject, actions: [action, ...nextProject.actions.filter(a => a.id !== action.id)] });
+      if (onSelectObject) onSelectObject(action.id);
+      if (onClose) onClose();
+    } catch (error) { reportError(error); }
   };
 
   const handleAddAudioTrack = (asset: MediaAsset) => {
-    const latestProject = projectRef.current;
-    const baseName = asset.name.replace(/\.[^.]+$/, '').replace(/[\r\n\0,，]/g, ' ').replace(/^@+/, '').trim().slice(0, 80) || '配音';
-    const existingNames = new Set(
-      flattenActions(latestProject.actions)
-        .filter(a => getBlockDefinition(a.type)?.createsObject)
-        .map(a => String(a.fields.name))
-    );
-    let uniqueName = baseName;
-    let suffix = 2;
-    while (existingNames.has(uniqueName)) {
-      uniqueName = `${baseName} ${suffix++}`;
-    }
+    try {
+      const latestProject = projectRef.current;
+      const baseName = asset.name.replace(/\.[^.]+$/, '').replace(/[\r\n\0,，]/g, ' ').replace(/^@+/, '').trim().slice(0, 80) || '配音';
+      const existingNames = new Set(
+        flattenActions(latestProject.actions)
+          .filter(a => getBlockDefinition(a.type)?.createsObject)
+          .map(a => String(a.fields.name))
+      );
+      let uniqueName = baseName;
+      let suffix = 2;
+      while (existingNames.has(uniqueName)) {
+        uniqueName = `${baseName} ${suffix++}`;
+      }
 
-    const audioAction = createAction('audio_play', {
-      name: uniqueName,
-      asset: asset.id,
-      delay: 0,
-      offset: 0,
-      length: 0,
-      gain: 0
-    });
+      const audioAction = createAction('audio_play', {
+        name: uniqueName,
+        asset: asset.id,
+        delay: 0,
+        offset: 0,
+        length: 0,
+        gain: 0
+      });
 
-    // Place at the beginning of actions with delay=0 for non-blocking playback
-    const nextProject: Project = {
-      ...latestProject,
-      workspace: undefined,
-      actions: [audioAction, ...latestProject.actions]
-    };
-    onProjectChangeRef.current(nextProject);
+      // Place at the beginning of actions with delay=0 for non-blocking playback
+      const nextProject: Project = {
+        ...latestProject,
+        workspace: undefined,
+        actions: [audioAction, ...latestProject.actions]
+      };
+      commitProject(nextProject);
+    } catch (error) { reportError(error); }
   };
 
   return (
@@ -215,7 +230,7 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
           <button
             type="button"
             className="om-asset-upload-btn"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={openFileChooser}
             disabled={isUploading}
             aria-label="上传新素材"
           >
@@ -248,8 +263,12 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
         }}
         onDragLeave={() => setIsDragOver(false)}
         onDrop={handleDrop}
-        onClick={() => fileInputRef.current?.click()}
+        onClick={openFileChooser}
         role="button"
+        aria-disabled={isUploading}
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openFileChooser(); }
+        }}
         tabIndex={0}
         aria-label="拖拽文件到此处或点击上传"
       >

@@ -1,0 +1,178 @@
+
+ RUN  v5.1.0 <repo>
+
+ ❯ src/studio/media-bundle.test.ts (3 tests | 1 failed) 8ms
+   × saves an unfinished draft but refuses to call it a runnable source export 6ms
+ ❯ src/studio/asset-shelf.test.tsx (6 tests | 5 failed) 70ms
+   × rejects adding image beyond the action limit without changing or closing the project 20ms
+   × rejects adding audio beyond the action limit without changing or closing the project 5ms
+   × rejects an upload that would exceed the asset limit and retains the saved project 34ms
+   × does not commit a newly uploaded image if automatic object creation exceeds the limit 6ms
+   × opens the upload chooser with Enter or Space and prevents duplicate uploads while pending 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/studio/asset-shelf.test.tsx > rejects adding image beyond the action limit without changing or closing the project
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "actions": [Array],
+        "assets": [Array],
+        "id": "a1fd7086-c3b1-4ca8-a9e9-e16454997cd5",
+        "name": "未命名动画",
+        "scene": [Object],
+        "schemaVersion": 2,
+        "workspace": undefined,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/studio/asset-shelf.test.tsx:30:37
+     28|   await act(async () => root.render(<AssetShelf project={project} {...…
+     29|   await act(async () => host.querySelector<HTMLButtonElement>(asset.ki…
+     30|   expect(props.onProjectChange).not.toHaveBeenCalled();
+       |                                     ^
+     31|   expect(props.onClose).not.toHaveBeenCalled();
+     32|   expect(host.querySelector('[role="alert"]')?.textContent).toContain(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/studio/asset-shelf.test.tsx > rejects adding audio beyond the action limit without changing or closing the project
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "actions": [Array],
+        "assets": [Array],
+        "id": "7e718a63-92b9-473b-8ecf-f88c35633cde",
+        "name": "未命名动画",
+        "scene": [Object],
+        "schemaVersion": 2,
+        "workspace": undefined,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/studio/asset-shelf.test.tsx:30:37
+     28|   await act(async () => root.render(<AssetShelf project={project} {...…
+     29|   await act(async () => host.querySelector<HTMLButtonElement>(asset.ki…
+     30|   expect(props.onProjectChange).not.toHaveBeenCalled();
+       |                                     ^
+     31|   expect(props.onClose).not.toHaveBeenCalled();
+     32|   expect(host.querySelector('[role="alert"]')?.textContent).toContain(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/studio/asset-shelf.test.tsx > rejects an upload that would exceed the asset limit and retains the saved project
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "actions": [Array],
+        "assets": [Array],
+        "id": "722bef84-95ed-4968-8a45-85256d85580f",
+        "name": "未命名动画",
+        "scene": [Object],
+        "schemaVersion": 2,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/studio/asset-shelf.test.tsx:41:37
+     39|   await act(async () => root.render(<AssetShelf project={project} {...…
+     40|   await chooseFile();
+     41|   expect(props.onProjectChange).not.toHaveBeenCalled();
+       |                                     ^
+     42|   expect(host.querySelector('[role="alert"]')?.textContent).toContain(…
+     43| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/studio/asset-shelf.test.tsx > does not commit a newly uploaded image if automatic object creation exceeds the limit
+AssertionError: expected "vi.fn()" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st vi.fn() call:
+
+    Array [
+      Object {
+        "actions": [Array],
+        "assets": [Array],
+        "id": "5cbd3622-f7af-488b-8883-c7e0e7e0e02a",
+        "name": "未命名动画",
+        "scene": [Object],
+        "schemaVersion": 2,
+        "workspace": undefined,
+      },
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/studio/asset-shelf.test.tsx:51:37
+     49|   await act(async () => root.render(<AssetShelf project={project} {...…
+     50|   await chooseFile();
+     51|   expect(props.onProjectChange).not.toHaveBeenCalled();
+       |                                     ^
+     52|   expect(props.onClose).not.toHaveBeenCalled();
+     53|   expect(host.querySelector('[role="alert"]')?.textContent).toContain(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/studio/asset-shelf.test.tsx > opens the upload chooser with Enter or Space and prevents duplicate uploads while pending
+AssertionError: expected "click" to be called 2 times, but got 0 times
+ ❯ src/studio/asset-shelf.test.tsx:81:17
+     79|   const dropzone = host.querySelector('[role="button"]')!;
+     80|   for (const key of ['Enter', ' ']) await act(async () => dropzone.dis…
+     81|   expect(click).toHaveBeenCalledTimes(2);
+       |                 ^
+     82|   await chooseFile();
+     83|   await act(async () => dropzone.dispatchEvent(new KeyboardEvent('keyd…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/studio/media-bundle.test.ts > saves an unfinished draft but refuses to call it a runnable source export
+AssertionError: expected [Function] to throw an error
+
+- Expected:
+null
+
++ Received:
+undefined
+
+ ❯ src/studio/media-bundle.test.ts:12:61
+     10|   expect(draft.project).toEqual(p);
+     11|   expect(draft.files['scene.py']).toBeUndefined();
+     12|   expect(() => packProject(p, {}, { requireSource: true })).toThrow('不…
+       |                                                             ^
+     13| });
+     14| it('roundtrips the editable project, original media and runnable sourc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 3 passed (9)
+   Start at  22:36:34
+   Duration  434ms (environment 46%, import 20%, tests 17%, transform 15%, worker 1%)
+

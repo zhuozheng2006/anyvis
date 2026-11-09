@@ -5,8 +5,10 @@ import { assetPath } from './core/assets';
 import { exportStandalonePython } from './core/export';
 import { uploadAsset } from './api';
 const LIMIT = 128 * 1024 * 1024;
-export function packProject(project: Project, contents: Record<string, Uint8Array>): Uint8Array {
+export interface BundleOptions { requireSource?: boolean }
+export function packProject(project: Project, contents: Record<string, Uint8Array>, options: BundleOptions = {}): Uint8Array {
   const files: Record<string, Uint8Array> = { 'project.anyvis.json': strToU8(JSON.stringify(project, null, 2)) };
+  if (files['project.anyvis.json'].length > 8 * 1024 * 1024) throw Error('项目文件超过 8 MB，请拆分项目后保存。');
   let total = files['project.anyvis.json'].length;
   for (const asset of project.assets || []) {
     const bytes = contents[assetPath(asset)];
@@ -15,9 +17,14 @@ export function packProject(project: Project, contents: Record<string, Uint8Arra
     files[assetPath(asset)] = bytes;
   }
   // Editable projects may contain drafts with compiler errors; saving must still work.
-  try { files['scene.py'] = strToU8(exportStandalonePython(project)); } catch { /* Project is always retained. */ }
-  files['README.txt'] = strToU8('AnyVis 项目与原始素材\n导入 project.anyvis.json 或直接在 AnyVis 中导入此 ZIP。\n若包含 scene.py，可在解压目录运行：python -m manim render scene.py AnyVisScene\n需要相同版本的 Manim、字体和公式工具。\n');
-  return zipSync(files, { level: 0 });
+  try { files['scene.py'] = strToU8(exportStandalonePython(project)); }
+  catch (error) { if (options.requireSource) throw error; }
+  files['README.txt'] = strToU8('AnyVis 项目与原始素材\n请在 AnyVis 中导入整个 ZIP，以恢复图片和配音。\n'
+    + (files['scene.py'] ? '可在解压目录运行：python -m manim render scene.py AnyVisScene\n需要相同版本的 Manim、字体和公式工具。\n' : '当前草稿含未完成或错误的动画，已保留可编辑工程，未生成 scene.py。请在 AnyVis 中修正后重新导出源码。\n'));
+  const archive = zipSync(files, { level: 0 });
+  // Include source, README and ZIP headers: every exported bundle must fit the importer.
+  if (archive.length > LIMIT) throw Error('素材包超过 128 MB，请拆分项目。');
+  return archive;
 }
 export function unpackProject(bytes: Uint8Array): { project: Project; files: Record<string, Uint8Array> } {
   if (bytes.length > LIMIT) throw Error('素材包超过 128 MB。');
@@ -33,7 +40,9 @@ export function unpackProject(bytes: Uint8Array): { project: Project; files: Rec
   for (const asset of project.assets || []) if (files[assetPath(asset)]?.length !== asset.bytes) throw Error(`素材缺失或不完整：${asset.name}`);
   return { project, files };
 }
-export async function downloadProjectBundle(project: Project) {
+export async function downloadProjectBundle(project: Project, options: BundleOptions = {}) {
+  // Source export must fail explicitly, before downloading potentially large media.
+  if (options.requireSource) exportStandalonePython(project);
   const contents: Record<string, Uint8Array> = {};
   if ((project.assets || []).reduce((n, a) => n + a.bytes, 0) > LIMIT) throw Error('素材包超过 128 MB，请拆分项目。');
   for (const asset of project.assets || []) {
@@ -41,7 +50,7 @@ export async function downloadProjectBundle(project: Project) {
     if (!response.ok) throw Error(`无法读取素材：${asset.name}，请重新上传。`);
     contents[assetPath(asset)] = new Uint8Array(await response.arrayBuffer());
   }
-  const bytes = packProject(project, contents);
+  const bytes = packProject(project, contents, options);
   const url = URL.createObjectURL(new Blob([bytes.slice().buffer], { type: 'application/zip' }));
   const link = document.createElement('a'); link.href = url; link.download = `${project.name.replace(/[\\/:*?"<>|]/g, '-').slice(0, 90) || 'AnyVis'}.anyvis.zip`; link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);

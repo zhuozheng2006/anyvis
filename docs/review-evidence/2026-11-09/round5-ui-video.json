@@ -1,0 +1,22 @@
+{
+  "width": 1280,
+  "height": 720,
+  "fps": 30.0,
+  "videoCodec": "h264",
+  "frames": 60,
+  "yellowPixels": 16497,
+  "bluePixels": 39352,
+  "audioCodec": "aac",
+  "sampleRate": 48000,
+  "rmsBefore": 0.0,
+  "rmsVoice": 0.023061682417957283,
+  "rmsAfter": 0.0,
+  "audioOnset": 0.5030833333333333,
+  "audioEnd": 1.5029166666666667,
+  "toneHz": 660.0,
+  "expectedStereoRmsAtMinus6dB": 0.022942451423050604,
+  "gainErrorDb": 0.045023327060284106,
+  "bundleAssets": 2,
+  "bundleSource": true,
+  "browserZipReopenVerified": true
+}

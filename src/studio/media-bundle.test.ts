@@ -1,7 +1,27 @@
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 import { strToU8, zipSync } from 'fflate';
 import { createEmptyProject } from './core/project';
-import { packProject, unpackProject } from './media-bundle';
+import { downloadProjectBundle, packProject, unpackProject } from './media-bundle';
+import { createAction } from './core/catalog';
+it('saves an unfinished draft but refuses to call it a runnable source export', () => {
+  const p = createEmptyProject();
+  p.actions = [createAction('shift', { target: '不存在' })];
+  const draft = unpackProject(packProject(p, {}));
+  expect(draft.project).toEqual(p);
+  expect(draft.files['scene.py']).toBeUndefined();
+  expect(() => packProject(p, {}, { requireSource: true })).toThrow('不存在');
+});
+it('rejects invalid source before fetching media or starting a download', async () => {
+  const fetch = vi.spyOn(globalThis, 'fetch');
+  try {
+    const p = createEmptyProject(); p.actions = [createAction('shift', { target: '不存在' })];
+    await expect(downloadProjectBundle(p, { requireSource: true })).rejects.toThrow('不存在');
+    expect(fetch).not.toHaveBeenCalled();
+  } finally { fetch.mockRestore(); }
+});
+it('refuses to export a project JSON larger than the importer accepts', () => {
+  expect(() => packProject({ ...createEmptyProject(), workspace: { oversized: 'x'.repeat(8 * 1024 * 1024) } }, {})).toThrow('8 MB');
+});
 it('roundtrips the editable project, original media and runnable source together', () => {
   const asset = { id: 'a'.repeat(64), name: '主角.png', kind: 'image' as const, extension: 'png', width: 2, height: 2, bytes: 4 };
   const p = { ...createEmptyProject(), assets: [asset] }, path = `assets/${asset.id}.png`, image = new Uint8Array([1, 2, 3, 4]);

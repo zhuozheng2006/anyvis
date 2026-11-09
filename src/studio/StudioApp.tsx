@@ -418,7 +418,7 @@ export default function StudioApp() {
   const exportSource = async () => {
     try {
       const latest = editor.current?.snapshot() || projectRef.current;
-      if (latest.assets?.length) await downloadProjectBundle(latest);
+      if (latest.assets?.length) await downloadProjectBundle(latest, { requireSource: true });
       else downloadText(`${fileName(latest.name)}.py`, exportStandalonePython(latest), 'text/x-python');
     } catch (error) { notify((error as Error).message); }
   };

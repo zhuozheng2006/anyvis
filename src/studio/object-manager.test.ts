@@ -700,11 +700,11 @@ describe('ActionInspector and ObjectManager components', () => {
 
     it('allows reusing existing image asset to create new object with unique name and appear=none', async () => {
       const imgAsset: MediaAsset = {
-        id: 'asset-chart',
+        id: '1111111111111111111111111111111111111111111111111111111111111111',
         name: '图表.png',
         kind: 'image',
         extension: 'png',
-        bytes: 2048
+        bytes: 2048, width: 64, height: 64
       };
       const existingCircle = createAction('circle', { name: '圆 1' });
       const project: Project = {
@@ -740,14 +740,14 @@ describe('ActionInspector and ObjectManager components', () => {
       const newAction = nextProj.actions.find(a => a.type === 'image_asset')!;
       expect(newAction).toBeDefined();
       expect(newAction.fields.name).toBe('图表');
-      expect(newAction.fields.asset).toBe('asset-chart');
+      expect(newAction.fields.asset).toBe('1111111111111111111111111111111111111111111111111111111111111111');
       expect(newAction.fields.appear).toBe('none');
       expect(onSelect).toHaveBeenCalledWith(newAction.id);
     });
 
     it('allows adding audio asset to track creating audio_play at start of actions with delay=0', async () => {
       const audioAsset: MediaAsset = {
-        id: 'voice-intro',
+        id: '2222222222222222222222222222222222222222222222222222222222222222',
         name: '旁白.mp3',
         kind: 'audio',
         extension: 'mp3',
@@ -777,7 +777,7 @@ describe('ActionInspector and ObjectManager components', () => {
       const audioEl = container.querySelector<HTMLAudioElement>('.om-asset-audio-player')!;
       expect(audioEl).not.toBeNull();
       expect(audioEl.controls).toBe(true);
-      expect(audioEl.src).toContain('/api/assets/voice-intro/file');
+      expect(audioEl.src).toContain('/api/assets/2222222222222222222222222222222222222222222222222222222222222222/file');
 
       // Click "加入音轨" button
       const addTrackBtn = container.querySelector<HTMLButtonElement>('.om-asset-btn-track')!;
@@ -793,7 +793,7 @@ describe('ActionInspector and ObjectManager components', () => {
       const firstAction = nextProj.actions[0];
       expect(firstAction.type).toBe('audio_play');
       expect(firstAction.fields.name).toBe('旁白');
-      expect(firstAction.fields.asset).toBe('voice-intro');
+      expect(firstAction.fields.asset).toBe('2222222222222222222222222222222222222222222222222222222222222222');
       expect(firstAction.fields.delay).toBe(0);
       expect(firstAction.fields.offset).toBe(0);
       expect(nextProj.actions[1].id).toBe(existingCircle.id);
@@ -806,7 +806,7 @@ describe('ActionInspector and ObjectManager components', () => {
       const onError = vi.fn();
 
       const uploadedImage: MediaAsset = {
-        id: 'uploaded-pic',
+        id: '3333333333333333333333333333333333333333333333333333333333333333',
         name: '插图.jpg',
         kind: 'image',
         extension: 'jpg',
@@ -844,13 +844,13 @@ describe('ActionInspector and ObjectManager components', () => {
       const resultProject: Project = onChange.mock.calls[0][0];
 
       // Asset saved in project.assets
-      expect(resultProject.assets?.some(a => a.id === 'uploaded-pic')).toBe(true);
+      expect(resultProject.assets?.some(a => a.id === '3333333333333333333333333333333333333333333333333333333333333333')).toBe(true);
 
       // image_asset action created with unique name, asset ID, appear none
       const createdAction = resultProject.actions.find(a => a.type === 'image_asset')!;
       expect(createdAction).toBeDefined();
       expect(createdAction.fields.name).toBe('插图');
-      expect(createdAction.fields.asset).toBe('uploaded-pic');
+      expect(createdAction.fields.asset).toBe('3333333333333333333333333333333333333333333333333333333333333333');
       expect(createdAction.fields.appear).toBe('none');
       expect(onSelect).toHaveBeenCalledWith(createdAction.id);
       expect(onError).not.toHaveBeenCalled();
@@ -863,7 +863,7 @@ describe('ActionInspector and ObjectManager components', () => {
       const onError = vi.fn();
 
       const uploadedAudio: MediaAsset = {
-        id: 'uploaded-bgm',
+        id: '4444444444444444444444444444444444444444444444444444444444444444',
         name: '背景乐.mp3',
         kind: 'audio',
         extension: 'mp3',
@@ -900,7 +900,7 @@ describe('ActionInspector and ObjectManager components', () => {
       const resultProject: Project = onChange.mock.calls[0][0];
 
       // Audio saved to assets
-      expect(resultProject.assets?.some(a => a.id === 'uploaded-bgm')).toBe(true);
+      expect(resultProject.assets?.some(a => a.id === '4444444444444444444444444444444444444444444444444444444444444444')).toBe(true);
       // No visual image action created
       expect(resultProject.actions.length).toBe(0);
       expect(onSelect).not.toHaveBeenCalled();
@@ -965,11 +965,11 @@ describe('ActionInspector and ObjectManager components', () => {
       // 3. Resolve upload promise
       await act(async () => {
         resolveUpload({
-          id: 'async-pic',
+          id: '5555555555555555555555555555555555555555555555555555555555555555',
           name: '示意图.png',
           kind: 'image',
           extension: 'png',
-          bytes: 4096
+          bytes: 4096, width: 64, height: 64
         });
       });
 
@@ -981,7 +981,7 @@ describe('ActionInspector and ObjectManager components', () => {
       expect(mergedProject.actions.some(a => a.fields.name === '蓝方')).toBe(true);
       // And the uploaded image action is also present!
       expect(mergedProject.actions.some(a => a.fields.name === '示意图')).toBe(true);
-      expect(mergedProject.assets?.some(a => a.id === 'async-pic')).toBe(true);
+      expect(mergedProject.assets?.some(a => a.id === '5555555555555555555555555555555555555555555555555555555555555555')).toBe(true);
     });
 
     it('displays upload error banner and reports onError when upload rejects', async () => {
