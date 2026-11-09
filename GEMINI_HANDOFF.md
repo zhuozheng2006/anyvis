@@ -1,10 +1,10 @@
 # AnyVis → Gemini 开发交接
 
-更新：2026-11-08（北京时间）。本文件是接手入口；历史验证过程见 [验证记录](docs/verification.md)，产品交互约定见 [编辑器设计](docs/editor-timeline-design.md)。本次交接仅整理文档，没有新增应用功能。
+更新：2026-11-09（北京时间）。本文件是接手入口；历史验证过程见 [验证记录](docs/verification.md)，产品交互约定见 [编辑器设计](docs/editor-timeline-design.md)。
 
 ## 1. 先看结论
 
-AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器制作真实 Manim 动画的应用，有浏览器本地服务和 Electron 桌面版。开发版本 **0.4.0**。不要重写项目或换掉现有时间轴库，接着补功能、做真实验证、发现问题后修复。
+AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器制作真实 Manim 动画的应用，有浏览器本地服务和 Electron 桌面版。开发版本 **0.5.0**。不要重写项目或换掉现有时间轴库，接着补功能、做真实验证、发现问题后修复。
 
 - 仓库：<https://github.com/zhuozheng2006/anyvis>，主分支 `main`。
 - 本次交接前主分支：`20f588cb37c5ce9d724495e86d0b30c946eaec79`；交接文档提交会在它之后。开始工作时重新读取当前 HEAD，勿硬编码旧 HEAD 推送。
