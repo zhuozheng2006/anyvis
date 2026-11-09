@@ -1,5 +1,7 @@
 # AnyVis → Gemini 开发交接
 
+> **v0.5.2 / 第七轮**：[界面与积木设计复核](docs/ux-block-design-v0.5.2.md)，646 项应用测试、11 项桌面测试、2 项发布校验通过；原生 Manim 与三平台构建通过，[最新 Release](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.2) 含七份安装包及校验和。改动均在 main，没有未合并 PR。
+
 > **v0.5.1 / 第六轮**：[恢复可靠性与发布记录](docs/recovery-release-2026-11-09.md)，641 项应用测试、11 项桌面测试及 2 项发布校验测试通过。[Release 与安装包](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.1)。
 
 > **第五轮改进**：[素材操作、草稿保存与真实界面验收](docs/media-workflow-2026-11-09.md)，637 项应用测试、11 项桌面测试通过；图片上传、配音裁剪、ZIP 重开和高清 MP4 导出完成端到端验证。
@@ -14,7 +16,7 @@
 
 ## 1. 先看结论
 
-AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器制作真实 Manim 动画的应用，有浏览器本地服务和 Electron 桌面版。开发版本 **0.5.1**。不要重写项目或换掉现有时间轴库，接着补功能、做真实验证、发现问题后修复。
+AnyVis 是用 Scratch 风格积木、视频剪辑式时间轴及对象管理器制作真实 Manim 动画的应用，有浏览器本地服务和 Electron 桌面版。开发版本 **0.5.2**。不要重写项目或换掉现有时间轴库，接着补功能、做真实验证、发现问题后修复。
 
 - 仓库：<https://github.com/zhuozheng2006/anyvis>，主分支 `main`。
 - [PR #2](https://github.com/zhuozheng2006/anyvis/pull/2) 已按用户要求合并到 `main`（`372965b`）；用户明确要求后续成果继续提交 `main`，不保留待合并 PR。本地 Git HEAD 仍为旧基线 `fd46a5c`，已发布文件可能仍显示修改/未跟踪；开始工作须重新读取远端并对账，勿用本地旧 HEAD 覆盖远端。

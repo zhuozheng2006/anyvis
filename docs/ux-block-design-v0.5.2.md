@@ -17,6 +17,7 @@
 - 应用测试：107 个文件、646 项通过，新增完整坐标展示、动作分组与搜索、对象提示、键盘调整与布局持久化回归。
 - 生产构建通过；11 项桌面测试和 2 项发布流程测试通过。
 - Chrome 实测 1440×900、1126×819、900×819 和 780×900；验证实际拖动分隔线、键盘调整、工具栏、积木库、对象属性与时间轴。完成现有三秒圆形工程的真实 Manim 预览。
-- macOS / Windows / Linux 安装包与原生 Manim 检查由该提交的 GitHub Actions 继续验证，Release 流程只接受同一提交全部通过的构建。
+- 最终代码提交 `e0e544853a9cd4daf2acc3d26498c8dc9367f03a` 的 [三平台桌面构建](https://github.com/zhuozheng2006/anyvis/actions/runs/42661271615) 与 [原生 Manim 回归](https://github.com/zhuozheng2006/anyvis/actions/runs/42661271689) 全部通过。
+- [发布流程](https://github.com/zhuozheng2006/anyvis/actions/runs/42662418860) 成功；[v0.5.2](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.2) 已公开并设为 Latest。七份安装包及 SHA256SUMS.txt 均已上传，版本与上述提交一致。macOS ARM64、Windows、Linux 通过打包后的启动检查；macOS Intel 为交叉构建，未在 Intel 机器实际启动。
 
 尚待进一步改善：大量对象的列表导航、长工程的积木导航，以及高级 API 的中文引导。这一轮没有把 755 项未验证 API 标记为已完成。

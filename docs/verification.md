@@ -1,5 +1,7 @@
 # AnyVis 验证记录
 
+> **当前 v0.5.2**：见[界面与积木改进及验证记录](ux-block-design-v0.5.2.md)。646 项应用测试、11 项桌面测试与 2 项发布校验通过，原生 Manim 回归及三平台构建成功；[Release](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.2) 已公开，七份安装包与校验和齐全。
+
 > **v0.5.1 更新**：见[第六轮恢复与发布记录](recovery-release-2026-11-09.md)及[Release](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.1)。以下按时间保留的旧测试和覆盖数字不是当前完成度声明。
 
 > **后续修复已完成三轮复验**：[2026-11-09 修复报告](fixes-2026-11-09.md)，623 项应用测试、30 项 API 原生测试及新增 Manim 检查通过；功能限制与完整覆盖缺口仍需明确区分。
