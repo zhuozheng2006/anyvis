@@ -5,6 +5,7 @@ import { flattenActions, duplicateAction, managedDefinition, managedObject, obje
 import { ActionInspector } from './ActionInspector';
 import { AssetShelf } from './AssetShelf';
 import { TrackerControlBar } from './TrackerControlBar';
+import { ObjectDialog } from './ObjectDialog';
 import './object-manager.css';
 
 export interface ObjectManagerProps {
@@ -570,12 +571,10 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
       {/* Advanced Parameters Drawer Overlay (does not displace cards tray) */}
       {isExpanded && selectedObject && (
         <div className="om-drawer-backdrop" onClick={() => setIsExpanded(false)}>
-          <div
+          <ObjectDialog
             className="om-drawer"
-            onClick={e => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${selectedObject.fields.name || '对象'}全部参数`}
+            onClose={() => setIsExpanded(false)}
+            label={`${selectedObject.fields.name || '对象'}全部参数`}
           >
             <div className="om-drawer-header">
               <div className="om-drawer-title">
@@ -604,7 +603,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                 onError={onError}
               />
             </div>
-          </div>
+          </ObjectDialog>
         </div>
       )}
 
@@ -622,7 +621,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
       {/* Add Object Modal */}
       {isAddModalOpen && (
         <div className="om-modal-backdrop" onClick={() => setIsAddModalOpen(false)}>
-          <div className="om-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="添加对象">
+          <ObjectDialog className="om-modal" onClose={() => setIsAddModalOpen(false)} label="添加对象">
             <div className="om-modal-header">
               <h4 className="om-modal-title">添加可视对象</h4>
               <button
@@ -643,7 +642,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                   placeholder="搜索图形、文字、公式或几何类..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  autoFocus
+                  data-dialog-initial-focus
                   aria-label="搜索对象"
                 />
               </div>
@@ -716,7 +715,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                 </div>
               )}
             </div>
-          </div>
+          </ObjectDialog>
         </div>
       )}
     </div>

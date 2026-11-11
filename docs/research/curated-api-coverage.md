@@ -261,4 +261,4 @@ print(len(report['api_entries']))
 
 先从 `unmapped_api_ids` 中筛选创作 API，逐项记录用途和排除理由，再补对应积木、可构造参数、错误定位、行为对照与渲染器验证。自动清单提供检查入口，无法代替这一过程。增加几个常用积木只是进度，不代表完整 API 工作已经完成。
 
-完整机器清单：[manim-ce-0.20.1-coverage.json.gz](research/manim-ce-0.20.1-coverage.json.gz)。
+完整机器清单：[manim-ce-0.20.1-coverage.json.gz](manim-ce-0.20.1-coverage.json.gz)。

@@ -2,17 +2,7 @@
 
 这套配置把编辑器、Electron 宿主和本地服务打包为 AnyVis 桌面应用。桌面进程负责启动和关闭自己的服务，不需要用户另外打开终端。Manim 的 Python 环境仍是外部依赖，可在桌面菜单中选择 Python 解释器路径并持久保存；当前安装包不包含 Python、Manim、LaTeX 或额外中文字体。
 
-**v0.4.0 状态：三平台构建与最终 ASAR 应用启动已通过。** [构建 42410963764](https://github.com/zhuozheng2006/anyvis/actions/runs/42410963764) 对应 `6e105e0`。实际启动覆盖 Mac ARM64、Windows x64、Linux x64，另生成 Intel Mac 安装包。[最新下载与验证范围](../docs/verification.md#最新桌面测试包)。本机尚未完成安装向导与外部 Manim 环境验收。
-
-2026-11-06，[构建 42295108033](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033) 已成功完成三平台真实 Electron 启动检查和安装包构建。对应提交为 `5b7e5545f9475e9dad62f530be1ba089b59fbfe2`：
-
-| 平台 | 本次生成的附件 |
-| --- | --- |
-| macOS | [旧构建的合并附件](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033/artifacts/13540949516)；后续构建已改为按 ARM64 / x64 分开提供，见下方下载说明 |
-| Windows | [x64 NSIS 安装程序](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033/artifacts/13540989138) |
-| Linux | [x64 AppImage 与 DEB](https://github.com/zhuozheng2006/anyvis/actions/runs/42295108033/artifacts/13540979175) |
-
-这些 Actions 附件保存至 2026-11-20，下载需要 GitHub 登录；未发布为 GitHub Release。以后提交生成的附件应按其提交 SHA 核对。此结果证明该提交能构建安装包和运行准备后的桌面应用，尚不能替代实际安装、最终 ASAR 路径和外部 Manim 环境的验收。
+当前公开版本为 [v0.5.2](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.2)。安装包与校验和从 Release 下载；临时 Actions 附件用于核对指定提交，不作为长期下载入口。[发布提交与验证范围](../docs/verification.md#最新桌面测试包)
 
 ## 固定工具版本
 
@@ -23,7 +13,7 @@
 | Electron | 45.2.3 | [Electron 发布记录](https://releases.electronjs.org/release/v45.2.3) |
 | electron-builder | 26.18.1 | [electron-builder 发布记录](https://github.com/electron-userland/electron-builder/releases/tag/electron-builder%4026.18.1) |
 
-以上版本于 2026-11-06 核对。构建用 Node.js 24，项目要求至少 22.18。根目录应用依赖使用现有 `package-lock.json` 和 `npm ci`。本机尚未安装桌面工具，因此没有手工编造 `desktop/package-lock.json`；CI 首次用 `npm install --prefix desktop` 解析工具依赖，并将实际生成的锁文件上传到检查附件。顶层工具版本已固定，但在锁文件纳入版本管理前，间接依赖仍可能变化。网络恢复后应审核并提交真实生成的锁文件，再把桌面工具安装改为 `npm ci --prefix desktop`。
+构建用 Node.js 24，项目要求至少 22.18。根目录应用依赖使用 `package-lock.json` 和 `npm ci`。桌面工具使用独立的 `npm install --prefix desktop`；当前配置未将桌面工具锁文件纳入版本管理，CI 上传实际解析的锁文件供核对，间接依赖仍可能变化。
 
 ## 本机构建
 
@@ -77,7 +67,7 @@ Linux 使用 Xvfb，并为当前 CI 临时环境中的 Chromium sandbox helper �
 
 检查会启动实际本地服务，等待 Studio 标题栏及 Blockly 工作区出现，打开 API 浏览器、搜索 Circle 并添加积木，再通过固定协议验证会话、携带 token 的 POST、视频 Range 请求和浏览器视频解码。随后重启内部引擎，确认固定地址下的本地存储仍可读取。成功退出 0，失败退出 1，整体有 30 秒超时。
 
-未安装 Manim 时允许壳启动检查通过；环境尚未检测完成时报告 `health.available: false, checking: true`，并不代表确认缺少环境。这项检查不能证明 Manim 渲染成功。CI 还会运行桌面生命周期和隔离 bundle 的 Node 回归测试。v0.3.0 增加第二轮检查：安装包构建后运行 `node scripts/check-packaged-desktop.mjs`，启动 `release/` 下的最终应用，要求 `app.isPackaged` 为真、应用路径为 `app.asar`、外置 worker 存在，并重复上述界面与协议检查。Linux 通过 Xvfb 运行并保留 Chromium sandbox。这可以验证实际 ASAR 资源路径，仍不能代替安装向导或外部 Manim 环境验收。macOS 的启动检查只覆盖 runner 本身的架构，不同时证明另一架构可运行。
+未安装 Manim 时允许壳启动检查通过；环境尚未检测完成时报告 `health.available: false, checking: true`，并不代表确认缺少环境。这项检查不能证明 Manim 渲染成功。CI 还会运行桌面生命周期和隔离 bundle 的 Node 回归测试。安装包还会进行第二轮检查：安装包构建后运行 `node scripts/check-packaged-desktop.mjs`，启动 `release/` 下的最终应用，要求 `app.isPackaged` 为真、应用路径为 `app.asar`、外置 worker 存在，并重复上述界面与协议检查。Linux 通过 Xvfb 运行并保留 Chromium sandbox。这可以验证实际 ASAR 资源路径，仍不能代替安装向导或外部 Manim 环境验收。macOS 的启动检查只覆盖 runner 本身的架构，不同时证明另一架构可运行。
 
 成功的安装包保存为以下工作流附件，保留 14 天。macOS 按架构分开上传，避免把四个文件合为一个过大的压缩包：
 
@@ -89,6 +79,10 @@ Linux 使用 Xvfb，并为当前 CI 临时环境中的 Chromium sandbox helper �
 | Linux x64 | `AnyVis-Linux-<提交 SHA>` |
 
 准备目录的 `smoke-result.json`、最终 ASAR 的 `packaged-smoke-result.json` 和本次真实解析的桌面工具锁文件另存为 `AnyVis-<平台>-checks-<提交 SHA>`。下载后核对提交 SHA。若构建失败，检查附件可能只含锁文件，应查看失败日志，不能据此判断启动通过。
+
+## 发布 Release
+
+在 main 上运行 `Publish tested desktop release` 工作流，传入成功的 `Desktop packages` 构建 ID。发布工具验证版本、构建提交、原生回归和七份安装包，生成校验和，先上传草稿再公开。三平台打包工作流本身不发布；已有公开版本不会被覆盖。发布说明放在 `docs/releases/<版本>.md`。
 
 ## 正式发行前的安装验收
 

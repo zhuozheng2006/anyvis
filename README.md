@@ -41,4 +41,4 @@ npm run studio
 
 启动器会打开浏览器，并同时启动编辑器和本地渲染服务。自动检测不到 Python 时，可通过 `ANYVIS_PYTHON` 指定路径，具体见[启动说明](desktop/README.md)。
 
-项目仍在持续开发，部分高级功能和 Manim API 尚未完整验证。[功能范围与限制](docs/Manim-API-Coverage.md) · [开发与验证记录](GEMINI_HANDOFF.md)
+项目仍在持续开发，部分高级功能和 Manim API 尚未完整验证。[功能范围与限制](docs/Manim-API-Coverage.md) · [开发文档](docs/README.md)
