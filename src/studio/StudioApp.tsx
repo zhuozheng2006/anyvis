@@ -36,6 +36,7 @@ import { QuickAddToolbar } from './QuickAddToolbar';
 import './studio.css';
 import './studio-polish.css';
 import { revisionOf } from './render-revision';
+import { canUseWorkspaceShortcut, handleProjectShortcut } from './studio-shortcuts';
 
 const CodeMirror = deferredPanel(() => import('@uiw/react-codemirror'), '代码编辑器');
 const Timeline = deferredPanel(async () => ({ default: (await import('./Timeline')).Timeline }), '时间轴');
@@ -384,13 +385,11 @@ export default function StudioApp() {
     return () => { flush(); window.removeEventListener('pagehide', flush); document.removeEventListener('visibilitychange', visibility); };
   }, []);
   useEffect(() => {
-    const listener = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setCmdPaletteOpen(v => !v); return; }
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') { event.preventDefault(); exportProject(); }
-      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') { event.preventDefault(); void renderRef.current('preview'); }
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !(event.target instanceof HTMLElement && event.target.closest('input,textarea,[contenteditable="true"]'))) { event.preventDefault(); event.stopPropagation(); if (event.shiftKey) redoProject(); else undoProject(); }
-      if (event.key === 'Escape') { setModal(null); setCmdPaletteOpen(false); }
-    };
+    const listener = (event: KeyboardEvent) => handleProjectShortcut(event, {
+      save: () => { void exportProject(); }, render: () => { void renderRef.current('preview'); },
+      undo: undoProject, redo: redoProject, togglePalette: () => setCmdPaletteOpen(v => !v),
+      closeStudioDialog: () => setModal(null),
+    });
     window.addEventListener('keydown', listener, true); return () => window.removeEventListener('keydown', listener, true);
   }, [exportProject, undoProject, redoProject]);
   const captureVideoFrame = useCallback(() => {
@@ -523,17 +522,7 @@ export default function StudioApp() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement | null;
-      const tagName = target?.tagName?.toLowerCase();
-      if (
-        tagName === 'input' ||
-        tagName === 'textarea' ||
-        tagName === 'select' ||
-        target?.isContentEditable ||
-        target?.closest('.cm-editor')
-      ) {
-        return;
-      }
+      if (!canUseWorkspaceShortcut(e)) return;
       if (!e.metaKey && !e.ctrlKey && !e.altKey) {
         if (e.key === '1') {
           e.preventDefault();

@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Search } from 'lucide-react';
 import type { Project } from './core/types';
 import { CURATED_BLOCK_CATALOG, getBlockDefinition } from './core/catalog';
 import { actionLabel, actionTrack, flattenActions, managedObject } from './authoring';
+import { isComposingShortcut } from './studio-shortcuts';
 import './command-palette.css';
 
 export interface CommandPaletteItem {
@@ -54,6 +55,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 }) => {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
+  const listId = useId();
+  const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  useLayoutEffect(() => {
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    inputRef.current?.focus();
+    return () => { if (previous?.isConnected) previous.focus(); };
+  }, []);
 
   const allItems = useMemo<CommandPaletteItem[]>(() => {
     const list: CommandPaletteItem[] = [];
@@ -114,6 +124,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     setActiveIndex(0);
   }, [query]);
 
+  useEffect(() => {
+    listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView?.({ block: 'nearest' });
+  }, [activeIndex, filtered]);
+
   const executeItem = (item?: CommandPaletteItem) => {
     if (!item) return;
     onClose();
@@ -128,16 +142,22 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         aria-modal="true"
         aria-label="全局命令面板"
         onKeyDown={e => {
+          if (e.defaultPrevented || isComposingShortcut(e.nativeEvent)) return;
           if (e.key === 'Escape') {
             e.preventDefault();
             onClose();
+          } else if (e.key === 'Tab') {
+            if (e.shiftKey && e.target === inputRef.current) { e.preventDefault(); closeRef.current?.focus(); }
+            else if (!e.shiftKey && e.target !== inputRef.current) { e.preventDefault(); inputRef.current?.focus(); }
+          } else if (e.target !== inputRef.current) {
+            return;
           } else if (e.key === 'ArrowDown') {
             e.preventDefault();
             setActiveIndex(i => (filtered.length ? (i + 1) % filtered.length : 0));
           } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             setActiveIndex(i => (filtered.length ? (i - 1 + filtered.length) % filtered.length : 0));
-          } else if (e.key === 'Enter') {
+          } else if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey && !e.altKey) {
             e.preventDefault();
             executeItem(filtered[activeIndex]);
           }
@@ -146,29 +166,37 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         <div className="cmd-palette-search-row">
           <Search size={17} className="cmd-palette-search-icon" />
           <input
+            ref={inputRef}
             type="text"
             className="cmd-palette-input"
             placeholder="搜索命令、定位场景对象、或快速添加图形与动画… (⌘/Ctrl + K)"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            autoFocus
             aria-label="搜索命令或对象"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded="true"
+            aria-controls={listId}
+            aria-activedescendant={filtered[activeIndex] ? `${listId}-${activeIndex}` : undefined}
           />
-          <span className="cmd-palette-esc-badge">ESC</span>
+          <button ref={closeRef} type="button" className="cmd-palette-esc-badge" onClick={onClose} aria-label="关闭命令面板">ESC</button>
         </div>
 
-        <div className="cmd-palette-list" role="listbox">
+        <div ref={listRef} id={listId} className="cmd-palette-list" role="listbox" aria-label="匹配的命令与对象">
           {filtered.length === 0 ? (
             <div className="cmd-palette-empty">未找到匹配的命令、对象或积木</div>
           ) : (
             filtered.map((item, idx) => (
               <button
                 key={item.id}
+                id={`${listId}-${idx}`}
                 type="button"
+                tabIndex={-1}
                 role="option"
                 aria-selected={idx === activeIndex}
                 className={`cmd-palette-item ${idx === activeIndex ? 'active' : ''}`}
                 onMouseEnter={() => setActiveIndex(idx)}
+                onFocus={() => setActiveIndex(idx)}
                 onClick={() => executeItem(item)}
               >
                 <div className="cmd-palette-item-left">
