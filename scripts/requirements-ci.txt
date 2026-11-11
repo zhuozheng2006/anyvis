@@ -1,0 +1,2 @@
+# Native regression baseline; upgrade only with a new API inventory and evidence.
+manim==0.20.1

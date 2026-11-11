@@ -18,7 +18,7 @@ concurrency:
 jobs:
   cairo:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -30,12 +30,33 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install isolated Cairo and software OpenGL runtime dependencies
+          cache: pip
+          cache-dependency-path: scripts/requirements-ci.txt
+      - name: Initialize installation diagnostics
+        id: diagnostics
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libcairo2-dev libpango1.0-dev pkg-config ffmpeg xvfb xauth libgl1-mesa-dri libegl1 mesa-utils fonts-noto-cjk texlive-latex-extra dvisvgm
-          python -m pip install 'manim==0.20.1'
-          npm ci
+          mkdir -p artifacts/ci
+          { date -u; python --version; node --version; npm --version; df -h /; } | tee artifacts/ci/environment.log
+      - name: Install Cairo, OpenGL and TeX system packages
+        timeout-minutes: 20
+        shell: bash
+        run: |
+          set -o pipefail
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update 2>&1 | tee artifacts/ci/apt-update.log
+          sudo env DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends libcairo2-dev libpango1.0-dev pkg-config ffmpeg xvfb xauth libgl1-mesa-dri libegl1 mesa-utils fonts-noto-cjk texlive-latex-extra texlive-fonts-recommended dvisvgm 2>&1 | tee artifacts/ci/apt-install.log
+      - name: Install pinned Manim runtime
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          set -o pipefail
+          python -m pip install --disable-pip-version-check --no-input --timeout 60 --retries 3 --progress-bar off -r scripts/requirements-ci.txt 2>&1 | tee artifacts/ci/pip-install.log
+      - name: Install application dependencies
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          set -o pipefail
+          npm ci --no-audit --no-fund 2>&1 | tee artifacts/ci/npm-install.log
       - name: Check dependency advisories
         shell: bash
         run: |
@@ -87,11 +108,13 @@ jobs:
           npm run test:render
           npm run test:media
           npm run test:music
-      - name: Upload native evidence
-        if: always()
+      - name: Upload native evidence and installation diagnostics
+        if: always() && steps.diagnostics.outcome == 'success'
         uses: actions/upload-artifact@v7.0.2
         with:
           name: AnyVis-native-cairo-${{ github.sha }}
-          path: artifacts/api/*.json
+          path: |
+            artifacts/api/*.json
+            artifacts/ci/*.log
           if-no-files-found: error
           retention-days: 14
