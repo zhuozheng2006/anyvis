@@ -417,11 +417,11 @@ describe('ActionInspector and ObjectManager components', () => {
       expect(cards[1].classList.contains('om-card-selected')).toBe(false);
 
       // Cards have accessible aria-labels
-      expect(cards[0].getAttribute('aria-label')).toContain('首圆');
-      expect(cards[1].getAttribute('aria-label')).toContain('次块');
+      expect(cards[0].querySelector('.om-card-select')!.getAttribute('aria-label')).toContain('首圆');
+      expect(cards[1].querySelector('.om-card-select')!.getAttribute('aria-label')).toContain('次块');
     });
 
-    it('supports selecting cards with keyboard (Enter / Space)', async () => {
+    it('uses native buttons for keyboard activation of object cards', async () => {
       const circle = createAction('circle', { name: '圆1' });
       const square = createAction('square', { name: '方1' });
       const project: Project = {
@@ -444,21 +444,16 @@ describe('ActionInspector and ObjectManager components', () => {
         );
       });
 
-      const cards = container.querySelectorAll<HTMLDivElement>('.om-card');
-      expect(cards[1].getAttribute('tabindex')).toBe('0');
-
-      // Press Enter on second card
-      await act(async () => {
-        cards[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-      });
+      const buttons = container.querySelectorAll<HTMLButtonElement>('.om-card-select');
+      expect(buttons[0].tabIndex).toBe(0);
+      expect(buttons[1].tabIndex).toBe(-1);
+      // Native buttons provide Enter/Space activation in the browser. jsdom
+      // does not synthesize native default actions for dispatched key events.
+      expect(buttons[1].tagName).toBe('BUTTON');
+      expect(buttons[1].type).toBe('button');
+      await act(async () => buttons[1].click());
       expect(onSelect).toHaveBeenCalledWith(square.id);
 
-      // Press Space on second card
-      onSelect.mockClear();
-      await act(async () => {
-        cards[1].dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
-      });
-      expect(onSelect).toHaveBeenCalledWith(square.id);
     });
 
     it('protects objects with dependents from deletion and reports error with aria-label', async () => {

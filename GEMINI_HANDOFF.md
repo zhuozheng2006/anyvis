@@ -1,5 +1,7 @@
 # AnyVis → Gemini 开发交接
 
+> **2026-11-11 / 第八轮**：[对象导航与 README 整理](docs/object-navigation-2026-11-11.md)。652 项应用测试、11 项桌面测试和生产构建通过；README 精简为产品介绍与上手指南。本轮更新 main 源码，公开安装包仍为 v0.5.2。
+
 > **v0.5.2 / 第七轮**：[界面与积木设计复核](docs/ux-block-design-v0.5.2.md)，646 项应用测试、11 项桌面测试、2 项发布校验通过；原生 Manim 与三平台构建通过，[最新 Release](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.2) 含七份安装包及校验和。改动均在 main，没有未合并 PR。
 
 > **v0.5.1 / 第六轮**：[恢复可靠性与发布记录](docs/recovery-release-2026-11-09.md)，641 项应用测试、11 项桌面测试及 2 项发布校验测试通过。[Release 与安装包](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.1)。

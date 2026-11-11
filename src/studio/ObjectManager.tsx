@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { Action, FieldValue, Project } from './core/types';
 import { CURATED_BLOCK_CATALOG, BLOCK_CATALOG, getBlockDefinition } from './core/catalog';
 import { flattenActions, duplicateAction, managedDefinition, managedObject, objectDependents, removeAction, reorderAction, updateAction } from './authoring';
@@ -189,39 +189,17 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [addTab, setAddTab] = useState<'curated' | 'api' | 'assets'>('curated');
   const [searchQuery, setSearchQuery] = useState('');
-  const [trayFilter, setTrayFilter] = useState<'all' | 'shapes' | 'text' | 'axes' | 'params'>('all');
+  const [trayFilter, setTrayFilter] = useState<'all' | 'shapes' | 'text' | 'axes'>('all');
   const [traySearch, setTraySearch] = useState('');
 
   const filteredTrayObjects = useMemo(() => {
     let list = objects;
-    if (trayFilter === 'shapes') {
-      list = list.filter(o => {
-        const t = o.type.toLowerCase();
-        return (
-          t.includes('circle') ||
-          t.includes('square') ||
-          t.includes('rect') ||
-          t.includes('poly') ||
-          t.includes('arrow') ||
-          t.includes('line') ||
-          t.includes('dot') ||
-          t.includes('triangle')
-        );
-      });
-    } else if (trayFilter === 'text') {
-      list = list.filter(o => {
-        const t = o.type.toLowerCase();
-        return t.includes('text') || t.includes('tex') || t.includes('latex') || t.includes('formula');
-      });
-    } else if (trayFilter === 'axes') {
-      list = list.filter(o => {
-        const t = o.type.toLowerCase();
-        return t.includes('axes') || t.includes('plane') || t.includes('number_line');
-      });
-    } else if (trayFilter === 'params') {
-      list = list.filter(o => {
-        const t = o.type.toLowerCase();
-        return t.includes('tracker') || t.includes('asset') || t.includes('image');
+    if (trayFilter !== 'all') {
+      list = list.filter(object => {
+        const kind = getBlockDefinition(object.type)?.objectKind;
+        const category = ['text', 'formula', 'number'].includes(kind || '') ? 'text'
+          : ['axes', 'axes3d', 'number_line'].includes(kind || '') ? 'axes' : 'shapes';
+        return category === trayFilter;
       });
     }
 
@@ -235,6 +213,27 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
     }
     return list;
   }, [objects, trayFilter, traySearch]);
+
+  const cardButtons = useRef(new Map<string, HTMLButtonElement>());
+  const filtering = trayFilter !== 'all' || Boolean(traySearch.trim());
+  const clearFilters = () => { setTrayFilter('all'); setTraySearch(''); };
+  useEffect(() => { setTrayFilter('all'); setTraySearch(''); }, [project.id]);
+  const visibleCardIds = JSON.stringify(filteredTrayObjects.map(object => object.id));
+  useEffect(() => {
+    cardButtons.current.get(effectiveSelectedId || '')?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+  }, [effectiveSelectedId, visibleCardIds]);
+  const navigateCards = (event: React.KeyboardEvent<HTMLButtonElement>, id: string) => {
+    const index = filteredTrayObjects.findIndex(object => object.id === id);
+    const last = filteredTrayObjects.length - 1;
+    const next = event.key === 'ArrowRight' ? Math.min(last, index + 1)
+      : event.key === 'ArrowLeft' ? Math.max(0, index - 1)
+      : event.key === 'Home' ? 0 : event.key === 'End' ? last : -1;
+    if (next < 0) return;
+    event.preventDefault(); event.stopPropagation();
+    const object = filteredTrayObjects[next];
+    onSelect(object.id);
+    cardButtons.current.get(object.id)?.focus();
+  };
 
   const handleMoveLayer = (e: React.MouseEvent, id: string, dir: -1 | 1) => {
     e.stopPropagation();
@@ -347,7 +346,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
         <div className="om-cards-tray-header">
           <div className="om-tray-title-group">
             <span>对象 ({objects.length})</span>
-            {objects.length >= 3 && (
+            {(objects.length >= 3 || trayFilter !== 'all') && (
               <div className="om-tray-filter-pills" role="group" aria-label="对象类型分类过滤">
                 <button
                   type="button"
@@ -381,14 +380,15 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
             )}
           </div>
           <div className="om-tray-tools-group">
-            {objects.length >= 4 && (
+            {(objects.length >= 4 || traySearch.length > 0) && (
               <input
                 type="text"
                 className="om-tray-search-input"
-                placeholder="筛选..."
+                placeholder="搜索对象…"
                 value={traySearch}
                 onChange={e => setTraySearch(e.target.value)}
                 aria-label="快速筛选对象角色"
+                onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); setTraySearch(''); } }}
               />
             )}
             {onMusicSettings && (
@@ -414,7 +414,12 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
             </button>
           </div>
         </div>
+        {filtering && <div className="om-filter-status" role="status">
+          <span>显示 {filteredTrayObjects.length} / {objects.length} 个对象</span>
+          <button type="button" onClick={clearFilters}>清除筛选</button>
+        </div>}
         <div className="om-cards-scroll-area" role="region" aria-label="对象卡片列表">
+          {!filteredTrayObjects.length && <p className="om-empty-results">{filtering ? '没有匹配的对象，请更换关键词或清除筛选。' : '添加第一个对象，开始创作。'}</p>}
           {filteredTrayObjects.map(obj => {
             const isSelected = obj.id === effectiveSelectedId;
             const def = getBlockDefinition(obj.type);
@@ -425,24 +430,15 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
             return (
               <div
                 key={obj.id}
-                tabIndex={0}
-                role="button"
-                aria-pressed={isSelected}
-                aria-label={`选择对象 ${name}，类型 ${label}`}
                 className={`om-card ${isSelected ? 'om-card-selected' : ''}`}
                 onClick={() => onSelect(obj.id)}
-                onKeyDown={e => {
-                  if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
-                    e.preventDefault();
-                    onSelect(obj.id);
-                  }
-                }}
               >
                 <div className="om-card-actions">
                   {idx > 0 && (
                     <button
                       type="button"
                       className="om-card-layer-btn"
+                      tabIndex={isSelected ? 0 : -1}
                       title="提前创建（不改变画面叠放层级）"
                       aria-label={`提前创建 ${name}`}
                       onClick={e => handleMoveLayer(e, obj.id, -1)}
@@ -454,6 +450,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                     <button
                       type="button"
                       className="om-card-layer-btn"
+                      tabIndex={isSelected ? 0 : -1}
                       title="延后创建（不改变画面叠放层级）"
                       aria-label={`延后创建 ${name}`}
                       onClick={e => handleMoveLayer(e, obj.id, 1)}
@@ -464,6 +461,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                   <button
                     type="button"
                     className="om-card-del-btn"
+                    tabIndex={isSelected ? 0 : -1}
                     onClick={e => handleDelete(e, obj.id, name)}
                     aria-label={`删除对象 ${name}`}
                     title={`删除对象 ${name}`}
@@ -471,6 +469,12 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                     ✕
                   </button>
                 </div>
+                <button type="button" className="om-card-select"
+                  ref={node => { if (node) cardButtons.current.set(obj.id, node); else cardButtons.current.delete(obj.id); }}
+                  tabIndex={isSelected || (!filteredTrayObjects.some(object => object.id === effectiveSelectedId) && obj.id === filteredTrayObjects[0]?.id) ? 0 : -1}
+                  aria-pressed={isSelected} aria-label={`选择对象 ${name}，类型 ${label}`}
+                  title={`${name} · ${label}；方向键切换对象`}
+                  onKeyDown={event => navigateCards(event, obj.id)}>
                 <div className="om-card-icon">{renderObjectIcon(obj)}</div>
                 <div className="om-card-info">
                   <span className="om-card-name" title={name}>
@@ -480,6 +484,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                     {label}
                   </span>
                 </div>
+                </button>
               </div>
             );
           })}
@@ -504,7 +509,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
             <div className="om-prop-header-row">
               <div className="om-prop-left">
                 <div className="om-prop-icon">{renderObjectIcon(selectedObject)}</div>
-                <span className="om-prop-badge">{selectedDef?.label || selectedObject.type}</span>
+                <span className="om-selected-name" title={String(selectedObject.fields.name || '未命名')}>{String(selectedObject.fields.name || '未命名')}</span><span className="om-prop-badge">{selectedDef?.label || selectedObject.type}</span>
               </div>
               <div className="om-prop-right">
                 {hasMoreFields && (
@@ -543,6 +548,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
               </div>
             </div>
 
+            {filtering && !filteredTrayObjects.some(object => object.id === effectiveSelectedId) && <div className="om-selection-notice">当前对象不在筛选结果中。<button type="button" onClick={clearFilters}>显示当前对象</button></div>}
             <div className="om-prop-body-compact">
               <ActionInspector
                 action={selectedObject}
