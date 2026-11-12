@@ -43,7 +43,8 @@
 .av-block-editor .blocklyScrollbarHandle { rx: 4px; }
 .av-block-editor .blocklyPathLight, .av-block-editor .blocklyPathDark { display: none; }
 .av-block-editor .blocklySelected > .blocklyPath { stroke: #ffeead; stroke-width: 3px; }
-.blocklyWidgetDiv, .blocklyDropDownDiv { z-index: 3000 !important; }
+/* Above workspace chrome (up to 80), below app modal backdrops (100+). */
+.blocklyWidgetDiv, .blocklyDropDownDiv, .blocklyTooltipDiv { z-index: 90 !important; }
 .blocklyDropDownDiv .goog-menuitem-content { font: 12px/1.6 'PingFang SC', 'Microsoft YaHei', sans-serif; }
 @media (max-width: 900px) {
   .av-block-toolbar { padding: 7px 9px; }

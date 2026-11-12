@@ -10,6 +10,7 @@ import {
 } from './model';
 import './studio-blocks.css';
 import { ApiBrowser } from './ApiBrowser';
+import { guardWorkspacePopups } from './modal-popups';
 
 export interface StudioBlocksHandle {
   snapshot(): Project;
@@ -198,6 +199,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       maxBlocks: 2000,
     });
     workspace.current = ws;
+    const releasePopupGuard = guardWorkspacePopups(host.current, () => ws.hideChaff(true));
     setObjectPresentation(ws, animationOnly);
     let loading = true;
     let disposed = false;
@@ -285,6 +287,7 @@ export const StudioBlocks = forwardRef<StudioBlocksHandle, StudioBlocksProps>(fu
       disposed = true;
       cancelAnimationFrame(frame);
       if (updateTimer.current) clearTimeout(updateTimer.current);
+      releasePopupGuard();
       observer.disconnect(); ws.removeChangeListener(listener); releaseReferenceNames(ws); ws.dispose();
       workspace.current = null;
     };

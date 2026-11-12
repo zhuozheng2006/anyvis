@@ -33,6 +33,16 @@ describe('command palette keyboard interaction', () => {
     return { run, close, input: container.querySelector('input')! };
   }
 
+  it('keeps the window open on right-click and middle-click of its backdrop', () => {
+    const { close, input } = mount();
+    const backdrop = container.querySelector('.cmd-palette-backdrop')!;
+    for (const button of [2, 1]) act(() => { backdrop.dispatchEvent(new MouseEvent('mousedown', { button, bubbles: true })); });
+    act(() => { input.dispatchEvent(new MouseEvent('mousedown', { button: 0, bubbles: true })); });
+    expect(close).not.toHaveBeenCalled();
+    act(() => { backdrop.dispatchEvent(new MouseEvent('mousedown', { button: 0, bubbles: true })); });
+    expect(close).toHaveBeenCalledOnce();
+  });
+
   it('does not execute or close while confirming Chinese composition', () => {
     const { input, run, close } = mount();
     press(input, 'Enter', { isComposing: true }); press(input, 'Escape', { isComposing: true });

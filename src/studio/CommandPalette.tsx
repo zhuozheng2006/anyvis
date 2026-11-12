@@ -135,7 +135,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   };
 
   return (
-    <div className="cmd-palette-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
+    <div className="cmd-palette-backdrop" onMouseDown={e => { if (e.button === 0 && e.target === e.currentTarget) onClose(); }}>
       <div
         className="cmd-palette-dialog"
         role="dialog"
