@@ -9,6 +9,8 @@ import {
   generateComplexMappingPythonCode,
   createComplexMappingActions,
 } from './complex-mapping';
+import { clientToSvgPoint, copyTextToClipboard } from './browser-utils';
+import { useTransientFlag, useDialogEscape, capturePointerSafe, releasePointerSafe } from './modal-hooks';
 import './complex-mapping.css';
 
 interface ComplexMappingModalProps {
@@ -30,7 +32,8 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
   const [gridSpacing, setGridSpacing] = useState<number>(0.5);
   const [probeZ, setProbeZ] = useState<Complex>({ re: 1.0, im: 0.8 });
   const [isMorphing, setIsMorphing] = useState<boolean>(false);
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isCopied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
+  useDialogEscape(isOpen, onClose);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   const isDraggingProbe = useRef<boolean>(false);
@@ -40,14 +43,28 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
     [selectedPresetId],
   );
 
+  useEffect(() => {
+    setApplyError('');
+  }, [selectedPresetId]);
+
+  useEffect(() => {
+    setApplyError('');
+    if (!isOpen) {
+      isDraggingProbe.current = false;
+      setIsMorphing(false);
+      resetCopied();
+    }
+  }, [isOpen, resetCopied]);
+
   const bounds = preset.defaultBounds;
 
   // Morph animation
   useEffect(() => {
-    if (!isMorphing) return;
+    if (!isOpen || !isMorphing) return;
 
     let start: number | null = null;
     const duration = 2400; // 2.4s
+    let reqId = 0;
 
     const frame = (timestamp: number) => {
       if (!start) start = timestamp;
@@ -57,15 +74,15 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
       setMorphT(eased);
 
       if (progress < 1) {
-        requestAnimationFrame(frame);
+        reqId = requestAnimationFrame(frame);
       } else {
         setIsMorphing(false);
       }
     };
 
-    const reqId = requestAnimationFrame(frame);
+    reqId = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(reqId);
-  }, [isMorphing]);
+  }, [isOpen, isMorphing]);
 
   const startMorph = () => {
     setMorphT(0);
@@ -114,13 +131,11 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
 
   const toComplexCoords = useCallback(
     (clientX: number, clientY: number) => {
-      if (!svgRef.current) return probeZ;
-      const rect = svgRef.current.getBoundingClientRect();
-      const clickX = clientX - rect.left;
-      const clickY = clientY - rect.top;
+      const pt = clientToSvgPoint(svgRef.current, clientX, clientY, svgWidth, svgHeight);
+      if (!pt) return probeZ;
 
-      const normX = (clickX - padding) / (svgWidth - 2 * padding);
-      const normY = (svgHeight - padding - clickY) / (svgHeight - 2 * padding);
+      const normX = (pt.x - padding) / (svgWidth - 2 * padding);
+      const normY = (svgHeight - padding - pt.y) / (svgHeight - 2 * padding);
 
       const mathX = bounds.min + normX * (bounds.max - bounds.min);
       const mathY = bounds.min + normY * (bounds.max - bounds.min);
@@ -134,7 +149,9 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
   );
 
   const handlePointerDown = (e: React.PointerEvent) => {
+    setApplyError('');
     isDraggingProbe.current = true;
+    capturePointerSafe(e.currentTarget as Element, e.pointerId);
     const coords = toComplexCoords(e.clientX, e.clientY);
     setProbeZ(coords);
   };
@@ -145,15 +162,23 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
     setProbeZ(coords);
   };
 
-  const handlePointerUp = () => {
-    isDraggingProbe.current = false;
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (isDraggingProbe.current) {
+      releasePointerSafe(e.currentTarget as Element, e.pointerId);
+      isDraggingProbe.current = false;
+    }
   };
 
   const handleCopyPython = async () => {
-    const code = generateComplexMappingPythonCode(preset, bounds, gridSpacing, morphT);
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    setApplyError('');
+    try {
+      const code = generateComplexMappingPythonCode(preset, bounds, gridSpacing, morphT);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleApplyToProject = () => {
@@ -197,6 +222,8 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              onLostPointerCapture={() => { isDraggingProbe.current = false; }}
             >
               <svg
                 ref={svgRef}
@@ -346,7 +373,12 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
                     max="1"
                     step="0.01"
                     value={morphT}
-                    onChange={(e) => setMorphT(parseFloat(e.target.value))}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      if (!Number.isFinite(val)) return;
+                      setApplyError('');
+                      setMorphT(Math.max(0, Math.min(1, val)));
+                    }}
                   />
                   <span>{(morphT * 100).toFixed(0)}%</span>
                 </div>
@@ -370,7 +402,12 @@ export const ComplexMappingModal: React.FC<ComplexMappingModalProps> = ({
                   max="1.0"
                   step="0.1"
                   value={gridSpacing}
-                  onChange={(e) => setGridSpacing(parseFloat(e.target.value))}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (!Number.isFinite(val)) return;
+                    setApplyError('');
+                    setGridSpacing(Math.max(0.3, Math.min(1.0, val)));
+                  }}
                 />
                 <span>{gridSpacing.toFixed(1)}</span>
               </div>

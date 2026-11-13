@@ -38,7 +38,7 @@ export function computeDft(points: Point2D[], maxHarmonics = 20): FourierCoeffic
   if (M === 0) return [];
 
   const coeffs: FourierCoefficient[] = [];
-  const limit = Math.max(1, Math.min(60, maxHarmonics));
+  const limit = Number.isFinite(maxHarmonics) ? Math.max(1, Math.min(60, Math.round(maxHarmonics))) : 20;
 
   for (let n = -limit; n <= limit; n++) {
     let re = 0;
@@ -155,7 +155,7 @@ export type FourierPresetId = 'pi' | 'heart' | 'trefoil' | 'star' | 'square' | '
 
 export function getFourierPreset(id: FourierPresetId, sampleCount = 200): Point2D[] {
   const points: Point2D[] = [];
-  const N = sampleCount;
+  const N = Number.isFinite(sampleCount) ? Math.max(4, Math.round(sampleCount)) : 200;
 
   switch (id) {
     case 'pi': {

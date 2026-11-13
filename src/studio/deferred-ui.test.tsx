@@ -75,6 +75,26 @@ it('hides a failed dialog on close and keeps its retry available when reopened',
   expect(host.querySelector('[role="alert"]')).not.toBeNull();
 });
 
+it('closes a loaded deferred dialog on Escape unless already prevented or composing', async () => {
+  const Dialog = deferredDialog(async () => ({
+    default: ({ isOpen }: Props) => isOpen ? <div role="dialog" aria-label="测试弹窗">内容</div> : null,
+  }), '快捷键弹窗');
+  const onClose = vi.fn();
+  await act(async () => root.render(<Dialog isOpen onClose={onClose} />));
+  expect(host.querySelector('[role="dialog"]')).not.toBeNull();
+
+  await act(async () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', isComposing: true, cancelable: true })));
+  expect(onClose).not.toHaveBeenCalled();
+
+  const cancelled = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true });
+  cancelled.preventDefault();
+  await act(async () => window.dispatchEvent(cancelled));
+  expect(onClose).not.toHaveBeenCalled();
+
+  await act(async () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', cancelable: true })));
+  expect(onClose).toHaveBeenCalledOnce();
+});
+
 it('loads an editor panel with current props and recovers from an import failure', async () => {
   vi.spyOn(console, 'error').mockImplementation(() => {});
   const load = vi.fn<() => Promise<{ default: ComponentType<{ value: string }> }>>()

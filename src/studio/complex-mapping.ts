@@ -154,13 +154,15 @@ export function generateMorphedGrid(
   samplesPerLine = 40,
 ): GridLine[] {
   const lines: GridLine[] = [];
-  const clampedT = Math.max(0, Math.min(1, t));
+  const safeSpacing = Number.isFinite(lineSpacing) && lineSpacing > 0.05 ? lineSpacing : 0.5;
+  const clampedT = Number.isFinite(t) ? Math.max(0, Math.min(1, t)) : 1;
+  const safeSamples = Number.isFinite(samplesPerLine) ? Math.max(2, Math.round(samplesPerLine)) : 40;
 
   // Vertical lines: x = const, y varies from min to max
-  for (let x = bounds.min; x <= bounds.max + 1e-6; x += lineSpacing) {
+  for (let x = bounds.min; x <= bounds.max + 1e-6; x += safeSpacing) {
     const pts: Array<{ x: number; y: number }> = [];
-    for (let s = 0; s <= samplesPerLine; s++) {
-      const y = bounds.min + (s / samplesPerLine) * (bounds.max - bounds.min);
+    for (let s = 0; s <= safeSamples; s++) {
+      const y = bounds.min + (s / safeSamples) * (bounds.max - bounds.min);
       const z: Complex = { re: x, im: y };
       const w = preset.map(z);
       // Linear interpolation: z_t = (1 - t) * z + t * w
@@ -177,10 +179,10 @@ export function generateMorphedGrid(
   }
 
   // Horizontal lines: y = const, x varies from min to max
-  for (let y = bounds.min; y <= bounds.max + 1e-6; y += lineSpacing) {
+  for (let y = bounds.min; y <= bounds.max + 1e-6; y += safeSpacing) {
     const pts: Array<{ x: number; y: number }> = [];
-    for (let s = 0; s <= samplesPerLine; s++) {
-      const x = bounds.min + (s / samplesPerLine) * (bounds.max - bounds.min);
+    for (let s = 0; s <= safeSamples; s++) {
+      const x = bounds.min + (s / safeSamples) * (bounds.max - bounds.min);
       const z: Complex = { re: x, im: y };
       const w = preset.map(z);
       const interpX = (1 - clampedT) * z.re + clampedT * w.re;
@@ -212,12 +214,13 @@ export function probeComplexMapping(
   preset: ComplexPreset,
   h = 0.001,
 ): ComplexProbeResult {
+  const safeH = Number.isFinite(h) && Math.abs(h) >= 1e-7 ? h : 0.001;
   const w0 = preset.map(z0);
-  const wPlusH = preset.map({ re: z0.re + h, im: z0.im });
+  const wPlusH = preset.map({ re: z0.re + safeH, im: z0.im });
   // f'(z) ≈ (f(z0 + h) - f(z0)) / h
   const fPrime: Complex = {
-    re: (wPlusH.re - w0.re) / h,
-    im: (wPlusH.im - w0.im) / h,
+    re: (wPlusH.re - w0.re) / safeH,
+    im: (wPlusH.im - w0.im) / safeH,
   };
 
   const mag = cAbs(fPrime);

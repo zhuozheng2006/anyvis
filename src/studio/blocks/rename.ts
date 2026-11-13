@@ -44,7 +44,7 @@ export function planObjectRename(actions: Action[], actionId: string, candidate:
             const obj=node as Record<string,unknown>;
             if (Object.keys(obj).length===1 && obj.$ref===previous) return {$ref:name};
             if (Object.keys(obj).length===1 && typeof obj.$expr==='string' && isTracker && !locals.includes(previous)) return {$expr:obj.$expr.replace(/[A-Za-z_][A-Za-z_0-9]*/g,t=>t===previous?name:t)};
-            if (obj.$lambda && typeof obj.$lambda==='object') {const l=obj.$lambda as {params:string[];body:unknown}; return {$lambda:{...l,body:walk(l.body,[...locals,...l.params])}};}
+            if (obj.$lambda && typeof obj.$lambda==='object') {const l=obj.$lambda as {params?:unknown;body:unknown}; const params=Array.isArray(l.params)?l.params.filter((p):p is string=>typeof p==='string'):[]; return {$lambda:{...l,body:walk(l.body,[...locals,...params])}};}
             return Object.fromEntries(Object.entries(obj).map(([k,v])=>[k,walk(v,locals)]));
           };
           const before=JSON.parse(value); const after=walk(before);
@@ -53,7 +53,7 @@ export function planObjectRename(actions: Action[], actionId: string, candidate:
       }
       if (kind === 'object' && value === previous) renamed = name;
       if (kind === 'object-list') {
-        renamed = value.split(/([,，])/).map((part) => part.trim() === previous ? part.replace(previous, () => name) : part).join('');
+        renamed = value.split(/(,)/).map((part) => part.trim() === previous ? part.replace(previous, () => name) : part).join('');
       }
       if (kind === 'expression' && isTracker) {
         renamed = value.replace(/[A-Za-z_][A-Za-z_0-9]*/g, (token) => token === previous ? name : token);

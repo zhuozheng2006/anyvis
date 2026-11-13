@@ -43,9 +43,11 @@ export function WorkspaceLayout({ editor, preview, inspector, status }: {
       title={`${label} · 拖动或方向键调整，双击恢复默认`}
       onPointerDown={event => {
         if (event.button !== 0) return;
-        const rect = (horizontal ? main : side).current!.getBoundingClientRect();
-        drag.current = { axis, start: horizontal ? event.clientX : event.clientY, value: layout[axis], size: horizontal ? rect.width : rect.height };
-        event.currentTarget.setPointerCapture(event.pointerId);
+        const rect = (horizontal ? main : side).current?.getBoundingClientRect();
+        const size = horizontal ? rect?.width : rect?.height;
+        if (!size) return;
+        drag.current = { axis, start: horizontal ? event.clientX : event.clientY, value: layout[axis], size };
+        try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* Ignore synthetic events. */ }
         event.currentTarget.focus();
         event.preventDefault();
       }} onPointerMove={move} onPointerUp={() => { drag.current = null; }}

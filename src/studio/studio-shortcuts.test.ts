@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { canUseWorkspaceShortcut, handleProjectShortcut } from './studio-shortcuts';
+import { canUsePlaybackSpaceShortcut, canUseWorkspaceShortcut, handleProjectShortcut } from './studio-shortcuts';
 
 describe('project shortcut ownership', () => {
   let area: HTMLDivElement;
@@ -64,5 +64,13 @@ describe('project shortcut ownership', () => {
     area.querySelector('[role="dialog"]')!.remove();
     expect(canUseWorkspaceShortcut(press(area.querySelector('button')!, '1'))).toBe(true);
     expect(canUseWorkspaceShortcut(press(area, '1', { isComposing: true }))).toBe(false);
+  });
+
+  it('restricts Space playback shortcut on focused interactive controls while allowing non-interactive workspace regions', () => {
+    area.innerHTML = '<div tabindex="0" id="stage"></div><button>播放</button><div role="tab">积木</div><input type="range" />';
+    expect(canUsePlaybackSpaceShortcut(press(area.querySelector('#stage')!, ' '))).toBe(true);
+    expect(canUsePlaybackSpaceShortcut(press(area.querySelector('button')!, ' '))).toBe(false);
+    expect(canUsePlaybackSpaceShortcut(press(area.querySelector('[role="tab"]')!, ' '))).toBe(false);
+    expect(canUsePlaybackSpaceShortcut(press(area.querySelector('input')!, ' '))).toBe(false);
   });
 });

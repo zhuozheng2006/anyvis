@@ -177,6 +177,10 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
     () => flattenActions(project.actions).filter(managedObject),
     [project.actions]
   );
+  const topObjects = useMemo(
+    () => project.actions.filter(managedObject),
+    [project.actions]
+  );
 
   // Default to selecting the first object when selectedId is empty / not in objects
   const effectiveSelectedId = objects.some(object => object.id === selectedId) ? selectedId : objects[0]?.id ?? null;
@@ -238,16 +242,21 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
 
   const handleMoveLayer = (e: React.MouseEvent, id: string, dir: -1 | 1) => {
     e.stopPropagation();
-    const idx = objects.findIndex(o => o.id === id);
-    if (idx === -1) return;
+    const idx = topObjects.findIndex(o => o.id === id);
+    if (idx === -1) {
+      onError('复合片段内部的动作请在积木中调整顺序。');
+      return;
+    }
     try {
       if (dir === -1 && idx > 0) {
-        const prevId = objects[idx - 1].id;
+        const prevId = topObjects[idx - 1].id;
         const next = reorderAction(project, id, prevId);
         onChange(next);
-      } else if (dir === 1 && idx < objects.length - 1) {
-        const nextNextId = objects[idx + 2]?.id || null;
-        const next = reorderAction(project, id, nextNextId);
+      } else if (dir === 1 && idx < topObjects.length - 1) {
+        const nextObjId = topObjects[idx + 1].id;
+        const nextObjPos = project.actions.findIndex(a => a.id === nextObjId);
+        const beforeId = nextObjPos >= 0 ? (project.actions[nextObjPos + 1]?.id ?? null) : null;
+        const next = reorderAction(project, id, beforeId);
         onChange(next);
       }
     } catch (err: unknown) {
@@ -426,7 +435,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
             const def = getBlockDefinition(obj.type);
             const name = String(obj.fields.name || '未命名');
             const label = def?.label || obj.type;
-            const idx = objects.findIndex(o => o.id === obj.id);
+            const topIdx = topObjects.findIndex(o => o.id === obj.id);
 
             return (
               <div
@@ -435,7 +444,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                 onClick={() => onSelect(obj.id)}
               >
                 <div className="om-card-actions">
-                  {idx > 0 && (
+                  {topIdx > 0 && (
                     <button
                       type="button"
                       className="om-card-layer-btn"
@@ -447,7 +456,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
                       ◀
                     </button>
                   )}
-                  {idx < objects.length - 1 && (
+                  {topIdx !== -1 && topIdx < topObjects.length - 1 && (
                     <button
                       type="button"
                       className="om-card-layer-btn"

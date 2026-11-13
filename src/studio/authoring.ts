@@ -77,12 +77,38 @@ export function updateAction(project: Project, id: string, fields: Record<string
   const changes = { ...fields }; delete changes.name;
   return { ...next, workspace: undefined, actions: mapActions(next.actions, a => a.id === id ? { ...a, fields: { ...a.fields, ...changes } } : a) };
 }
+function collectObjectNames(actions: Action[]): Set<string> {
+  return new Set(
+    flattenActions(actions)
+      .filter(a => getBlockDefinition(a.type)?.createsObject)
+      .map(a => String(a.fields.name))
+  );
+}
+
+function resolveUniqueObjectName(usedNames: Set<string>, type: string, rawName: string, forceSuffix = false): string {
+  if (!forceSuffix && !usedNames.has(rawName)) return rawName;
+  const tracker = type === 'tracker';
+  const maxLength = tracker ? 31 : 100;
+  const stripped = rawName.replace(tracker ? /_\d+$/ : /\s+\d+$/, '');
+  const base = stripped.length > 0 ? stripped : rawName;
+  const candidateFor = (suffix: number) => {
+    const ending = `${tracker ? '_' : ' '}${suffix}`;
+    return `${base.slice(0, maxLength - ending.length)}${ending}`;
+  };
+  let suffix = 2;
+  let candidate = candidateFor(suffix);
+  while (usedNames.has(candidate)) {
+    suffix += 1;
+    candidate = candidateFor(suffix);
+  }
+  return candidate;
+}
+
 export function appendAction(project: Project, type: string, fields: Record<string, FieldValue> = {}): { project: Project; action: Action } {
   const action = createAction(type, fields);
   if (getBlockDefinition(type)?.createsObject) {
-    const names = new Set(flattenActions(project.actions).filter(a => getBlockDefinition(a.type)?.createsObject).map(a => a.fields.name));
-    const original = String(action.fields.name); let suffix = 2;
-    while (names.has(action.fields.name)) action.fields.name = `${original} ${suffix++}`;
+    const names = collectObjectNames(project.actions);
+    action.fields.name = resolveUniqueObjectName(names, type, String(action.fields.name));
   }
   return { project: { ...project, workspace: undefined, actions: [...project.actions, action] }, action };
 }
@@ -131,27 +157,12 @@ export function parallelWithNext(project: Project, id: string): Project {
   return { ...project, workspace: undefined, actions: [...project.actions.slice(0, index), group, ...project.actions.slice(index + 2)] };
 }
 export function duplicateAction(project: Project, id: string): { project: Project; action: Action } {
-  const usedNames = new Set(
-    flattenActions(project.actions)
-      .filter(a => getBlockDefinition(a.type)?.createsObject)
-      .map(a => String(a.fields.name))
-  );
+  const usedNames = collectObjectNames(project.actions);
   const renames: { id: string; name: string }[] = [];
   const cloneNode = (node: Action): Action => {
     const fresh = createAction(node.type, { ...node.fields });
     if (getBlockDefinition(node.type)?.createsObject && typeof fresh.fields.name === 'string') {
-      const tracker = node.type === 'tracker';
-      const base = fresh.fields.name.replace(tracker ? /_\d+$/ : /\s+\d+$/, '');
-      const candidateFor = (suffix: number) => {
-        const ending = `${tracker ? '_' : ' '}${suffix}`;
-        return `${base.slice(0, (tracker ? 31 : 100) - ending.length)}${ending}`;
-      };
-      let suffix = 2;
-      let candidate = candidateFor(suffix);
-      while (usedNames.has(candidate)) {
-        suffix += 1;
-        candidate = candidateFor(suffix);
-      }
+      const candidate = resolveUniqueObjectName(usedNames, node.type, fresh.fields.name, true);
       // Keep the old name until the whole clone exists so semantic renaming can
       // update its references, including forward/nested API references.
       renames.push({ id: fresh.id, name: candidate });

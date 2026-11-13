@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useDialogEscape } from './modal-hooks';
 import './shortcuts-help.css';
 
 interface ShortcutsHelpModalProps {
@@ -10,17 +11,7 @@ export const ShortcutsHelpModal: React.FC<ShortcutsHelpModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  useDialogEscape(isOpen, onClose);
 
   if (!isOpen) return null;
 
@@ -28,7 +19,7 @@ export const ShortcutsHelpModal: React.FC<ShortcutsHelpModalProps> = ({
   const cmdKey = isMac ? '⌘' : 'Ctrl';
 
   return (
-    <div className="shortcuts-modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="shortcuts-modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="全局快捷键速查中心">
       <div className="shortcuts-modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="shortcuts-modal-header">
           <h3>⌨ 全局快捷键速查中心 (Keyboard Shortcuts)</h3>

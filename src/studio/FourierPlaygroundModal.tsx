@@ -11,6 +11,14 @@ import {
   generateFourierPythonCode,
   evaluateFourier,
 } from './fourier';
+import { clientToSvgPoint, copyTextToClipboard } from './browser-utils';
+import {
+  useTransientFlag,
+  useDelayedAction,
+  useDialogEscape,
+  capturePointerSafe,
+  releasePointerSafe,
+} from './modal-hooks';
 import './fourier-playground.css';
 
 export interface FourierPlaygroundModalProps {
@@ -46,15 +54,27 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
   const [points, setPoints] = useState<Point2D[]>(() => getFourierPreset('pi', 180));
   const [harmonicLimit, setHarmonicLimit] = useState(15);
   const [isPlaying, setIsPlaying] = useState(true);
+  useDialogEscape(isOpen, onClose);
   const [time, setTime] = useState(0);
   const [speed, setSpeed] = useState<0.5 | 1 | 2>(1);
-  const [copied, setCopied] = useState(false);
-  const [inserted, setInserted] = useState(false);
+  const [copied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
+  const [inserted, scheduleInsertClose, resetInserted] = useDelayedAction(600, isOpen);
+  const [actionError, setActionError] = useState('');
   const [isDrawing, setIsDrawing] = useState(false);
 
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const drawPointsRef = useRef<Point2D[]>([]);
   const animFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(performance.now());
+
+  useEffect(() => {
+    setActionError('');
+    if (!isOpen) {
+      setIsDrawing(false);
+      resetCopied();
+      resetInserted();
+    }
+  }, [isOpen, resetCopied, resetInserted]);
 
   // 1. Compute Fourier coefficients
   const coeffs = useMemo(() => {
@@ -84,6 +104,7 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
 
   // 5. Preset selection
   const selectPreset = (preset: FourierPresetId) => {
+    setActionError('');
     setActivePreset(preset);
     setIsDrawing(false);
     setTime(0);
@@ -100,7 +121,7 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
 
       setTime(prev => {
         const next = prev + (dt / 5.0) * speed;
-        return next >= 1 ? next - 1 : next;
+        return next >= 1 ? next % 1 : next;
       });
 
       animFrameRef.current = requestAnimationFrame(loop);
@@ -116,10 +137,10 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
 
   // 7. Freehand drawing handlers
   const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const sx = e.clientX - rect.left;
-    const sy = e.clientY - rect.top;
-    const mathPt = { x: toMathX(sx), y: toMathY(sy) };
+    const pt = clientToSvgPoint(svgRef.current || e.currentTarget, e.clientX, e.clientY, CANVAS_WIDTH, CANVAS_HEIGHT);
+    if (!pt) return;
+    capturePointerSafe(svgRef.current || e.currentTarget, e.pointerId);
+    const mathPt = { x: toMathX(pt.x), y: toMathY(pt.y) };
 
     setIsDrawing(true);
     setActivePreset('custom');
@@ -130,10 +151,9 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
 
   const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
     if (!isDrawing) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const sx = e.clientX - rect.left;
-    const sy = e.clientY - rect.top;
-    const mathPt = { x: toMathX(sx), y: toMathY(sy) };
+    const pt = clientToSvgPoint(svgRef.current || e.currentTarget, e.clientX, e.clientY, CANVAS_WIDTH, CANVAS_HEIGHT);
+    if (!pt) return;
+    const mathPt = { x: toMathX(pt.x), y: toMathY(pt.y) };
 
     const last = drawPointsRef.current[drawPointsRef.current.length - 1];
     if (last && Math.hypot(last.x - mathPt.x, last.y - mathPt.y) > 0.05) {
@@ -142,8 +162,11 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
     }
   };
 
-  const handlePointerUp = () => {
+  const finalizeStroke = (target: Element | null, pointerId?: number) => {
     if (!isDrawing) return;
+    if (pointerId !== undefined) {
+      releasePointerSafe(target, pointerId);
+    }
     setIsDrawing(false);
     const pts = drawPointsRef.current;
     if (pts.length > 5) {
@@ -155,29 +178,35 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
     }
   };
 
+  const handlePointerUp = (e: React.PointerEvent<SVGSVGElement>) => {
+    finalizeStroke(svgRef.current || e.currentTarget, e.pointerId);
+  };
+
   // 8. Copy Python code
   const handleCopyCode = useCallback(async () => {
-    const py = generateFourierPythonCode(coeffs, activePreset === 'custom' ? 'CustomDrawing' : activePreset);
+    setActionError('');
     try {
-      await navigator.clipboard.writeText(py);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback
+      const py = generateFourierPythonCode(coeffs, activePreset === 'custom' ? 'CustomDrawing' : activePreset);
+      if (await copyTextToClipboard(py)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : String(error));
     }
-  }, [coeffs, activePreset]);
+  }, [coeffs, activePreset, triggerCopied]);
 
   // 9. Insert Action into Project
   const handleInsert = useCallback(() => {
-    if (onInsertFourier) {
-      onInsertFourier(coeffs, activePreset === 'custom' ? '手绘傅里叶' : `傅里叶_${activePreset}`);
-      setInserted(true);
-      setTimeout(() => {
-        setInserted(false);
-        onClose();
-      }, 600);
+    if (!onInsertFourier || inserted) return;
+    setActionError('');
+    try {
+      scheduleInsertClose(onClose, () =>
+        onInsertFourier(coeffs, activePreset === 'custom' ? '手绘傅里叶' : `傅里叶_${activePreset}`),
+      );
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : String(error));
     }
-  }, [coeffs, activePreset, onInsertFourier, onClose]);
+  }, [coeffs, activePreset, inserted, onInsertFourier, scheduleInsertClose, onClose]);
 
   if (!isOpen) return null;
 
@@ -205,11 +234,14 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
                 {isDrawing ? '松开指针完成闭合曲线' : '点击画布可直接自由手绘'}
               </span>
               <svg
+                ref={svgRef}
                 className="fourier-svg"
                 viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onLostPointerCapture={() => finalizeStroke(svgRef.current)}
               >
                 {/* Coordinate Grid axes */}
                 <line x1={0} y1={CANVAS_HEIGHT / 2} x2={CANVAS_WIDTH} y2={CANVAS_HEIGHT / 2} stroke="#1e293b" strokeWidth={1} />
@@ -307,7 +339,10 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
                 step={0.005}
                 value={time}
                 onChange={e => {
-                  setTime(parseFloat(e.target.value));
+                  const val = parseFloat(e.target.value);
+                  if (!Number.isFinite(val)) return;
+                  setActionError('');
+                  setTime(Math.max(0, Math.min(1, val)));
                   setIsPlaying(false);
                 }}
               />
@@ -397,7 +432,12 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
                 max={40}
                 step={1}
                 value={harmonicLimit}
-                onChange={e => setHarmonicLimit(parseInt(e.target.value, 10))}
+                onChange={e => {
+                  const val = parseInt(e.target.value, 10);
+                  if (!Number.isFinite(val)) return;
+                  setActionError('');
+                  setHarmonicLimit(Math.max(1, Math.min(40, val)));
+                }}
               />
               <div className="fourier-slider-row">
                 <span style={{ color: '#64748b' }}>基频 (N=1)</span>
@@ -455,14 +495,20 @@ export const FourierPlaygroundModal: React.FC<FourierPlaygroundModalProps> = ({
         {/* Footer */}
         <div className="fourier-modal-footer">
           <div className="fourier-footer-left">
-            <span>支持导出参数曲线积木与独立 Manim CE 场景</span>
+            {actionError ? (
+              <span role="alert" style={{ color: '#f87171', fontSize: 12 }}>
+                {actionError}
+              </span>
+            ) : (
+              <span>支持导出参数曲线积木与独立 Manim CE 场景</span>
+            )}
           </div>
           <div className="fourier-footer-right">
             <button className="fourier-btn-secondary" onClick={handleCopyCode}>
               {copied ? <Check size={14} color="#34D399" /> : <Copy size={14} />}
               <span>{copied ? '已复制 Python 代码' : '复制代码'}</span>
             </button>
-            <button className="fourier-btn-primary" onClick={handleInsert}>
+            <button className="fourier-btn-primary" onClick={handleInsert} disabled={inserted}>
               {inserted ? <Check size={14} /> : <Sparkles size={14} />}
               <span>{inserted ? '已插入工程' : '插入参数曲线积木'}</span>
             </button>

@@ -71,17 +71,24 @@ export const DEFAULT_CAMERA_SHOTS: CameraShot[] = [
 export const BASE_FRAME_WIDTH = 8 * 16 / 9;
 export const BASE_FRAME_HEIGHT = 8.0;
 
+/** Clamps camera zoom into the supported [0.2, 10.0] range, guarding against zero/NaN. */
+function clampCameraZoom(zoom: number): number {
+  return Math.max(0.2, Math.min(10.0, Number.isFinite(zoom) ? zoom : 1.0));
+}
+
 /** Computes the mathematical boundary coordinates of the camera viewfinder box */
 export function getViewfinderBox(x: number, y: number, zoom: number, frameWidth = BASE_FRAME_WIDTH): ViewfinderBox {
-  const safeZoom = Math.max(0.2, Math.min(10.0, zoom));
+  const safeZoom = clampCameraZoom(zoom);
+  const safeX = Number.isFinite(x) ? x : 0;
+  const safeY = Number.isFinite(y) ? y : 0;
   const width = frameWidth / safeZoom;
   const height = BASE_FRAME_HEIGHT / safeZoom;
 
   return {
-    left: x - width / 2,
-    right: x + width / 2,
-    top: y + height / 2,
-    bottom: y - height / 2,
+    left: safeX - width / 2,
+    right: safeX + width / 2,
+    top: safeY + height / 2,
+    bottom: safeY - height / 2,
     width,
     height,
   };
@@ -91,13 +98,14 @@ export function getViewfinderBox(x: number, y: number, zoom: number, frameWidth 
 export function interpolateCameraPose(shots: CameraShot[], t: number): { x: number; y: number; zoom: number } {
   if (shots.length === 0) return { x: 0, y: 0, zoom: 1.0 };
   const sorted = [...shots].sort((a, b) => a.time - b.time);
+  const safeT = Number.isFinite(t) ? t : sorted[0].time;
 
-  if (t <= sorted[0].time) {
-    return { x: sorted[0].x, y: sorted[0].y, zoom: sorted[0].zoom };
+  if (safeT <= sorted[0].time) {
+    return { x: sorted[0].x, y: sorted[0].y, zoom: clampCameraZoom(sorted[0].zoom) };
   }
-  if (t >= sorted[sorted.length - 1].time) {
+  if (safeT >= sorted[sorted.length - 1].time) {
     const last = sorted[sorted.length - 1];
-    return { x: last.x, y: last.y, zoom: last.zoom };
+    return { x: last.x, y: last.y, zoom: clampCameraZoom(last.zoom) };
   }
 
   // Find surrounding shots
@@ -105,28 +113,34 @@ export function interpolateCameraPose(shots: CameraShot[], t: number): { x: numb
     const curr = sorted[i];
     const next = sorted[i + 1];
 
-    if (t >= curr.time && t <= next.time) {
+    if (safeT >= curr.time && safeT <= next.time) {
+      if (!Number.isFinite(next.duration) || next.duration <= 0) {
+        const target = safeT >= next.time ? next : curr;
+        return { x: target.x, y: target.y, zoom: clampCameraZoom(target.zoom) };
+      }
       const transStart = next.time - next.duration;
-      if (t < transStart) {
-        return { x: curr.x, y: curr.y, zoom: curr.zoom };
+      if (safeT < transStart) {
+        return { x: curr.x, y: curr.y, zoom: clampCameraZoom(curr.zoom) };
       }
       // Ease progress
-      const p = Math.max(0, Math.min(1, (t - transStart) / next.duration));
+      const p = Math.max(0, Math.min(1, (safeT - transStart) / next.duration));
       // smoothstep easing
       const sigmoid = (x: number) => 1 / (1 + Math.exp(-x));
       const edge = sigmoid(-5);
       const eased = next.rateFunc === 'linear' ? p : next.rateFunc === 'ease_in_out' ? (1 - Math.cos(Math.PI * p)) / 2 : (sigmoid(10 * (p - 0.5)) - edge) / (1 - 2 * edge);
 
+      const currZoom = clampCameraZoom(curr.zoom);
+      const nextZoom = clampCameraZoom(next.zoom);
       return {
         x: curr.x + (next.x - curr.x) * eased,
         y: curr.y + (next.y - curr.y) * eased,
-        zoom: 1 / ((1 - eased) / curr.zoom + eased / next.zoom),
+        zoom: 1 / ((1 - eased) / currZoom + eased / nextZoom),
       };
     }
   }
 
   const last = sorted[sorted.length - 1];
-  return { x: last.x, y: last.y, zoom: last.zoom };
+  return { x: last.x, y: last.y, zoom: clampCameraZoom(last.zoom) };
 }
 
 /** Shot times are arrival times relative to this appended camera section. */

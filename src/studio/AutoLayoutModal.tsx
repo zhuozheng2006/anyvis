@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import type { Project } from './core/types';
 import {
   type LayoutMode,
@@ -8,6 +8,8 @@ import {
   generateAutoLayoutPythonCode,
   applyLayoutToProject,
 } from './auto-layout';
+import { copyTextToClipboard } from './browser-utils';
+import { useTransientFlag, useDialogEscape } from './modal-hooks';
 import './auto-layout.css';
 
 interface AutoLayoutModalProps {
@@ -27,6 +29,21 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() =>
     new Set(movableObjects.map((o) => o.actionId)),
   );
+  const knownIdsRef = useRef<Set<string>>(new Set(movableObjects.map((o) => o.actionId)));
+
+  useEffect(() => {
+    const currentIds = new Set(movableObjects.map((o) => o.actionId));
+    const prevKnown = knownIdsRef.current;
+    // Prune deleted objects and auto-select objects added while the modal was closed.
+    setSelectedIds((prev) => {
+      const next = new Set<string>();
+      for (const id of currentIds) {
+        if (prev.has(id) || !prevKnown.has(id)) next.add(id);
+      }
+      return next.size === prev.size && [...next].every((id) => prev.has(id)) ? prev : next;
+    });
+    knownIdsRef.current = currentIds;
+  }, [movableObjects]);
 
   const [mode, setMode] = useState<LayoutMode>('horizontal');
   const [gap, setGap] = useState<number>(1.2);
@@ -36,7 +53,12 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
   const [radius, setRadius] = useState<number>(2.0);
   const [startAngleDeg, setStartAngleDeg] = useState<number>(90);
   const [anchorType, setAnchorType] = useState<'centroid' | 'origin'>('centroid');
-  const [isCopied, setIsCopied] = useState(false);
+  const [isCopied, triggerCopied] = useTransientFlag(2000, isOpen);
+  useDialogEscape(isOpen, onClose);
+
+  const updateNumberParam = (setter: (value: number) => void, parsed: number) => {
+    if (Number.isFinite(parsed)) setter(parsed);
+  };
 
   const selectedObjects = useMemo(
     () => movableObjects.filter((o) => selectedIds.has(o.actionId)),
@@ -79,10 +101,14 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
   };
 
   const handleCopyPython = async () => {
-    const code = generateAutoLayoutPythonCode(selectedObjects, config);
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    try {
+      const code = generateAutoLayoutPythonCode(selectedObjects, config);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch {
+      // Ignore transient clipboard/generation failures without crashing the modal.
+    }
   };
 
   const handleApply = () => {
@@ -110,7 +136,7 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="layout-modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="layout-modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="智能对齐与多物体自动布局">
       <div className="layout-modal-container" onClick={(e) => e.stopPropagation()}>
         <div className="layout-modal-header">
           <h3>📐 智能对齐与多物体自动布局 (Smart Align & Auto-Layout)</h3>
@@ -223,7 +249,7 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
                     max="3.0"
                     step="0.1"
                     value={gap}
-                    onChange={(e) => setGap(parseFloat(e.target.value))}
+                    onChange={(e) => updateNumberParam(setGap, parseFloat(e.target.value))}
                   />
                   <span className="layout-param-val">{gap.toFixed(1)}</span>
                 </div>
@@ -239,7 +265,7 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
                       max="6"
                       step="1"
                       value={cols}
-                      onChange={(e) => setCols(parseInt(e.target.value, 10))}
+                      onChange={(e) => updateNumberParam(setCols, parseInt(e.target.value, 10))}
                     />
                     <span className="layout-param-val">{cols}</span>
                   </div>
@@ -251,7 +277,7 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
                       max="3.0"
                       step="0.1"
                       value={colGap}
-                      onChange={(e) => setColGap(parseFloat(e.target.value))}
+                      onChange={(e) => updateNumberParam(setColGap, parseFloat(e.target.value))}
                     />
                     <span className="layout-param-val">{colGap.toFixed(1)}</span>
                   </div>
@@ -263,7 +289,7 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
                       max="3.0"
                       step="0.1"
                       value={rowGap}
-                      onChange={(e) => setRowGap(parseFloat(e.target.value))}
+                      onChange={(e) => updateNumberParam(setRowGap, parseFloat(e.target.value))}
                     />
                     <span className="layout-param-val">{rowGap.toFixed(1)}</span>
                   </div>
@@ -280,7 +306,7 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
                       max="4.0"
                       step="0.1"
                       value={radius}
-                      onChange={(e) => setRadius(parseFloat(e.target.value))}
+                      onChange={(e) => updateNumberParam(setRadius, parseFloat(e.target.value))}
                     />
                     <span className="layout-param-val">{radius.toFixed(1)}</span>
                   </div>
@@ -292,7 +318,7 @@ export const AutoLayoutModal: React.FC<AutoLayoutModalProps> = ({
                       max="360"
                       step="15"
                       value={startAngleDeg}
-                      onChange={(e) => setStartAngleDeg(parseInt(e.target.value, 10))}
+                      onChange={(e) => updateNumberParam(setStartAngleDeg, parseInt(e.target.value, 10))}
                     />
                     <span className="layout-param-val">{startAngleDeg}°</span>
                   </div>

@@ -127,6 +127,38 @@ export function exponentialPdf(x: number, lambda: number): number {
   return lambda * Math.exp(-lambda * x);
 }
 
+/** Probability P(a <= X <= b) for all supported distribution presets. */
+export function computeIntervalProbability(
+  kind: DistributionKind,
+  params: Record<string, number>,
+  a: number,
+  b: number,
+): number {
+  if (!Number.isFinite(a) || !Number.isFinite(b) || b < a) return 0;
+  let prob = 0;
+  if (kind === 'normal') {
+    const mu = params.mu ?? 0;
+    const sigma = params.sigma ?? 1.0;
+    prob = normalCdf(b, mu, sigma) - normalCdf(a, mu, sigma);
+  } else if (kind === 'binomial') {
+    const n = Math.max(1, Math.round(params.n ?? 20));
+    const p = Math.max(0, Math.min(1, params.p ?? 0.5));
+    const start = Math.max(0, Math.ceil(a - 1e-9));
+    const end = Math.min(n, Math.floor(b + 1e-9));
+    for (let k = start; k <= end; k++) prob += binomialPmf(k, n, p);
+  } else if (kind === 'poisson') {
+    const lambda = Math.max(0.01, params.lambda ?? 4.0);
+    const start = Math.max(0, Math.ceil(a - 1e-9));
+    const end = Math.min(500, Math.floor(b + 1e-9));
+    for (let k = start; k <= end; k++) prob += poissonPmf(k, lambda);
+  } else if (kind === 'exponential') {
+    const lambda = Math.max(0.01, params.lambda ?? 1.2);
+    const cdf = (x: number) => (x <= 0 ? 0 : 1 - Math.exp(-lambda * x));
+    prob = cdf(b) - cdf(a);
+  }
+  return Number.isFinite(prob) ? Math.max(0, Math.min(1, prob)) : 0;
+}
+
 export interface DistributionPoint {
   x: number;
   y: number;
@@ -139,20 +171,21 @@ export function sampleDistribution(
   params: Record<string, number>,
   numSamples = 80,
 ): { points: DistributionPoint[]; mean: number; variance: number; maxY: number } {
+  const safeSamples = Number.isFinite(numSamples) ? Math.max(4, Math.round(numSamples)) : 80;
   const points: DistributionPoint[] = [];
   let mean = 0;
   let variance = 0;
   let maxY = 0;
 
   if (preset.id === 'normal') {
-    const mu = params.mu ?? 0;
-    const sigma = params.sigma ?? 1.0;
+    const mu = Number.isFinite(params.mu) ? params.mu : 0;
+    const sigma = Number.isFinite(params.sigma) && params.sigma > 1e-4 ? params.sigma : 1.0;
     mean = mu;
     variance = sigma * sigma;
 
     const xMin = mu - 3.8 * sigma;
     const xMax = mu + 3.8 * sigma;
-    const step = (xMax - xMin) / numSamples;
+    const step = (xMax - xMin) / safeSamples;
 
     for (let x = xMin; x <= xMax + 1e-6; x += step) {
       const y = normalPdf(x, mu, sigma);
@@ -160,8 +193,8 @@ export function sampleDistribution(
       points.push({ x, y });
     }
   } else if (preset.id === 'binomial') {
-    const n = Math.round(params.n ?? 20);
-    const p = params.p ?? 0.5;
+    const n = Number.isFinite(params.n) ? Math.max(1, Math.min(500, Math.round(params.n))) : 20;
+    const p = Number.isFinite(params.p) ? Math.max(0, Math.min(1, params.p)) : 0.5;
     mean = n * p;
     variance = n * p * (1 - p);
 
@@ -171,7 +204,7 @@ export function sampleDistribution(
       points.push({ x: k, y, isBar: true });
     }
   } else if (preset.id === 'poisson') {
-    const lambda = params.lambda ?? 4.0;
+    const lambda = Number.isFinite(params.lambda) && params.lambda > 0 ? params.lambda : 4.0;
     mean = lambda;
     variance = lambda;
 
@@ -182,12 +215,12 @@ export function sampleDistribution(
       points.push({ x: k, y, isBar: true });
     }
   } else if (preset.id === 'exponential') {
-    const lambda = params.lambda ?? 1.2;
+    const lambda = Number.isFinite(params.lambda) && params.lambda > 0 ? params.lambda : 1.2;
     mean = 1 / lambda;
     variance = 1 / (lambda * lambda);
 
     const xMax = 4.5 * mean;
-    const step = xMax / numSamples;
+    const step = xMax / safeSamples;
     for (let x = 0; x <= xMax + 1e-6; x += step) {
       const y = exponentialPdf(x, lambda);
       if (y > maxY) maxY = y;
@@ -205,9 +238,18 @@ export function generateProbabilityPythonCode(preset: DistributionPreset, params
 
 /** Injects probability distribution actions into project */
 export function createProbabilityActions(project: Project, preset: DistributionPreset, params: Record<string, number> = preset.defaultParams): { project: Project; actionIds: string[] } {
-  const values = { ...preset.defaultParams, ...params };
+  const values: Record<string, number> = { ...preset.defaultParams };
+  for (const [k, v] of Object.entries(params)) {
+    if (Number.isFinite(v)) values[k] = v;
+  }
+  if (preset.id === 'normal' && !(values.sigma > 1e-4)) values.sigma = preset.defaultParams.sigma ?? 1.0;
+  if ((preset.id === 'poisson' || preset.id === 'exponential') && !(values.lambda > 0)) values.lambda = preset.defaultParams.lambda ?? 1.0;
+  if (preset.id === 'binomial') {
+    values.n = Math.max(1, Math.min(500, Math.round(values.n ?? 20)));
+    values.p = Math.max(0, Math.min(1, values.p ?? 0.5));
+  }
   const sampled = sampleDistribution(preset, values);
-  const xMin = sampled.points[0].x, xMax = sampled.points.at(-1)!.x;
+  const xMin = sampled.points[0].x, xMax = Math.max(xMin + 1e-3, sampled.points.at(-1)!.x);
   const axes = playgroundName('概率坐标系'), yMax = sampled.maxY * 1.15;
   const actions = [createAction('axes', { name: axes, xMin, xMax, yMin: 0, yMax, xLength: 9, yLength: 5 })];
   if (preset.id === 'normal' || preset.id === 'exponential') {

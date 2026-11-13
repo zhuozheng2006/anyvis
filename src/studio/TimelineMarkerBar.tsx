@@ -5,8 +5,10 @@ import { timecode } from './Timeline';
 import './timeline-marker-bar.css';
 
 export function addMarker(project: Project, time: number, label?: string): { project: Project; marker: TimelineMarker } {
-  const fps = Math.max(1, project.scene.fps || 30);
-  const snappedTime = Number((Math.round(time * fps) / fps).toFixed(4));
+  const rawFps = Number(project.scene.fps);
+  const fps = Number.isFinite(rawFps) && rawFps >= 1 ? rawFps : 30;
+  const safeTime = Number.isFinite(time) ? Math.max(0, time) : 0;
+  const snappedTime = Number((Math.round(safeTime * fps) / fps).toFixed(4));
   const existing = project.scene.markers || [];
   const nextNum = existing.length + 1;
   const marker: TimelineMarker = {
@@ -29,11 +31,13 @@ export function addMarker(project: Project, time: number, label?: string): { pro
 }
 
 export function updateMarker(project: Project, markerId: string, updates: Partial<TimelineMarker>): Project {
+  const rawFps = Number(project.scene.fps);
+  const fps = Number.isFinite(rawFps) && rawFps >= 1 ? rawFps : 30;
   const existing = project.scene.markers || [];
   const updatedMarkers = existing.map(m => {
     if (m.id !== markerId) return m;
-    const nextTime = updates.time !== undefined
-      ? Number((Math.round(updates.time * (project.scene.fps || 30)) / (project.scene.fps || 30)).toFixed(4))
+    const nextTime = updates.time !== undefined && Number.isFinite(updates.time)
+      ? Number((Math.round(Math.max(0, updates.time) * fps) / fps).toFixed(4))
       : m.time;
     return {
       ...m,
@@ -112,6 +116,7 @@ export const TimelineMarkerBar: React.FC<TimelineMarkerBarProps> = ({
   onUpdateMarker,
   onRemoveMarker,
 }) => {
+  const safeFps = Number.isFinite(fps) && fps >= 1 ? fps : 30;
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editLabel, setEditLabel] = useState('');
 
@@ -122,6 +127,7 @@ export const TimelineMarkerBar: React.FC<TimelineMarkerBarProps> = ({
   };
 
   const handleSaveEdit = (markerId: string) => {
+    if (editingId !== markerId) return;
     const trimmed = editLabel.trim();
     if (trimmed) {
       onUpdateMarker(markerId, { label: trimmed });
@@ -141,7 +147,7 @@ export const TimelineMarkerBar: React.FC<TimelineMarkerBarProps> = ({
       </div>
       <div className="tmb-list">
         {markers.map(m => {
-          const isNearPlayhead = Math.abs(m.time - currentTime) < 1 / fps + 1e-4;
+          const isNearPlayhead = Math.abs(m.time - currentTime) < 1 / safeFps + 1e-4;
           const isEditing = editingId === m.id;
 
           return (
@@ -150,10 +156,10 @@ export const TimelineMarkerBar: React.FC<TimelineMarkerBarProps> = ({
               className={`tmb-pill ${isNearPlayhead ? 'tmb-pill-active' : ''}`}
               style={{ '--marker-color': m.color || '#fbbf24' } as React.CSSProperties}
               onClick={() => onSeek(m.time)}
-              title={`点击跳转至 ${timecode(m.time, fps)} · 双击重命名`}
+              title={`点击跳转至 ${timecode(m.time, safeFps)} · 双击重命名`}
             >
               <span className="tmb-diamond" />
-              <span className="tmb-timecode">{timecode(m.time, fps).slice(3)}</span>
+              <span className="tmb-timecode">{timecode(m.time, safeFps).slice(3)}</span>
               {isEditing ? (
                 <input
                   type="text"

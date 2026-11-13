@@ -147,7 +147,11 @@ export async function createAnyVisServer(options = {}) {
       return result;
     } catch (error) {
       const line = String(error.stdout || '').split(/\r?\n/).findLast(l => l.startsWith(EVENT_PREFIX));
-      if (line) throw Error(JSON.parse(line.slice(EVENT_PREFIX.length)).error || '素材校验失败。');
+      if (line) {
+        let parsed = null;
+        try { parsed = JSON.parse(line.slice(EVENT_PREFIX.length)); } catch {}
+        if (parsed && typeof parsed === 'object') throw Error(parsed.error || '素材校验失败。');
+      }
       throw Error('素材无法解码或校验超时，请检查文件格式。');
     }
   });
@@ -318,9 +322,14 @@ export async function createAnyVisServer(options = {}) {
     if (pending.filter(job => job.status === 'queued').length >= 3) throw Object.assign(new Error('已有多个渲染任务，请等待或停止当前任务。'), { status: 429 });
     const id = randomUUID(); const directory = path.join(cacheRoot, id);
     await mkdir(directory, { recursive: true });
-    await assets.stage(staged, directory);
-    await writeFile(path.join(directory, 'scene.py'), compiled.code, 'utf8');
-    await writeFile(path.join(directory, 'job.json'), JSON.stringify({ width, height, frameAspect: scene.width / scene.height, fps: scene.fps, background: scene.background, renderer: scene.renderer || 'cairo', duration: compiled.duration }), 'utf8');
+    try {
+      await assets.stage(staged, directory);
+      await writeFile(path.join(directory, 'scene.py'), compiled.code, 'utf8');
+      await writeFile(path.join(directory, 'job.json'), JSON.stringify({ width, height, frameAspect: scene.width / scene.height, fps: scene.fps, background: scene.background, renderer: scene.renderer || 'cairo', duration: compiled.duration }), 'utf8');
+    } catch (error) {
+      await rm(directory, { recursive: true, force: true }).catch(() => {});
+      throw error;
+    }
     const job = { id, directory, digest, assetBytes: staged.reduce((sum, asset) => sum + asset.bytes, 0), projectId: project.id, status: 'queued', progress: 0, message: running ? '等待前一个任务完成…' : '准备渲染…', revision, quality, createdAt: Date.now(), code: compiled.code, sourceMap: compiled.sourceMap, duration: compiled.duration, width, height, fps: scene.fps };
     jobs.set(id, job); pending.push(job); schedule(); return job;
   }

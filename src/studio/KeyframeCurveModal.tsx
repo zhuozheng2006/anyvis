@@ -7,6 +7,14 @@ import {
   sampleCubicBezierDerivative,
   generateBezierRateFuncPython,
 } from './easing-curve';
+import { clientToSvgPoint, copyTextToClipboard } from './browser-utils';
+import {
+  useTransientFlag,
+  useDelayedAction,
+  useDialogEscape,
+  capturePointerSafe,
+  releasePointerSafe,
+} from './modal-hooks';
 import './keyframe-curve.css';
 
 export interface KeyframeCurveModalProps {
@@ -43,13 +51,15 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
   onApplyRateFunc,
 }) => {
   const [activePreset, setActivePreset] = useState<EasingPreset>(EASING_PRESETS[1]); // Default 3B1B smooth
+  useDialogEscape(isOpen, onClose);
   const [x1, setX1] = useState(activePreset.coords[0]);
   const [y1, setY1] = useState(activePreset.coords[1]);
   const [x2, setX2] = useState(activePreset.coords[2]);
   const [y2, setY2] = useState(activePreset.coords[3]);
 
-  const [copied, setCopied] = useState(false);
-  const [applied, setApplied] = useState(false);
+  const [copied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
+  const [applied, scheduleApplyClose, resetApplied] = useDelayedAction(450, isOpen);
+  const [actionError, setActionError] = useState('');
   const [draggingPoint, setDraggingPoint] = useState<'p1' | 'p2' | null>(null);
 
   // Preview stage state
@@ -61,8 +71,18 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
   const svgRef = useRef<SVGSVGElement | null>(null);
   const animRef = useRef<number | null>(null);
 
+  useEffect(() => {
+    setActionError('');
+    if (!isOpen) {
+      setDraggingPoint(null);
+      resetCopied();
+      resetApplied();
+    }
+  }, [isOpen, resetCopied, resetApplied]);
+
   // Switch preset
   const handleSelectPreset = (p: EasingPreset) => {
+    setActionError('');
     setActivePreset(p);
     setX1(p.coords[0]);
     setY1(p.coords[1]);
@@ -99,18 +119,18 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
   // Pointer drag handles
   const handlePointerDown = (point: 'p1' | 'p2', e: React.PointerEvent) => {
     e.stopPropagation();
-    (e.target as Element).setPointerCapture(e.pointerId);
+    setActionError('');
+    capturePointerSafe(svgRef.current || (e.currentTarget as Element), e.pointerId);
     setDraggingPoint(point);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!draggingPoint || !svgRef.current) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const sx = e.clientX - rect.left;
-    const sy = e.clientY - rect.top;
+    if (!draggingPoint) return;
+    const pt = clientToSvgPoint(svgRef.current, e.clientX, e.clientY, CANVAS_SIZE, CANVAS_SIZE);
+    if (!pt) return;
 
-    const mx = Math.round(toMathX(sx) * 100) / 100;
-    const my = Math.round(toMathY(sy) * 100) / 100;
+    const mx = Math.round(toMathX(pt.x) * 100) / 100;
+    const my = Math.round(toMathY(pt.y) * 100) / 100;
 
     if (draggingPoint === 'p1') {
       setX1(mx);
@@ -123,18 +143,14 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
 
   const handlePointerUp = (e: React.PointerEvent) => {
     if (draggingPoint) {
-      try {
-        (e.target as Element).releasePointerCapture(e.pointerId);
-      } catch {
-        // no-op
-      }
+      releasePointerSafe(svgRef.current || (e.currentTarget as Element), e.pointerId);
       setDraggingPoint(null);
     }
   };
 
   // Preview loop
   useEffect(() => {
-    if (!previewPlaying) return;
+    if (!isOpen || !previewPlaying) return;
     let lastTime = performance.now();
     const loopDurationMs = 1500 / playbackSpeed;
 
@@ -147,9 +163,12 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
 
     animRef.current = requestAnimationFrame(frame);
     return () => {
-      if (animRef.current !== null) cancelAnimationFrame(animRef.current);
+      if (animRef.current !== null) {
+        cancelAnimationFrame(animRef.current);
+        animRef.current = null;
+      }
     };
-  }, [previewPlaying, playbackSpeed]);
+  }, [isOpen, previewPlaying, playbackSpeed]);
 
   // Evaluated preview value
   const easedVal = useMemo(() => {
@@ -158,25 +177,26 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
 
   // Copy Python code
   const handleCopyCode = async () => {
-    const code = generateBezierRateFuncPython(x1, y1, x2, y2);
+    setActionError('');
     try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // ignore
+      const code = generateBezierRateFuncPython(x1, y1, x2, y2);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : String(error));
     }
   };
 
   // Apply rate function
   const handleApply = () => {
-    if (!onApplyRateFunc) return;
-    onApplyRateFunc(activePreset.id, [x1, y1, x2, y2]);
-    setApplied(true);
-    setTimeout(() => {
-      setApplied(false);
-      onClose();
-    }, 450);
+    if (!onApplyRateFunc || applied) return;
+    setActionError('');
+    try {
+      scheduleApplyClose(onClose, () => onApplyRateFunc(activePreset.id, [x1, y1, x2, y2]));
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -229,6 +249,8 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
                 className="keyframe-svg"
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onLostPointerCapture={() => setDraggingPoint(null)}
               >
                 <defs>
                   {/* Subtle Grid Pattern */}
@@ -457,7 +479,13 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
                       min="0"
                       max="1"
                       value={x1}
-                      onChange={e => setX1(parseFloat(e.target.value) || 0)}
+                      onChange={e => {
+                        const val = parseFloat(e.target.value);
+                        if (Number.isFinite(val)) {
+                          setActionError('');
+                          setX1(Math.max(0, Math.min(1, val)));
+                        }
+                      }}
                       className="keyframe-coord-input"
                     />
                   </div>
@@ -469,7 +497,13 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
                       min="-1.5"
                       max="2.5"
                       value={y1}
-                      onChange={e => setY1(parseFloat(e.target.value) || 0)}
+                      onChange={e => {
+                        const val = parseFloat(e.target.value);
+                        if (Number.isFinite(val)) {
+                          setActionError('');
+                          setY1(Math.max(-1.5, Math.min(2.5, val)));
+                        }
+                      }}
                       className="keyframe-coord-input"
                     />
                   </div>
@@ -487,7 +521,13 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
                       min="0"
                       max="1"
                       value={x2}
-                      onChange={e => setX2(parseFloat(e.target.value) || 0)}
+                      onChange={e => {
+                        const val = parseFloat(e.target.value);
+                        if (Number.isFinite(val)) {
+                          setActionError('');
+                          setX2(Math.max(0, Math.min(1, val)));
+                        }
+                      }}
                       className="keyframe-coord-input"
                     />
                   </div>
@@ -499,7 +539,13 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
                       min="-1.5"
                       max="2.5"
                       value={y2}
-                      onChange={e => setY2(parseFloat(e.target.value) || 0)}
+                      onChange={e => {
+                        const val = parseFloat(e.target.value);
+                        if (Number.isFinite(val)) {
+                          setActionError('');
+                          setY2(Math.max(-1.5, Math.min(2.5, val)));
+                        }
+                      }}
                       className="keyframe-coord-input"
                     />
                   </div>
@@ -511,6 +557,11 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
 
         {/* Footer */}
         <div className="keyframe-footer">
+          {actionError && (
+            <div role="alert" style={{ color: '#f87171', fontSize: 12 }}>
+              {actionError}
+            </div>
+          )}
           <div style={{ fontSize: 11, color: '#8892b0' }}>
             提示：支持拖动青色 (P₁) 与粉紫色 (P₂) 手柄自由塑造运动质感
           </div>
@@ -519,7 +570,7 @@ export const KeyframeCurveModal: React.FC<KeyframeCurveModalProps> = ({
               {copied ? <Check size={14} color="#48bb78" /> : <Copy size={14} />}
               <span>{copied ? '已复制 Manim 代码' : '复制 Python 代码'}</span>
             </button>
-            <button className="keyframe-btn-primary" onClick={handleApply} disabled={x1 !== y1 || x2 !== y2} title="工程内暂支持匀速曲线；自定义贝塞尔可预览并导出 Python">
+            <button className="keyframe-btn-primary" onClick={handleApply} disabled={applied || x1 !== y1 || x2 !== y2} title="工程内暂支持匀速曲线；自定义贝塞尔可预览并导出 Python">
               {applied ? <Check size={14} /> : <Sparkles size={14} />}
               <span>应用缓动曲线（暂支持匀速）</span>
             </button>

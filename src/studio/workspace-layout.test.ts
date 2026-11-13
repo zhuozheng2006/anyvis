@@ -42,3 +42,14 @@ it('restores saved proportions and safely recovers from invalid storage', () => 
   localStorage.setItem('anyvis.workspace-layout.v1', '{invalid');
   expect(render()[0].getAttribute('aria-valuenow')).toBe('58');
 });
+it('ignores pointer drags when the layout container has zero size instead of producing NaN CSS splits', () => {
+  const [columns] = render();
+  act(() => {
+    columns.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true, button: 0, clientX: 100 }));
+    columns.dispatchEvent(new MouseEvent('pointermove', { bubbles: true, clientX: 250 }));
+    columns.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }));
+  });
+  expect(columns.getAttribute('aria-valuenow')).toBe('58');
+  const main = host.querySelector<HTMLElement>('main.workspace-split, main.resizable-workspace')!;
+  expect(main.style.getPropertyValue('--editor-size')).toBe('58fr');
+});

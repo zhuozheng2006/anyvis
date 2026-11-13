@@ -7,6 +7,14 @@ import {
   computeSecantSlope,
   generateCalculusPythonCode,
 } from './calculus';
+import { clientToSvgPoint, copyTextToClipboard } from './browser-utils';
+import {
+  useTransientFlag,
+  useDelayedAction,
+  useDialogEscape,
+  capturePointerSafe,
+  releasePointerSafe,
+} from './modal-hooks';
 import './calculus-playground.css';
 
 export interface CalculusPlaygroundModalProps {
@@ -40,12 +48,15 @@ export const CalculusPlaygroundModal: React.FC<CalculusPlaygroundModalProps> = (
   const [activePreset, setActivePreset] = useState<CalculusPreset>(CALCULUS_PRESETS[0]);
   const [x0, setX0] = useState(1.0);
   const [dx, setDx] = useState(1.2);
-  const [copied, setCopied] = useState(false);
-  const [inserted, setInserted] = useState(false);
+  const [copied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
+  const [inserted, scheduleInsertClose, resetInserted] = useDelayedAction(600, isOpen);
+  useDialogEscape(isOpen, onClose);
+  const [actionError, setActionError] = useState('');
   const [isDraggingP, setIsDraggingP] = useState(false);
   const [isLimiting, setIsLimiting] = useState(false);
 
   const animRef = useRef<number | null>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
 
   // 1. Calculations
   const y0 = useMemo(() => activePreset.fn(x0), [activePreset, x0]);
@@ -112,6 +123,7 @@ export const CalculusPlaygroundModal: React.FC<CalculusPlaygroundModalProps> = (
 
   // 6. Handle preset change
   const selectPreset = (p: CalculusPreset) => {
+    setActionError('');
     setActivePreset(p);
     setX0(p.defaultX);
     setDx(1.0);
@@ -147,52 +159,70 @@ export const CalculusPlaygroundModal: React.FC<CalculusPlaygroundModalProps> = (
   };
 
   useEffect(() => {
+    setActionError('');
+    if (!isOpen) {
+      setIsDraggingP(false);
+      resetCopied();
+      resetInserted();
+      if (animRef.current !== null) {
+        cancelAnimationFrame(animRef.current);
+        animRef.current = null;
+        setIsLimiting(false);
+      }
+    }
     return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
+      if (animRef.current !== null) {
+        cancelAnimationFrame(animRef.current);
+        animRef.current = null;
+      }
     };
-  }, []);
+  }, [isOpen, resetCopied, resetInserted]);
 
   // 8. Pointer drag for point P
   const handlePointerDownP = (e: React.PointerEvent) => {
     e.stopPropagation();
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    setActionError('');
+    capturePointerSafe(svgRef.current || (e.currentTarget as Element), e.pointerId);
     setIsDraggingP(true);
   };
 
   const handlePointerMoveP = (e: React.PointerEvent<SVGSVGElement>) => {
     if (!isDraggingP) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const sx = e.clientX - rect.left;
-    const mathX = Math.max(activePreset.domain[0], Math.min(activePreset.domain[1], toMathX(sx)));
+    const pt = clientToSvgPoint(svgRef.current || e.currentTarget, e.clientX, e.clientY, CANVAS_WIDTH, CANVAS_HEIGHT);
+    if (!pt) return;
+    const mathX = Math.max(activePreset.domain[0], Math.min(activePreset.domain[1], toMathX(pt.x)));
     setX0(mathX);
   };
 
-  const handlePointerUpP = () => {
-    setIsDraggingP(false);
+  const handlePointerUpP = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (isDraggingP) {
+      releasePointerSafe(svgRef.current || e.currentTarget, e.pointerId);
+      setIsDraggingP(false);
+    }
   };
 
   // 9. Actions
   const handleCopyCode = useCallback(async () => {
-    const py = generateCalculusPythonCode(activePreset, x0, dx);
+    setActionError('');
     try {
-      await navigator.clipboard.writeText(py);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // fallback
+      const py = generateCalculusPythonCode(activePreset, x0, dx);
+      if (await copyTextToClipboard(py)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : String(error));
     }
-  }, [activePreset, x0, dx]);
+  }, [activePreset, x0, dx, triggerCopied]);
 
   const handleInsert = useCallback(() => {
-    if (onInsertCalculus) {
-      onInsertCalculus(activePreset, x0);
-      setInserted(true);
-      setTimeout(() => {
-        setInserted(false);
-        onClose();
-      }, 600);
+    if (!onInsertCalculus || inserted) return;
+    setActionError('');
+    try {
+      scheduleInsertClose(onClose, () => onInsertCalculus(activePreset, x0));
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : String(error));
     }
-  }, [activePreset, x0, onInsertCalculus, onClose]);
+  }, [activePreset, x0, inserted, onInsertCalculus, scheduleInsertClose, onClose]);
 
   if (!isOpen) return null;
 
@@ -217,10 +247,13 @@ export const CalculusPlaygroundModal: React.FC<CalculusPlaygroundModalProps> = (
           <div className="calculus-canvas-container">
             <div className="calculus-canvas-wrap">
               <svg
+                ref={svgRef}
                 className="calculus-svg"
                 viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
                 onPointerMove={handlePointerMoveP}
                 onPointerUp={handlePointerUpP}
+                onPointerCancel={handlePointerUpP}
+                onLostPointerCapture={() => setIsDraggingP(false)}
               >
                 {/* Grid Lines */}
                 {[-3, -2, -1, 1, 2, 3].map(gx => (
@@ -397,7 +430,13 @@ export const CalculusPlaygroundModal: React.FC<CalculusPlaygroundModalProps> = (
                 max={activePreset.domain[1]}
                 step={0.05}
                 value={x0}
-                onChange={e => setX0(parseFloat(e.target.value))}
+                onChange={e => {
+                  const val = parseFloat(e.target.value);
+                  if (Number.isFinite(val)) {
+                    setActionError('');
+                    setX0(Math.max(activePreset.domain[0], Math.min(activePreset.domain[1], val)));
+                  }
+                }}
               />
 
               {/* dx Slider */}
@@ -414,7 +453,13 @@ export const CalculusPlaygroundModal: React.FC<CalculusPlaygroundModalProps> = (
                 max={2.0}
                 step={0.005}
                 value={dx}
-                onChange={e => setDx(parseFloat(e.target.value))}
+                onChange={e => {
+                  const val = parseFloat(e.target.value);
+                  if (Number.isFinite(val)) {
+                    setActionError('');
+                    setDx(Math.max(0.005, Math.min(2.0, val)));
+                  }
+                }}
               />
 
               {/* 1-Click Limit Animation */}
@@ -468,14 +513,20 @@ export const CalculusPlaygroundModal: React.FC<CalculusPlaygroundModalProps> = (
         {/* Footer */}
         <div className="calculus-modal-footer">
           <div className="calculus-footer-left">
-            <span>支持导出 ValueTracker 割线逼近动画与函数积木</span>
+            {actionError ? (
+              <span role="alert" style={{ color: '#f87171', fontSize: 12 }}>
+                {actionError}
+              </span>
+            ) : (
+              <span>支持导出 ValueTracker 割线逼近动画与函数积木</span>
+            )}
           </div>
           <div className="calculus-footer-right">
             <button className="calculus-btn-secondary" onClick={handleCopyCode}>
               {copied ? <Check size={14} color="#34D399" /> : <Copy size={14} />}
               <span>{copied ? '已复制 Python 代码' : '复制代码'}</span>
             </button>
-            <button className="calculus-btn-primary" onClick={handleInsert}>
+            <button className="calculus-btn-primary" onClick={handleInsert} disabled={inserted}>
               {inserted ? <Check size={14} /> : <Sparkles size={14} />}
               <span>{inserted ? '已插入工程' : '插入微积分积木'}</span>
             </button>

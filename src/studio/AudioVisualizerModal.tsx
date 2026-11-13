@@ -6,6 +6,7 @@ import {
   simulateAudioFrequencies,
   AUDIO_VISUALIZER_LIMITATION,
 } from './audio-visualizer';
+import { useDialogEscape } from './modal-hooks';
 import './audio-visualizer.css';
 
 export interface AudioVisualizerModalProps {
@@ -26,19 +27,28 @@ export const AudioVisualizerModal: React.FC<AudioVisualizerModalProps> = ({
   const [position, setPosition] = useState<'bottom' | 'center' | 'top'>(activePreset.position);
   const [playing, setPlaying] = useState(true);
   const [simTime, setSimTime] = useState(0);
+  useDialogEscape(isOpen, onClose);
 
   const animRef = useRef<number | null>(null);
+
+  const clampBarCount = (value: number) => Math.max(8, Math.min(64, Math.round(value)));
+
+  const updateBarCount = (raw: string) => {
+    const parsed = Number.parseInt(raw, 10);
+    if (!Number.isFinite(parsed)) return;
+    setBarCount(clampBarCount(parsed));
+  };
 
   // Switch preset
   const handleSelectPreset = (p: AudioVisualizerPreset) => {
     setActivePreset(p);
-    setBarCount(p.barCount);
+    setBarCount(clampBarCount(p.barCount));
     setPosition(p.position);
   };
 
   // 60fps simulation loop
   useEffect(() => {
-    if (!playing) return;
+    if (!isOpen || !playing) return;
     let last = performance.now();
 
     const loop = (now: number) => {
@@ -50,9 +60,12 @@ export const AudioVisualizerModal: React.FC<AudioVisualizerModalProps> = ({
 
     animRef.current = requestAnimationFrame(loop);
     return () => {
-      if (animRef.current !== null) cancelAnimationFrame(animRef.current);
+      if (animRef.current !== null) {
+        cancelAnimationFrame(animRef.current);
+        animRef.current = null;
+      }
     };
-  }, [playing]);
+  }, [isOpen, playing]);
 
   // Current audio amplitudes
   const amplitudes = useMemo(() => {
@@ -260,7 +273,7 @@ export const AudioVisualizerModal: React.FC<AudioVisualizerModalProps> = ({
                   max="64"
                   step="4"
                   value={barCount}
-                  onChange={e => setBarCount(parseInt(e.target.value, 10))}
+                  onChange={e => updateBarCount(e.target.value)}
                   className="audio-vis-slider"
                 />
               </div>

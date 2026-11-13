@@ -143,3 +143,45 @@ test('local API blocks cross-site execution, DNS-rebinding hosts and missing ses
     assert.equal(mediaTraversal.status, 404);
   } finally { await app.close(); await rm(directory, { recursive: true, force: true }); }
 });
+
+test('asset upload probe turns malformed worker JSON error lines into friendly decoding error', async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), 'anyvis-probe-json-test-'));
+  const runtimeRoot = path.join(directory, 'runtime');
+  await mkdir(runtimeRoot, { recursive: true });
+  const workerPath = path.join(runtimeRoot, 'worker.cjs');
+  await writeFile(
+    workerPath,
+    `
+const args = process.argv.slice(2);
+if (args[0] === '--probe-asset') {
+  console.log('ANYVIS_EVENT {not-valid-json');
+  process.exit(1);
+}
+console.log('ANYVIS_EVENT ' + JSON.stringify({ event: 'health', available: true, capabilities: {} }));
+`,
+  );
+  const app = await createAnyVisServer({
+    port: 4317,
+    listen: false,
+    cacheRoot: path.join(directory, 'cache'),
+    pythonPath: process.execPath,
+    workerPath,
+    runtimeRoot,
+  });
+  try {
+    await app.healthPromise;
+    const { token } = (await request(app, '/api/session')).json();
+    const res = await request(app, '/api/assets?name=broken.png', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/octet-stream', 'X-AnyVis-Token': token },
+      body: 'not-a-real-png',
+    });
+    assert.equal(res.status, 400);
+    const payload = res.json();
+    assert.match(payload.error, /素材无法解码或校验超时/);
+    assert.doesNotMatch(payload.error, /SyntaxError|JSON/);
+  } finally {
+    await app.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});

@@ -17,7 +17,7 @@ export interface StoryboardChapter {
 
 /** Formats seconds into mm:ss standard video cue format */
 export function formatTimestamp(seconds: number): string {
-  const safeSec = Math.max(0, seconds);
+  const safeSec = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
   const mins = Math.floor(safeSec / 60);
   const secs = Math.floor(safeSec % 60);
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -151,14 +151,17 @@ export function updateProjectChapters(
   project: Project,
   chapters: StoryboardChapter[],
 ): Project {
+  const existingColors = new Map(
+    (project.scene.markers || []).map((m) => [m.id, m.color]),
+  );
   // Markers correspond to chapter boundary start times (excluding 0)
   const nextMarkers: TimelineMarker[] = chapters
     .filter((c) => c.startTime > 0)
-    .map((c, idx) => ({
-      id: c.markerId || `m_sec_${idx}_${Date.now()}`,
+    .map((c) => ({
+      id: c.markerId || `m_sec_${crypto.randomUUID().slice(0, 8)}`,
       time: c.startTime,
       label: c.name,
-      color: '#38bdf8',
+      color: (c.markerId && existingColors.get(c.markerId)) || '#38bdf8',
     }));
 
   return {

@@ -7,6 +7,8 @@ import {
   generatePolarParametricPythonCode,
   createPolarParametricActions,
 } from './polar-parametric';
+import { copyTextToClipboard } from './browser-utils';
+import { useTransientFlag, useDialogEscape } from './modal-hooks';
 import './polar-parametric.css';
 
 interface PolarParametricModalProps {
@@ -27,7 +29,8 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
   const [params, setParams] = useState<Record<string, number>>({ a: 2.2, k: 4 });
   const [progress, setProgress] = useState<number>(0.75);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isCopied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
+  useDialogEscape(isOpen, onClose);
 
   const preset = useMemo(
     () =>
@@ -37,6 +40,7 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
   );
 
   useEffect(() => {
+    setApplyError('');
     const defaultParams: Record<string, number> = {};
     preset.params.forEach((p) => {
       defaultParams[p.key] = p.defaultValue;
@@ -46,9 +50,17 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
     setIsPlaying(false);
   }, [preset]);
 
+  useEffect(() => {
+    setApplyError('');
+    if (!isOpen) {
+      setIsPlaying(false);
+      resetCopied();
+    }
+  }, [isOpen, resetCopied]);
+
   // Tracing animation loop
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isOpen || !isPlaying) return;
     const interval = setInterval(() => {
       setProgress((prev) => {
         const next = prev + 0.008;
@@ -56,7 +68,7 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
       });
     }, 24);
     return () => clearInterval(interval);
-  }, [isPlaying]);
+  }, [isOpen, isPlaying]);
 
   const curveData = useMemo(() => {
     return sampleCurve(preset, params, progress, 300);
@@ -76,10 +88,15 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
   );
 
   const handleCopyPython = async () => {
-    const code = generatePolarParametricPythonCode(preset, params);
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    setApplyError('');
+    try {
+      const code = generatePolarParametricPythonCode(preset, params);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleApplyToProject = () => {
@@ -145,12 +162,15 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
                     max={p.max}
                     step={p.step}
                     value={params[p.key] ?? p.defaultValue}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      if (!Number.isFinite(val)) return;
+                      setApplyError('');
                       setParams((prev) => ({
                         ...prev,
-                        [p.key]: parseFloat(e.target.value),
-                      }))
-                    }
+                        [p.key]: Math.max(p.min, Math.min(p.max, val)),
+                      }));
+                    }}
                   />
                   <span className="polar-param-val">
                     {(params[p.key] ?? p.defaultValue).toFixed(1)}
@@ -169,7 +189,10 @@ export const PolarParametricModal: React.FC<PolarParametricModalProps> = ({
                     step="0.01"
                     value={progress}
                     onChange={(e) => {
-                      setProgress(parseFloat(e.target.value));
+                      const val = parseFloat(e.target.value);
+                      if (!Number.isFinite(val)) return;
+                      setApplyError('');
+                      setProgress(Math.max(0.05, Math.min(1.0, val)));
                       setIsPlaying(false);
                     }}
                   />

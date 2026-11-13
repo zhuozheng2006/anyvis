@@ -80,6 +80,9 @@ export async function generateProject(body, options = {}) {
   }
   let data;
   try { data = JSON.parse(text); } catch { throw failure('模型服务没有返回兼容的 JSON 响应。', 502); }
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    throw failure('模型服务没有返回兼容的 JSON 响应。', 502);
+  }
   const message = data.choices?.[0]?.message;
   const finishReason = data.choices?.[0]?.finish_reason;
   if (finishReason === 'length') throw failure('模型输出达到长度上限，未应用不完整作品。请把动画拆成较小的任务。', 502);

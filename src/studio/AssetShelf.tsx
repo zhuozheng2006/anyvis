@@ -7,6 +7,10 @@ import { validateProject } from './core/project';
 import { checkedEdit } from './timeline-model';
 import './media-assets.css';
 
+function sanitizeAssetActionName(name: string, fallback = '图片'): string {
+  return name.replace(/\.[^.]+$/, '').replace(/[\r\n\0,，]/g, ' ').replace(/^@+/, '').trim().slice(0, 80) || fallback;
+}
+
 export interface AssetShelfProps {
   project: Project;
   onProjectChange(project: Project): void;
@@ -96,7 +100,7 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
 
       if (uploadedAsset.kind === 'image') {
         // Automatically create image_asset action with unique name, asset ID, appear none
-        const baseName = uploadedAsset.name.replace(/\.[^.]+$/, '').replace(/[\r\n\0,，]/g, ' ').replace(/^@+/, '').trim().slice(0, 80) || '图片';
+        const baseName = sanitizeAssetActionName(uploadedAsset.name);
         const { project: pWithImg, action } = appendAction(nextProject, 'image_asset', {
           name: baseName,
           asset: uploadedAsset.id,
@@ -142,7 +146,7 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
   const handleUseImage = (asset: MediaAsset) => {
     try {
       const latestProject = projectRef.current;
-      const baseName = asset.name.replace(/\.[^.]+$/, '').replace(/[\r\n\0,，]/g, ' ').replace(/^@+/, '').trim().slice(0, 80) || '图片';
+      const baseName = sanitizeAssetActionName(asset.name);
       const { project: nextProject, action } = appendAction(latestProject, 'image_asset', {
         name: baseName,
         asset: asset.id,
@@ -157,7 +161,7 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
   const handleAddAudioTrack = (asset: MediaAsset) => {
     try {
       const latestProject = projectRef.current;
-      const baseName = asset.name.replace(/\.[^.]+$/, '').replace(/[\r\n\0,，]/g, ' ').replace(/^@+/, '').trim().slice(0, 80) || '配音';
+      const baseName = sanitizeAssetActionName(asset.name, '配音');
       const existingNames = new Set(
         flattenActions(latestProject.actions)
           .filter(a => getBlockDefinition(a.type)?.createsObject)

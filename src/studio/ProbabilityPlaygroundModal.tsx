@@ -4,11 +4,13 @@ import {
   DISTRIBUTION_PRESETS,
   type DistributionKind,
   sampleDistribution,
-  normalCdf,
+  computeIntervalProbability,
   normalPdf,
   generateProbabilityPythonCode,
   createProbabilityActions,
 } from './probability';
+import { copyTextToClipboard } from './browser-utils';
+import { useTransientFlag, useDialogEscape } from './modal-hooks';
 import './probability-playground.css';
 
 interface ProbabilityPlaygroundModalProps {
@@ -29,7 +31,8 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
   const [params, setParams] = useState<Record<string, number>>({ mu: 0, sigma: 1.0 });
   const [intervalA, setIntervalA] = useState<number>(-1.0);
   const [intervalB, setIntervalB] = useState<number>(1.0);
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isCopied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
+  useDialogEscape(isOpen, onClose);
 
   const preset = useMemo(
     () => DISTRIBUTION_PRESETS.find((p) => p.id === selectedPresetId) || DISTRIBUTION_PRESETS[0],
@@ -37,6 +40,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
   );
 
   useEffect(() => {
+    setApplyError('');
     setParams(preset.defaultParams);
     if (preset.id === 'normal') {
       setIntervalA(-1.0);
@@ -50,6 +54,13 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
     }
   }, [preset]);
 
+  useEffect(() => {
+    setApplyError('');
+    if (!isOpen) {
+      resetCopied();
+    }
+  }, [isOpen, resetCopied]);
+
   const { points, mean, variance, maxY } = useMemo(
     () => sampleDistribution(preset, params),
     [preset, params],
@@ -58,15 +69,10 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
   const sigma = Math.sqrt(variance);
 
   // Interval probability calculation
-  const intervalProb = useMemo(() => {
-    if (preset.id === 'normal') {
-      const mu = params.mu ?? 0;
-      const s = params.sigma ?? 1.0;
-      const prob = normalCdf(intervalB, mu, s) - normalCdf(intervalA, mu, s);
-      return Math.max(0, Math.min(1, prob));
-    }
-    return 0.68;
-  }, [preset, params, intervalA, intervalB]);
+  const intervalProb = useMemo(
+    () => computeIntervalProbability(preset.id, params, intervalA, intervalB),
+    [preset.id, params, intervalA, intervalB],
+  );
 
   // Coordinate mapping
   const svgWidth = 600;
@@ -75,7 +81,19 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
 
   const xMin = preset.xRange[0];
   const xMax = preset.xRange[1];
-  const safeMaxY = maxY * 1.25;
+  const safeMaxY = Number.isFinite(maxY) && maxY > 0 ? maxY * 1.25 : 1;
+
+  const updateParam = (key: string, parsed: number) => {
+    if (!Number.isFinite(parsed)) return;
+    setApplyError('');
+    setParams((prev) => ({ ...prev, [key]: parsed }));
+  };
+
+  const updateInterval = (setter: (val: number) => void, parsed: number) => {
+    if (!Number.isFinite(parsed)) return;
+    setApplyError('');
+    setter(parsed);
+  };
 
   const toSvgX = useCallback(
     (x: number) =>
@@ -89,11 +107,35 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
     [safeMaxY, svgHeight, padding],
   );
 
+  // Build shaded polygon points for normal curve above the isOpen early return
+  // so hook call count stays invariant across open/close transitions.
+  const shadedPointsStr = useMemo(() => {
+    if (preset.id !== 'normal' || !Number.isFinite(intervalA) || !Number.isFinite(intervalB) || intervalB <= intervalA) {
+      return '';
+    }
+    const mu = params.mu ?? 0;
+    const s = params.sigma ?? 1.0;
+
+    const subStep = (intervalB - intervalA) / 40;
+    const pts: string[] = [`${toSvgX(intervalA)},${toSvgY(0)}`];
+
+    for (let x = intervalA; x <= intervalB + 1e-5; x += subStep) {
+      pts.push(`${toSvgX(x)},${toSvgY(normalPdf(x, mu, s))}`);
+    }
+    pts.push(`${toSvgX(intervalB)},${toSvgY(0)}`);
+    return pts.join(' ');
+  }, [preset.id, params, intervalA, intervalB, toSvgX, toSvgY]);
+
   const handleCopyPython = async () => {
-    const code = generateProbabilityPythonCode(preset, params);
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    setApplyError('');
+    try {
+      const code = generateProbabilityPythonCode(preset, params);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleApplyToProject = () => {
@@ -108,22 +150,6 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
   };
 
   if (!isOpen) return null;
-
-  // Build shaded polygon points for normal curve
-  const shadedPointsStr = useMemo(() => {
-    if (preset.id !== 'normal') return '';
-    const mu = params.mu ?? 0;
-    const s = params.sigma ?? 1.0;
-
-    const subStep = (intervalB - intervalA) / 40;
-    const pts: string[] = [`${toSvgX(intervalA)},${toSvgY(0)}`];
-
-    for (let x = intervalA; x <= intervalB + 1e-5; x += subStep) {
-      pts.push(`${toSvgX(x)},${toSvgY(normalPdf(x, mu, s))}`);
-    }
-    pts.push(`${toSvgX(intervalB)},${toSvgY(0)}`);
-    return pts.join(' ');
-  }, [preset, params, intervalA, intervalB, toSvgX, toSvgY]);
 
   // Continuous curve points
   const curvePointsStr = points.map((p) => `${toSvgX(p.x)},${toSvgY(p.y)}`).join(' ');
@@ -322,7 +348,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
                       step="0.1"
                       value={params.mu ?? 0}
                       onChange={(e) =>
-                        setParams((prev) => ({ ...prev, mu: parseFloat(e.target.value) }))
+                        updateParam('mu', parseFloat(e.target.value))
                       }
                     />
                     <span>{(params.mu ?? 0).toFixed(1)}</span>
@@ -336,7 +362,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
                       step="0.1"
                       value={params.sigma ?? 1.0}
                       onChange={(e) =>
-                        setParams((prev) => ({ ...prev, sigma: parseFloat(e.target.value) }))
+                        updateParam('sigma', parseFloat(e.target.value))
                       }
                     />
                     <span>{(params.sigma ?? 1.0).toFixed(1)}</span>
@@ -351,7 +377,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
                       max="1.0"
                       step="0.1"
                       value={intervalA}
-                      onChange={(e) => setIntervalA(parseFloat(e.target.value))}
+                      onChange={(e) => updateInterval(setIntervalA, parseFloat(e.target.value))}
                     />
                     <span>{intervalA.toFixed(1)}</span>
                   </div>
@@ -363,7 +389,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
                       max="3.5"
                       step="0.1"
                       value={intervalB}
-                      onChange={(e) => setIntervalB(parseFloat(e.target.value))}
+                      onChange={(e) => updateInterval(setIntervalB, parseFloat(e.target.value))}
                     />
                     <span>{intervalB.toFixed(1)}</span>
                   </div>
@@ -381,7 +407,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
                       step="1"
                       value={params.n ?? 20}
                       onChange={(e) =>
-                        setParams((prev) => ({ ...prev, n: parseInt(e.target.value, 10) }))
+                        updateParam('n', parseInt(e.target.value, 10))
                       }
                     />
                     <span>{params.n ?? 20}</span>
@@ -395,7 +421,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
                       step="0.05"
                       value={params.p ?? 0.5}
                       onChange={(e) =>
-                        setParams((prev) => ({ ...prev, p: parseFloat(e.target.value) }))
+                        updateParam('p', parseFloat(e.target.value))
                       }
                     />
                     <span>{(params.p ?? 0.5).toFixed(2)}</span>
@@ -413,7 +439,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
                     step="0.5"
                     value={params.lambda ?? 4.0}
                     onChange={(e) =>
-                      setParams((prev) => ({ ...prev, lambda: parseFloat(e.target.value) }))
+                      updateParam('lambda', parseFloat(e.target.value))
                     }
                   />
                   <span>{(params.lambda ?? 4.0).toFixed(1)}</span>
@@ -430,7 +456,7 @@ export const ProbabilityPlaygroundModal: React.FC<ProbabilityPlaygroundModalProp
                     step="0.1"
                     value={params.lambda ?? 1.2}
                     onChange={(e) =>
-                      setParams((prev) => ({ ...prev, lambda: parseFloat(e.target.value) }))
+                      updateParam('lambda', parseFloat(e.target.value))
                     }
                   />
                   <span>{(params.lambda ?? 1.2).toFixed(1)}</span>

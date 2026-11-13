@@ -92,7 +92,7 @@ function bezierCoordDerivative(p1: number, p2: number, t: number): number {
  * Solves for parameter t given x in [0, 1] using Newton-Raphson with bisection fallback
  */
 export function solveCubicBezierT(x1: number, x2: number, x: number): number {
-  if (x <= 0) return 0;
+  if (!Number.isFinite(x) || x <= 0) return 0;
   if (x >= 1) return 1;
 
   // Initial guess
@@ -137,7 +137,7 @@ export function sampleCubicBezier(
   y2: number,
   x: number
 ): number {
-  if (x <= 0) return 0;
+  if (!Number.isFinite(x) || x <= 0) return 0;
   if (x >= 1) return 1;
   const t = solveCubicBezierT(x1, x2, x);
   return bezierCoord(y1, y2, t);

@@ -1,5 +1,12 @@
-import React, { useState, useRef, useId } from 'react';
+import React, { useState, useRef, useId, useEffect } from 'react';
 import { Grid, X, Check, Copy, Sparkles } from 'lucide-react';
+import { clientToSvgPoint, copyTextToClipboard } from './browser-utils';
+import {
+  useTransientFlag,
+  useDialogEscape,
+  capturePointerSafe,
+  releasePointerSafe,
+} from './modal-hooks';
 import './matrix-playground.css';
 
 export interface MatrixPlaygroundModalProps {
@@ -39,11 +46,20 @@ export const MatrixPlaygroundModal: React.FC<MatrixPlaygroundModalProps> = ({
   const [b, setB] = useState(1);
   const [c, setC] = useState(0);
   const [d, setD] = useState(1);
-  const [copied, setCopied] = useState(false);
+  const [copied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
   const [dragging, setDragging] = useState<'i' | 'j' | null>(null);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const idPrefix = useId();
+
+  useEffect(() => {
+    if (!isOpen) {
+      setDragging(null);
+      resetCopied();
+    }
+  }, [isOpen, resetCopied]);
+
+  useDialogEscape(isOpen, onClose);
 
   if (!isOpen) return null;
 
@@ -81,16 +97,15 @@ export const MatrixPlaygroundModal: React.FC<MatrixPlaygroundModalProps> = ({
 
   const handlePointerDown = (which: 'i' | 'j') => (e: React.PointerEvent) => {
     e.stopPropagation();
-    e.currentTarget.setPointerCapture(e.pointerId);
+    capturePointerSafe(svgRef.current || e.currentTarget, e.pointerId);
     setDragging(which);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging || !svgRef.current) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const svgX = ((e.clientX - rect.left) / rect.width) * svgSize;
-    const svgY = ((e.clientY - rect.top) / rect.height) * svgSize;
-    const [wx, wy] = fromSvgCoords(svgX, svgY);
+    if (!dragging) return;
+    const pt = clientToSvgPoint(svgRef.current, e.clientX, e.clientY, svgSize, svgSize);
+    if (!pt) return;
+    const [wx, wy] = fromSvgCoords(pt.x, pt.y);
 
     if (dragging === 'i') {
       setA(wx);
@@ -101,17 +116,20 @@ export const MatrixPlaygroundModal: React.FC<MatrixPlaygroundModalProps> = ({
     }
   };
 
-  const handlePointerUp = () => {
-    setDragging(null);
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (dragging) {
+      releasePointerSafe(svgRef.current || e.currentTarget, e.pointerId);
+      setDragging(null);
+    }
   };
 
   const matrixString = `[[${a}, ${b}], [${c}, ${d}]]`;
   const manimCode = `self.play(ApplyMatrix([[${a}, ${b}], [${c}, ${d}]], target))`;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(manimCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    if (await copyTextToClipboard(manimCode)) {
+      triggerCopied();
+    }
   };
 
   const applyPreset = (p: Preset) => {
@@ -122,7 +140,7 @@ export const MatrixPlaygroundModal: React.FC<MatrixPlaygroundModalProps> = ({
   };
 
   return (
-    <div className="mpm-overlay" role="dialog" aria-modal="true" aria-label="3B1B 矩阵线性变换交互台">
+    <div className="mpm-overlay" role="dialog" aria-modal="true" aria-label="3B1B 矩阵线性变换交互台" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="mpm-modal">
         <div className="mpm-header">
           <div className="mpm-title">
@@ -143,6 +161,8 @@ export const MatrixPlaygroundModal: React.FC<MatrixPlaygroundModalProps> = ({
                 className="mpm-svg"
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onLostPointerCapture={() => setDragging(null)}
               >
                 <defs>
                   <marker
@@ -315,7 +335,10 @@ export const MatrixPlaygroundModal: React.FC<MatrixPlaygroundModalProps> = ({
                       type="number"
                       step="0.1"
                       value={a}
-                      onChange={e => setA(Number(e.target.value))}
+                      onChange={e => {
+                        const val = Number(e.target.value);
+                        if (Number.isFinite(val)) setA(val);
+                      }}
                     />
                   </div>
                   <div className="mpm-cell">
@@ -324,7 +347,10 @@ export const MatrixPlaygroundModal: React.FC<MatrixPlaygroundModalProps> = ({
                       type="number"
                       step="0.1"
                       value={b}
-                      onChange={e => setB(Number(e.target.value))}
+                      onChange={e => {
+                        const val = Number(e.target.value);
+                        if (Number.isFinite(val)) setB(val);
+                      }}
                     />
                   </div>
                   <div className="mpm-cell">
@@ -333,7 +359,10 @@ export const MatrixPlaygroundModal: React.FC<MatrixPlaygroundModalProps> = ({
                       type="number"
                       step="0.1"
                       value={c}
-                      onChange={e => setC(Number(e.target.value))}
+                      onChange={e => {
+                        const val = Number(e.target.value);
+                        if (Number.isFinite(val)) setC(val);
+                      }}
                     />
                   </div>
                   <div className="mpm-cell">
@@ -342,7 +371,10 @@ export const MatrixPlaygroundModal: React.FC<MatrixPlaygroundModalProps> = ({
                       type="number"
                       step="0.1"
                       value={d}
-                      onChange={e => setD(Number(e.target.value))}
+                      onChange={e => {
+                        const val = Number(e.target.value);
+                        if (Number.isFinite(val)) setD(val);
+                      }}
                     />
                   </div>
                 </div>

@@ -1,5 +1,7 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useId } from 'react';
 import type { Project } from './core/types';
+import { copyTextToClipboard } from './browser-utils';
+import { capturePointerSafe, releasePointerSafe, useDialogEscape, useTransientFlag } from './modal-hooks';
 import {
   type Vector3D,
   type Vector3DOperation,
@@ -37,7 +39,9 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
   const [azimuth, setAzimuth] = useState<number>(35);
   const [elevation, setElevation] = useState<number>(25);
   const [activeTab, setActiveTab] = useState<'visual' | 'code'>('visual');
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isCopied, triggerCopied] = useTransientFlag(2000, isOpen);
+  const idPrefix = useId();
+  useDialogEscape(isOpen, onClose);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number; az: number; el: number }>({
     x: 0,
@@ -46,9 +50,35 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
     el: 25,
   });
 
+  useEffect(() => {
+    if (!isOpen) {
+      setIsDragging(false);
+      setGenerationError('');
+    }
+  }, [isOpen]);
+
+  const updateAngle = (setter: (value: number) => void, raw: string) => {
+    const val = Number(raw);
+    if (!Number.isFinite(val)) return;
+    setGenerationError('');
+    setter(val);
+  };
+
+  const updateVecCoord = (
+    setter: React.Dispatch<React.SetStateAction<Vector3D>>,
+    axis: keyof Vector3D,
+    raw: string,
+  ) => {
+    const val = Number(raw);
+    if (!Number.isFinite(val)) return;
+    setGenerationError('');
+    setter(prev => ({ ...prev, [axis]: val }));
+  };
+
   const selectPreset = useCallback((presetId: string) => {
     const p = VECTOR3D_PRESETS.find(item => item.id === presetId);
     if (!p) return;
+    setGenerationError('');
     setSelectedPresetId(p.id);
     setU(p.u);
     setV(p.v);
@@ -66,8 +96,18 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
   const crossArea = useMemo(() => magnitude3D(crossVec), [crossVec]);
 
   // Manim Python Code
-  const manimCode = useMemo(() => {
-    return generateVector3DManimCode(u, v, operation, { azimuth, elevation });
+  const { manimCode, codeError } = useMemo(() => {
+    try {
+      return {
+        manimCode: generateVector3DManimCode(u, v, operation, { azimuth, elevation }),
+        codeError: '',
+      };
+    } catch (error) {
+      return {
+        manimCode: '',
+        codeError: error instanceof Error ? error.message : String(error),
+      };
+    }
   }, [u, v, operation, azimuth, elevation]);
 
   // 3D Canvas Geometry Projection
@@ -127,7 +167,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
       az: azimuth,
       el: elevation,
     });
-    (e.target as Element).setPointerCapture(e.pointerId);
+    capturePointerSafe(e.currentTarget, e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
@@ -138,41 +178,38 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
     setElevation(Math.max(-85, Math.min(85, dragStart.el - dy * 0.75)));
   };
 
-  const handlePointerUp = (e: React.PointerEvent<SVGSVGElement>) => {
+  const endOrbitDrag = (e?: React.PointerEvent<SVGSVGElement>) => {
     setIsDragging(false);
-    try {
-      (e.target as Element).releasePointerCapture(e.pointerId);
-    } catch {
-      // Ignore
-    }
+    if (e) releasePointerSafe(e.currentTarget, e.pointerId);
   };
 
   const handleApply = () => {
     setGenerationError('');
     try {
-    const { project: nextProject, actionCount } = createVector3DActions(project, u, v, operation, { azimuth, elevation });
-    const addedIds = nextProject.actions.slice(-actionCount).map(a => a.id);
-    onApply(nextProject, addedIds);
-    onClose();
+      const { project: nextProject, actionCount } = createVector3DActions(project, u, v, operation, { azimuth, elevation });
+      const addedIds = nextProject.actions.slice(-actionCount).map(a => a.id);
+      onApply(nextProject, addedIds);
+      onClose();
     } catch (error) {
       setGenerationError(error instanceof Error ? error.message : String(error));
     }
   };
 
   const handleCopyCode = async () => {
-    try {
-      await navigator.clipboard.writeText(manimCode);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch {
-      // Ignore
+    if (codeError || !manimCode) {
+      setGenerationError(codeError || '无法生成 Manim 代码。');
+      return;
+    }
+    setGenerationError('');
+    if (await copyTextToClipboard(manimCode)) {
+      triggerCopied();
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="vector3d-modal-backdrop" role="dialog" aria-modal="true" onClick={onClose}>
+    <div className="vector3d-modal-backdrop" role="dialog" aria-modal="true" aria-label="3D 向量与线性代数工作台" onClick={onClose}>
       <div className="vector3d-modal-window" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="vector3d-header">
@@ -215,7 +252,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         min="0"
                         max="360"
                         value={azimuth}
-                        onChange={e => setAzimuth(Number(e.target.value))}
+                        onChange={e => updateAngle(setAzimuth, e.target.value)}
                       />
                     </label>
                     <label>
@@ -225,7 +262,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         min="-85"
                         max="85"
                         value={elevation}
-                        onChange={e => setElevation(Number(e.target.value))}
+                        onChange={e => updateAngle(setElevation, e.target.value)}
                       />
                     </label>
                   </div>
@@ -237,11 +274,13 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                     viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
                     onPointerDown={handlePointerDown}
                     onPointerMove={handlePointerMove}
-                    onPointerUp={handlePointerUp}
+                    onPointerUp={endOrbitDrag}
+                    onPointerCancel={endOrbitDrag}
+                    onLostPointerCapture={() => endOrbitDrag()}
                   >
                     <defs>
                       <marker
-                        id="arrowhead-u"
+                        id={`${idPrefix}-arrowhead-u`}
                         markerWidth="7"
                         markerHeight="5"
                         refX="6"
@@ -251,7 +290,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         <polygon points="0 0, 7 2.5, 0 5" fill="#38bdf8" />
                       </marker>
                       <marker
-                        id="arrowhead-v"
+                        id={`${idPrefix}-arrowhead-v`}
                         markerWidth="7"
                         markerHeight="5"
                         refX="6"
@@ -261,7 +300,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         <polygon points="0 0, 7 2.5, 0 5" fill="#f43f5e" />
                       </marker>
                       <marker
-                        id="arrowhead-sum"
+                        id={`${idPrefix}-arrowhead-sum`}
                         markerWidth="7"
                         markerHeight="5"
                         refX="6"
@@ -271,7 +310,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         <polygon points="0 0, 7 2.5, 0 5" fill="#facc15" />
                       </marker>
                       <marker
-                        id="arrowhead-cross"
+                        id={`${idPrefix}-arrowhead-cross`}
                         markerWidth="7"
                         markerHeight="5"
                         refX="6"
@@ -281,7 +320,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         <polygon points="0 0, 7 2.5, 0 5" fill="#c084fc" />
                       </marker>
                       <marker
-                        id="arrowhead-proj"
+                        id={`${idPrefix}-arrowhead-proj`}
                         markerWidth="7"
                         markerHeight="5"
                         refX="6"
@@ -341,31 +380,31 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                     )}
 
                     {/* Vector u */}
-                    <line x1={origin2D.x} y1={origin2D.y} x2={u2D.x} y2={u2D.y} stroke="#38bdf8" strokeWidth="2.8" markerEnd="url(#arrowhead-u)" />
+                    <line x1={origin2D.x} y1={origin2D.y} x2={u2D.x} y2={u2D.y} stroke="#38bdf8" strokeWidth="2.8" markerEnd={`url(#${idPrefix}-arrowhead-u)`} />
                     <text x={u2D.x + 8} y={u2D.y - 4} fill="#38bdf8" fontSize="12" fontWeight="bold">u ({u.x}, {u.y}, {u.z})</text>
 
                     {/* Vector v */}
-                    <line x1={origin2D.x} y1={origin2D.y} x2={v2D.x} y2={v2D.y} stroke="#f43f5e" strokeWidth="2.8" markerEnd="url(#arrowhead-v)" />
+                    <line x1={origin2D.x} y1={origin2D.y} x2={v2D.x} y2={v2D.y} stroke="#f43f5e" strokeWidth="2.8" markerEnd={`url(#${idPrefix}-arrowhead-v)`} />
                     <text x={v2D.x + 8} y={v2D.y - 4} fill="#f43f5e" fontSize="12" fontWeight="bold">v ({v.x}, {v.y}, {v.z})</text>
 
                     {/* Result vector */}
                     {operation === 'add' && (
                       <>
-                        <line x1={origin2D.x} y1={origin2D.y} x2={sum2D.x} y2={sum2D.y} stroke="#facc15" strokeWidth="3" markerEnd="url(#arrowhead-sum)" />
+                        <line x1={origin2D.x} y1={origin2D.y} x2={sum2D.x} y2={sum2D.y} stroke="#facc15" strokeWidth="3" markerEnd={`url(#${idPrefix}-arrowhead-sum)`} />
                         <text x={sum2D.x + 8} y={sum2D.y - 4} fill="#facc15" fontSize="12" fontWeight="bold">u + v</text>
                       </>
                     )}
 
                     {operation === 'dot' && (
                       <>
-                        <line x1={origin2D.x} y1={origin2D.y} x2={proj2D.x} y2={proj2D.y} stroke="#4ade80" strokeWidth="3" markerEnd="url(#arrowhead-proj)" />
+                        <line x1={origin2D.x} y1={origin2D.y} x2={proj2D.x} y2={proj2D.y} stroke="#4ade80" strokeWidth="3" markerEnd={`url(#${idPrefix}-arrowhead-proj)`} />
                         <text x={proj2D.x + 8} y={proj2D.y + 12} fill="#4ade80" fontSize="12" fontWeight="bold">proj_v(u)</text>
                       </>
                     )}
 
                     {operation === 'cross' && (
                       <>
-                        <line x1={origin2D.x} y1={origin2D.y} x2={cross2D.x} y2={cross2D.y} stroke="#c084fc" strokeWidth="3.2" markerEnd="url(#arrowhead-cross)" />
+                        <line x1={origin2D.x} y1={origin2D.y} x2={cross2D.x} y2={cross2D.y} stroke="#c084fc" strokeWidth="3.2" markerEnd={`url(#${idPrefix}-arrowhead-cross)`} />
                         <text x={cross2D.x + 8} y={cross2D.y - 4} fill="#c084fc" fontSize="12" fontWeight="bold">w = u × v</text>
                       </>
                     )}
@@ -425,19 +464,28 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                   <div className="operation-toggle-group">
                     <button
                       className={`op-btn ${operation === 'cross' ? 'active' : ''}`}
-                      onClick={() => setOperation('cross')}
+                      onClick={() => {
+                        setGenerationError('');
+                        setOperation('cross');
+                      }}
                     >
                       叉乘 u × v (张成平行四边形)
                     </button>
                     <button
                       className={`op-btn ${operation === 'dot' ? 'active' : ''}`}
-                      onClick={() => setOperation('dot')}
+                      onClick={() => {
+                        setGenerationError('');
+                        setOperation('dot');
+                      }}
                     >
                       点乘 u · v (投影分量)
                     </button>
                     <button
                       className={`op-btn ${operation === 'add' ? 'active' : ''}`}
-                      onClick={() => setOperation('add')}
+                      onClick={() => {
+                        setGenerationError('');
+                        setOperation('add');
+                      }}
                     >
                       相加 u + v (空间平行四边形)
                     </button>
@@ -456,7 +504,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         max="3"
                         step="0.1"
                         value={u.x}
-                        onChange={e => setU({ ...u, x: Number(e.target.value) })}
+                        onChange={e => updateVecCoord(setU, 'x', e.target.value)}
                       />
                     </label>
                     <label>
@@ -467,7 +515,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         max="3"
                         step="0.1"
                         value={u.y}
-                        onChange={e => setU({ ...u, y: Number(e.target.value) })}
+                        onChange={e => updateVecCoord(setU, 'y', e.target.value)}
                       />
                     </label>
                     <label>
@@ -478,7 +526,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         max="3"
                         step="0.1"
                         value={u.z}
-                        onChange={e => setU({ ...u, z: Number(e.target.value) })}
+                        onChange={e => updateVecCoord(setU, 'z', e.target.value)}
                       />
                     </label>
                   </div>
@@ -496,7 +544,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         max="3"
                         step="0.1"
                         value={v.x}
-                        onChange={e => setV({ ...v, x: Number(e.target.value) })}
+                        onChange={e => updateVecCoord(setV, 'x', e.target.value)}
                       />
                     </label>
                     <label>
@@ -507,7 +555,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         max="3"
                         step="0.1"
                         value={v.y}
-                        onChange={e => setV({ ...v, y: Number(e.target.value) })}
+                        onChange={e => updateVecCoord(setV, 'y', e.target.value)}
                       />
                     </label>
                     <label>
@@ -518,7 +566,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                         max="3"
                         step="0.1"
                         value={v.z}
-                        onChange={e => setV({ ...v, z: Number(e.target.value) })}
+                        onChange={e => updateVecCoord(setV, 'z', e.target.value)}
                       />
                     </label>
                   </div>
@@ -535,7 +583,7 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
                 </button>
               </div>
               <pre className="code-block">
-                <code>{manimCode}</code>
+                <code>{manimCode || `# 无法生成代码：${codeError || '参数无效'}`}</code>
               </pre>
             </div>
           )}
@@ -543,7 +591,11 @@ export const Vector3DPlaygroundModal: React.FC<Vector3DPlaygroundModalProps> = (
 
         {/* Footer Actions */}
         <div className="vector3d-footer">
-          {generationError && <div role="alert" style={{ color: '#ef4444' }}>{generationError}</div>}
+          {(generationError || codeError) && (
+            <div role="alert" style={{ color: '#ef4444' }}>
+              {generationError || codeError}
+            </div>
+          )}
           <span className="footer-summary">
             三维模式 · 包含 ThreeDAxes、Arrow3D 及数学公式注释
           </span>

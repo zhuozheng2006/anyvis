@@ -195,12 +195,16 @@ export default function App() {
                 e.preventDefault();
                 play();
             }
-            if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+            if ((e.metaKey || e.ctrlKey) && !e.altKey && e.key.toLowerCase() === 'z') {
                 e.preventDefault();
                 if (e.shiftKey)
                     redo();
                 else
                     undo();
+            }
+            else if (e.ctrlKey && !e.metaKey && !e.altKey && e.key.toLowerCase() === 'y') {
+                e.preventDefault();
+                redo();
             }
             if (e.key === 'Escape') {
                 setPresenting(false);

@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionInspector } from './ActionInspector';
 import { createAction } from './core/catalog';
+import { createEmptyProject, validateProject } from './core/project';
 
 describe('ActionInspector UX Enhancements: Arrow Stepping, Reset to Default, LaTeX Copy', () => {
   let container: HTMLDivElement;
@@ -131,5 +132,97 @@ describe('ActionInspector UX Enhancements: Arrow Stepping, Reset to Default, LaT
     const scrubHandle = container.querySelector('.ai-fields-scrub-handle');
     expect(scrubHandle).not.toBeNull();
     expect(scrubHandle?.textContent).toContain('↔');
+  });
+
+  it('commits numeric scrub drag once on pointerup and reverts on pointercancel', async () => {
+    const circleAction = createAction('circle', { name: '圆', radius: 1.0 });
+    const onChange = vi.fn();
+
+    await act(async () => {
+      root.render(
+        React.createElement(ActionInspector, {
+          action: circleAction,
+          actions: [circleAction],
+          fields: ['radius'],
+          onChange,
+        })
+      );
+    });
+
+    const scrubHandle = container.querySelector('.ai-fields-scrub-handle')!;
+    const input = container.querySelector<HTMLInputElement>('.ai-fields-input')!;
+
+    await act(async () => {
+      scrubHandle.dispatchEvent(new MouseEvent('pointerdown', { clientX: 100, bubbles: true }));
+      window.dispatchEvent(new MouseEvent('pointermove', { clientX: 108 }));
+      window.dispatchEvent(new MouseEvent('pointermove', { clientX: 120 }));
+    });
+    expect(onChange).not.toHaveBeenCalled();
+    expect(input.value).toBe('1.5');
+
+    await act(async () => {
+      window.dispatchEvent(new MouseEvent('pointerup', { clientX: 120 }));
+    });
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith({ radius: 1.5 });
+
+    // Cancel discards pending scrub draft
+    onChange.mockClear();
+    await act(async () => {
+      scrubHandle.dispatchEvent(new MouseEvent('pointerdown', { clientX: 100, bubbles: true }));
+      window.dispatchEvent(new MouseEvent('pointermove', { clientX: 140 }));
+    });
+    expect(input.value).toBe('2.5');
+    await act(async () => {
+      window.dispatchEvent(new Event('pointercancel'));
+    });
+    expect(onChange).not.toHaveBeenCalled();
+    expect(input.value).toBe('1.5');
+  });
+
+  it('keeps RateFuncPicker idle while closed and emits only project-valid easing options', async () => {
+    const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(() => 1);
+    const shiftAction = createAction('shift', { target: '圆', dx: 2, easing: 'smooth' });
+    const onChange = vi.fn();
+
+    await act(async () => {
+      root.render(
+        React.createElement(ActionInspector, {
+          action: shiftAction,
+          actions: [createAction('circle', { name: '圆' }), shiftAction],
+          fields: ['easing'],
+          onChange,
+        })
+      );
+    });
+
+    expect(rafSpy).not.toHaveBeenCalled();
+
+    const trigger = container.querySelector<HTMLButtonElement>('.rfp-trigger')!;
+    await act(async () => {
+      trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(rafSpy).toHaveBeenCalled();
+    const options = Array.from(container.querySelectorAll<HTMLButtonElement>('[role="option"]'));
+    expect(options.length).toBeGreaterThan(0);
+
+    for (const option of options) {
+      await act(async () => {
+        option.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+      const chosen = onChange.mock.calls.at(-1)?.[0] as { easing: string };
+      expect(() => validateProject({
+        ...createEmptyProject(),
+        actions: [createAction('circle', { name: '圆' }), createAction('shift', { target: '圆', dx: 2, easing: chosen.easing })],
+      })).not.toThrow();
+
+      // Re-open for the next card
+      await act(async () => {
+        container.querySelector<HTMLButtonElement>('.rfp-trigger')!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+    }
+
+    rafSpy.mockRestore();
   });
 });

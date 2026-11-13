@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Project } from './core/types';
 import {
   DEFAULT_SUBTITLE_PRESET,
@@ -8,6 +8,8 @@ import {
   createSubtitleActions,
   type SubtitleItem,
 } from './subtitles';
+import { copyTextToClipboard, useBoundedPlayback } from './browser-utils';
+import { useTransientFlag, useDialogEscape } from './modal-hooks';
 import './subtitles.css';
 
 interface SubtitleSyncModalProps {
@@ -25,44 +27,37 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
 }) => {
   const [generationError, setGenerationError] = useState('');
   const [subtitles, setSubtitles] = useState<SubtitleItem[]>(DEFAULT_SUBTITLE_PRESET);
-  const [playbackTime, setPlaybackTime] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [isCopiedPy, setIsCopiedPy] = useState<boolean>(false);
-  const [isCopiedSrt, setIsCopiedSrt] = useState<boolean>(false);
+  const [isCopiedPy, triggerCopiedPy, resetCopiedPy] = useTransientFlag(2000, isOpen);
+  const [isCopiedSrt, triggerCopiedSrt, resetCopiedSrt] = useTransientFlag(2000, isOpen);
+  useDialogEscape(isOpen, onClose);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const isOpenRef = useRef(isOpen);
+  isOpenRef.current = isOpen;
+  const activeReaderRef = useRef<FileReader | null>(null);
+
+  useEffect(() => {
+    setGenerationError('');
+    resetCopiedPy();
+    resetCopiedSrt();
+    if (!isOpen && activeReaderRef.current) {
+      activeReaderRef.current.abort();
+      activeReaderRef.current = null;
+    }
+    return () => {
+      if (activeReaderRef.current) {
+        activeReaderRef.current.abort();
+        activeReaderRef.current = null;
+      }
+    };
+  }, [isOpen, resetCopiedPy, resetCopiedSrt]);
 
   const maxTime = useMemo(() => {
-    const last = subtitles.reduce((max, s) => Math.max(max, s.endTime), 18);
+    const last = subtitles.reduce((max, s) => (Number.isFinite(s.endTime) ? Math.max(max, s.endTime) : max), 18);
     return Math.ceil(last + 1);
   }, [subtitles]);
 
-  // Playback timer loop
-  useEffect(() => {
-    if (!isOpen || !isPlaying) return;
-
-    let frameId: number;
-    let lastStamp = performance.now();
-
-    const loop = (stamp: number) => {
-      const dt = (stamp - lastStamp) / 1000;
-      lastStamp = stamp;
-
-      setPlaybackTime((prev) => {
-        const next = prev + dt;
-        if (next >= maxTime) {
-          setIsPlaying(false);
-          return 0;
-        }
-        return next;
-      });
-
-      frameId = requestAnimationFrame(loop);
-    };
-
-    frameId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(frameId);
-  }, [isOpen, isPlaying, maxTime]);
+  const { playbackTime, setPlaybackTime, isPlaying, setIsPlaying } = useBoundedPlayback(isOpen, maxTime);
 
   // Currently active subtitle
   const activeSubtitles = useMemo(() => {
@@ -72,15 +67,17 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
   }, [subtitles, playbackTime]);
 
   const handleUpdateSub = (id: string, updates: Partial<SubtitleItem>) => {
+    setGenerationError('');
     setSubtitles((prev) =>
       prev.map((s) => (s.id === id ? { ...s, ...updates } : s)),
     );
   };
 
   const handleAddSub = () => {
+    setGenerationError('');
     const nextStart = Math.round(playbackTime * 10) / 10;
     const newSub: SubtitleItem = {
-      id: `sub_${Date.now()}`,
+      id: `sub_${crypto.randomUUID().slice(0, 8)}`,
       startTime: nextStart,
       endTime: nextStart + 3.0,
       text: '新字幕文本...',
@@ -93,39 +90,61 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
 
   const handleDeleteSub = (id: string) => {
     if (subtitles.length <= 1) return;
+    setGenerationError('');
     setSubtitles((prev) => prev.filter((s) => s.id !== id));
   };
 
   const handleImportSrt = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file) return;
+
+    if (activeReaderRef.current) {
+      activeReaderRef.current.abort();
+    }
+    setGenerationError('');
+
     const reader = new FileReader();
+    activeReaderRef.current = reader;
     reader.onload = (evt) => {
-      const text = evt.target?.result as string;
-      if (text) {
-        const parsed = parseSrt(text);
-        if (parsed.length > 0) {
-          setSubtitles(parsed);
-        }
+      if (activeReaderRef.current !== reader || !isOpenRef.current) return;
+      activeReaderRef.current = null;
+      const text = typeof evt.target?.result === 'string' ? evt.target.result : '';
+      if (!text.trim()) {
+        setGenerationError('所选 .srt 文件为空');
+        return;
       }
+      const parsed = parseSrt(text);
+      if (parsed.length === 0) {
+        setGenerationError('未能从所选文件中解析出有效字幕条目，请检查 .srt 格式');
+        return;
+      }
+      setSubtitles(parsed);
+      setGenerationError('');
+    };
+    reader.onerror = () => {
+      if (activeReaderRef.current !== reader || !isOpenRef.current) return;
+      activeReaderRef.current = null;
+      setGenerationError('读取 .srt 文件失败');
     };
     reader.readAsText(file);
   };
 
   const handleCopySrt = async () => {
+    setGenerationError('');
     const srt = exportToSrt(subtitles);
-    await navigator.clipboard.writeText(srt);
-    setIsCopiedSrt(true);
-    setTimeout(() => setIsCopiedSrt(false), 2000);
+    if (await copyTextToClipboard(srt)) {
+      triggerCopiedSrt();
+    }
   };
 
   const handleCopyPython = async () => {
     setGenerationError('');
     try {
-    const code = generateSubtitlesPythonCode(subtitles);
-    await navigator.clipboard.writeText(code);
-    setIsCopiedPy(true);
-    setTimeout(() => setIsCopiedPy(false), 2000);
+      const code = generateSubtitlesPythonCode(subtitles);
+      if (await copyTextToClipboard(code)) {
+        triggerCopiedPy();
+      }
     } catch (error) {
       setGenerationError(error instanceof Error ? error.message : String(error));
     }
@@ -209,8 +228,11 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
                 step="0.1"
                 value={playbackTime}
                 onChange={(e) => {
-                  setIsPlaying(false);
-                  setPlaybackTime(parseFloat(e.target.value));
+                  const val = parseFloat(e.target.value);
+                  if (Number.isFinite(val)) {
+                    setIsPlaying(false);
+                    setPlaybackTime(val);
+                  }
                 }}
                 style={{ flex: 1, accentColor: '#83c167' }}
               />
@@ -271,18 +293,24 @@ export const SubtitleSyncModal: React.FC<SubtitleSyncModalProps> = ({
                           type="number"
                           step="0.2"
                           value={sub.startTime}
-                          onChange={(e) =>
-                            handleUpdateSub(sub.id, { startTime: parseFloat(e.target.value) || 0 })
-                          }
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value);
+                            if (Number.isFinite(val)) {
+                              handleUpdateSub(sub.id, { startTime: Math.max(0, val) });
+                            }
+                          }}
                         />
                         <span>止:</span>
                         <input
                           type="number"
                           step="0.2"
                           value={sub.endTime}
-                          onChange={(e) =>
-                            handleUpdateSub(sub.id, { endTime: parseFloat(e.target.value) || 0 })
-                          }
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value);
+                            if (Number.isFinite(val)) {
+                              handleUpdateSub(sub.id, { endTime: Math.max(0, val) });
+                            }
+                          }}
                         />
                         <span>s</span>
                       </div>

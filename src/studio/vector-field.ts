@@ -175,11 +175,12 @@ export function sampleVectorField(
   func: (x: number, y: number) => [number, number],
   theme: ColorTheme = '3b1b',
 ): { samples: VectorFieldSample[]; maxMagnitude: number } {
+  const safeStep = Number.isFinite(step) && step > 0.05 ? step : 0.5;
   const rawSamples: Array<{ x: number; y: number; u: number; v: number; magnitude: number; angle: number }> = [];
   let maxMagnitude = 0;
 
-  for (let x = bounds.xMin; x <= bounds.xMax + 1e-6; x += step) {
-    for (let y = bounds.yMin; y <= bounds.yMax + 1e-6; y += step) {
+  for (let x = bounds.xMin; x <= bounds.xMax + 1e-6; x += safeStep) {
+    for (let y = bounds.yMin; y <= bounds.yMax + 1e-6; y += safeStep) {
       const [u, v] = func(x, y);
       const mag = Math.sqrt(u * u + v * v);
       if (mag > maxMagnitude) maxMagnitude = mag;
@@ -204,26 +205,27 @@ export function probeVectorField(
   func: (x: number, y: number) => [number, number],
   h = 0.005,
 ): VectorProbeResult {
+  const safeH = Number.isFinite(h) && Math.abs(h) >= 1e-7 ? h : 0.005;
   const [u, v] = func(x, y);
   const mag = Math.sqrt(u * u + v * v);
   const angle = Math.atan2(v, u);
 
   // Central differences for partial derivatives
-  const [uRight] = func(x + h, y);
-  const [uLeft] = func(x - h, y);
-  const dudx = (uRight - uLeft) / (2 * h);
+  const [uRight] = func(x + safeH, y);
+  const [uLeft] = func(x - safeH, y);
+  const dudx = (uRight - uLeft) / (2 * safeH);
 
-  const [, vTop] = func(x, y + h);
-  const [, vBottom] = func(x, y - h);
-  const dvdy = (vTop - vBottom) / (2 * h);
+  const [, vTop] = func(x, y + safeH);
+  const [, vBottom] = func(x, y - safeH);
+  const dvdy = (vTop - vBottom) / (2 * safeH);
 
-  const [, vRight] = func(x + h, y);
-  const [, vLeft] = func(x - h, y);
-  const dvdx = (vRight - vLeft) / (2 * h);
+  const [, vRight] = func(x + safeH, y);
+  const [, vLeft] = func(x - safeH, y);
+  const dvdx = (vRight - vLeft) / (2 * safeH);
 
-  const [uTop] = func(x, y + h);
-  const [uBottom] = func(x, y - h);
-  const dudy = (uTop - uBottom) / (2 * h);
+  const [uTop] = func(x, y + safeH);
+  const [uBottom] = func(x, y - safeH);
+  const dudy = (uTop - uBottom) / (2 * safeH);
 
   // Divergence = ∇·F = du/dx + dv/dy
   const divergence = dudx + dvdy;

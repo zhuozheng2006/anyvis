@@ -11,6 +11,8 @@ import {
   createVectorFieldActions,
   type Particle,
 } from './vector-field';
+import { clientToSvgPoint, copyTextToClipboard } from './browser-utils';
+import { useTransientFlag, useDialogEscape, capturePointerSafe, releasePointerSafe } from './modal-hooks';
 import './vector-field-playground.css';
 
 interface VectorFieldPlaygroundModalProps {
@@ -34,7 +36,7 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
   const [probePos, setProbePos] = useState<{ x: number; y: number }>({ x: 1.0, y: 1.0 });
   const [isAnimatingParticles, setIsAnimatingParticles] = useState<boolean>(true);
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isCopied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   const isDraggingProbe = useRef<boolean>(false);
@@ -48,6 +50,7 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
 
   // Initial particle generator
   useEffect(() => {
+    setApplyError('');
     const count = 35;
     const initial: Particle[] = [];
     for (let i = 0; i < count; i++) {
@@ -64,6 +67,16 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
     }
     setParticles(initial);
   }, [selectedPresetId, bounds]);
+
+  useEffect(() => {
+    setApplyError('');
+    if (!isOpen) {
+      isDraggingProbe.current = false;
+      resetCopied();
+    }
+  }, [isOpen, resetCopied]);
+
+  useDialogEscape(isOpen, onClose);
 
   // Particle animation loop
   useEffect(() => {
@@ -117,13 +130,11 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
 
   const toMathCoords = useCallback(
     (clientX: number, clientY: number) => {
-      if (!svgRef.current) return probePos;
-      const rect = svgRef.current.getBoundingClientRect();
-      const clickX = clientX - rect.left;
-      const clickY = clientY - rect.top;
+      const pt = clientToSvgPoint(svgRef.current, clientX, clientY, svgWidth, svgHeight);
+      if (!pt) return probePos;
 
-      const normX = (clickX - padding) / (svgWidth - 2 * padding);
-      const normY = (svgHeight - padding - clickY) / (svgHeight - 2 * padding);
+      const normX = (pt.x - padding) / (svgWidth - 2 * padding);
+      const normY = (svgHeight - padding - pt.y) / (svgHeight - 2 * padding);
 
       const mathX = bounds.xMin + normX * (bounds.xMax - bounds.xMin);
       const mathY = bounds.yMin + normY * (bounds.yMax - bounds.yMin);
@@ -137,7 +148,9 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
   );
 
   const handlePointerDown = (e: React.PointerEvent) => {
+    setApplyError('');
     isDraggingProbe.current = true;
+    capturePointerSafe(e.currentTarget as Element, e.pointerId);
     const coords = toMathCoords(e.clientX, e.clientY);
     setProbePos(coords);
   };
@@ -148,15 +161,23 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
     setProbePos(coords);
   };
 
-  const handlePointerUp = () => {
-    isDraggingProbe.current = false;
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (isDraggingProbe.current) {
+      releasePointerSafe(e.currentTarget as Element, e.pointerId);
+      isDraggingProbe.current = false;
+    }
   };
 
   const handleCopyPython = async () => {
-    const code = generateVectorFieldPythonCode(preset, bounds, mode, gridStep, theme);
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    setApplyError('');
+    try {
+      const code = generateVectorFieldPythonCode(preset, bounds, mode, gridStep, theme);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleApplyToProject = () => {
@@ -173,7 +194,7 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="vector-field-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="vector-field-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="2D 向量场与流线工作台">
       <div className="vector-field-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="vector-field-header">
@@ -198,25 +219,14 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              onLostPointerCapture={() => { isDraggingProbe.current = false; }}
             >
               <svg
                 ref={svgRef}
                 viewBox={`0 0 ${svgWidth} ${svgHeight}`}
                 className="vector-field-svg"
               >
-                <defs>
-                  <marker
-                    id="arrowhead"
-                    viewBox="0 0 10 10"
-                    refX="5"
-                    refY="5"
-                    markerWidth="4"
-                    markerHeight="4"
-                    orient="auto-start-reverse"
-                  >
-                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#cbd5e1" />
-                  </marker>
-                </defs>
 
                 {/* Axes */}
                 <line
@@ -286,7 +296,6 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
                         cy={currentY}
                         r="3"
                         fill="#f8fafc"
-                        box-shadow="0 0 6px #58c4dd"
                       />
                     </g>
                   );
@@ -379,13 +388,13 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
               <div className="field-mode-btn-group">
                 <button
                   className={`mode-btn ${mode === 'arrows' ? 'active' : ''}`}
-                  onClick={() => setMode('arrows')}
+                  onClick={() => { setApplyError(''); setMode('arrows'); }}
                 >
                   箭头网格 (Arrows)
                 </button>
                 <button
                   className={`mode-btn ${mode === 'streamlines' ? 'active' : ''}`}
-                  onClick={() => setMode('streamlines')}
+                  onClick={() => { setApplyError(''); setMode('streamlines'); }}
                 >
                   流线粒子 (Streamlines)
                 </button>
@@ -398,19 +407,19 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
               <div className="theme-pill-group">
                 <button
                   className={`theme-pill ${theme === '3b1b' ? 'active' : ''}`}
-                  onClick={() => setTheme('3b1b')}
+                  onClick={() => { setApplyError(''); setTheme('3b1b'); }}
                 >
                   3B1B 金蓝
                 </button>
                 <button
                   className={`theme-pill ${theme === 'electric' ? 'active' : ''}`}
-                  onClick={() => setTheme('electric')}
+                  onClick={() => { setApplyError(''); setTheme('electric'); }}
                 >
                   赛博电光
                 </button>
                 <button
                   className={`theme-pill ${theme === 'plasma' ? 'active' : ''}`}
-                  onClick={() => setTheme('plasma')}
+                  onClick={() => { setApplyError(''); setTheme('plasma'); }}
                 >
                   等离子
                 </button>
@@ -427,7 +436,12 @@ export const VectorFieldPlaygroundModal: React.FC<VectorFieldPlaygroundModalProp
                   max="0.8"
                   step="0.05"
                   value={gridStep}
-                  onChange={(e) => setGridStep(parseFloat(e.target.value))}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (!Number.isFinite(val)) return;
+                    setApplyError('');
+                    setGridStep(Math.max(0.35, Math.min(0.8, val)));
+                  }}
                 />
                 <span>{gridStep.toFixed(2)}</span>
               </div>

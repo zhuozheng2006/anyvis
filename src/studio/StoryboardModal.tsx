@@ -9,6 +9,9 @@ import {
   estimateProjectDuration,
   type StoryboardChapter,
 } from './storyboard';
+import { copyTextToClipboard } from './browser-utils';
+import { useTransientFlag, useDialogEscape } from './modal-hooks';
+import type { TimelineMarker } from './core/types';
 import './storyboard.css';
 
 interface StoryboardModalProps {
@@ -27,18 +30,58 @@ export const StoryboardModal: React.FC<StoryboardModalProps> = ({
   const [chapters, setChapters] = useState<StoryboardChapter[]>([]);
   const [newChapterTime, setNewChapterTime] = useState<number>(5.0);
   const [newChapterName, setNewChapterName] = useState<string>('新分段');
-  const [copiedYt, setCopiedYt] = useState<boolean>(false);
-  const [copiedPy, setCopiedPy] = useState<boolean>(false);
+  const [chapterError, setChapterError] = useState<string>('');
+  const [copiedYt, triggerCopiedYt, resetCopiedYt] = useTransientFlag(2000, isOpen);
+  const [copiedPy, triggerCopiedPy, resetCopiedPy] = useTransientFlag(2000, isOpen);
+  useDialogEscape(isOpen, onClose);
 
   useEffect(() => {
     if (isOpen) {
       setChapters(buildStoryboard(project));
       const total = estimateProjectDuration(project);
-      setNewChapterTime(Math.min(10, Math.floor(total / 2)));
+      setNewChapterTime(total > 0 ? Math.min(10, Math.round((total / 2) * 10) / 10) : 0);
+      setChapterError('');
+      resetCopiedYt();
+      resetCopiedPy();
     }
-  }, [isOpen, project]);
+  }, [isOpen, project, resetCopiedYt, resetCopiedPy]);
 
   const totalDuration = useMemo(() => estimateProjectDuration(project), [project]);
+
+  const rebuildChaptersWithEdits = (
+    currentChapters: StoryboardChapter[],
+    nextMarkers: TimelineMarker[],
+  ): StoryboardChapter[] => {
+    const nextProject: Project = {
+      ...project,
+      scene: {
+        ...project.scene,
+        markers: nextMarkers,
+      },
+    };
+    const rebuilt = buildStoryboard(nextProject);
+    const introDefaults = new Set(['全片场景 (Full Scene)', '序幕引言 (Introduction)']);
+
+    return rebuilt.map((chapter) => {
+      const prev =
+        (chapter.markerId
+          ? currentChapters.find((c) => c.markerId === chapter.markerId)
+          : undefined) ||
+        currentChapters.find((c) => Math.abs(c.startTime - chapter.startTime) < 0.01);
+      if (!prev) return chapter;
+
+      const preserveName =
+        chapter.startTime === 0 ? !introDefaults.has(prev.name) : true;
+      return {
+        ...chapter,
+        name: preserveName ? prev.name : chapter.name,
+        skipAnimations: prev.skipAnimations,
+      };
+    });
+  };
+
+  const toDraftMarkers = (sourceChapters: StoryboardChapter[]): TimelineMarker[] =>
+    updateProjectChapters(project, sourceChapters).scene.markers || [];
 
   const handleUpdateTitle = (id: string, name: string) => {
     setChapters((prev) =>
@@ -57,60 +100,78 @@ export const StoryboardModal: React.FC<StoryboardModalProps> = ({
     const target = chapters.find((c) => c.id === id);
     if (!target || target.startTime === 0) return;
 
-    // Remove this chapter by merging into previous or filtering out its marker
-    const remainingMarkers = (project.scene.markers || []).filter(
-      (m) => m.id !== target.markerId && Math.abs(m.time - target.startTime) > 0.01,
+    const remainingChapters = chapters.filter(
+      (c) => c.id !== id && Math.abs(c.startTime - target.startTime) > 0.01,
     );
-    const updatedProject = {
-      ...project,
-      scene: {
-        ...project.scene,
-        markers: remainingMarkers,
-      },
-    };
-    setChapters(buildStoryboard(updatedProject));
+    setChapterError('');
+    setChapters(rebuildChaptersWithEdits(chapters, toDraftMarkers(remainingChapters)));
   };
 
   const handleAddChapter = () => {
-    if (newChapterTime <= 0 || newChapterTime >= totalDuration) return;
-    const newMarker = {
-      id: `m_${Date.now()}`,
+    if (!Number.isFinite(newChapterTime) || newChapterTime <= 0 || newChapterTime >= totalDuration) {
+      setChapterError(
+        totalDuration > 0
+          ? `插入时间必须在 0s 到 ${totalDuration.toFixed(1)}s 之间`
+          : '当前工程总时长为 0s，请先在时间轴中添加动作或音频片段',
+      );
+      return;
+    }
+    if (chapters.some((c) => Math.abs(c.startTime - newChapterTime) < 0.01)) {
+      setChapterError(`时间点 ${newChapterTime}s 已存在分段边界`);
+      return;
+    }
+
+    const newMarker: TimelineMarker = {
+      id: `m_${crypto.randomUUID().slice(0, 8)}`,
       time: newChapterTime,
       label: newChapterName.trim() || `分段 ${chapters.length + 1}`,
       color: '#38bdf8',
     };
-    const updatedMarkers = [...(project.scene.markers || []), newMarker].sort(
+    const updatedMarkers = [...toDraftMarkers(chapters), newMarker].sort(
       (a, b) => a.time - b.time,
     );
-    const updatedProject = {
-      ...project,
-      scene: {
-        ...project.scene,
-        markers: updatedMarkers,
-      },
-    };
-    setChapters(buildStoryboard(updatedProject));
+    setChapterError('');
+    setChapters(rebuildChaptersWithEdits(chapters, updatedMarkers));
     setNewChapterName(`分段 ${chapters.length + 2}`);
   };
 
   const handleCopyYouTube = async () => {
-    const text = exportYouTubeChapters(chapters);
-    await navigator.clipboard.writeText(text);
-    setCopiedYt(true);
-    setTimeout(() => setCopiedYt(false), 2000);
+    try {
+      setChapterError('');
+      const text = exportYouTubeChapters(chapters);
+      if (await copyTextToClipboard(text)) {
+        triggerCopiedYt();
+      } else {
+        setChapterError('复制章节失败，请检查剪贴板权限');
+      }
+    } catch (err) {
+      setChapterError((err as Error).message || '生成章节文本失败');
+    }
   };
 
   const handleCopyPython = async () => {
-    const code = generateManimSectionPythonCode(chapters, project);
-    await navigator.clipboard.writeText(code);
-    setCopiedPy(true);
-    setTimeout(() => setCopiedPy(false), 2000);
+    try {
+      setChapterError('');
+      const code = generateManimSectionPythonCode(chapters, project);
+      if (await copyTextToClipboard(code)) {
+        triggerCopiedPy();
+      } else {
+        setChapterError('复制 Python 代码失败，请检查剪贴板权限');
+      }
+    } catch (err) {
+      setChapterError((err as Error).message || '生成 Python 代码失败');
+    }
   };
 
   const handleSaveAndSync = () => {
-    const nextProject = updateProjectChapters(project, chapters);
-    onApply(nextProject);
-    onClose();
+    try {
+      setChapterError('');
+      const nextProject = updateProjectChapters(project, chapters);
+      onApply(nextProject);
+      onClose();
+    } catch (err) {
+      setChapterError((err as Error).message || '同步时间轴标记失败');
+    }
   };
 
   if (!isOpen) return null;
@@ -211,7 +272,10 @@ export const StoryboardModal: React.FC<StoryboardModalProps> = ({
                 flex: 1,
               }}
               value={newChapterName}
-              onChange={(e) => setNewChapterName(e.target.value)}
+              onChange={(e) => {
+                setNewChapterName(e.target.value);
+                if (chapterError) setChapterError('');
+              }}
               placeholder="新章节名称..."
             />
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', color: '#94a3b8' }}>
@@ -219,8 +283,8 @@ export const StoryboardModal: React.FC<StoryboardModalProps> = ({
               <input
                 type="number"
                 step="0.5"
-                min="0.5"
-                max={totalDuration - 0.5}
+                min="0.1"
+                max={totalDuration > 0.2 ? totalDuration - 0.1 : undefined}
                 style={{
                   background: '#1e293b',
                   border: '1px solid #334155',
@@ -230,8 +294,12 @@ export const StoryboardModal: React.FC<StoryboardModalProps> = ({
                   width: 70,
                   fontSize: '0.8rem',
                 }}
-                value={newChapterTime}
-                onChange={(e) => setNewChapterTime(parseFloat(e.target.value) || 0)}
+                value={Number.isFinite(newChapterTime) ? newChapterTime : ''}
+                onChange={(e) => {
+                  const parsed = parseFloat(e.target.value);
+                  setNewChapterTime(Number.isFinite(parsed) ? parsed : NaN);
+                  if (chapterError) setChapterError('');
+                }}
               />
             </div>
             <button
@@ -242,6 +310,11 @@ export const StoryboardModal: React.FC<StoryboardModalProps> = ({
               + 插入分段
             </button>
           </div>
+          {chapterError && (
+            <div role="alert" style={{ color: '#f87171', fontSize: '0.8rem', marginTop: -8 }}>
+              {chapterError}
+            </div>
+          )}
 
           {/* Export Cues Section */}
           <div className="storyboard-export-tabs">

@@ -46,6 +46,16 @@ export function deferredDialog<P extends DialogProps>(load: Loader<P>, title: st
   return function DeferredDialog(props: P) {
     const [opened, setOpened] = useState(props.isOpen);
     useEffect(() => { if (props.isOpen) setOpened(true); }, [props.isOpen]);
+    useEffect(() => {
+      if (!props.isOpen) return;
+      const handleEscape = (event: KeyboardEvent) => {
+        if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing || event.keyCode === 229) return;
+        event.preventDefault();
+        props.onClose();
+      };
+      window.addEventListener('keydown', handleEscape);
+      return () => window.removeEventListener('keydown', handleEscape);
+    }, [props.isOpen, props.onClose]);
     // Never mount unused tools. Once opened, preserve their settings on close.
     return opened || props.isOpen ? <Content {...props} /> : null;
   };

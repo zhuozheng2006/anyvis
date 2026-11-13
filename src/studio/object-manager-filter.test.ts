@@ -172,6 +172,44 @@ describe('ObjectManager category filtering, search, and layer reordering', () =>
     expect(updatedProject.actions[1].id).toBe(circle.id);
   });
 
+  it('reorders an object right after its neighbor without pushing it behind later animations', async () => {
+    const circle = createAction('circle', { name: '第1层' });
+    const square = createAction('square', { name: '第2层' });
+    const wait = createAction('wait', { duration: 1 });
+    const move = createAction('shift', { target: '第1层', dx: 1 });
+
+    const project: Project = {
+      ...createEmptyProject(),
+      actions: [circle, square, wait, move],
+    };
+    const onChange = vi.fn();
+    const onError = vi.fn();
+
+    await act(async () => {
+      root.render(
+        React.createElement(ObjectManager, {
+          project,
+          selectedId: null,
+          onSelect: vi.fn(),
+          onChange,
+          onAdd: vi.fn(),
+          onError,
+        })
+      );
+    });
+
+    const cards = container.querySelectorAll('.om-card');
+    const rightBtn = cards[0].querySelector('.om-card-layer-btn') as HTMLButtonElement;
+    await act(async () => {
+      rightBtn.click();
+    });
+
+    expect(onError).not.toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledTimes(1);
+    const updatedProject = onChange.mock.calls[0][0] as Project;
+    expect(updatedProject.actions.map(a => a.id)).toEqual([square.id, circle.id, wait.id, move.id]);
+  });
+
   async function mount(project: Project, selectedId: string | null = null, onSelect = vi.fn()) {
     await act(async () => root.render(React.createElement(ObjectManager, {
       project, selectedId, onSelect, onChange: vi.fn(), onAdd: vi.fn(), onError: vi.fn(),

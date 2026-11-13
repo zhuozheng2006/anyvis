@@ -3,6 +3,7 @@ import { Sparkles, X, Check, Mic, Music, Film, Clock } from 'lucide-react';
 import type { Project, TimelineMarker } from './core/types';
 import { generateSmartMarkers, type SmartMarkerMode } from './smart-marker';
 import { timecode } from './Timeline';
+import { useDialogEscape } from './modal-hooks';
 import './smart-marker-modal.css';
 
 export interface SmartMarkerModalProps {
@@ -32,6 +33,8 @@ export const SmartMarkerModal: React.FC<SmartMarkerModalProps> = ({
   const [labelPrefix, setLabelPrefix] = useState('语段');
   const [color, setColor] = useState('#fbbf24');
   const [replaceExisting, setReplaceExisting] = useState(false);
+
+  useDialogEscape(isOpen, onClose);
 
   if (!isOpen) return null;
 
@@ -68,7 +71,13 @@ export const SmartMarkerModal: React.FC<SmartMarkerModalProps> = ({
   };
 
   return (
-    <div className="smm-overlay" role="dialog" aria-modal="true" aria-label="节奏标记助手">
+    <div
+      className="smm-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="节奏标记助手"
+      onClick={e => e.target === e.currentTarget && onClose()}
+    >
       <div className="smm-modal">
         <div className="smm-header">
           <div className="smm-title">
@@ -138,7 +147,10 @@ export const SmartMarkerModal: React.FC<SmartMarkerModalProps> = ({
                     max="8.0"
                     step="0.5"
                     value={cadence}
-                    onChange={e => setCadence(Number(e.target.value))}
+                    onChange={e => {
+                      const val = Number(e.target.value);
+                      if (Number.isFinite(val) && val >= 0.5) setCadence(val);
+                    }}
                     className="smm-slider"
                   />
                   <span className="smm-val">{cadence.toFixed(1)} 秒</span>
@@ -156,7 +168,10 @@ export const SmartMarkerModal: React.FC<SmartMarkerModalProps> = ({
                     max="180"
                     step="5"
                     value={bpm}
-                    onChange={e => setBpm(Number(e.target.value))}
+                    onChange={e => {
+                      const val = Number(e.target.value);
+                      if (Number.isFinite(val) && val >= 30) setBpm(val);
+                    }}
                     className="smm-slider"
                   />
                   <span className="smm-val">{bpm} BPM ({((60 / bpm)).toFixed(2)}s)</span>
@@ -174,7 +189,10 @@ export const SmartMarkerModal: React.FC<SmartMarkerModalProps> = ({
                     max="10.0"
                     step="0.5"
                     value={cadence}
-                    onChange={e => setCadence(Number(e.target.value))}
+                    onChange={e => {
+                      const val = Number(e.target.value);
+                      if (Number.isFinite(val) && val >= 0.5) setCadence(val);
+                    }}
                     className="smm-slider"
                   />
                   <span className="smm-val">{cadence.toFixed(1)} 秒</span>

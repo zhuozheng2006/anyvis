@@ -9,6 +9,8 @@ import {
   createSurfaceActions,
   project3DToScreen,
 } from './surface3d';
+import { copyTextToClipboard } from './browser-utils';
+import { capturePointerSafe, releasePointerSafe, useDialogEscape, useTransientFlag } from './modal-hooks';
 import './surface-playground.css';
 
 interface SurfacePlaygroundModalProps {
@@ -33,10 +35,19 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
     scale: 1.0,
   });
   const [ambientRotating, setAmbientRotating] = useState<boolean>(false);
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isCopied, triggerCopied] = useTransientFlag(2000, isOpen);
 
   const isDragging = useRef<boolean>(false);
   const lastPointer = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  useEffect(() => {
+    if (!isOpen) {
+      isDragging.current = false;
+      setApplyError('');
+    }
+  }, [isOpen]);
+
+  useDialogEscape(isOpen, onClose);
 
   const preset = useMemo(
     () => SURFACE_PRESETS.find((p) => p.id === selectedPresetId) || SURFACE_PRESETS[0],
@@ -88,12 +99,13 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
   );
 
   // Pointer drag to orbit camera
-  const handlePointerDown = (e: React.PointerEvent) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     isDragging.current = true;
     lastPointer.current = { x: e.clientX, y: e.clientY };
+    capturePointerSafe(e.currentTarget, e.pointerId);
   };
 
-  const handlePointerMove = (e: React.PointerEvent) => {
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDragging.current) return;
     const dx = e.clientX - lastPointer.current.x;
     const dy = e.clientY - lastPointer.current.y;
@@ -113,15 +125,29 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
     });
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e?: React.PointerEvent<HTMLDivElement>) => {
     isDragging.current = false;
+    if (!e) return;
+    releasePointerSafe(e.currentTarget, e.pointerId);
+  };
+
+  const updateCameraNumeric = (key: 'phi' | 'theta' | 'distance', raw: string) => {
+    const value = Number.parseFloat(raw);
+    if (!Number.isFinite(value)) return;
+    setApplyError('');
+    setCamera((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleCopyPython = async () => {
-    const code = generateSurfacePythonCode(preset, camera, ambientRotating);
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    setApplyError('');
+    try {
+      const code = generateSurfacePythonCode(preset, camera, ambientRotating);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleApplyToProject = () => {
@@ -138,7 +164,7 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="surface-modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="surface-modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-label="3D 参数曲面工作台">
       <div className="surface-modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="surface-header">
@@ -165,6 +191,8 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              onLostPointerCapture={() => handlePointerUp()}
             >
               <svg viewBox={`0 0 ${viewportWidth} ${viewportHeight}`} className="surface-svg">
                 {/* 3D Coordinate Axes */}
@@ -259,7 +287,10 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
                   <button
                     key={p.id}
                     className={`preset-chip ${p.id === selectedPresetId ? 'active' : ''}`}
-                    onClick={() => setSelectedPresetId(p.id)}
+                    onClick={() => {
+                      setApplyError('');
+                      setSelectedPresetId(p.id);
+                    }}
                   >
                     {p.name.split(' (')[0]}
                   </button>
@@ -278,9 +309,7 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
                   max="85"
                   step="1"
                   value={camera.phi}
-                  onChange={(e) =>
-                    setCamera((prev) => ({ ...prev, phi: parseFloat(e.target.value) }))
-                  }
+                  onChange={(e) => updateCameraNumeric('phi', e.target.value)}
                 />
                 <span>{camera.phi.toFixed(0)}°</span>
               </div>
@@ -292,9 +321,7 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
                   max="180"
                   step="2"
                   value={camera.theta}
-                  onChange={(e) =>
-                    setCamera((prev) => ({ ...prev, theta: parseFloat(e.target.value) }))
-                  }
+                  onChange={(e) => updateCameraNumeric('theta', e.target.value)}
                 />
                 <span>{camera.theta.toFixed(0)}°</span>
               </div>
@@ -306,9 +333,7 @@ export const SurfacePlaygroundModal: React.FC<SurfacePlaygroundModalProps> = ({
                   max="8.0"
                   step="0.2"
                   value={camera.distance}
-                  onChange={(e) =>
-                    setCamera((prev) => ({ ...prev, distance: parseFloat(e.target.value) }))
-                  }
+                  onChange={(e) => updateCameraNumeric('distance', e.target.value)}
                 />
                 <span>{camera.distance.toFixed(1)}</span>
               </div>

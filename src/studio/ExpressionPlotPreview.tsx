@@ -67,7 +67,7 @@ function tokenizeForEval(source: string): Token[] {
       index += 2;
       continue;
     }
-    if ('+-*/^'.includes(ch)) {
+    if ('+-*/^%'.includes(ch)) {
       tokens.push({ type: 'op', value: ch });
       index += 1;
       continue;
@@ -121,10 +121,10 @@ export function evaluateScalarExpressionAt(
 
   const parseTerm = (): number => {
     let left = parseUnary();
-    while (peek()?.type === 'op' && (peek() as { value: string }).value.match(/^[*/]$/)) {
+    while (peek()?.type === 'op' && (peek() as { value: string }).value.match(/^[*/%]$/)) {
       const op = (consume() as { value: string }).value;
       const right = parseUnary();
-      left = op === '*' ? left * right : left / right;
+      left = op === '*' ? left * right : op === '/' ? left / right : left % right;
     }
     return left;
   };
@@ -270,6 +270,40 @@ export function sampleExpressionCurve(
   };
 }
 
+/** Build SVG path data, starting a new subpath across domain gaps or sign-flipping asymptotes. */
+export function buildExpressionSvgPath(
+  samples: ExpressionSample[],
+  yMin: number,
+  yMax: number,
+  xMin = -4,
+  xMax = 4,
+  steps = 65,
+  width = 240,
+  height = 76
+): string {
+  if (samples.length === 0) return '';
+  const xSpan = Math.max(1e-6, xMax - xMin);
+  const ySpan = Math.max(1e-6, yMax - yMin);
+  const stepX = xSpan / Math.max(1, steps - 1);
+  const toSvgX = (x: number) => ((x - xMin) / xSpan) * width;
+  const toSvgY = (y: number) => height - ((y - yMin) / ySpan) * height;
+  const parts: string[] = [];
+
+  for (let idx = 0; idx < samples.length; idx++) {
+    const pt = samples[idx];
+    const prev = idx > 0 ? samples[idx - 1] : null;
+    const hasDomainGap = prev !== null && pt.x - prev.x > stepX * 1.5;
+    const hasPoleJump =
+      prev !== null &&
+      prev.y * pt.y < 0 &&
+      Math.abs(pt.y - prev.y) > ySpan * 0.65;
+    const cmd = idx === 0 || hasDomainGap || hasPoleJump ? 'M' : 'L';
+    parts.push(`${cmd}${toSvgX(pt.x).toFixed(1)},${toSvgY(pt.y).toFixed(1)}`);
+  }
+
+  return parts.join(' ');
+}
+
 export interface ExpressionPlotPreviewProps {
   expression: string;
   trackerValues?: Record<string, number>;
@@ -298,9 +332,7 @@ export const ExpressionPlotPreview: React.FC<ExpressionPlotPreviewProps> = ({
 
   const pathData = useMemo(() => {
     if (!result.valid || result.samples.length === 0) return '';
-    return result.samples
-      .map((pt, idx) => `${idx === 0 ? 'M' : 'L'}${toSvgX(pt.x).toFixed(1)},${toSvgY(pt.y).toFixed(1)}`)
-      .join(' ');
+    return buildExpressionSvgPath(result.samples, result.yMin, result.yMax, xMin, xMax, 65, width, height);
   }, [result]);
 
   const zeroY = toSvgY(0);

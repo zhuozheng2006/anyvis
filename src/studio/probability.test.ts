@@ -11,6 +11,7 @@ import {
   sampleDistribution,
   generateProbabilityPythonCode,
   createProbabilityActions,
+  computeIntervalProbability,
 } from './probability';
 import type { Project } from './core/types';
 
@@ -102,5 +103,14 @@ describe('probability distributions math, CDF, and Manim CE code generator', () 
     expect(dummyProject.actions).toHaveLength(0);
     expect(compileProject(nextProject).diagnostics).toEqual([]);
     expect(actionIds).toHaveLength(nextProject.actions.length);
+  });
+
+  it('computes accurate interval probabilities across normal, discrete, and exponential distributions', () => {
+    expect(computeIntervalProbability('normal', { mu: 0, sigma: 1 }, -1, 1)).toBeCloseTo(0.682689, 5);
+    expect(computeIntervalProbability('binomial', { n: 4, p: 0.5 }, 0, 2)).toBeCloseTo(11 / 16, 6);
+    expect(computeIntervalProbability('poisson', { lambda: 2 }, 0, 1)).toBeCloseTo(3 * Math.exp(-2), 6);
+    expect(computeIntervalProbability('exponential', { lambda: 2 }, -2, 1)).toBeCloseTo(1 - Math.exp(-2), 6);
+    expect(computeIntervalProbability('normal', { mu: 0, sigma: 1 }, 2, 1)).toBe(0);
+    expect(computeIntervalProbability('binomial', { n: 4, p: 0.5 }, 3, 1)).toBe(0);
   });
 });

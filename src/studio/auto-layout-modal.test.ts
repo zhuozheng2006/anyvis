@@ -117,4 +117,78 @@ describe('AutoLayoutModal', () => {
     expect(appliedProject.actions.length).toBe(2);
     expect(actionIds).toHaveLength(2);
   });
+
+  it('syncs added and removed project objects across re-renders without overwriting user unchecks', async () => {
+    const onClose = vi.fn();
+    const onApply = vi.fn();
+
+    await act(async () => {
+      root.render(
+        React.createElement(AutoLayoutModal, {
+          isOpen: true,
+          onClose,
+          project: dummyProject,
+          onApply,
+        }),
+      );
+    });
+
+    const initialCheckboxes = Array.from(container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'));
+    expect(initialCheckboxes).toHaveLength(2);
+    expect(initialCheckboxes.every((cb) => cb.checked)).toBe(true);
+
+    // Explicitly uncheck the first object (Dot_1)
+    await act(async () => {
+      initialCheckboxes[0].click();
+    });
+    expect(initialCheckboxes[0].checked).toBe(false);
+
+    // Update project while modal stays mounted (e.g. closed then re-opened after project edits):
+    // remove a2 (Dot_2), add a3 (Dot_3) and a4 (Dot_4)
+    const updatedProject: Project = {
+      ...dummyProject,
+      actions: [
+        dummyProject.actions[0],
+        { id: 'a3', type: 'circle', fields: { name: 'Dot_3', x: 0, y: 0, radius: 0.5 }, children: [] },
+        { id: 'a4', type: 'circle', fields: { name: 'Dot_4', x: 3, y: 2, radius: 0.5 }, children: [] },
+      ],
+    };
+
+    await act(async () => {
+      root.render(
+        React.createElement(AutoLayoutModal, {
+          isOpen: false,
+          onClose,
+          project: updatedProject,
+          onApply,
+        }),
+      );
+    });
+    await act(async () => {
+      root.render(
+        React.createElement(AutoLayoutModal, {
+          isOpen: true,
+          onClose,
+          project: updatedProject,
+          onApply,
+        }),
+      );
+    });
+
+    const syncedCheckboxes = Array.from(container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]'));
+    expect(syncedCheckboxes).toHaveLength(3);
+    expect(syncedCheckboxes[0].checked).toBe(false);
+    expect(syncedCheckboxes[1].checked).toBe(true);
+    expect(syncedCheckboxes[2].checked).toBe(true);
+
+    const applyBtn = Array.from(container.querySelectorAll('button')).find((b) =>
+      b.textContent?.includes('应用自动对齐布局'),
+    );
+    await act(async () => {
+      applyBtn?.click();
+    });
+    expect(onApply).toHaveBeenCalledTimes(1);
+    const [, actionIds] = onApply.mock.calls[0];
+    expect(actionIds).toEqual(['a3', 'a4']);
+  });
 });

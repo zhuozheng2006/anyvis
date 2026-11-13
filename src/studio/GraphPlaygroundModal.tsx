@@ -10,6 +10,13 @@ import {
   generateGraphPythonCode,
   createGraphActions,
 } from './graph-network';
+import { clientToSvgPoint, copyTextToClipboard } from './browser-utils';
+import {
+  useTransientFlag,
+  useDialogEscape,
+  capturePointerSafe,
+  releasePointerSafe,
+} from './modal-hooks';
 import './graph-playground.css';
 
 interface GraphPlaygroundModalProps {
@@ -32,10 +39,12 @@ export const GraphPlaygroundModal: React.FC<GraphPlaygroundModalProps> = ({
   const [isSimulatingPhysics, setIsSimulatingPhysics] = useState<boolean>(false);
   const [startNodeId, setStartNodeId] = useState<string>('');
   const [endNodeId, setEndNodeId] = useState<string>('');
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isCopied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
+  useDialogEscape(isOpen, onClose);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
   const draggingId = useRef<string | null>(null);
+  const captureTargetRef = useRef<Element | null>(null);
 
   const preset = useMemo(
     () => GRAPH_PRESETS.find((p) => p.id === selectedPresetId) || GRAPH_PRESETS[0],
@@ -44,6 +53,7 @@ export const GraphPlaygroundModal: React.FC<GraphPlaygroundModalProps> = ({
 
   // Initialize graph from preset
   useEffect(() => {
+    setApplyError('');
     const initialVertices: GraphVertex[] = preset.vertices.map((v) => ({
       ...v,
       vx: 0,
@@ -58,6 +68,16 @@ export const GraphPlaygroundModal: React.FC<GraphPlaygroundModalProps> = ({
       setEndNodeId(initialVertices[initialVertices.length - 1].id);
     }
   }, [preset]);
+
+  useEffect(() => {
+    setApplyError('');
+    if (!isOpen) {
+      setIsSimulatingPhysics(false);
+      draggingId.current = null;
+      captureTargetRef.current = null;
+      resetCopied();
+    }
+  }, [isOpen, resetCopied]);
 
   // Force-directed physics simulation loop
   useEffect(() => {
@@ -100,25 +120,26 @@ export const GraphPlaygroundModal: React.FC<GraphPlaygroundModalProps> = ({
 
   const toMathCoords = useCallback(
     (clientX: number, clientY: number) => {
-      if (!svgRef.current) return { x: 0, y: 0 };
-      const rect = svgRef.current.getBoundingClientRect();
-      const clickX = clientX - rect.left;
-      const clickY = clientY - rect.top;
+      const pt = clientToSvgPoint(svgRef.current, clientX, clientY, svgWidth, svgHeight);
+      if (!pt) return { x: 0, y: 0 };
 
-      const normX = clickX / svgWidth;
-      const normY = (svgHeight - clickY) / svgHeight;
+      const normX = pt.x / svgWidth;
+      const normY = (svgHeight - pt.y) / svgHeight;
 
       return {
-        x: bounds.xMin + normX * (bounds.xMax - bounds.xMin),
-        y: bounds.yMin + normY * (bounds.yMax - bounds.yMin),
+        x: Math.max(bounds.xMin + 0.2, Math.min(bounds.xMax - 0.2, bounds.xMin + normX * (bounds.xMax - bounds.xMin))),
+        y: Math.max(bounds.yMin + 0.2, Math.min(bounds.yMax - 0.2, bounds.yMin + normY * (bounds.yMax - bounds.yMin))),
       };
     },
     [bounds, svgWidth, svgHeight],
   );
 
   const handlePointerDown = (id: string, e: React.PointerEvent) => {
+    setApplyError('');
     draggingId.current = id;
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    const captureEl = (e.currentTarget as Element) || (e.target as Element);
+    captureTargetRef.current = captureEl;
+    capturePointerSafe(captureEl, e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
@@ -133,16 +154,22 @@ export const GraphPlaygroundModal: React.FC<GraphPlaygroundModalProps> = ({
 
   const handlePointerUp = (e: React.PointerEvent) => {
     if (draggingId.current) {
-      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+      releasePointerSafe(captureTargetRef.current || (e.target as Element), e.pointerId);
       draggingId.current = null;
+      captureTargetRef.current = null;
     }
   };
 
   const handleCopyPython = async () => {
-    const code = generateGraphPythonCode({ ...preset, vertices, edges });
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    setApplyError('');
+    try {
+      const code = generateGraphPythonCode({ ...preset, vertices, edges });
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleApplyToProject = () => {
@@ -187,6 +214,11 @@ export const GraphPlaygroundModal: React.FC<GraphPlaygroundModalProps> = ({
               className="graph-canvas-container"
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              onLostPointerCapture={() => {
+                draggingId.current = null;
+                captureTargetRef.current = null;
+              }}
             >
               <svg ref={svgRef} viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="graph-svg">
                 {/* Edges */}

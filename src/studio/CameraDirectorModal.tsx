@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import type { Project } from './core/types';
 import {
   DEFAULT_CAMERA_SHOTS,
@@ -8,6 +8,8 @@ import {
   createCameraDirectorActions,
   type CameraShot,
 } from './camera-director';
+import { copyTextToClipboard, useBoundedPlayback } from './browser-utils';
+import { useTransientFlag, useDialogEscape } from './modal-hooks';
 import './camera-director.css';
 
 interface CameraDirectorModalProps {
@@ -26,53 +28,46 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
   const [generationError, setGenerationError] = useState('');
   const [shots, setShots] = useState<CameraShot[]>(DEFAULT_CAMERA_SHOTS);
   const [selectedShotId, setSelectedShotId] = useState<string>('shot_1');
-  const [playbackTime, setPlaybackTime] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [isCopied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  const maxTime = useMemo(() => {
-    const last = shots.reduce((max, s) => Math.max(max, s.time + s.duration), 12);
-    return last + 1;
-  }, [shots]);
-
-  // Scrubber playback animation loop
   useEffect(() => {
-    if (!isOpen || !isPlaying) return;
+    if (isOpen) {
+      setGenerationError('');
+      resetCopied();
+    }
+  }, [isOpen, resetCopied]);
 
-    let frameId: number;
-    let lastStamp = performance.now();
+  useDialogEscape(isOpen, onClose);
 
-    const loop = (stamp: number) => {
-      const dt = (stamp - lastStamp) / 1000;
-      lastStamp = stamp;
+  const sortedShots = useMemo(
+    () => [...shots].sort((a, b) => a.time - b.time),
+    [shots],
+  );
 
-      setPlaybackTime((prev) => {
-        const next = prev + dt;
-        if (next >= maxTime) {
-          setIsPlaying(false);
-          return 0;
-        }
-        return next;
-      });
+  const maxTime = useMemo(() => {
+    const last = sortedShots.reduce((max, s) => Math.max(max, s.time + s.duration), 12);
+    return last + 1;
+  }, [sortedShots]);
 
-      frameId = requestAnimationFrame(loop);
-    };
-
-    frameId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(frameId);
-  }, [isOpen, isPlaying, maxTime]);
+  const { playbackTime, setPlaybackTime, isPlaying, setIsPlaying } = useBoundedPlayback(isOpen, maxTime);
 
   // Current interpolated camera pose
   const currentPose = useMemo(
-    () => interpolateCameraPose(shots, playbackTime),
-    [shots, playbackTime],
+    () => interpolateCameraPose(sortedShots, playbackTime),
+    [sortedShots, playbackTime],
   );
 
   // Viewfinder box in scene units
   const currentBox = useMemo(
-    () => getViewfinderBox(currentPose.x, currentPose.y, currentPose.zoom, 8 * project.scene.width / project.scene.height),
+    () =>
+      getViewfinderBox(
+        currentPose.x,
+        currentPose.y,
+        currentPose.zoom,
+        project.scene.height > 0 ? (8 * project.scene.width) / project.scene.height : 14.22,
+      ),
     [currentPose, project.scene.width, project.scene.height],
   );
 
@@ -94,15 +89,17 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
   );
 
   const handleUpdateShot = (id: string, updates: Partial<CameraShot>) => {
+    setGenerationError('');
     setShots((prev) =>
       prev.map((s) => (s.id === id ? { ...s, ...updates } : s)),
     );
   };
 
   const handleAddShot = () => {
+    setGenerationError('');
     const nextTime = Math.round((playbackTime > 0 ? playbackTime : maxTime) * 10) / 10;
     const newShot: CameraShot = {
-      id: `shot_${Date.now()}`,
+      id: `shot_${crypto.randomUUID().slice(0, 8)}`,
       name: `镜头 ${shots.length + 1}`,
       time: nextTime,
       duration: 1.5,
@@ -117,16 +114,21 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
 
   const handleDeleteShot = (id: string) => {
     if (shots.length <= 1) return;
-    setShots((prev) => prev.filter((s) => s.id !== id));
+    setGenerationError('');
+    const remaining = shots.filter((s) => s.id !== id);
+    setShots(remaining);
+    if (selectedShotId === id && remaining.length > 0) {
+      setSelectedShotId(remaining[0].id);
+    }
   };
 
   const handleCopyPython = async () => {
     setGenerationError('');
     try {
-    const code = generateCameraDirectorPythonCode(shots);
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+      const code = generateCameraDirectorPythonCode(shots);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
     } catch (error) {
       setGenerationError(error instanceof Error ? error.message : String(error));
     }
@@ -193,9 +195,9 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                 />
 
                 {/* Trajectory line between shots */}
-                {shots.length > 1 && (
+                {sortedShots.length > 1 && (
                   <polyline
-                    points={shots.map((s) => `${toSvgX(s.x)},${toSvgY(s.y)}`).join(' ')}
+                    points={sortedShots.map((s) => `${toSvgX(s.x)},${toSvgY(s.y)}`).join(' ')}
                     fill="none"
                     stroke="#f59e0b"
                     strokeWidth="1.5"
@@ -205,7 +207,7 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                 )}
 
                 {/* Shot Target Pins */}
-                {shots.map((s, idx) => (
+                {sortedShots.map((s, idx) => (
                   <g
                     key={s.id}
                     onClick={() => {
@@ -302,8 +304,11 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                 step="0.05"
                 value={playbackTime}
                 onChange={(e) => {
-                  setIsPlaying(false);
-                  setPlaybackTime(parseFloat(e.target.value));
+                  const val = parseFloat(e.target.value);
+                  if (Number.isFinite(val)) {
+                    setIsPlaying(false);
+                    setPlaybackTime(val);
+                  }
                 }}
                 style={{ flex: 1, accentColor: '#f59e0b' }}
               />
@@ -372,9 +377,12 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                         type="number"
                         step="0.5"
                         value={s.time}
-                        onChange={(e) =>
-                          handleUpdateShot(s.id, { time: parseFloat(e.target.value) || 0 })
-                        }
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          if (Number.isFinite(val)) {
+                            handleUpdateShot(s.id, { time: Math.max(0, val) });
+                          }
+                        }}
                       />
                       <span>s</span>
                     </div>
@@ -385,9 +393,12 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                         step="0.2"
                         min="0.2"
                         title="第一镜头为初始构图；其余时长是到达前的过渡时长" value={s.duration}
-                        onChange={(e) =>
-                          handleUpdateShot(s.id, { duration: parseFloat(e.target.value) || 1 })
-                        }
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          if (Number.isFinite(val)) {
+                            handleUpdateShot(s.id, { duration: Math.max(0.2, val) });
+                          }
+                        }}
                       />
                       <span>s</span>
                     </div>
@@ -397,9 +408,12 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                         type="number"
                         step="0.2"
                         value={s.x}
-                        onChange={(e) =>
-                          handleUpdateShot(s.id, { x: parseFloat(e.target.value) || 0 })
-                        }
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          if (Number.isFinite(val)) {
+                            handleUpdateShot(s.id, { x: val });
+                          }
+                        }}
                       />
                     </div>
                     <div className="shot-param-item">
@@ -408,9 +422,12 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                         type="number"
                         step="0.2"
                         value={s.y}
-                        onChange={(e) =>
-                          handleUpdateShot(s.id, { y: parseFloat(e.target.value) || 0 })
-                        }
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          if (Number.isFinite(val)) {
+                            handleUpdateShot(s.id, { y: val });
+                          }
+                        }}
                       />
                     </div>
                     <div className="shot-param-item" style={{ gridColumn: 'span 2' }}>
@@ -421,9 +438,12 @@ export const CameraDirectorModal: React.FC<CameraDirectorModalProps> = ({
                         min="0.4"
                         max="6.0"
                         value={s.zoom}
-                        onChange={(e) =>
-                          handleUpdateShot(s.id, { zoom: parseFloat(e.target.value) || 1 })
-                        }
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          if (Number.isFinite(val)) {
+                            handleUpdateShot(s.id, { zoom: Math.max(0.2, Math.min(10, val)) });
+                          }
+                        }}
                       />
                       <span>x (范围 0.4x - 6.0x)</span>
                     </div>

@@ -198,22 +198,27 @@ export function sampleCurve(
   sampleSteps: number = 360,
 ): CurveSampleResult {
   const [tMin, tMax] = preset.tRange;
-  const currentTMax = tMin + (tMax - tMin) * Math.max(0.001, Math.min(1.0, progressFraction));
+  const safeProgress = Number.isFinite(progressFraction) ? Math.max(0.001, Math.min(1.0, progressFraction)) : 1.0;
+  const safeSteps = Number.isFinite(sampleSteps) ? Math.max(2, Math.round(sampleSteps)) : 360;
+  const safeParams = Object.fromEntries(
+    preset.params.map((p) => [p.key, Number.isFinite(params[p.key]) ? params[p.key] : p.defaultValue]),
+  );
+  const currentTMax = tMin + (tMax - tMin) * safeProgress;
 
   const fullPoints: [number, number][] = [];
   const currentPoints: [number, number][] = [];
   let arcLength = 0;
 
-  for (let i = 0; i <= sampleSteps; i++) {
-    const t = tMin + ((tMax - tMin) * i) / sampleSteps;
-    const pt = preset.evalPoint(t, params);
+  for (let i = 0; i <= safeSteps; i++) {
+    const t = tMin + ((tMax - tMin) * i) / safeSteps;
+    const pt = preset.evalPoint(t, safeParams);
     fullPoints.push(pt);
   }
 
-  const currentSteps = Math.max(2, Math.round(sampleSteps * Math.max(0.001, Math.min(1.0, progressFraction))));
+  const currentSteps = Math.max(2, Math.round(safeSteps * safeProgress));
   for (let i = 0; i <= currentSteps; i++) {
     const t = tMin + ((currentTMax - tMin) * i) / currentSteps;
-    const pt = preset.evalPoint(t, params);
+    const pt = preset.evalPoint(t, safeParams);
     currentPoints.push(pt);
     if (i > 0) {
       const prev = currentPoints[i - 1];
@@ -227,8 +232,8 @@ export function sampleCurve(
 
   // Compute tangent vector using central difference
   const dt = 1e-4;
-  const pForward = preset.evalPoint(currentTMax + dt, params);
-  const pBackward = preset.evalPoint(currentTMax - dt, params);
+  const pForward = preset.evalPoint(currentTMax + dt, safeParams);
+  const pBackward = preset.evalPoint(currentTMax - dt, safeParams);
   const tx = (pForward[0] - pBackward[0]) / (2 * dt);
   const ty = (pForward[1] - pBackward[1]) / (2 * dt);
   const mag = Math.sqrt(tx * tx + ty * ty);
@@ -250,7 +255,7 @@ export function generatePolarParametricPythonCode(preset: PolarParametricPreset,
 
 /** Injects parametric curve actions into AnyVis project */
 export function createPolarParametricActions(project: Project, preset: PolarParametricPreset, params: Record<string, number>): { project: Project; actionIds: string[] } {
-  const values = Object.fromEntries(preset.params.map(p => [p.key, params[p.key] ?? p.defaultValue]));
+  const values = Object.fromEntries(preset.params.map(p => [p.key, Number.isFinite(params[p.key]) ? params[p.key] : p.defaultValue]));
   const a = values.a, b = values.b;
   let xExpr: string, yExpr: string;
   let radius = '';

@@ -48,4 +48,10 @@ describe('explicit AI provider proxy', () => {
     await expect(generateProject({ endpoint: 'http://localhost:1234/v1', model: 'local', prompt: '再加一个圆', project: original })).rejects.toThrow('长度上限');
     expect(JSON.stringify(original)).toBe(before);
   });
+  it('returns a friendly 502 error when upstream JSON is null or a non-object primitive/array', async () => {
+    for (const payload of ['null', '[]', '123', '"ok"']) {
+      vi.stubGlobal('fetch', vi.fn(async () => new Response(payload, { status: 200 })));
+      await expect(generateProject({ endpoint: 'https://example.com/v1', model: 'test-model', key: 'test-only-key', prompt: '加一个圆', project: project() })).rejects.toMatchObject({ status: 502 });
+    }
+  });
 });

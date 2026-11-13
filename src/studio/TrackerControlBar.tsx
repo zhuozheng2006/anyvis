@@ -41,8 +41,8 @@ export function extractTrackers(actions: Action[]): TrackerSummary[] {
 export function suggestNextTrackerName(actions: Action[]): string {
   const used = new Set(
     flattenActions(actions)
-      .filter(a => a.type === 'tracker')
       .map(a => String(a.fields.name || '').trim())
+      .filter(Boolean)
   );
   for (const candidate of PREFERRED_NAMES) {
     if (!used.has(candidate)) return candidate;
@@ -79,10 +79,14 @@ export const TrackerControlBar: React.FC<TrackerControlBarProps> = ({
   const trackers = React.useMemo(() => extractTrackers(project.actions), [project.actions]);
 
   const handleAddTracker = () => {
-    const nextName = suggestNextTrackerName(project.actions);
-    const result = appendAction(project, 'tracker', { name: nextName, value: 1 });
-    onChange(result.project);
-    onSelect(result.action.id);
+    try {
+      const nextName = suggestNextTrackerName(project.actions);
+      const result = appendAction(project, 'tracker', { name: nextName, value: 1 });
+      onChange(result.project);
+      onSelect(result.action.id);
+    } catch (err: unknown) {
+      onError(err instanceof Error ? err.message : '声明动态参数失败');
+    }
   };
 
   const handleValueChange = (trackerId: string, nextValue: number) => {
@@ -96,16 +100,20 @@ export const TrackerControlBar: React.FC<TrackerControlBarProps> = ({
   };
 
   const handleAnimateTracker = (summary: TrackerSummary) => {
-    const baseVal = summary.latestTargetValue ?? summary.value;
-    const nextTarget = baseVal === 0 ? 3 : Number((-baseVal).toFixed(2));
-    const result = appendAction(project, 'animate_value', {
-      target: summary.name,
-      value: nextTarget,
-      duration: 1.5,
-      easing: 'smooth',
-    });
-    onChange(result.project);
-    onSelect(result.action.id);
+    try {
+      const baseVal = summary.latestTargetValue ?? summary.value;
+      const nextTarget = baseVal === 0 ? 3 : Number((-baseVal).toFixed(2));
+      const result = appendAction(project, 'animate_value', {
+        target: summary.name,
+        value: nextTarget,
+        duration: 1.5,
+        easing: 'smooth',
+      });
+      onChange(result.project);
+      onSelect(result.action.id);
+    } catch (err: unknown) {
+      onError(err instanceof Error ? err.message : `为参数 ${summary.name} 添加动画失败`);
+    }
   };
 
   const handleDeleteTracker = (summary: TrackerSummary) => {

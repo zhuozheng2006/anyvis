@@ -25,10 +25,14 @@ function load(asset: MediaAsset): Promise<Peaks | null> {
       if (!response.ok) return null;
       const context = new OfflineAudioContext(1, 1, 8000);
       const buffer = await context.decodeAudioData(await response.arrayBuffer());
-      return { duration: buffer.duration, values: envelope(Array.from({ length: buffer.numberOfChannels }, (_, channel) => buffer.getChannelData(channel))) };
+      const result = { duration: buffer.duration, values: envelope(Array.from({ length: buffer.numberOfChannels }, (_, channel) => buffer.getChannelData(channel))) };
+      return result;
     } catch { return null; }
   })();
   cache.set(asset.id, promise);
+  void promise.then(result => {
+    if (!result && cache.get(asset.id) === promise) cache.delete(asset.id);
+  });
   if (cache.size > 16) cache.delete(cache.keys().next().value!);
   return promise;
 }
@@ -39,7 +43,7 @@ export function AudioWaveform({ asset, offset, duration }: { asset?: MediaAsset;
     if (asset) void load(asset).then(value => { if (current) setPeaks(value); });
     return () => { current = false; };
   }, [asset?.id]);
-  if (!peaks?.values.length) return null;
+  if (!peaks?.values.length || peaks.duration <= 0) return null;
   const from = Math.floor(offset / peaks.duration * peaks.values.length), to = Math.ceil((offset + duration) / peaks.duration * peaks.values.length);
   const values = peaks.values.slice(Math.max(0, from), Math.min(peaks.values.length, to));
   if (!values.length) return null;

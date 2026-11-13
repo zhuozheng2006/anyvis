@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Palette, X, Check, Copy, Sparkles } from 'lucide-react';
+import { copyTextToClipboard } from './browser-utils';
+import { useDelayedAction, useDialogEscape, useTransientFlag } from './modal-hooks';
 import {
   TEX_STYLING_PRESETS,
   PALETTE_3B1B,
@@ -25,11 +27,19 @@ export const TexColorStylerModal: React.FC<TexColorStylerModalProps> = ({
   const [rawTex, setRawTex] = useState(activePreset.rawTex);
   const [colorMap, setColorMap] = useState<Record<string, string>>({ ...activePreset.defaultColors });
   const [selectedTokenKey, setSelectedTokenKey] = useState<string>('e');
-  const [copied, setCopied] = useState(false);
-  const [inserted, setInserted] = useState(false);
+  const [copied, triggerCopied] = useTransientFlag(2000, isOpen);
+  const [inserted, scheduleInsert] = useDelayedAction(450, isOpen);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    if (!isOpen) setErrorMsg('');
+  }, [isOpen]);
+
+  useDialogEscape(isOpen, onClose);
 
   // Switch preset
   const handleSelectPreset = (p: TexStylingPreset) => {
+    setErrorMsg('');
     setActivePreset(p);
     setRawTex(p.rawTex);
     setColorMap({ ...p.defaultColors });
@@ -60,12 +70,17 @@ export const TexColorStylerModal: React.FC<TexColorStylerModalProps> = ({
 
   // Apply colors
   const { coloredTex } = useMemo(() => {
-    return applyColorsToTex(rawTex, colorMap);
+    try {
+      return applyColorsToTex(rawTex, colorMap);
+    } catch {
+      return { coloredTex: rawTex };
+    }
   }, [rawTex, colorMap]);
 
   // Handle color change for active token
   const handleSelectColor = (hex: string) => {
     if (!currentToken) return;
+    setErrorMsg('');
     setColorMap(prev => ({
       ...prev,
       [currentToken]: hex,
@@ -74,31 +89,34 @@ export const TexColorStylerModal: React.FC<TexColorStylerModalProps> = ({
 
   // Copy Python code
   const handleCopyCode = async () => {
-    const code = generateColoredMathTexPython(rawTex, colorMap);
+    setErrorMsg('');
     try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // ignore
+      const code = generateColoredMathTexPython(rawTex, colorMap);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setErrorMsg(error instanceof Error ? error.message : '生成 Python 代码失败。');
     }
   };
 
   // Insert into project
   const handleInsert = () => {
-    if (!onInsertColoredTex) return;
-    onInsertColoredTex(rawTex, colorMap, activePreset.name.split(' ')[0]);
-    setInserted(true);
-    setTimeout(() => {
-      setInserted(false);
-      onClose();
-    }, 450);
+    if (!onInsertColoredTex || inserted) return;
+    setErrorMsg('');
+    try {
+      scheduleInsert(onClose, () => {
+        onInsertColoredTex(rawTex, colorMap, activePreset.name.split(' ')[0]);
+      });
+    } catch (error) {
+      setErrorMsg(error instanceof Error ? error.message : '插入配色公式失败。');
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="tex-styler-modal-backdrop" onClick={onClose} role="dialog" aria-modal="true">
+    <div className="tex-styler-modal-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-label="LaTeX 配色编辑器">
       <div className="tex-styler-modal-container" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="tex-styler-header">
@@ -216,7 +234,10 @@ export const TexColorStylerModal: React.FC<TexColorStylerModalProps> = ({
               <input
                 type="text"
                 value={rawTex}
-                onChange={e => setRawTex(e.target.value)}
+                onChange={e => {
+                  setErrorMsg('');
+                  setRawTex(e.target.value);
+                }}
                 placeholder="例如: \int_0^1 x^2 dx = \frac{1}{3}"
                 className="tex-styler-input"
               />
@@ -227,14 +248,18 @@ export const TexColorStylerModal: React.FC<TexColorStylerModalProps> = ({
         {/* Footer */}
         <div className="tex-styler-footer">
           <div style={{ fontSize: 11, color: '#8892b0' }}>
-            彩色公式使用 MathTex 扩展；渲染时需要现有的可信扩展授权，并需安装 LaTeX。
+            {errorMsg ? (
+              <span role="alert" style={{ color: '#fca5a5' }}>{errorMsg}</span>
+            ) : (
+              '彩色公式使用 MathTex 扩展；渲染时需要现有的可信扩展授权，并需安装 LaTeX。'
+            )}
           </div>
           <div className="tex-styler-action-btn-row">
             <button className="tex-styler-btn-secondary" onClick={handleCopyCode}>
               {copied ? <Check size={14} color="#48bb78" /> : <Copy size={14} />}
               <span>{copied ? '已复制 Manim 代码' : '复制 Python 代码'}</span>
             </button>
-            <button className="tex-styler-btn-primary" onClick={handleInsert}>
+            <button className="tex-styler-btn-primary" onClick={handleInsert} disabled={inserted}>
               {inserted ? <Check size={14} /> : <Sparkles size={14} />}
               <span>插入到动画编排</span>
             </button>

@@ -9,6 +9,8 @@ import {
   generateGeometryPythonCode,
   createGeometryActions,
 } from './geometry-euclidean';
+import { clientToSvgPoint, copyTextToClipboard } from './browser-utils';
+import { useTransientFlag, useDialogEscape } from './modal-hooks';
 import './geometry-playground.css';
 
 interface GeometryPlaygroundModalProps {
@@ -30,7 +32,8 @@ export const GeometryPlaygroundModal: React.FC<GeometryPlaygroundModalProps> = (
   const [B, setB] = useState<Point2D>([2.6, -1.2]);
   const [C, setC] = useState<Point2D>([0.6, 2.2]);
   const [draggingVertex, setDraggingVertex] = useState<'A' | 'B' | 'C' | null>(null);
-  const [isCopied, setIsCopied] = useState(false);
+  const [isCopied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
+  useDialogEscape(isOpen, onClose);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -40,10 +43,19 @@ export const GeometryPlaygroundModal: React.FC<GeometryPlaygroundModalProps> = (
   );
 
   useEffect(() => {
+    setApplyError('');
     setA(preset.initialA);
     setB(preset.initialB);
     setC(preset.initialC);
   }, [preset]);
+
+  useEffect(() => {
+    setApplyError('');
+    if (!isOpen) {
+      setDraggingVertex(null);
+      resetCopied();
+    }
+  }, [isOpen, resetCopied]);
 
   const centers = useMemo(() => computeTriangleCenters(A, B, C), [A, B, C]);
 
@@ -73,16 +85,16 @@ export const GeometryPlaygroundModal: React.FC<GeometryPlaygroundModalProps> = (
 
   const handleMouseDownVertex = (vertex: 'A' | 'B' | 'C') => (e: React.MouseEvent) => {
     e.stopPropagation();
+    setApplyError('');
     setDraggingVertex(vertex);
   };
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<SVGSVGElement>) => {
-      if (!draggingVertex || !svgRef.current) return;
-      const rect = svgRef.current.getBoundingClientRect();
-      const svgX = e.clientX - rect.left;
-      const svgY = e.clientY - rect.top;
-      const [mathX, mathY] = fromSvgCoords(svgX, svgY);
+      if (!draggingVertex) return;
+      const pt = clientToSvgPoint(svgRef.current, e.clientX, e.clientY, svgWidth, svgHeight);
+      if (!pt) return;
+      const [mathX, mathY] = fromSvgCoords(pt.x, pt.y);
 
       // Clamp to screen bounds
       const clampedX = Math.max(-3.8, Math.min(3.8, mathX));
@@ -92,7 +104,7 @@ export const GeometryPlaygroundModal: React.FC<GeometryPlaygroundModalProps> = (
       else if (draggingVertex === 'B') setB([clampedX, clampedY]);
       else if (draggingVertex === 'C') setC([clampedX, clampedY]);
     },
-    [draggingVertex, fromSvgCoords],
+    [draggingVertex, fromSvgCoords, svgWidth, svgHeight],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -100,10 +112,15 @@ export const GeometryPlaygroundModal: React.FC<GeometryPlaygroundModalProps> = (
   }, []);
 
   const handleCopyPython = async () => {
-    const code = generateGeometryPythonCode(preset, A, B, C);
-    await navigator.clipboard.writeText(code);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    setApplyError('');
+    try {
+      const code = generateGeometryPythonCode(preset, A, B, C);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setApplyError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   const handleApplyToProject = () => {

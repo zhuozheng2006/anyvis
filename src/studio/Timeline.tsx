@@ -5,7 +5,7 @@ import type { TimelineRow } from '@xzdarcy/timeline-engine';
 import type { Project } from './core/types';
 import { CURATED_BLOCK_CATALOG, getBlockDefinition } from './core/catalog';
 import { actionLabel, actionTrack, appendAction, duplicateAction, flattenActions, managedDefinition, managedObject, parallelWithNext, removeAction, removeActions, reorderAction, scaleActionsDuration, timelineClips, updateAction } from './authoring';
-import { audioClips, checkedEdit, editAudioClip, frameTime, moveAnimationClip, moveAnimationClips, resizeAnimationClip, splitActionClip, splitAudioClip } from './timeline-model';
+import { audioClips, checkedEdit, committedClipRange, editAudioClip, frameTime, moveAnimationClip, moveAnimationClips, resizeAnimationClip, splitActionClip, splitAudioClip } from './timeline-model';
 import { AudioWaveform } from './AudioWaveform';
 import { ActionInspector } from './ActionInspector';
 import { TimelineMarkerBar, addMarker, clearMarkers, removeMarker, snapTimeToMarkers, updateMarker } from './TimelineMarkerBar';
@@ -78,10 +78,16 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
   useEffect(() => { editor.current?.setTime(time); }, [time, revision, scale]);
 
   const resolveId = (id: string) => audio.find(c => c.id === id)?.action.id || id;
-  const mutate = (operation: () => Project) => {
-    try { const next = operation(); onChange(next); setHint(''); }
-    catch (error) { onError((error as Error).message); }
+  const mutate = (operation: () => Project): boolean => {
+    try { const next = operation(); onChange(next); setHint(''); return true; }
+    catch (error) { onError((error as Error).message); return false; }
     finally { setRevision(v => v + 1); }
+  };
+
+  const deleteSelectedActions = () => {
+    if (selectedIds.length === 0) return;
+    const toRemove = [...selectedIds];
+    if (mutate(() => removeActions(project, toRemove))) handleSelectIds([]);
   };
 
   const commit = (id: string, start: number, end: number, mode: 'move' | 'left' | 'right') => {
@@ -89,17 +95,18 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
     const isMulti = selectedIds.length > 1 && selectedIds.includes(resolved);
     if (!isMulti) handleSelectIds([resolved]);
     const clip = audio.find(c => c.id === id);
-    const effectiveStart = snapping && project.scene.markers?.length ? snapTimeToMarkers(project.scene.markers, start) : start;
+    const snap = (value: number) => (snapping && project.scene.markers?.length ? snapTimeToMarkers(project.scene.markers, value) : value);
+    const { start: nextStart, end: nextEnd } = committedClipRange(start, end, mode, snap);
     if (clip) {
-      mutate(() => editAudioClip(project, clip, effectiveStart, effectiveStart + (end - start), mode));
+      mutate(() => editAudioClip(project, clip, nextStart, nextEnd, mode));
     } else if (mode === 'move') {
       if (isMulti) {
-        mutate(() => moveAnimationClips(project, selectedIds, effectiveStart, resolved));
+        mutate(() => moveAnimationClips(project, selectedIds, nextStart, resolved));
       } else {
-        mutate(() => moveAnimationClip(project, resolved, effectiveStart));
+        mutate(() => moveAnimationClip(project, resolved, nextStart));
       }
     } else {
-      mutate(() => resizeAnimationClip(project, resolved, end - start));
+      mutate(() => resizeAnimationClip(project, resolved, nextEnd - nextStart));
     }
   };
 
@@ -145,8 +152,16 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
     });
   };
 
+  const selecting = box !== null;
+  const boxRef = useRef(box);
+  boxRef.current = box;
+  const selectedIdsRef = useRef(selectedIds);
+  selectedIdsRef.current = selectedIds;
+  const handleSelectIdsRef = useRef(handleSelectIds);
+  handleSelectIdsRef.current = handleSelectIds;
+
   useEffect(() => {
-    if (!box) return;
+    if (!selecting) return;
     const handleWindowMouseMove = (e: MouseEvent) => {
       setBox(prev => {
         if (!prev) return null;
@@ -157,8 +172,8 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       });
     };
     const handleWindowMouseUp = (e: MouseEvent) => {
-      const prev = box;
-      if (prev.active) {
+      const prev = boxRef.current;
+      if (prev?.active) {
         const boxLeft = Math.min(prev.startX, prev.currentX);
         const boxRight = Math.max(prev.startX, prev.currentX);
         const boxTop = Math.min(prev.startY, prev.currentY);
@@ -178,20 +193,23 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
         });
         const uniqueHits = Array.from(new Set(hitIds));
         if (e.shiftKey || e.metaKey || e.ctrlKey) {
-          handleSelectIds(Array.from(new Set([...selectedIds, ...uniqueHits])));
+          handleSelectIdsRef.current(Array.from(new Set([...selectedIdsRef.current, ...uniqueHits])));
         } else {
-          handleSelectIds(uniqueHits);
+          handleSelectIdsRef.current(uniqueHits);
         }
       }
       setBox(null);
     };
+    const cancelMarquee = () => setBox(null);
     window.addEventListener('mousemove', handleWindowMouseMove);
     window.addEventListener('mouseup', handleWindowMouseUp);
+    window.addEventListener('blur', cancelMarquee);
     return () => {
       window.removeEventListener('mousemove', handleWindowMouseMove);
       window.removeEventListener('mouseup', handleWindowMouseUp);
+      window.removeEventListener('blur', cancelMarquee);
     };
-  }, [box, selectedIds, handleSelectIds]);
+  }, [selecting]);
 
   return <section className="tl-editor" aria-label="动画时间轴" onKeyDown={event => {
     if ((event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')) return;
@@ -236,9 +254,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
     else if (event.key === 'Escape') { event.preventDefault(); handleSelectIds([]); }
     else if ((event.key === 'Delete' || event.key === 'Backspace') && selectedIds.length > 0) {
       event.preventDefault();
-      const toRemove = [...selectedIds];
-      mutate(() => removeActions(project, toRemove));
-      handleSelectIds([]);
+      deleteSelectedActions();
     }
   }}>
     <div className="tl-toolbar">
@@ -460,11 +476,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
           <div className="tl-spacer"/>
           <button aria-label="批量加速所选片段 2x" title="将所选片段时长缩短为 0.5 倍（2x 加速）" onClick={() => mutate(() => scaleActionsDuration(project, selectedIds, 0.5))}>2x 加速</button>
           <button aria-label="批量减速所选片段 0.5x" title="将所选片段时长延长为 2 倍（0.5x 减速）" onClick={() => mutate(() => scaleActionsDuration(project, selectedIds, 2))}>0.5x 减速</button>
-          <button aria-label="批量删除所选片段" onClick={() => {
-            const toRemove = [...selectedIds];
-            mutate(() => removeActions(project, toRemove));
-            handleSelectIds([]);
-          }}><Trash2 size={14}/> 批量删除 ({selectedIds.length})</button>
+          <button aria-label="批量删除所选片段" onClick={deleteSelectedActions}><Trash2 size={14}/> 批量删除 ({selectedIds.length})</button>
           <button onClick={() => handleSelectIds([])}><X size={14}/> 取消选择</button>
         </div>
       ) : selected ? <><div className="tl-selection-heading"><strong>{selectedAudio ? '配音' : actionLabel(selected)} <span>{selectedAudio ? String(selected.fields.name) : actionTrack(selected)}</span></strong><span>{(selectedAudio?.start ?? selectedClip?.start) == null ? '开始时间待定' : `开始 ${timecode((selectedAudio?.start ?? selectedClip?.start)!, project.scene.fps)}`}</span><div className="tl-spacer"/>

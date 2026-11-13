@@ -1,6 +1,6 @@
 import type { Project, TimelineMarker } from './core/types';
 import { timelineClips } from './authoring';
-import { audioClips } from './timeline-model';
+import { estimateProjectDuration } from './storyboard';
 
 export type SmartMarkerMode = 'speech' | 'beat' | 'cuts' | 'interval';
 
@@ -28,15 +28,17 @@ export interface MarkerPreviewItem {
  * Generate smart markers based on project state and configuration.
  */
 export function generateSmartMarkers(project: Project, config: SmartMarkerConfig): TimelineMarker[] {
-  const fps = Math.max(1, project.scene.fps || 30);
+  const rawFps = Number(project.scene.fps);
+  const fps = Number.isFinite(rawFps) && rawFps >= 1 ? rawFps : 30;
   const color = config.color || '#fbbf24';
   const prefix = config.labelPrefix?.trim() || getDefaultPrefix(config.mode);
-  const totalDuration = calculateTotalDuration(project);
+  const totalDuration = estimateProjectDuration(project);
   const items: MarkerPreviewItem[] = [];
 
   if (config.mode === 'speech') {
     // User-specified cadence, not detected speech pauses.
-    const phraseInterval = Math.max(0.5, config.cadenceSeconds || 3.0);
+    const rawCadence = Number(config.cadenceSeconds);
+    const phraseInterval = Number.isFinite(rawCadence) && rawCadence >= 0.5 ? rawCadence : 3.0;
     let t = phraseInterval;
     let count = 1;
     while (t < totalDuration + 0.05) {
@@ -51,7 +53,8 @@ export function generateSmartMarkers(project: Project, config: SmartMarkerConfig
     }
   } else if (config.mode === 'beat') {
     // Musical beat cadence: calculates interval based on BPM
-    const bpm = Math.max(30, Math.min(300, config.bpm || 120));
+    const rawBpm = Number(config.bpm);
+    const bpm = Number.isFinite(rawBpm) ? Math.max(30, Math.min(300, rawBpm)) : 120;
     const beatInterval = 60 / bpm;
     let t = beatInterval;
     let count = 1;
@@ -80,7 +83,8 @@ export function generateSmartMarkers(project: Project, config: SmartMarkerConfig
     }
   } else if (config.mode === 'interval') {
     // Custom equal intervals
-    const interval = Math.max(0.2, config.cadenceSeconds || 2.0);
+    const rawInterval = Number(config.cadenceSeconds);
+    const interval = Number.isFinite(rawInterval) && rawInterval >= 0.2 ? rawInterval : 2.0;
     let t = interval;
     let count = 1;
     while (t < totalDuration + 0.05) {
@@ -129,12 +133,4 @@ function getDefaultPrefix(mode: SmartMarkerMode): string {
     case 'interval':
       return '分段';
   }
-}
-
-function calculateTotalDuration(project: Project): number {
-  const visual = timelineClips(project.actions);
-  const audio = audioClips(project);
-  const visualEnd = Math.max(0, ...visual.map(c => c.start === null ? 0 : c.start + (c.duration ?? 0)));
-  const audioEnd = Math.max(0, ...audio.map(c => c.start === null ? 0 : c.start + c.duration));
-  return Math.max(visualEnd, audioEnd);
 }

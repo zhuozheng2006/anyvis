@@ -7,6 +7,14 @@ import {
   computeRiemannSum,
   generateRiemannPythonCode,
 } from './riemann';
+import { clientToSvgPoint, copyTextToClipboard } from './browser-utils';
+import {
+  useTransientFlag,
+  useDelayedAction,
+  useDialogEscape,
+  capturePointerSafe,
+  releasePointerSafe,
+} from './modal-hooks';
 import './riemann-playground.css';
 
 export interface RiemannPlaygroundModalProps {
@@ -28,16 +36,33 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
   const [b, setB] = useState(activePreset.defaultB);
   const [n, setN] = useState(16);
   const [mode, setMode] = useState<RiemannMode>('mid');
-  const [copied, setCopied] = useState(false);
-  const [inserted, setInserted] = useState(false);
+  const [copied, triggerCopied, resetCopied] = useTransientFlag(2000, isOpen);
+  const [inserted, scheduleInsertClose, resetInserted] = useDelayedAction(450, isOpen);
+  const [actionError, setActionError] = useState('');
+  useDialogEscape(isOpen, onClose);
   const [isLimiting, setIsLimiting] = useState(false);
   const [draggingHandle, setDraggingHandle] = useState<'a' | 'b' | null>(null);
 
   const animRef = useRef<number | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
+  useEffect(() => {
+    if (!isOpen) {
+      setDraggingHandle(null);
+      resetCopied();
+      resetInserted();
+    }
+    setActionError('');
+  }, [isOpen, resetCopied, resetInserted]);
+
   // Switch preset
   const handleSelectPreset = (p: RiemannPreset) => {
+    if (animRef.current) {
+      cancelAnimationFrame(animRef.current);
+      animRef.current = null;
+    }
+    setIsLimiting(false);
+    setActionError('');
     setActivePreset(p);
     setA(p.defaultA);
     setB(p.defaultB);
@@ -95,14 +120,16 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
   // Dragging limit handles
   const handlePointerDown = (handle: 'a' | 'b', e: React.PointerEvent) => {
     e.stopPropagation();
-    (e.target as Element).setPointerCapture(e.pointerId);
+    setActionError('');
+    capturePointerSafe(svgRef.current || (e.currentTarget as Element), e.pointerId);
     setDraggingHandle(handle);
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!draggingHandle || !svgRef.current) return;
-    const rect = svgRef.current.getBoundingClientRect();
-    const sx = Math.max(0, Math.min(CANVAS_WIDTH, e.clientX - rect.left));
+    if (!draggingHandle) return;
+    const pt = clientToSvgPoint(svgRef.current, e.clientX, e.clientY, CANVAS_WIDTH, CANVAS_HEIGHT);
+    if (!pt) return;
+    const sx = Math.max(0, Math.min(CANVAS_WIDTH, pt.x));
     const mx = Math.round(toMathX(sx) * 10) / 10;
 
     if (draggingHandle === 'a') {
@@ -114,11 +141,7 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
 
   const handlePointerUp = (e: React.PointerEvent) => {
     if (draggingHandle) {
-      try {
-        (e.target as Element).releasePointerCapture(e.pointerId);
-      } catch {
-        // no-op
-      }
+      releasePointerSafe(svgRef.current || (e.currentTarget as Element), e.pointerId);
       setDraggingHandle(null);
     }
   };
@@ -151,30 +174,39 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
   };
 
   useEffect(() => {
+    if (!isOpen && animRef.current !== null) {
+      cancelAnimationFrame(animRef.current);
+      animRef.current = null;
+      setIsLimiting(false);
+    }
     return () => {
-      if (animRef.current !== null) cancelAnimationFrame(animRef.current);
+      if (animRef.current !== null) {
+        cancelAnimationFrame(animRef.current);
+        animRef.current = null;
+      }
     };
-  }, []);
+  }, [isOpen]);
 
   const handleCopyCode = async () => {
-    const code = generateRiemannPythonCode(activePreset, a, b, n, mode);
+    setActionError('');
     try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // ignore
+      const code = generateRiemannPythonCode(activePreset, a, b, n, mode);
+      if (await copyTextToClipboard(code)) {
+        triggerCopied();
+      }
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : String(error));
     }
   };
 
   const handleInsert = () => {
-    if (!onInsertRiemann) return;
-    onInsertRiemann(activePreset, a, b, n, mode);
-    setInserted(true);
-    setTimeout(() => {
-      setInserted(false);
-      onClose();
-    }, 450);
+    if (!onInsertRiemann || inserted) return;
+    setActionError('');
+    try {
+      scheduleInsertClose(onClose, () => onInsertRiemann(activePreset, a, b, n, mode));
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : String(error));
+    }
   };
 
   if (!isOpen) return null;
@@ -208,6 +240,8 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
                 className="riemann-svg"
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onLostPointerCapture={() => setDraggingHandle(null)}
               >
                 <defs>
                   {/* Subtle Grid Pattern */}
@@ -387,25 +421,25 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
               <div className="riemann-mode-pill-row">
                 <button
                   className={`riemann-mode-pill ${mode === 'left' ? 'active' : ''}`}
-                  onClick={() => setMode('left')}
+                  onClick={() => { setActionError(''); setMode('left'); }}
                 >
                   左黎曼和
                 </button>
                 <button
                   className={`riemann-mode-pill ${mode === 'mid' ? 'active' : ''}`}
-                  onClick={() => setMode('mid')}
+                  onClick={() => { setActionError(''); setMode('mid'); }}
                 >
                   中点和
                 </button>
                 <button
                   className={`riemann-mode-pill ${mode === 'right' ? 'active' : ''}`}
-                  onClick={() => setMode('right')}
+                  onClick={() => { setActionError(''); setMode('right'); }}
                 >
                   右黎曼和
                 </button>
                 <button
                   className={`riemann-mode-pill ${mode === 'trapezoid' ? 'active' : ''}`}
-                  onClick={() => setMode('trapezoid')}
+                  onClick={() => { setActionError(''); setMode('trapezoid'); }}
                 >
                   梯形法则
                 </button>
@@ -425,7 +459,13 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
                   max="100"
                   step="1"
                   value={n}
-                  onChange={e => setN(parseInt(e.target.value, 10))}
+                  onChange={e => {
+                    const val = parseInt(e.target.value, 10);
+                    if (Number.isFinite(val)) {
+                      setActionError('');
+                      setN(Math.max(2, Math.min(100, val)));
+                    }
+                  }}
                   className="riemann-slider"
                 />
               </div>
@@ -441,7 +481,13 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
                   max={b - 0.2}
                   step="0.1"
                   value={a}
-                  onChange={e => setA(parseFloat(e.target.value))}
+                  onChange={e => {
+                    const val = parseFloat(e.target.value);
+                    if (Number.isFinite(val)) {
+                      setActionError('');
+                      setA(Math.max(xMin, Math.min(b - 0.2, val)));
+                    }
+                  }}
                   className="riemann-slider"
                 />
               </div>
@@ -457,7 +503,13 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
                   max={xMax}
                   step="0.1"
                   value={b}
-                  onChange={e => setB(parseFloat(e.target.value))}
+                  onChange={e => {
+                    const val = parseFloat(e.target.value);
+                    if (Number.isFinite(val)) {
+                      setActionError('');
+                      setB(Math.max(a + 0.2, Math.min(xMax, val)));
+                    }
+                  }}
                   className="riemann-slider"
                 />
               </div>
@@ -477,6 +529,11 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
 
         {/* Footer */}
         <div className="riemann-footer">
+          {actionError && (
+            <div role="alert" style={{ color: '#f87171', fontSize: 12 }}>
+              {actionError}
+            </div>
+          )}
           <div style={{ fontSize: 11, color: '#8892b0' }}>
             提示：支持拖动绿色与橙色圆点调整积分上下限 [a, b]
           </div>
@@ -485,7 +542,7 @@ export const RiemannPlaygroundModal: React.FC<RiemannPlaygroundModalProps> = ({
               {copied ? <Check size={14} color="#48bb78" /> : <Copy size={14} />}
               <span>{copied ? '已复制 Manim 代码' : '复制 Python 代码'}</span>
             </button>
-            <button className="riemann-btn-primary" onClick={handleInsert}>
+            <button className="riemann-btn-primary" onClick={handleInsert} disabled={inserted}>
               {inserted ? <Check size={14} /> : <Sparkles size={14} />}
               <span>插入到动画编排</span>
             </button>

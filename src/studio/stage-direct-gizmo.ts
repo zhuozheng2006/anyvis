@@ -5,10 +5,13 @@ export function manimToStagePercent(
   y: number,
   halfWidth = MANIM_FRAME_HALF_WIDTH,
 ): { leftPercent: number; topPercent: number } {
-  const clampedX = Math.max(-halfWidth, Math.min(halfWidth, x));
-  const clampedY = Math.max(-MANIM_FRAME_HALF_HEIGHT, Math.min(MANIM_FRAME_HALF_HEIGHT, y));
+  const safeHalfWidth = Number.isFinite(halfWidth) && halfWidth > 0 ? halfWidth : MANIM_FRAME_HALF_WIDTH;
+  const safeX = Number.isFinite(x) ? x : 0;
+  const safeY = Number.isFinite(y) ? y : 0;
+  const clampedX = Math.max(-safeHalfWidth, Math.min(safeHalfWidth, safeX));
+  const clampedY = Math.max(-MANIM_FRAME_HALF_HEIGHT, Math.min(MANIM_FRAME_HALF_HEIGHT, safeY));
 
-  const leftPercent = ((clampedX + halfWidth) / (2 * halfWidth)) * 100;
+  const leftPercent = ((clampedX + safeHalfWidth) / (2 * safeHalfWidth)) * 100;
   const topPercent = ((MANIM_FRAME_HALF_HEIGHT - clampedY) / (2 * MANIM_FRAME_HALF_HEIGHT)) * 100;
 
   return { leftPercent, topPercent };
@@ -20,18 +23,22 @@ export function stagePercentToManim(
   step = 0.1,
   halfWidth = MANIM_FRAME_HALF_WIDTH,
 ): { x: number; y: number } {
-  const ratioX = Math.max(0, Math.min(100, leftPercent)) / 100;
-  const ratioY = Math.max(0, Math.min(100, topPercent)) / 100;
+  const safeHalfWidth = Number.isFinite(halfWidth) && halfWidth > 0 ? halfWidth : MANIM_FRAME_HALF_WIDTH;
+  const safeStep = Number.isFinite(step) && step > 0 ? step : 0.1;
+  const safeLeft = Number.isFinite(leftPercent) ? leftPercent : 50;
+  const safeTop = Number.isFinite(topPercent) ? topPercent : 50;
+  const ratioX = Math.max(0, Math.min(100, safeLeft)) / 100;
+  const ratioY = Math.max(0, Math.min(100, safeTop)) / 100;
 
-  const rawX = (ratioX * 2 - 1) * halfWidth;
+  const rawX = (ratioX * 2 - 1) * safeHalfWidth;
   const rawY = (1 - ratioY * 2) * MANIM_FRAME_HALF_HEIGHT;
 
   // Snap close to 0 if within snap threshold
-  let x = clampAndSnapCoord(rawX, halfWidth, step);
-  let y = clampAndSnapCoord(rawY, MANIM_FRAME_HALF_HEIGHT, step);
+  let x = clampAndSnapCoord(rawX, safeHalfWidth, safeStep);
+  let y = clampAndSnapCoord(rawY, MANIM_FRAME_HALF_HEIGHT, safeStep);
 
-  if (Math.abs(x) < step * 0.75) x = 0;
-  if (Math.abs(y) < step * 0.75) y = 0;
+  if (Math.abs(x) < safeStep * 0.75) x = 0;
+  if (Math.abs(y) < safeStep * 0.75) y = 0;
 
   return { x, y };
 }

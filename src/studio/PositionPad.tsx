@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import { capturePointerSafe, releasePointerSafe } from './modal-hooks';
 import './position-pad.css';
 
 export interface PositionPreset {
@@ -37,6 +38,9 @@ export const MANIM_FRAME_HALF_WIDTH = 7.1;
 export const MANIM_FRAME_HALF_HEIGHT = 4.0;
 
 export function clampAndSnapCoord(val: number, maxAbs: number, step = 0.1): number {
+  if (!Number.isFinite(val) || !Number.isFinite(maxAbs) || !Number.isFinite(step) || step <= 0) {
+    return 0;
+  }
   const clamped = Math.max(-maxAbs, Math.min(maxAbs, val));
   const snapped = Math.round(clamped / step) * step;
   return Number(snapped.toFixed(2));
@@ -63,8 +67,12 @@ export interface PositionPadProps {
 }
 
 export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }) => {
+  const safeX = Number.isFinite(x) ? x : 0;
+  const safeY = Number.isFinite(y) ? y : 0;
   const svgRef = useRef<SVGSVGElement | null>(null);
   const draggingRef = useRef(false);
+  const draftRef = useRef<{ x: number; y: number } | null>(null);
+  const [draftCoords, setDraftCoords] = useState<{ x: number; y: number } | null>(null);
 
   const presets = mode === 'shift' ? SHIFT_VECTOR_PRESETS : STAGE_POSITION_PRESETS;
   const width = 160;
@@ -80,18 +88,19 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
       (2 * MANIM_FRAME_HALF_HEIGHT)) *
     height;
 
-  const updateFromPointer = (clientX: number, clientY: number, shiftKey: boolean) => {
+  const readCoordsFromPointer = (clientX: number, clientY: number, shiftKey: boolean): { x: number; y: number } | null => {
     const svg = svgRef.current;
-    if (!svg) return;
+    if (!svg) return null;
     const rect = svg.getBoundingClientRect();
     const ratioX = Math.max(0, Math.min(1, (clientX - rect.left) / Math.max(1, rect.width)));
     const ratioY = Math.max(0, Math.min(1, (clientY - rect.top) / Math.max(1, rect.height)));
-    const coords = clientRatioToManimCoords(ratioX, ratioY, shiftKey ? 0.5 : 0.1);
-    onChange(coords);
+    return clientRatioToManimCoords(ratioX, ratioY, shiftKey ? 0.5 : 0.1);
   };
 
-  const dotX = toSvgX(x);
-  const dotY = toSvgY(y);
+  const displayX = draftCoords?.x ?? safeX;
+  const displayY = draftCoords?.y ?? safeY;
+  const dotX = toSvgX(displayX);
+  const dotY = toSvgY(displayY);
   const centerX = width / 2;
   const centerY = height / 2;
 
@@ -102,7 +111,7 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
           {mode === 'shift' ? '位移方向与距离 (dx, dy)' : '舞台位置与九宫格对齐 (x, y)'}
         </span>
         <span className="pos-pad-coords">
-          ({x.toFixed(1)}, {y.toFixed(1)})
+          ({displayX.toFixed(1)}, {displayY.toFixed(1)})
         </span>
       </div>
       <div className="pos-pad-body">
@@ -112,18 +121,41 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
           viewBox={`0 0 ${width} ${height}`}
           onPointerDown={e => {
             draggingRef.current = true;
-            e.currentTarget.setPointerCapture(e.pointerId);
-            updateFromPointer(e.clientX, e.clientY, e.shiftKey);
+            capturePointerSafe(e.currentTarget, e.pointerId);
+            const coords = readCoordsFromPointer(e.clientX, e.clientY, e.shiftKey);
+            if (coords) {
+              draftRef.current = coords;
+              setDraftCoords(coords);
+            }
           }}
           onPointerMove={e => {
             if (!draggingRef.current) return;
-            updateFromPointer(e.clientX, e.clientY, e.shiftKey);
+            const coords = readCoordsFromPointer(e.clientX, e.clientY, e.shiftKey);
+            if (coords) {
+              draftRef.current = coords;
+              setDraftCoords(coords);
+            }
           }}
           onPointerUp={e => {
-            if (draggingRef.current) {
-              draggingRef.current = false;
-              e.currentTarget.releasePointerCapture(e.pointerId);
+            if (!draggingRef.current) return;
+            draggingRef.current = false;
+            releasePointerSafe(e.currentTarget, e.pointerId);
+            const finalCoords = readCoordsFromPointer(e.clientX, e.clientY, e.shiftKey) ?? draftRef.current;
+            draftRef.current = null;
+            setDraftCoords(null);
+            if (finalCoords && (finalCoords.x !== safeX || finalCoords.y !== safeY)) {
+              onChange(finalCoords);
             }
+          }}
+          onPointerCancel={() => {
+            draggingRef.current = false;
+            draftRef.current = null;
+            setDraftCoords(null);
+          }}
+          onLostPointerCapture={() => {
+            draggingRef.current = false;
+            draftRef.current = null;
+            setDraftCoords(null);
           }}
         >
           {/* Rule-of-thirds safe frame */}
@@ -155,7 +187,7 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
             strokeWidth="1"
           />
           {/* Vector arrow when in shift mode */}
-          {mode === 'shift' && (Math.abs(x) > 0.05 || Math.abs(y) > 0.05) && (
+          {mode === 'shift' && (Math.abs(displayX) > 0.05 || Math.abs(displayY) > 0.05) && (
             <line
               x1={centerX}
               y1={centerY}
@@ -179,7 +211,7 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
 
         <div className="pos-pad-grid-9" role="group" aria-label="九宫格快捷对齐">
           {presets.map(p => {
-            const isActive = Math.abs(x - p.x) < 0.05 && Math.abs(y - p.y) < 0.05;
+            const isActive = Math.abs(displayX - p.x) < 0.05 && Math.abs(displayY - p.y) < 0.05;
             return (
               <button
                 key={p.id}

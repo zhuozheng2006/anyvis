@@ -12,9 +12,15 @@ export function isTextEditingShortcut(event: KeyboardEvent) {
 }
 
 const DIALOG = '[role="dialog"], [role="alertdialog"]';
+const INTERACTIVE_CONTROL = 'button, a[href], summary, [role="button"], [role="tab"], [role="menuitem"], [role="option"], [role="slider"], [role="checkbox"], [role="switch"]';
 
 export function canUseWorkspaceShortcut(event: KeyboardEvent) {
   return !event.defaultPrevented && !isComposingShortcut(event) && !isTextEditingShortcut(event) && !document.querySelector(DIALOG);
+}
+
+/** Space activates buttons/tabs/custom triggers, so leave Space to those focused controls. */
+export function canUsePlaybackSpaceShortcut(event: KeyboardEvent) {
+  return canUseWorkspaceShortcut(event) && !eventElement(event)?.closest(INTERACTIVE_CONTROL);
 }
 
 interface ProjectShortcutActions {

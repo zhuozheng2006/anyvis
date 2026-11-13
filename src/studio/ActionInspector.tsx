@@ -3,11 +3,18 @@ import type { Action, FieldDefinition, FieldValue, MediaAsset } from './core/typ
 import { getBlockDefinition } from './core/catalog';
 import { flattenActions } from './authoring';
 import { createApiValueEditor, type ApiValueEditorElement } from './blocks/api-value-field';
+import { normaliseHexColour } from './blocks/colour-field';
 import { RateFuncPicker } from './RateFuncPicker';
 import { MathSymbolPalette } from './MathSymbolPalette';
 import { ExpressionPlotPreview } from './ExpressionPlotPreview';
 import { PositionPad } from './PositionPad';
+import { copyTextToClipboard } from './browser-utils';
 import './object-manager.css';
+
+const finiteNumber = (value: unknown) => {
+  const n = Number(value ?? 0);
+  return Number.isFinite(n) ? n : 0;
+};
 
 export interface ActionInspectorProps {
   action: Action;
@@ -19,6 +26,13 @@ export interface ActionInspectorProps {
 }
 
 const COMMON_PALETTE = ['#58C4DD', '#83C167', '#FFFF00', '#FC6255', '#9A72AC', '#FF862F', '#FFFFFF', '#222222'];
+
+function isMathTexField(actionType: string, fieldName: string): boolean {
+  return (
+    fieldName === 'tex' ||
+    (fieldName === 'text' && (actionType === 'formula' || actionType === 'matching_tex'))
+  );
+}
 
 export const ActionInspector: React.FC<ActionInspectorProps> = ({
   action,
@@ -58,48 +72,116 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
   // API-value modal state & stable lifecycle
   const [activeApiField, setActiveApiField] = useState<FieldDefinition | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeEditorRef = useRef<ApiValueEditorElement | null>(null);
   const editorMountedRef = useRef(false);
+  const apiPreviousFocusRef = useRef<HTMLElement | null>(null);
+  const apiModalWrapperRef = useRef<HTMLDivElement | null>(null);
   const mathInputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
+
+  const scrubCleanupRef = useRef<(() => void) | null>(null);
+  useEffect(() => {
+    return () => {
+      scrubCleanupRef.current?.();
+      if (copyTimerRef.current) {
+        clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    setCopiedField(null);
+    if (copyTimerRef.current) {
+      clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = null;
+    }
+  }, [action.id]);
+
+  const stepNumericField = (start: number, f: FieldDefinition, ticks: number, shiftKey: boolean, altKey: boolean): number => {
+    const integerOnly = f.step === 1;
+    const baseStep = f.step || 0.1;
+    const rawStep = shiftKey ? baseStep * 10 : altKey ? (integerOnly ? baseStep : baseStep * 0.1) : baseStep;
+    const step = integerOnly ? Math.max(1, Math.round(rawStep)) : rawStep;
+    let nextVal = Math.round((start + ticks * step) * 10000) / 10000;
+    if (integerOnly) nextVal = Math.round(nextVal);
+    if (typeof f.min === 'number') nextVal = Math.max(f.min, nextVal);
+    if (typeof f.max === 'number') nextVal = Math.min(f.max, nextVal);
+    return nextVal;
+  };
 
   const handleScrubPointerDown = (e: React.PointerEvent, f: FieldDefinition) => {
     e.preventDefault();
+    scrubCleanupRef.current?.();
     const startX = e.clientX;
     const raw = drafts[f.name] ?? '';
     const startVal = !isNaN(parseFloat(raw)) ? parseFloat(raw) : (typeof f.default === 'number' ? f.default : 0);
-    const baseStep = f.step || 0.1;
+    let pendingVal = startVal;
+    let moved = false;
+
+    const cleanup = () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerCancel);
+      scrubCleanupRef.current = null;
+    };
 
     const onPointerMove = (ev: PointerEvent) => {
       const dx = ev.clientX - startX;
-      const step = ev.shiftKey ? baseStep * 10 : ev.altKey ? baseStep * 0.1 : baseStep;
-      const delta = Math.round(dx / 4) * step;
-      let nextVal = Math.round((startVal + delta) * 10000) / 10000;
-      if (typeof f.min === 'number') nextVal = Math.max(f.min, nextVal);
-      if (typeof f.max === 'number') nextVal = Math.min(f.max, nextVal);
-      const strVal = String(nextVal);
-      setDrafts(prev => ({ ...prev, [f.name]: strVal }));
-      onChangeRef.current({ [f.name]: nextVal });
+      if (dx === 0 && !moved) return;
+      moved = true;
+      const nextVal = stepNumericField(startVal, f, Math.round(dx / 4), ev.shiftKey, ev.altKey);
+      pendingVal = nextVal;
+      setDrafts(prev => ({ ...prev, [f.name]: String(nextVal) }));
     };
 
     const onPointerUp = () => {
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
-      window.removeEventListener('pointercancel', onPointerUp);
+      cleanup();
+      // Commit once at drag end so scrubbing produces a single undo step.
+      if (moved && pendingVal !== startVal) onChangeRef.current({ [f.name]: pendingVal });
     };
 
+    const onPointerCancel = () => {
+      cleanup();
+      setDrafts(prev => ({ ...prev, [f.name]: raw }));
+    };
+
+    scrubCleanupRef.current = cleanup;
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('pointercancel', onPointerUp);
+    window.addEventListener('pointercancel', onPointerCancel);
   };
 
-  const closeApiEditor = useCallback(() => {
+  const disposeApiEditor = useCallback((restoreFocus = false) => {
     if (activeEditorRef.current) {
       activeEditorRef.current.dispose();
       activeEditorRef.current = null;
     }
     editorMountedRef.current = false;
     setActiveApiField(null);
+    const prev = apiPreviousFocusRef.current;
+    apiPreviousFocusRef.current = null;
+    if (restoreFocus && prev?.isConnected) prev.focus();
   }, []);
+
+  const closeApiEditor = useCallback(() => disposeApiEditor(true), [disposeApiEditor]);
+
+  const openApiEditor = useCallback((field: FieldDefinition) => {
+    apiPreviousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setActiveApiField(field);
+  }, []);
+
+  useEffect(() => {
+    disposeApiEditor(false);
+    return () => disposeApiEditor(false);
+  }, [action.id, disposeApiEditor]);
+
+  useEffect(() => {
+    if (!activeApiField) return;
+    const wrapper = apiModalWrapperRef.current;
+    const focusTarget = wrapper?.querySelector<HTMLElement>('select, input, textarea, button') ?? wrapper;
+    focusTarget?.focus();
+  }, [activeApiField]);
 
   // Callback ref to mount the DOM editor once per active field opening, avoiding recreation on timeline/preview re-renders
   const modalContainerCallbackRef = useCallback(
@@ -210,12 +292,19 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
         }));
         return;
       }
-      if (field.max !== undefined && num > field.max) {
-        onError?.(`${field.label}不能大于 ${field.max}`);
+      const rejectNumeric = (message: string) => {
+        onError?.(message);
         setDrafts(prev => ({
           ...prev,
           [field.name]: currentVal !== undefined ? String(currentVal) : (field.default !== undefined ? String(field.default) : '')
         }));
+      };
+      if (field.max !== undefined && num > field.max) {
+        rejectNumeric(`${field.label}不能大于 ${field.max}`);
+        return;
+      }
+      if (field.step === 1 && !Number.isInteger(num)) {
+        rejectNumeric(`${field.label}须为整数`);
         return;
       }
       if (num !== currentVal) {
@@ -364,7 +453,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
         <button
           type="button"
           className="ai-fields-api-launcher"
-          onClick={() => setActiveApiField(field)}
+          onClick={() => openApiEditor(field)}
           aria-label={`配置${field.label}`}
         >
           <span>{raw ? '已配置参数' : '默认参数'}</span>
@@ -375,7 +464,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
 
     // 4. Color
     if (field.type === 'color') {
-      const hexValue = typeof currentVal === 'string' && currentVal.startsWith('#') ? currentVal : '#58C4DD';
+      const hexValue = normaliseHexColour(currentVal)?.toLowerCase() ?? '#58c4dd';
       return (
         <div className="ai-fields-color-group">
           <input
@@ -408,6 +497,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
         return (
           <RateFuncPicker
             value={String(currentVal ?? field.default ?? 'smooth')}
+            options={field.options}
             onChange={val => onChange({ [field.name]: val })}
           />
         );
@@ -428,11 +518,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
       );
     }
 
-    const isMathTex =
-      field.name === 'tex' ||
-      (field.name === 'text' && (action.type === 'formula' || action.type === 'matching_tex')) ||
-      action.type === 'formula' ||
-      action.type === 'matching_tex';
+    const isMathTex = isMathTexField(action.type, field.name);
 
     // 6. Multiline
     if (field.type === 'multiline') {
@@ -481,12 +567,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
                 const raw = drafts[field.name] ?? '';
                 const currentNum = parseFloat(raw);
                 const valid = !isNaN(currentNum) ? currentNum : (typeof field.default === 'number' ? field.default : 0);
-                const baseStep = field.step || 0.1;
-                const step = e.shiftKey ? baseStep * 10 : e.altKey ? baseStep * 0.1 : baseStep;
-                const delta = e.key === 'ArrowUp' ? step : -step;
-                let nextVal = Math.round((valid + delta) * 10000) / 10000;
-                if (typeof field.min === 'number') nextVal = Math.max(field.min, nextVal);
-                if (typeof field.max === 'number') nextVal = Math.min(field.max, nextVal);
+                const nextVal = stepNumericField(valid, field, e.key === 'ArrowUp' ? 1 : -1, e.shiftKey, e.altKey);
                 const strVal = String(nextVal);
                 handleDraftChange(field.name, strVal);
                 onChange({ [field.name]: nextVal });
@@ -534,11 +615,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
   return (
     <div className="ai-fields-container">
       {targetFields.map(field => {
-        const isFieldMathTex =
-          field.name === 'tex' ||
-          (field.name === 'text' && (action.type === 'formula' || action.type === 'matching_tex')) ||
-          action.type === 'formula' ||
-          action.type === 'matching_tex';
+        const isFieldMathTex = isMathTexField(action.type, field.name);
         const isFieldModified =
           field.default !== undefined &&
           action.fields[field.name] !== undefined &&
@@ -560,13 +637,16 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
                     className="ai-fields-copy-tex-btn"
                     title="复制 LaTeX 公式代码"
                     aria-label="复制 LaTeX 公式代码"
-                    onClick={() => {
-                      const val = String(drafts[field.name] || action.fields[field.name] || '');
-                      if (navigator.clipboard) {
-                        void navigator.clipboard.writeText(val);
+                    onClick={async () => {
+                      const val = String(drafts[field.name] ?? action.fields[field.name] ?? '');
+                      if (await copyTextToClipboard(val)) {
+                        setCopiedField(field.name);
+                        if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+                        copyTimerRef.current = setTimeout(() => {
+                          copyTimerRef.current = null;
+                          setCopiedField(null);
+                        }, 2000);
                       }
-                      setCopiedField(field.name);
-                      setTimeout(() => setCopiedField(null), 2000);
                     }}
                   >
                     {copiedField === field.name ? '✓ 已复制' : '📋 复制'}
@@ -596,7 +676,22 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
 
       {activeApiField && (
         <div className="ai-fields-modal-overlay" onClick={closeApiEditor}>
-          <div className="ai-fields-modal-wrapper" onClick={e => e.stopPropagation()}>
+          <div
+            ref={apiModalWrapperRef}
+            className="ai-fields-modal-wrapper"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`配置${activeApiField.label}`}
+            tabIndex={-1}
+            onClick={e => e.stopPropagation()}
+            onKeyDown={e => {
+              if (e.key === 'Escape') {
+                e.preventDefault();
+                e.stopPropagation();
+                closeApiEditor();
+              }
+            }}
+          >
             <div ref={modalContainerCallbackRef} />
           </div>
         </div>
@@ -605,8 +700,8 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
         {targetFields.some(f => f.name === 'y') && targetFields.some(f => f.name === 'x') && (
           <PositionPad
             mode="position"
-            x={Number(action.fields.x ?? 0)}
-            y={Number(action.fields.y ?? 0)}
+            x={finiteNumber(action.fields.x)}
+            y={finiteNumber(action.fields.y)}
             onChange={({ x: nextX, y: nextY }) => {
               setDrafts(prev => ({ ...prev, x: String(nextX), y: String(nextY) }));
               onChange({ x: nextX, y: nextY });
@@ -616,8 +711,8 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
         {targetFields.some(f => f.name === 'dy') && targetFields.some(f => f.name === 'dx') && (
           <PositionPad
             mode="shift"
-            x={Number(action.fields.dx ?? 0)}
-            y={Number(action.fields.dy ?? 0)}
+            x={finiteNumber(action.fields.dx)}
+            y={finiteNumber(action.fields.dy)}
             onChange={({ x: nextDx, y: nextDy }) => {
               setDrafts(prev => ({ ...prev, dx: String(nextDx), dy: String(nextDy) }));
               onChange({ dx: nextDx, dy: nextDy });

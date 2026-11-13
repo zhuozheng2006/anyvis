@@ -1,6 +1,6 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Crosshair, Download, FilePlus2, FolderOpen, Grid, Keyboard, LayoutGrid, Loader2, Maximize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, StepBack, StepForward, Undo2, Upload, WandSparkles, X } from 'lucide-react';
+import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Crosshair, Download, FilePlus2, FolderOpen, Grid, Keyboard, LayoutGrid, Loader2, Maximize2, Minimize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, StepBack, StepForward, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import { deferredDialog, deferredPanel } from './deferred-ui';
 import type { Action, Project } from './core/types';
 import { compileProject } from './core/compiler';
@@ -36,7 +36,8 @@ import { QuickAddToolbar } from './QuickAddToolbar';
 import './studio.css';
 import './studio-polish.css';
 import { revisionOf } from './render-revision';
-import { canUseWorkspaceShortcut, handleProjectShortcut } from './studio-shortcuts';
+import { copyTextToClipboard } from './browser-utils';
+import { canUsePlaybackSpaceShortcut, canUseWorkspaceShortcut, handleProjectShortcut } from './studio-shortcuts';
 
 const CodeMirror = deferredPanel(() => import('@uiw/react-codemirror'), '代码编辑器');
 const Timeline = deferredPanel(async () => ({ default: (await import('./Timeline')).Timeline }), '时间轴');
@@ -98,7 +99,10 @@ export default function StudioApp() {
   const [presentationStepIdx, setPresentationStepIdx] = useState(0);
   const [presentationPlaying, setPresentationPlaying] = useState(false);
   const presentationVideoRef = useRef<HTMLVideoElement>(null);
+  const presentationOverlayRef = useRef<HTMLDivElement>(null);
+  const presentationReturnFocusRef = useRef<HTMLElement | null>(null);
   const presentationSteps = useMemo(() => computePresentationSteps(project), [project]);
+  const safePresentationStepIdx = Math.min(presentationStepIdx, Math.max(0, presentationSteps.length - 1));
   const [matrixPlaygroundOpen, setMatrixPlaygroundOpen] = useState(false);
   const [fourierPlaygroundOpen, setFourierPlaygroundOpen] = useState(false);
   const [calculusPlaygroundOpen, setCalculusPlaygroundOpen] = useState(false);
@@ -148,6 +152,17 @@ export default function StudioApp() {
   const pendingManualRender = useRef<'preview' | 'final' | null>(null);
   const aiAbort = useRef<AbortController | null>(null);
   const healthTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const highlightTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (highlightTimer.current) clearTimeout(highlightTimer.current);
+  }, []);
+  const scheduleHighlight = useCallback((id: string) => {
+    if (highlightTimer.current) clearTimeout(highlightTimer.current);
+    highlightTimer.current = setTimeout(() => {
+      highlightTimer.current = null;
+      editor.current?.highlight(id);
+    }, 40);
+  }, []);
   const currentRevision = revisionOf(project);
   const revisionRef = useRef(currentRevision); revisionRef.current = currentRevision;
   const projectRef = useRef(project); projectRef.current = project;
@@ -384,14 +399,47 @@ export default function StudioApp() {
     document.addEventListener('visibilitychange', visibility);
     return () => { flush(); window.removeEventListener('pagehide', flush); document.removeEventListener('visibilitychange', visibility); };
   }, []);
+  const flushEditorSnapshot = useCallback((): Project => {
+    try {
+      const latest = editor.current?.snapshot();
+      if (latest && JSON.stringify(latest.actions) !== JSON.stringify(projectRef.current.actions)) {
+        setProject(latest);
+        return latest;
+      }
+      return latest || projectRef.current;
+    } catch {
+      return projectRef.current;
+    }
+  }, []);
+  const openPlayground = useCallback((setOpen: (open: boolean) => void) => {
+    flushEditorSnapshot();
+    setOpen(true);
+  }, [flushEditorSnapshot]);
+  const applyPlaygroundEdit = useCallback((base: Project, nextProject: Project, message: string, actionIds?: string[]) => {
+    try {
+      setProject(checkedEdit(base, validateProject({ ...nextProject, workspace: undefined })));
+      if (actionIds?.[0]) {
+        setSelected(actionIds[0]);
+        setSelectedIds(actionIds);
+      }
+      notify(message);
+    } catch (error) {
+      notify((error as Error).message);
+    }
+  }, [notify]);
+
   useEffect(() => {
     const listener = (event: KeyboardEvent) => handleProjectShortcut(event, {
       save: () => { void exportProject(); }, render: () => { void renderRef.current('preview'); },
-      undo: undoProject, redo: redoProject, togglePalette: () => setCmdPaletteOpen(v => !v),
+      undo: undoProject, redo: redoProject,
+      togglePalette: () => setCmdPaletteOpen(v => {
+        if (!v) flushEditorSnapshot();
+        return !v;
+      }),
       closeStudioDialog: () => setModal(null),
     });
     window.addEventListener('keydown', listener, true); return () => window.removeEventListener('keydown', listener, true);
-  }, [exportProject, undoProject, redoProject]);
+  }, [exportProject, undoProject, redoProject, flushEditorSnapshot]);
   const captureVideoFrame = useCallback(() => {
     const vid = player.current;
     if (!vid || !vid.videoWidth || !vid.videoHeight) {
@@ -432,12 +480,12 @@ export default function StudioApp() {
       }
       if (file.size > 8 * 1024 * 1024) throw new Error('项目文件过大，请选择 8 MB 以内的 .anyvis.json。');
       const value = JSON.parse(await file.text());
-      if (value.schemaVersion !== 2) throw new Error('这是旧版课件或其他格式。旧课件可用 ?legacy=1 打开；新版请导入 v2 积木项目。原文件没有被修改。');
+      if (!value || typeof value !== 'object' || Array.isArray(value) || value.schemaVersion !== 2) throw new Error('这是旧版课件或其他格式。旧课件可用 ?legacy=1 打开；新版请导入 v2 积木项目。原文件没有被修改。');
       if (replaceProject(validateProject(value))) notify('已打开项目。');
     } catch (error) { notify(`打开失败：${(error as Error).message}`); }
     finally { if (input.current) input.current.value = ''; }
   };
-  const chooseStep = (id: string) => { setSelected(id); setSelectedIds(id ? [id] : []); setEditorTab('blocks'); setTimeout(() => editor.current?.highlight(id), 40); };
+  const chooseStep = (id: string) => { setSelected(id); setSelectedIds(id ? [id] : []); setEditorTab('blocks'); scheduleHighlight(id); };
   const switchView = (tab: 'blocks' | 'timeline' | 'code') => {
     try { const latest = editor.current?.snapshot(); if (latest) setProject(latest); } catch (error) { notify((error as Error).message); }
     setEditorTab(tab);
@@ -446,26 +494,65 @@ export default function StudioApp() {
     try { const result = appendAction(editor.current?.snapshot() || projectRef.current, type); setProject(result.project); setSelected(result.action.id); setSelectedIds([result.action.id]); }
     catch (error) { notify((error as Error).message); }
   };
-  const play = () => { if (!player.current || !video) return; if (player.current.paused) void player.current.play().catch(() => notify('请点击播放重试。')); else player.current.pause(); };
-  const seek = (value: number) => { if (player.current) { player.current.currentTime = value; setTime(value); } };
+  useEffect(() => {
+    if (player.current) player.current.playbackRate = playbackRate;
+  }, [playbackRate, video?.url]);
+  const play = useCallback(() => {
+    if (!player.current || !video) return;
+    if (player.current.paused) {
+      player.current.playbackRate = playbackRate;
+      void player.current.play().catch(() => notify('请点击播放重试。'));
+    } else {
+      player.current.pause();
+    }
+  }, [video, playbackRate, notify]);
+  const seek = useCallback((value: number) => {
+    if (player.current) {
+      player.current.currentTime = value;
+      setTime(value);
+    }
+  }, []);
+  const stepFrames = useCallback((frames: number) => {
+    const vid = player.current;
+    if (!vid || !video) return;
+    const duration = Number.isFinite(vid.duration) && vid.duration > 0 ? vid.duration : videoDuration;
+    const current = Number.isFinite(vid.currentTime) ? vid.currentTime : time;
+    const target = Math.max(0, Math.min(duration || current, current + frames / project.scene.fps));
+    seek(target);
+  }, [video, videoDuration, time, project.scene.fps, seek]);
 
   const advancePresentation = useCallback(() => {
     const vid = presentationVideoRef.current;
-    if (!vid) return;
-    if (presentationStepIdx < presentationSteps.length - 1) {
-      const nextIdx = presentationStepIdx + 1;
+    if (!vid || !presentationSteps.length) return;
+    const currentIdx = Math.min(presentationStepIdx, presentationSteps.length - 1);
+    const curStep = presentationSteps[currentIdx];
+    const hasUnplayedSegment = curStep
+      && !presentationPlaying
+      && curStep.pauseTime > curStep.startTime + 0.05
+      && vid.currentTime < curStep.pauseTime - 0.08;
+    if (hasUnplayedSegment) {
+      if (vid.currentTime < curStep.startTime - 0.05) {
+        vid.currentTime = curStep.startTime;
+      }
+      void vid.play().catch(() => {});
+      setPresentationPlaying(true);
+      return;
+    }
+    if (currentIdx < presentationSteps.length - 1) {
+      const nextIdx = currentIdx + 1;
       const nextStep = presentationSteps[nextIdx];
       setPresentationStepIdx(nextIdx);
       vid.currentTime = nextStep.startTime;
       void vid.play().catch(() => {});
       setPresentationPlaying(true);
     } else {
+      const firstStep = presentationSteps[0];
       setPresentationStepIdx(0);
-      vid.currentTime = 0;
+      vid.currentTime = firstStep?.startTime ?? 0;
       void vid.play().catch(() => {});
       setPresentationPlaying(true);
     }
-  }, [presentationStepIdx, presentationSteps]);
+  }, [presentationPlaying, presentationStepIdx, presentationSteps]);
 
   const jumpPresentationStep = useCallback((idx: number) => {
     const vid = presentationVideoRef.current;
@@ -476,6 +563,19 @@ export default function StudioApp() {
     setPresentationPlaying(false);
   }, [presentationSteps]);
 
+  const enterPresentation = useCallback(() => {
+    if (!video) {
+      notify('请先生成预览视频，再开启演播模式。');
+      return;
+    }
+    presentationReturnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    player.current?.pause();
+    seek(0);
+    setPresentationStepIdx(0);
+    setPresentationPlaying(false);
+    setPresenting(true);
+  }, [video, notify, seek]);
+
   const exitPresentation = useCallback(() => {
     const vid = presentationVideoRef.current;
     if (vid) {
@@ -484,23 +584,29 @@ export default function StudioApp() {
     }
     setPresenting(false);
     setPresentationPlaying(false);
+    const returnFocus = presentationReturnFocusRef.current;
+    presentationReturnFocusRef.current = null;
+    if (returnFocus?.isConnected) returnFocus.focus();
   }, []);
+
+  useEffect(() => {
+    if (!presenting) return;
+    presentationOverlayRef.current?.focus();
+  }, [presenting]);
 
   const onPresentationTimeUpdate = useCallback(() => {
     const vid = presentationVideoRef.current;
     if (!vid) return;
     const curTime = vid.currentTime;
-    const curStep = presentationSteps[presentationStepIdx];
+    const curStep = presentationSteps[safePresentationStepIdx];
     if (!curStep) return;
 
-    if (curTime >= curStep.pauseTime - 0.05 && curTime < curStep.pauseTime + 0.4) {
-      if (!vid.paused) {
-        vid.pause();
-        vid.currentTime = curStep.pauseTime;
-        setPresentationPlaying(false);
-      }
+    if (!vid.paused && curTime >= curStep.pauseTime - 0.05) {
+      vid.pause();
+      vid.currentTime = curStep.pauseTime;
+      setPresentationPlaying(false);
     }
-  }, [presentationStepIdx, presentationSteps]);
+  }, [safePresentationStepIdx, presentationSteps]);
 
   useEffect(() => {
     if (!presenting) return;
@@ -513,18 +619,48 @@ export default function StudioApp() {
         advancePresentation();
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        if (presentationStepIdx > 0) jumpPresentationStep(presentationStepIdx - 1);
+        if (safePresentationStepIdx > 0) jumpPresentationStep(safePresentationStepIdx - 1);
       }
     };
     window.addEventListener('keydown', handler, true);
     return () => window.removeEventListener('keydown', handler, true);
-  }, [presenting, advancePresentation, jumpPresentationStep, exitPresentation, presentationStepIdx]);
+  }, [presenting, advancePresentation, jumpPresentationStep, exitPresentation, safePresentationStepIdx]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!canUseWorkspaceShortcut(e)) return;
+      if (!canUseWorkspaceShortcut(e) || presenting) return;
       if (!e.metaKey && !e.ctrlKey && !e.altKey) {
-        if (e.key === '1') {
+        if ((e.code === 'Space' || e.key === ' ') && canUsePlaybackSpaceShortcut(e)) {
+          if (video) {
+            e.preventDefault();
+            if (!e.repeat) play();
+          }
+        } else if (e.key === ',') {
+          if (video) {
+            e.preventDefault();
+            stepFrames(-1);
+          }
+        } else if (e.key === '.') {
+          if (video) {
+            e.preventDefault();
+            stepFrames(1);
+          }
+        } else if (e.key.toLowerCase() === 'k' && !e.repeat) {
+          if (video) {
+            e.preventDefault();
+            play();
+          }
+        } else if (e.key.toLowerCase() === 'j' && !e.repeat) {
+          if (video) {
+            e.preventDefault();
+            stepFrames(-10);
+          }
+        } else if (e.key.toLowerCase() === 'l' && !e.repeat) {
+          if (video) {
+            e.preventDefault();
+            stepFrames(10);
+          }
+        } else if (e.key === '1') {
           e.preventDefault();
           switchView('blocks');
         } else if (e.key === '2') {
@@ -553,7 +689,7 @@ export default function StudioApp() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [switchView, handleZoomIn, handleZoomOut, handleResetZoom, toggleFullscreen]);
+  }, [presenting, video, play, stepFrames, switchView, handleZoomIn, handleZoomOut, handleResetZoom, toggleFullscreen]);
 
   const importAI = async () => {
     setAiError('');
@@ -570,8 +706,8 @@ export default function StudioApp() {
       const { buildPrompt } = await import('./ai/project-assistant');
       text = buildPrompt(project, aiPrompt || '改进这个动画，保留可编辑的原生积木。');
     } catch (error) { setAiError((error as Error).message); return; }
-    try { await navigator.clipboard.writeText(text); notify('已复制项目与积木说明，可交给你使用的 AI。'); }
-    catch { setAiError('无法访问剪贴板，请使用“导出提示词”。'); }
+    if (await copyTextToClipboard(text)) notify('已复制项目与积木说明，可交给你使用的 AI。');
+    else setAiError('无法访问剪贴板，请使用“导出提示词”。');
   };
   const downloadPrompt = async () => {
     setAiError('');
@@ -600,27 +736,27 @@ export default function StudioApp() {
       <span className="header-divider"/>
       <div className="project-title"><input aria-label="作品名称" value={project.name} maxLength={80} onBlur={() => { if (!project.name.trim()) setProject(p => ({ ...p, name: '未命名动画' })); }} onChange={e => setProject(p => ({ ...p, name: e.target.value }))}/><span className={saveError ? 'save-status error' : 'save-status'}>{saveError ? '需要备份' : saved ? <><Check size={12}/> 已自动保存</> : '保存中…'}</span></div>
       <div className="header-spacer"/>
-      <button className="header-button" title="全局命令面板 · ⌘/Ctrl K" aria-label="全局命令面板" onClick={() => setCmdPaletteOpen(true)}><Search size={15}/><span>命令 ⌘K</span></button>
+      <button className="header-button" title="全局命令面板 · ⌘/Ctrl K" aria-label="全局命令面板" onClick={() => openPlayground(setCmdPaletteOpen)}><Search size={15}/><span>命令 ⌘K</span></button>
       <ToolsHubDropdown
-        onOpenMatrix={() => setMatrixPlaygroundOpen(true)}
-        onOpenFourier={() => setFourierPlaygroundOpen(true)}
-        onOpenCalculus={() => setCalculusPlaygroundOpen(true)}
-        onOpenRiemann={() => setRiemannPlaygroundOpen(true)}
-        onOpenVectorField={() => setVectorFieldOpen(true)}
-        onOpenComplexMapping={() => setComplexMappingOpen(true)}
-        onOpenPolarParametric={() => setPolarParametricOpen(true)}
-        onOpenGeometry={() => setGeometryPlaygroundOpen(true)}
-        onOpenVector3D={() => setVector3DOpen(true)}
-        onOpenSurface={() => setSurfacePlaygroundOpen(true)}
-        onOpenGraph={() => setGraphPlaygroundOpen(true)}
-        onOpenProbability={() => setProbabilityPlaygroundOpen(true)}
-        onOpenAutoLayout={() => setAutoLayoutOpen(true)}
-        onOpenCameraDirector={() => setCameraDirectorOpen(true)}
-        onOpenSubtitleSync={() => setSubtitleSyncOpen(true)}
-        onOpenStoryboard={() => setStoryboardOpen(true)}
-        onOpenEasingCurve={() => setKeyframeCurveOpen(true)}
-        onOpenAudioVisualizer={() => setAudioVisualizerOpen(true)}
-        onOpenTexColorStyler={() => setTexColorStylerOpen(true)}
+        onOpenMatrix={() => openPlayground(setMatrixPlaygroundOpen)}
+        onOpenFourier={() => openPlayground(setFourierPlaygroundOpen)}
+        onOpenCalculus={() => openPlayground(setCalculusPlaygroundOpen)}
+        onOpenRiemann={() => openPlayground(setRiemannPlaygroundOpen)}
+        onOpenVectorField={() => openPlayground(setVectorFieldOpen)}
+        onOpenComplexMapping={() => openPlayground(setComplexMappingOpen)}
+        onOpenPolarParametric={() => openPlayground(setPolarParametricOpen)}
+        onOpenGeometry={() => openPlayground(setGeometryPlaygroundOpen)}
+        onOpenVector3D={() => openPlayground(setVector3DOpen)}
+        onOpenSurface={() => openPlayground(setSurfacePlaygroundOpen)}
+        onOpenGraph={() => openPlayground(setGraphPlaygroundOpen)}
+        onOpenProbability={() => openPlayground(setProbabilityPlaygroundOpen)}
+        onOpenAutoLayout={() => openPlayground(setAutoLayoutOpen)}
+        onOpenCameraDirector={() => openPlayground(setCameraDirectorOpen)}
+        onOpenSubtitleSync={() => openPlayground(setSubtitleSyncOpen)}
+        onOpenStoryboard={() => openPlayground(setStoryboardOpen)}
+        onOpenEasingCurve={() => openPlayground(setKeyframeCurveOpen)}
+        onOpenAudioVisualizer={() => openPlayground(setAudioVisualizerOpen)}
+        onOpenTexColorStyler={() => openPlayground(setTexColorStylerOpen)}
       />
       <button className="header-button" title="全局快捷键速查中心 (按 ? 或 Shift+/)" aria-label="全局快捷键速查中心" onClick={() => setShortcutsModalOpen(true)}><Keyboard size={15}/><span>快捷键 ?</span></button>
       <button className="header-button" title="我的作品" aria-label="我的作品" onClick={() => setModal('projects')}><FolderOpen size={16}/><span>我的作品</span></button>
@@ -644,13 +780,13 @@ export default function StudioApp() {
           <StudioBlocks animationOnly onUndo={undoProject} onRedo={redoProject} ref={editor} project={project} onChange={setProject} onSelect={id => { setSelected(id); setSelectedIds(id ? [id] : []); }} selectedBlockId={selected || undefined} highlightedBlockId={job?.blockId} onWorkspaceError={message => setRenderError(message || '')}/>
         </div>
         {editorTab === 'timeline' && <Timeline onMusicSettings={() => setModal('settings')} project={project} selectedId={selected} selectedIds={selectedIds} onSelectIds={setSelectedIds} time={time} playing={playing} canPlay={!!video} onPlay={play} onChange={setProject} onSelect={id => { setSelected(id); setSelectedIds(id ? [id] : []); }} onShowBlocks={chooseStep} onSeek={seek} onError={notify}/>}
-        {editorTab === 'code' && <div className="python-view"><div className="code-intro"><div><strong>生成的 Manim 源码 · 只读</strong><p>在对象管理器、积木或时间轴中修改，代码会同步更新。</p></div><div style={{ display: 'flex', gap: '8px' }}><button className="small-button" onClick={async () => { try { await navigator.clipboard.writeText(compiled.code); notify('已复制 Manim 源码到剪贴板！'); } catch { notify('复制失败，请手动选取代码。'); } }} title="复制完整 Manim Python 源码到剪贴板"><Copy size={14}/> 复制代码</button><button className="small-button" disabled={!!errors.length} onClick={() => void exportSource()}><Download size={14}/> {project.assets?.length ? '导出源码与素材' : '导出 .py'}</button></div></div><CodeMirror className="generated-code" value={compiled.code} editable={false} readOnly height="100%" basicSetup={{ lineNumbers: true, foldGutter: true }} theme="light"/>{compiled.requiresTrust && <label className="trust-code"><input type="checkbox" checked={trusted} onChange={e => setTrusted(e.target.checked)}/> 我已检查此作品的 Python 扩展及 API 调用，允许它在本机运行。</label>}</div>}
+        {editorTab === 'code' && <div className="python-view"><div className="code-intro"><div><strong>生成的 Manim 源码 · 只读</strong><p>在对象管理器、积木或时间轴中修改，代码会同步更新。</p></div><div style={{ display: 'flex', gap: '8px' }}><button className="small-button" onClick={async () => { if (await copyTextToClipboard(compiled.code)) notify('已复制 Manim 源码到剪贴板！'); else notify('复制失败，请手动选取代码。'); }} title="复制完整 Manim Python 源码到剪贴板"><Copy size={14}/> 复制代码</button><button className="small-button" disabled={!!errors.length} onClick={() => void exportSource()}><Download size={14}/> {project.assets?.length ? '导出源码与素材' : '导出 .py'}</button></div></div><CodeMirror className="generated-code" value={compiled.code} editable={false} readOnly height="100%" basicSetup={{ lineNumbers: true, foldGutter: true }} theme="light"/>{compiled.requiresTrust && <label className="trust-code"><input type="checkbox" checked={trusted} onChange={e => setTrusted(e.target.checked)}/> 我已检查此作品的 Python 扩展及 API 调用，允许它在本机运行。</label>}</div>}
         <div className="workspace-footer"><span>{flattened.length} 个积木<span className="footer-separator">·</span>{project.scene.dimension === '3d' ? '三维场景' : '二维场景'}</span><span>{compiled.duration === null ? '动态时长' : `约 ${compiled.duration.toFixed(1)} 秒`}<span className="footer-separator">·</span>Manim 原生动画</span></div>
       </section>
 
       } preview={
         <section className="preview-panel" aria-label="动画预览">
-          <div className="panel-heading"><div className="panel-title"><span className="live-dot"/>舞台预览</div><div className="preview-heading-tools"><span className="dimension-badge">{project.scene.dimension.toUpperCase()}</span><button className="icon-button" aria-label="截取当前画面帧" title="截取当前画面帧 PNG 快照" disabled={!video} onClick={captureVideoFrame}><Camera size={15}/></button><button className="icon-button" aria-label="演播模式" title="演播模式 · 幻灯片放映与交互讲解 (按空格或右方向键逐步推进)" disabled={!video} onClick={() => { setPresenting(true); setPresentationStepIdx(0); seek(0); }}><Presentation size={15}/></button><button className="icon-button" aria-label="全屏预览" onClick={() => void stage.current?.requestFullscreen()}><Maximize2 size={15}/></button></div></div>
+          <div className="panel-heading"><div className="panel-title"><span className="live-dot"/>舞台预览</div><div className="preview-heading-tools"><span className="dimension-badge">{project.scene.dimension.toUpperCase()}</span><button className="icon-button" aria-label="截取当前画面帧" title="截取当前画面帧 PNG 快照" disabled={!video} onClick={captureVideoFrame}><Camera size={15}/></button><button className="icon-button" aria-label="演播模式" title="演播模式 · 幻灯片放映与交互讲解 (按空格或右方向键逐步推进)" disabled={!video} onClick={enterPresentation}><Presentation size={15}/></button><button className="icon-button" aria-label={isFullscreen ? '退出全屏预览' : '全屏预览'} title={isFullscreen ? '退出全屏 (F)' : '全屏预览 (F)'} aria-pressed={isFullscreen} onClick={toggleFullscreen}>{isFullscreen ? <Minimize2 size={15}/> : <Maximize2 size={15}/>}</button></div></div>
           <div className="stage-hud-bar" role="toolbar" aria-label="取景与画面辅助">
             <details className="stage-assist-menu"><summary><Settings2 size={12}/> 画面辅助</summary><div className="stage-assist-popover">
             <div className="stage-hud-group">
@@ -710,9 +846,15 @@ export default function StudioApp() {
                 title="切换画幅与画面分辨率"
               >
                 <option value="1920x1080">16:9 宽屏 (1080p)</option>
+                <option value="1280x720">16:9 标准 (720p)</option>
                 <option value="1080x1920">9:16 竖屏 (短视频)</option>
                 <option value="1080x1080">1:1 方形 (社交媒体)</option>
                 <option value="1440x1080">4:3 经典 (幻灯片)</option>
+                {!['1920x1080', '1280x720', '1080x1920', '1080x1080', '1440x1080'].includes(`${project.scene.width}x${project.scene.height}`) && (
+                  <option value={`${project.scene.width}x${project.scene.height}`}>
+                    自定义 ({project.scene.width}×{project.scene.height})
+                  </option>
+                )}
               </select>
             </div>
             <div className="stage-hud-group">
@@ -786,11 +928,17 @@ export default function StudioApp() {
                 action={selectedManagedObject}
                 onChange={fields => {
                   if (!selectedManagedObject) return;
-                  const next = updateAction(project, selectedManagedObject.id, fields);
-                  setProject(next);
+                  const latest = flushEditorSnapshot();
+                  const target = allActions(latest.actions).find(a => a.id === selectedManagedObject.id);
+                  if (!target) return;
+                  try {
+                    setProject(checkedEdit(latest, updateAction(latest, target.id, fields)));
+                  } catch (error) {
+                    notify((error as Error).message);
+                  }
                 }}
               />
-              {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => { setVideoDuration(player.current?.duration || 0); setTime(0); }} onTimeUpdate={() => setTime(player.current?.currentTime || 0)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
+              {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => { if (player.current) player.current.playbackRate = playbackRate; const rawDuration = player.current?.duration; setVideoDuration(typeof rawDuration === 'number' && Number.isFinite(rawDuration) ? rawDuration : 0); setTime(0); }} onTimeUpdate={() => setTime(player.current?.currentTime || 0)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
               {running && job?.posterUrl && <img className="live-render-frame" src={job.posterUrl} alt="Manim 正在生成的实际画面"/>}
               {running && <div className="render-overlay"><Loader2 className="spin" size={14}/><span>{job?.message || '正在渲染…'}</span><button onClick={() => void cancel()} aria-label="停止渲染"><X size={14}/></button></div>}
               {video && !currentVideo && !running && <button className="stale-preview" onClick={() => void render('preview')}>积木已修改 · 点击更新画面</button>}
@@ -798,9 +946,9 @@ export default function StudioApp() {
             </div>
           </div>
           <div className="player-controls">
-            <button className="icon-button" disabled={!video} title="退后 1 帧 (,)" aria-label="退后一帧" onClick={() => seek(Math.max(0, time - 1 / project.scene.fps))}><StepBack size={14}/></button>
+            <button className="icon-button" disabled={!video} title="退后 1 帧 (,)" aria-label="退后一帧" onClick={() => stepFrames(-1)}><StepBack size={14}/></button>
             <button className="play-control" onClick={play} disabled={!video} title={playing ? '暂停播放 (空格)' : currentVideo ? '播放已生成的动画 (空格)' : '播放上一次生成的动画；修改后请更新预览'} aria-label={playing ? '暂停播放' : '播放动画'}>{playing ? <Pause size={16} fill="currentColor"/> : <Play size={16} fill="currentColor"/>}</button>
-            <button className="icon-button" disabled={!video} title="前进 1 帧 (.)" aria-label="前进一帧" onClick={() => seek(Math.min(videoDuration, time + 1 / project.scene.fps))}><StepForward size={14}/></button>
+            <button className="icon-button" disabled={!video} title="前进 1 帧 (.)" aria-label="前进一帧" onClick={() => stepFrames(1)}><StepForward size={14}/></button>
             <span className="player-time">{fmt(time)}</span>
             <input aria-label="播放进度" type="range" min={0} max={videoDuration || 1} step={0.01} value={time} disabled={!video} onChange={e => seek(Number(e.target.value))}/>
             <span className="player-time">{fmt(videoDuration)}</span>
@@ -823,7 +971,7 @@ export default function StudioApp() {
               <option value="1.5">1.5×</option>
               <option value="2">2.0×</option>
             </select>
-            <button className="icon-button" aria-label="从头播放" disabled={!video} onClick={() => { seek(0); void player.current?.play(); }}><RefreshCw size={14}/></button>
+            <button className="icon-button" aria-label="从头播放" disabled={!video} onClick={() => { seek(0); if (player.current) { player.current.playbackRate = playbackRate; void player.current.play().catch(() => notify('请点击播放重试。')); } }}><RefreshCw size={14}/></button>
           </div>
           <div className="preview-actions"><label className="auto-preview"><input type="checkbox" checked={autoPreview} onChange={e => setAutoPreview(e.target.checked)}/><span>自动预览</span></label><span className="render-quality">{project.scene.fps} fps</span><button className={`preview-button ${!currentVideo ? 'needs-update' : ''}`} disabled={running || !project.actions.length} onClick={() => void render('preview')}>{running ? <Loader2 size={14} className="spin"/> : <RefreshCw size={14}/>} {running ? '生成中' : '更新预览'}</button></div>
           {running && <div className="render-progress"><i style={{ width: `${Math.min(98, Math.max(3, (job?.progress || 0) * ((job?.progress || 0) <= 1 ? 100 : 1)))}%` }}/></div>}
@@ -845,7 +993,7 @@ export default function StudioApp() {
     <input ref={input} type="file" accept=".json,.anyvis,.zip" hidden onChange={e => void importFile(e.target.files?.[0])}/>
 
     {modal && <div className="modal-backdrop" onMouseDown={e => { if (e.button === 0 && e.target === e.currentTarget) setModal(null); }}><section className={`studio-modal modal-${modal}`} role="dialog" aria-modal="true" aria-labelledby="modal-title"><div className="modal-heading"><div><span className="modal-eyebrow">ANYVIS STUDIO</span><h2 id="modal-title">{({ templates: '从一个好想法开始', projects: '我的作品', settings: '画面设置', help: '让你的第一段动画动起来', ai: '和 AI 一起创作', export: '把作品带出去' })[modal]}</h2></div><button className="icon-button" aria-label="关闭对话框" onClick={() => setModal(null)}><X size={20}/></button></div>
-      {modal === 'templates' && <><p className="modal-description">每个示例都由可编辑的积木组成。改一个参数，就能看到新的结果。</p><div className="gallery-toolbar"><div className="gallery-search"><Search size={16}/><input aria-label="搜索示例" placeholder="搜索几何、函数、三维…" value={gallerySearch} onChange={e => setGallerySearch(e.target.value)}/></div><button className="small-button" onClick={() => replaceProject(withDefaultMusic(createEmptyProject()))}><FilePlus2 size={15}/> 空白作品</button></div><div className="template-grid">{templateCatalog.filter(t => `${t.title} ${t.description} ${t.category}`.includes(gallerySearch)).map(t => <button className="template-card" key={t.id} onClick={() => { const next = getTemplate(t.id); if (next) replaceProject(withDefaultMusic(next)); }}><div className="template-image"><img src={t.thumbnail} alt=""/><span>{t.category}</span></div><div className="template-info"><h3>{t.title}<ArrowRight size={16}/></h3><p>{t.description}</p><small>打开并编辑积木 <span>→</span></small></div></button>)}</div><p className="modal-footnote">封面是内容示意图，舞台预览使用真实 Manim 渲染。当前作品已自动保留在“我的作品”。</p></>}
+      {modal === 'templates' && <><p className="modal-description">每个示例都由可编辑的积木组成。改一个参数，就能看到新的结果。</p><div className="gallery-toolbar"><div className="gallery-search"><Search size={16}/><input aria-label="搜索示例" placeholder="搜索几何、函数、三维…" value={gallerySearch} onChange={e => setGallerySearch(e.target.value)}/></div><button className="small-button" onClick={() => replaceProject(withDefaultMusic(createEmptyProject()))}><FilePlus2 size={15}/> 空白作品</button></div><div className="template-grid">{templateCatalog.filter(t => `${t.title} ${t.description} ${t.category}`.toLowerCase().includes(gallerySearch.trim().toLowerCase())).map(t => <button className="template-card" key={t.id} onClick={() => { const next = getTemplate(t.id); if (next) replaceProject(withDefaultMusic(next)); }}><div className="template-image"><img src={t.thumbnail} alt=""/><span>{t.category}</span></div><div className="template-info"><h3>{t.title}<ArrowRight size={16}/></h3><p>{t.description}</p><small>打开并编辑积木 <span>→</span></small></div></button>)}</div><p className="modal-footnote">封面是内容示意图，舞台预览使用真实 Manim 渲染。当前作品已自动保留在“我的作品”。</p></>}
       {modal === 'projects' && <><p className="modal-description">作品自动保存在当前浏览器。导出项目文件，可以备份或换一台电脑继续创作。</p><div className="project-library-actions"><button className="small-button" onClick={() => input.current?.click()}><Upload size={15}/> 打开项目文件</button><button className="small-button primary" onClick={() => replaceProject(withDefaultMusic(createEmptyProject()))}><Plus size={15}/> 新建作品</button></div><div className="saved-project-list">{readProjects().map(({ project: item, savedAt }) => <button key={item.id} onClick={() => replaceProject(item)}><span className="project-file-icon"><Clapperboard size={21}/></span><span><strong>{item.name}</strong><small>{allActions(item.actions).length} 个积木 · {new Date(savedAt).toLocaleString('zh-CN')}</small></span><ArrowRight size={16}/></button>)}</div></>}
       {modal === 'settings' && <div className="settings-grid"><label>场景类型<select value={project.scene.dimension} onChange={e => setProject(p => ({ ...p, scene: { ...p.scene, dimension: e.target.value as '2d' | '3d' } }))}><option value="2d">二维 · 几何、函数与公式</option><option value="3d">三维 · 空间与相机</option></select></label><label>渲染器<select value={project.scene.renderer || 'cairo'} onChange={e => setProject(p => ({ ...p, scene: { ...p.scene, renderer: e.target.value as 'cairo' | 'opengl' } }))}><option value="cairo">Cairo · 稳定的默认渲染</option><option value="opengl">OpenGL · 扩展 API，需要显卡环境支持</option></select></label><label>画面比例<select value={`${project.scene.width}x${project.scene.height}`} onChange={e => { const [width, height] = e.target.value.split('x').map(Number); setProject(p => ({ ...p, scene: { ...p.scene, width, height } })); }}>{!['1920x1080','1080x1080','1080x1920','1280x720'].includes(`${project.scene.width}x${project.scene.height}`) && <option value={`${project.scene.width}x${project.scene.height}`}>自定义 · {project.scene.width} × {project.scene.height}</option>}<option value="1920x1080">16:9 · 1920 × 1080</option><option value="1080x1080">1:1 · 1080 × 1080</option><option value="1080x1920">9:16 · 1080 × 1920</option><option value="1280x720">16:9 · 1280 × 720</option></select></label><label>动画帧率<select value={project.scene.fps} onChange={e => setProject(p => ({ ...p, scene: { ...p.scene, fps: Number(e.target.value) } }))}>{![24, 30, 60].includes(project.scene.fps) && <option value={project.scene.fps}>{project.scene.fps} fps · 自定义</option>}<option value={24}>24 fps</option><option value={30}>30 fps</option><option value={60}>60 fps</option></select></label><MusicSettings project={project} onChange={setProject} onError={notify}/><div className="math-theme-presets" role="group" aria-label="推荐画面主题预设"><span className="math-theme-label">主题预设：</span>{MATH_THEMES.map(theme => <button key={theme.bg} type="button" className={`math-theme-pill ${project.scene.background.toLowerCase() === theme.bg.toLowerCase() ? 'active' : ''}`} onClick={() => setProject(p => ({ ...p, scene: { ...p.scene, background: theme.bg } }))}><span className="math-theme-swatch" style={{ background: theme.bg }}/>{theme.name}</button>)}</div><div className="settings-color-field"><label htmlFor="scene-background">背景颜色</label><div className="color-input"><input id="scene-background" aria-label="背景颜色" type="color" value={project.scene.background} onChange={e => setProject(p => ({ ...p, scene: { ...p.scene, background: e.target.value } }))}/><code>{project.scene.background}</code></div><div className="background-swatches" role="group" aria-label="常用背景颜色">{COMMON_COLOURS.slice(0, 6).map(colour => <button key={colour.value} aria-label={`背景：${colour.name}`} title={colour.name} style={{ backgroundColor: colour.value }} onClick={() => setProject(p => ({ ...p, scene: { ...p.scene, background: colour.value } }))}/>)}</div></div><p className="settings-note">预览会降低分辨率以更快得到结果；预览与成片使用相同的 Manim 动画和求值帧率。</p><button className="primary-button settings-done" onClick={() => setModal(null)}>完成</button></div>}
       {modal === 'help' && <><p className="modal-description">不用写 Python，也可以制作真正的数学动画。</p><div className="guide-steps"><div><span>01</span><h3>添加图形</h3><p>点击“添加对象”或上方快捷按钮，创建图形、文字或坐标系。在右侧修改外观，在积木中设置出场方式。</p></div><div><span>02</span><h3>安排变化</h3><p>接上移动、旋转、变形等动作，选择要改变的对象。用“同时”和“重复”把多个动作组合起来。</p></div><div><span>03</span><h3>观看与导出</h3><p>自动预览会在修改后重新渲染。播放确认效果，再导出视频；保存项目后仍可继续修改。</p></div></div><div className="guide-shortcuts"><span><kbd>⌘ / Ctrl</kbd> + <kbd>S</kbd> 保存项目</span><span><kbd>⌘ / Ctrl</kbd> + <kbd>Enter</kbd> 更新预览</span></div><button className="primary-button" onClick={() => setModal('templates')}>选一个示例开始 <ArrowRight size={15}/></button></>}
@@ -854,7 +1002,15 @@ export default function StudioApp() {
     </section></div>}
 
     {presenting && (
-      <div className="presentation-overlay" style={{ background: project.scene.background }}>
+      <div
+        ref={presentationOverlayRef}
+        className="presentation-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-label="交互式演播模式"
+        tabIndex={-1}
+        style={{ background: project.scene.background }}
+      >
         <div className="presentation-stage">
           <video
             ref={presentationVideoRef}
@@ -863,22 +1019,25 @@ export default function StudioApp() {
             playsInline
             preload="auto"
             onClick={advancePresentation}
+            onPlay={() => setPresentationPlaying(true)}
+            onPause={() => setPresentationPlaying(false)}
+            onEnded={() => setPresentationPlaying(false)}
             onTimeUpdate={onPresentationTimeUpdate}
           />
         </div>
         <div className="presentation-hud">
           <div className="presentation-hud-left">
             <button className="presentation-btn" onClick={() => jumpPresentationStep(0)} title="从头开始" aria-label="从头开始"><RotateCcw size={15} /></button>
-            <button className="presentation-btn" disabled={presentationStepIdx === 0} onClick={() => jumpPresentationStep(presentationStepIdx - 1)} title="上一步 (←)" aria-label="上一步"><ChevronLeft size={16} /> 上一步</button>
+            <button className="presentation-btn" disabled={safePresentationStepIdx === 0} onClick={() => jumpPresentationStep(safePresentationStepIdx - 1)} title="上一步 (←)" aria-label="上一步"><ChevronLeft size={16} /> 上一步</button>
           </div>
           <div className="presentation-hud-center">
-            <span className="presentation-step-badge">{presentationStepIdx + 1} / {presentationSteps.length}</span>
-            <span className="presentation-step-title">{presentationSteps[presentationStepIdx]?.label}</span>
+            <span className="presentation-step-badge">{safePresentationStepIdx + 1} / {presentationSteps.length}</span>
+            <span className="presentation-step-title">{presentationSteps[safePresentationStepIdx]?.label}</span>
             <div className="presentation-dots">
               {presentationSteps.map((step, idx) => (
                 <button
                   key={idx}
-                  className={`presentation-dot ${idx === presentationStepIdx ? 'active' : idx < presentationStepIdx ? 'passed' : ''}`}
+                  className={`presentation-dot ${idx === safePresentationStepIdx ? 'active' : idx < safePresentationStepIdx ? 'passed' : ''}`}
                   onClick={() => jumpPresentationStep(idx)}
                   title={`步骤 ${idx + 1}: ${step.label}`}
                   aria-label={`步骤 ${idx + 1}`}
@@ -887,9 +1046,9 @@ export default function StudioApp() {
             </div>
           </div>
           <div className="presentation-hud-right">
-            <button className="presentation-btn primary" onClick={advancePresentation} title={presentationStepIdx < presentationSteps.length - 1 ? '下一步 (空格 / →)' : '从头播放'} aria-label="下一步">
+            <button className="presentation-btn primary" onClick={advancePresentation} title={safePresentationStepIdx < presentationSteps.length - 1 ? '播放 / 下一步 (空格 / →)' : '从头播放'} aria-label="下一步">
               {presentationPlaying ? <Pause size={15} /> : <Play size={15} />}
-              <span>{presentationStepIdx < presentationSteps.length - 1 ? '下一步' : '从头播放'}</span>
+              <span>{safePresentationStepIdx < presentationSteps.length - 1 ? '下一步' : '从头播放'}</span>
               <ChevronRight size={16} />
             </button>
             <button className="presentation-btn close" onClick={exitPresentation} title="退出演播 (Esc)" aria-label="退出演播"><X size={16} /></button>
@@ -906,7 +1065,7 @@ export default function StudioApp() {
           setSelected(id);
           setSelectedIds([id]);
           if (editorTab === 'blocks') {
-            setTimeout(() => editor.current?.highlight(id), 40);
+            scheduleHighlight(id);
           }
         }}
         onAddBlock={type => addObject(type)}
@@ -923,15 +1082,7 @@ export default function StudioApp() {
             title: '开启交互式演播模式',
             subtitle: '按步骤自动驻留，空格/方向键控制讲解幻灯片',
             keywords: 'presentation slide 演播 幻灯片 放映',
-            run: () => {
-              if (!video) {
-                notify('请先生成预览视频，再开启演播模式。');
-                return;
-              }
-              setPresenting(true);
-              setPresentationStepIdx(0);
-              seek(0);
-            },
+            run: enterPresentation,
           },
           {
             id: 'snapshot-frame',
@@ -1106,6 +1257,14 @@ export default function StudioApp() {
             run: () => setPolarParametricOpen(true),
           },
           {
+            id: 'open-vector3d-playground',
+            title: '三维向量投影与叉积几何演播室 (3D Vector & Cross Product)',
+            subtitle: '在三维坐标系中可视化空间向量合成、叉积法向量与正交投影分解',
+            colour: '#06b6d4',
+            keywords: 'vector 3d cross product projection dot 三维 向量 叉积 点积 投影 坐标系 3b1b',
+            run: () => setVector3DOpen(true),
+          },
+          {
             id: 'shortcuts-help',
             title: '全局快捷键速查中心 (Keyboard Shortcuts)',
             subtitle: '查看播放控制、视图切换、标记与编辑快捷键列表',
@@ -1139,11 +1298,12 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const result = createMatrixActions(current, matStr);
-          const targetName = result.targetName;
-          setProject(result.project);
-          setSelected(result.action.id);
-          setSelectedIds([result.action.id]);
-          notify(`已插入线性变换动画：ApplyMatrix(${matStr}, ${targetName})`);
+          applyPlaygroundEdit(
+            current,
+            result.project,
+            `已插入线性变换动画：ApplyMatrix(${matStr}, ${result.targetName})`,
+            [result.action.id],
+          );
         } catch (e) {
           notify((e as Error).message);
         }
@@ -1157,12 +1317,7 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const { project: nextProject, actionIds } = createFourierActions(current, coeffs, shapeName);
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入“${shapeName}”参数曲线`);
+          applyPlaygroundEdit(current, nextProject, `已向动画编排插入“${shapeName}”参数曲线`, actionIds);
         } catch (e) {
           notify((e as Error).message);
         }
@@ -1176,12 +1331,7 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const { project: nextProject, actionIds } = createCalculusActions(current, preset, preset.name.split(' ')[0], x0);
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入“${preset.name}”及导函数曲线 (x₀=${x0.toFixed(2)})`);
+          applyPlaygroundEdit(current, nextProject, `已向动画编排插入“${preset.name}”及导函数曲线 (x₀=${x0.toFixed(2)})`, actionIds);
         } catch (e) {
           notify((e as Error).message);
         }
@@ -1195,12 +1345,7 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const { project: nextProject, actionIds } = createRiemannActions(current, preset, a, b, n, mode);
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入“${preset.name}”黎曼和与定积分`);
+          applyPlaygroundEdit(current, nextProject, `已向动画编排插入“${preset.name}”黎曼和与定积分`, actionIds);
         } catch (e) {
           notify((e as Error).message);
         }
@@ -1222,7 +1367,7 @@ export default function StudioApp() {
             ...(a.branches ? { branches: a.branches.map(mapActions) } : {}),
           });
           setProject(checkedEdit(current, { ...current, workspace: undefined, actions: mapActions(current.actions) }));
-          notify('已应用匀速曲线');
+          notify(`已应用缓动曲线 (${rateFuncName})`);
         } catch (e) {
           notify((e as Error).message);
         }
@@ -1236,12 +1381,7 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const { project: nextProject, actionIds } = createAudioVisualizerActions(current, preset);
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入“${preset.name}”音频频谱组件`);
+          applyPlaygroundEdit(current, nextProject, `已向动画编排插入“${preset.name}”音频频谱组件`, actionIds);
         } catch (e) {
           notify((e as Error).message);
         }
@@ -1255,12 +1395,7 @@ export default function StudioApp() {
         try {
           const current = editor.current?.snapshot() || projectRef.current;
           const { project: nextProject, actionIds } = createColoredMathTexActions(current, rawTex, colorMap, name);
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入“${name}”专属配色公式`);
+          applyPlaygroundEdit(current, nextProject, `已向动画编排插入“${name}”专属配色公式`, actionIds);
         } catch (e) {
           notify((e as Error).message);
         }
@@ -1271,212 +1406,84 @@ export default function StudioApp() {
       isOpen={vectorFieldOpen}
       onClose={() => setVectorFieldOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入 2D 向量场组件`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已向动画编排插入 2D 向量场组件', actionIds)}
     />
 
     <ComplexMappingModal
       isOpen={complexMappingOpen}
       onClose={() => setComplexMappingOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入复变共形映射组件`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已向动画编排插入复变共形映射组件', actionIds)}
     />
 
     <StoryboardModal
       isOpen={storyboardOpen}
       onClose={() => setStoryboardOpen(false)}
       project={project}
-      onApply={(nextProject) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          notify(`已同步分镜章节到时间轴智能标记`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={nextProject => applyPlaygroundEdit(projectRef.current, nextProject, '已同步分镜章节到时间轴智能标记')}
     />
 
     <SurfacePlaygroundModal
       isOpen={surfacePlaygroundOpen}
       onClose={() => setSurfacePlaygroundOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已切换至 3D 模式并插入参数曲面组件`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已切换至 3D 模式并插入参数曲面组件', actionIds)}
     />
 
     <CameraDirectorModal
       isOpen={cameraDirectorOpen}
       onClose={() => setCameraDirectorOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入运镜序列动作`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已向动画编排插入运镜序列动作', actionIds)}
     />
 
     <SubtitleSyncModal
       isOpen={subtitleSyncOpen}
       onClose={() => setSubtitleSyncOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入解说字幕序列`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已向动画编排插入解说字幕序列', actionIds)}
     />
 
     <GraphPlaygroundModal
       isOpen={graphPlaygroundOpen}
       onClose={() => setGraphPlaygroundOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入图论网络组件`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已向动画编排插入图论网络组件', actionIds)}
     />
 
     <ProbabilityPlaygroundModal
       isOpen={probabilityPlaygroundOpen}
       onClose={() => setProbabilityPlaygroundOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入概率分布组件`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已向动画编排插入概率分布组件', actionIds)}
     />
 
     <GeometryPlaygroundModal
       isOpen={geometryPlaygroundOpen}
       onClose={() => setGeometryPlaygroundOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入欧氏几何组件`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已向动画编排插入欧氏几何组件', actionIds)}
     />
 
     <AutoLayoutModal
       isOpen={autoLayoutOpen}
       onClose={() => setAutoLayoutOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已更新 ${actionIds.length} 个物体的排版布局坐标`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, `已更新 ${actionIds.length} 个物体的排版布局坐标`, actionIds)}
     />
 
     <PolarParametricModal
       isOpen={polarParametricOpen}
       onClose={() => setPolarParametricOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入极坐标参数曲线组件`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已向动画编排插入极坐标参数曲线组件', actionIds)}
     />
 
     <Vector3DPlaygroundModal
       isOpen={vector3DOpen}
       onClose={() => setVector3DOpen(false)}
       project={project}
-      onApply={(nextProject, actionIds) => {
-        try {
-          setProject(checkedEdit(projectRef.current, validateProject({ ...nextProject, workspace: undefined })));
-          if (actionIds[0]) {
-            setSelected(actionIds[0]);
-            setSelectedIds(actionIds);
-          }
-          notify(`已向动画编排插入 3D 向量运算与动画组件`);
-        } catch (e) {
-          notify((e as Error).message);
-        }
-      }}
+      onApply={(nextProject, actionIds) => applyPlaygroundEdit(projectRef.current, nextProject, '已向动画编排插入 3D 向量运算与动画组件', actionIds)}
     />
 
     <ShortcutsHelpModal

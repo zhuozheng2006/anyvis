@@ -8,6 +8,19 @@ export interface AudioClip {
   offset: number; sourceDuration: number; stop: number | null; editable: boolean;
 }
 export const frameTime = (time: number, fps: number) => Math.round(time * fps) / fps;
+
+/** Resolves snapped start/end for move vs left/right edge trim without shifting fixed edges. */
+export function committedClipRange(
+  start: number,
+  end: number,
+  mode: 'move' | 'left' | 'right',
+  snap: (time: number) => number = time => time,
+): { start: number; end: number } {
+  if (mode === 'left') return { start: snap(start), end };
+  if (mode === 'right') return { start, end: snap(end) };
+  const snappedStart = snap(start);
+  return { start: snappedStart, end: snappedStart + (end - start) };
+}
 export function audioClips(project: Project): AudioClip[] {
   const clips: AudioClip[] = [], active = new Map<string, AudioClip>();
   const counts = new Map<string, number>();

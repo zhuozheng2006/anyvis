@@ -23,34 +23,16 @@ export const RATE_FUNCS: RateFuncOption[] = [
     fn: t => Math.max(0, Math.min(1, t)),
   },
   {
-    id: 'rush_into',
-    label: '慢入 (rush_into)',
-    description: '起步缓慢，逐渐加速至终点',
-    fn: t => Math.max(0, Math.min(1, t * t)),
+    id: 'ease_in_sine',
+    label: '慢入 (ease_in_sine)',
+    description: '正弦慢入：起步缓慢，逐渐加速',
+    fn: t => 1 - Math.cos((Math.max(0, Math.min(1, t)) * Math.PI) / 2),
   },
   {
-    id: 'rush_from',
-    label: '慢出 (rush_from)',
-    description: '起步快速，接近终点时柔和减速',
-    fn: t => {
-      const p = 1 - t;
-      return Math.max(0, Math.min(1, 1 - p * p));
-    },
-  },
-  {
-    id: 'slow_into',
-    label: '缓入缓出 (slow_into)',
-    description: '起步与结束温和过渡',
-    fn: t => {
-      const p = 1 - t;
-      return Math.max(0, Math.min(1, 1 - p * p * p));
-    },
-  },
-  {
-    id: 'double_smooth',
-    label: '陡峭平滑 (double_smooth)',
-    description: '更激进的 S 曲线，中间速度更快',
-    fn: t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+    id: 'ease_out_sine',
+    label: '慢出 (ease_out_sine)',
+    description: '正弦慢出：起步明快，接近终点柔和减速',
+    fn: t => Math.sin((Math.max(0, Math.min(1, t)) * Math.PI) / 2),
   },
   {
     id: 'there_and_back',
@@ -61,29 +43,14 @@ export const RATE_FUNCS: RateFuncOption[] = [
       return 3 * p * p - 2 * p * p * p;
     },
   },
-  {
-    id: 'wiggle',
-    label: '震荡 (wiggle)',
-    description: '终点前后微幅弹性摆动',
-    fn: t => (t >= 1 ? 1 : t + Math.sin(t * Math.PI * 4) * Math.exp(-4 * t) * 0.25),
-  },
-  {
-    id: 'lingering',
-    label: '驻留 (lingering)',
-    description: '快速完成位移并在尾部保持静止',
-    fn: t => (t < 0.75 ? (4 / 3) * t : 1),
-  },
-  {
-    id: 'exponential_decay',
-    label: '指数衰减 (exponential_decay)',
-    description: '瞬间起步并以指数曲线渐近停稳',
-    fn: t => 1 - Math.exp(-5 * Math.max(0, Math.min(1, t))),
-  },
 ];
+
+const RATE_FUNC_BY_ID = new Map(RATE_FUNCS.map(option => [option.id, option]));
 
 interface Props {
   value: string;
   onChange(value: string): void;
+  options?: [string, string][];
   disabled?: boolean;
 }
 
@@ -102,20 +69,31 @@ export function generateSvgPath(fn: (t: number) => number, width = 64, height = 
   return points.join(' ');
 }
 
-export const RateFuncPicker: React.FC<Props> = ({ value, onChange, disabled }) => {
+export const RateFuncPicker: React.FC<Props> = ({ value, onChange, options, disabled }) => {
   const [open, setOpen] = useState(false);
-  const [hoveredProgress, setHoveredProgress] = useState(0);
+  const [hoveredProgress, setHoveredProgress] = useState(0.5);
   const containerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<number | null>(null);
 
+  const availableOptions = useMemo<RateFuncOption[]>(() => {
+    if (!options?.length) return RATE_FUNCS;
+    return options.map(([label, id]) => RATE_FUNC_BY_ID.get(id) ?? {
+      id,
+      label: `${label} (${id})`,
+      description: label,
+      fn: t => Math.max(0, Math.min(1, t)),
+    });
+  }, [options]);
+
   const normalized = value || 'smooth';
   const current = useMemo(
-    () => RATE_FUNCS.find(f => f.id === normalized || (f.id === 'rush_into' && normalized === 'ease_in_sine') || (f.id === 'rush_from' && normalized === 'ease_out_sine')) || RATE_FUNCS[0],
-    [normalized]
+    () => availableOptions.find(f => f.id === normalized) || availableOptions[0],
+    [availableOptions, normalized]
   );
 
   useEffect(() => {
-    let start = performance.now();
+    if (!open) return;
+    const start = performance.now();
     const loop = (now: number) => {
       const elapsed = (now - start) % 1800;
       setHoveredProgress(elapsed / 1800);
@@ -123,9 +101,12 @@ export const RateFuncPicker: React.FC<Props> = ({ value, onChange, disabled }) =
     };
     animRef.current = requestAnimationFrame(loop);
     return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
+      if (animRef.current !== null) {
+        cancelAnimationFrame(animRef.current);
+        animRef.current = null;
+      }
     };
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -134,13 +115,25 @@ export const RateFuncPicker: React.FC<Props> = ({ value, onChange, disabled }) =
         setOpen(false);
       }
     };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        setOpen(false);
+      }
+    };
     window.addEventListener('mousedown', handleClickOutside);
-    return () => window.removeEventListener('mousedown', handleClickOutside);
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => {
+      window.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('keydown', handleKeyDown, true);
+    };
   }, [open]);
 
+  const previewProgress = open ? hoveredProgress : 0.5;
   const currentPath = useMemo(() => generateSvgPath(current.fn, 56, 32, 4), [current]);
-  const progressVal = current.fn(hoveredProgress);
-  const dotX = 4 + hoveredProgress * 48;
+  const progressVal = current.fn(previewProgress);
+  const dotX = 4 + previewProgress * 48;
   const dotY = 4 + (1 - Math.max(0, Math.min(1.2, progressVal))) * 24;
 
   return (
@@ -150,6 +143,7 @@ export const RateFuncPicker: React.FC<Props> = ({ value, onChange, disabled }) =
         className="rfp-trigger"
         onClick={() => !disabled && setOpen(!open)}
         disabled={disabled}
+        aria-expanded={open}
         aria-label={`节奏曲线：${current.label}`}
         title={`${current.label} · ${current.description}`}
       >
@@ -170,11 +164,11 @@ export const RateFuncPicker: React.FC<Props> = ({ value, onChange, disabled }) =
             <span>Manim 缓动曲线与动画节奏</span>
           </div>
           <div className="rfp-grid">
-            {RATE_FUNCS.map(item => {
+            {availableOptions.map(item => {
               const isSelected = item.id === current.id;
               const path = generateSvgPath(item.fn, 68, 38, 4);
-              const pVal = item.fn(hoveredProgress);
-              const pX = 4 + hoveredProgress * 60;
+              const pVal = item.fn(previewProgress);
+              const pX = 4 + previewProgress * 60;
               const pY = 4 + (1 - Math.max(0, Math.min(1.2, pVal))) * 30;
 
               return (

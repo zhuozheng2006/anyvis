@@ -15,12 +15,14 @@ export default function Timeline({ project, time, onSeek, onChange }: Props) {
     const patch = (p: Partial<AnimationClip>) => onChange({ ...project, clips: project.clips.map(c => c.id === selected ? { ...c, ...p } : c) });
     const seek = (e: React.PointerEvent<HTMLDivElement>) => {
         const r = e.currentTarget.getBoundingClientRect();
+        if (!r.width || !Number.isFinite(project.duration)) return;
         onSeek(Math.max(0, Math.min(project.duration, (e.clientX - r.left) / r.width * project.duration)));
     };
     const move = (e: React.PointerEvent<HTMLElement>, c: AnimationClip, resize = false) => {
         e.stopPropagation();
         setSelected(c.id);
-        const width = laneRef.current?.getBoundingClientRect().width ?? 500;
+        const rectWidth = laneRef.current?.getBoundingClientRect().width;
+        const width = rectWidth && rectWidth > 0 ? rectWidth : 500;
         const origin = e.clientX;
         const base = c.start;
         const duration = c.duration;
@@ -58,7 +60,9 @@ export default function Timeline({ project, time, onSeek, onChange }: Props) {
     }}><Flag size={13}/></button>)}<div className="playhead" style={{ left: `${time / project.duration * 100}%` }}/></div></div>
    {project.parameters.map(p => <div className="time-row" key={p.id}><div className="track-name"><i style={{ background: p.color }}/>{p.name}<button title={`添加 ${p.name} 动画`} onClick={() => {
         const id = crypto.randomUUID();
-        onChange({ ...project, clips: [...project.clips, { id, parameterId: p.id, start: Math.min(time, project.duration - .1), duration: Math.min(2, project.duration - time) || .1, from: p.value, to: Math.min(p.max, p.value + 1), easing: 'smooth' }] });
+        const start = Math.max(0, Math.min(time, project.duration - .1));
+        const duration = Math.max(.1, Math.min(2, project.duration - start));
+        onChange({ ...project, clips: [...project.clips, { id, parameterId: p.id, start, duration, from: p.value, to: Math.min(p.max, p.value + 1), easing: 'smooth' }] });
         setSelected(id);
     }}><Plus size={13}/></button></div><div className="track-lane" onPointerDown={seek}>{project.clips.filter(c => c.parameterId === p.id).map(c => <button key={c.id} className={`timeline-clip ${selected === c.id ? 'selected' : ''}`} style={{ left: `${c.start / project.duration * 100}%`, width: `${c.duration / project.duration * 100}%`, '--clip-color': p.color } as React.CSSProperties} onPointerDown={e => move(e, c)} title={`${p.name}: ${c.from} → ${c.to}`}><span>{c.from} → {c.to}</span><span className="clip-grip" onPointerDown={e => move(e, c, true)}>⠿</span></button>)}<div className="playhead" style={{ left: `${time / project.duration * 100}%` }}/></div></div>)}
   </div>
@@ -75,7 +79,7 @@ export default function Timeline({ project, time, onSeek, onChange }: Props) {
     }}/></label>)}<select aria-label="缓动方式" value={clip.easing} onChange={e => patch({ easing: e.target.value as AnimationClip['easing'] })}><option value="linear">线性</option><option value="smooth">平滑</option></select><button className="icon-button" title="删除片段" onClick={() => {
         onChange({ ...project, clips: project.clips.filter(c => c.id !== selected) });
         setSelected(null);
-    }}><Trash2 size={14}/></button></> : cue ? <><span className="detail-title">交互节点</span><input aria-label="节点标题" maxLength={120} value={cue.title} onChange={e => onChange({ ...project, cues: project.cues.map(c => c.id === cue.id ? { ...c, title: e.target.value } : c) })}/><label>时间<input aria-label="节点时间" type="number" step="0.1" min="0" max={project.duration} value={cue.time} onChange={e => onChange({ ...project, cues: project.cues.map(c => c.id === cue.id ? { ...c, time: Math.min(project.duration, Math.max(0, Number(e.target.value))) } : c) })}/></label><button className="icon-button" title="删除节点" onClick={() => {
+    }}><Trash2 size={14}/></button></> : cue ? <><span className="detail-title">交互节点</span><input aria-label="节点标题" maxLength={120} value={cue.title} onChange={e => onChange({ ...project, cues: project.cues.map(c => c.id === cue.id ? { ...c, title: e.target.value } : c) })}/><label>时间<input aria-label="节点时间" type="number" step="0.1" min="0" max={project.duration} value={cue.time} onChange={e => { if (e.target.value.trim() === '') return; const nextTime = Number(e.target.value); if (!Number.isFinite(nextTime)) return; onChange({ ...project, cues: project.cues.map(c => c.id === cue.id ? { ...c, time: Math.min(project.duration, Math.max(0, nextTime)) } : c) }); }}/></label><button className="icon-button" title="删除节点" onClick={() => {
         onChange({ ...project, cues: project.cues.filter(c => c.id !== selected) });
         setSelected(null);
     }}><Trash2 size={14}/></button></> : <span className="muted">点击片段编辑属性，点击标尺跳转。紫色旗标会让播放暂停，留出自由探索的时间。</span>}</div>

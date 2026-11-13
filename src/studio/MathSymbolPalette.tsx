@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import './math-symbol-palette.css';
 
 export interface MathSymbolPaletteProps {
@@ -97,6 +97,17 @@ export const MathSymbolPalette: React.FC<MathSymbolPaletteProps> = ({
   value,
   onChange,
 }) => {
+  const focusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (focusTimerRef.current) {
+        clearTimeout(focusTimerRef.current);
+        focusTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const insertSymbol = useCallback(
     (item: SymbolItem) => {
       const input = inputRef.current;
@@ -135,7 +146,12 @@ export const MathSymbolPalette: React.FC<MathSymbolPaletteProps> = ({
 
       onChange(nextVal);
 
-      setTimeout(() => {
+      if (focusTimerRef.current) {
+        clearTimeout(focusTimerRef.current);
+      }
+      focusTimerRef.current = setTimeout(() => {
+        focusTimerRef.current = null;
+        if (!input.isConnected) return;
         input.focus();
         input.setSelectionRange(newCursor, newCursor);
       }, 10);

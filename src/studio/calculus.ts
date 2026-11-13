@@ -84,7 +84,7 @@ export const CALCULUS_PRESETS: CalculusPreset[] = [
  * Computes numerical secant slope between x0 and x0 + dx.
  */
 export function computeSecantSlope(fn: (x: number) => number, x0: number, dx: number): number {
-  if (Math.abs(dx) < 1e-9) {
+  if (!Number.isFinite(dx) || Math.abs(dx) < 1e-9) {
     // If dx is tiny, fallback to central difference derivative
     return computeDerivative(fn, x0);
   }
@@ -95,7 +95,8 @@ export function computeSecantSlope(fn: (x: number) => number, x0: number, dx: nu
  * Computes numerical derivative f'(x0) using high-precision central difference.
  */
 export function computeDerivative(fn: (x: number) => number, x0: number, h = 1e-5): number {
-  return (fn(x0 + h) - fn(x0 - h)) / (2 * h);
+  const safeH = Number.isFinite(h) && Math.abs(h) >= 1e-9 ? h : 1e-5;
+  return (fn(x0 + safeH) - fn(x0 - safeH)) / (2 * safeH);
 }
 
 /**
@@ -106,14 +107,16 @@ export function generateCalculusPythonCode(preset: CalculusPreset, x0: number, i
 }
 
 export function createCalculusActions(project: Project, preset: CalculusPreset, name = '微积分曲线', x0 = preset.defaultX, initialDx = 1): { project: Project; actionIds: string[] } {
+  const safeX0 = Number.isFinite(x0) ? x0 : preset.defaultX;
+  const safeDx = Number.isFinite(initialDx) && Math.abs(initialDx) >= 1e-4 ? initialDx : 1;
   const axes = playgroundName('坐标系'), tracker = playgroundName('dx'), curve = playgroundName(name);
-  const at = String(x0), next = `(${at}+${tracker})`;
+  const at = String(safeX0), next = `(${at}+${tracker})`;
   const f = (x: string) => preset.fnExpr.replace(/\bx\b/g, `(${x})`);
   const slope = `((${f(next)})-(${f(at)}))/${tracker}`;
   const actions = [
     createAction('axes', {name: axes, xMin: preset.domain[0], xMax: preset.domain[1], yMin: -3, yMax: 5}),
     createAction('function_plot', {name: curve, axes, expression: preset.fnExpr, xMin: preset.domain[0], xMax: preset.domain[1]}),
-    createAction('tracker', {name: tracker, value: initialDx}),
+    createAction('tracker', {name: tracker, value: safeDx}),
     createAction('dynamic_dot', {name: playgroundName('切点'), axes, xExpr: at, yExpr: f(at)}),
     createAction('dynamic_dot', {name: playgroundName('割点'), axes, xExpr: next, yExpr: f(next)}),
     createAction('dynamic_line', {name: playgroundName('割线'), axes, x1Expr: `${at}-1`, y1Expr: `(${f(at)})-(${slope})`, x2Expr: `${at}+1`, y2Expr: `(${f(at)})+(${slope})`}),

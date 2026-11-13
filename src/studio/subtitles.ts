@@ -55,7 +55,7 @@ export const DEFAULT_SUBTITLE_PRESET: SubtitleItem[] = [
 
 /** Formats seconds to SRT timestamp 00:00:00,000 */
 export function formatSrtTime(seconds: number): string {
-  const safe = Math.max(0, seconds);
+  const safe = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
   const totalMs = Math.round(safe * 1000);
   const hrs = Math.floor(totalMs / 3600000);
   const mins = Math.floor((totalMs % 3600000) / 60000);
@@ -65,17 +65,20 @@ export function formatSrtTime(seconds: number): string {
   return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')},${ms.toString().padStart(3, '0')}`;
 }
 
-/** Parses SRT timestamp 00:00:00,000 to seconds */
+/** Parses SRT/VTT timestamp (HH:MM:SS,mmm or MM:SS.mmm) to seconds */
 export function parseSrtTime(stamp: string): number {
-  const clean = stamp.trim().replace('.', ',');
+  const token = stamp.trim().split(/\s+/)[0] || '';
+  const clean = token.replace('.', ',');
   const parts = clean.split(':');
-  if (parts.length < 3) return 0;
-  const hrs = parseFloat(parts[0]) || 0;
-  const mins = parseFloat(parts[1]) || 0;
-  const secParts = parts[2].split(',');
-  const secs = parseFloat(secParts[0]) || 0;
-  const ms = parseFloat(secParts[1]) || 0;
-  return (hrs * 3600000 + mins * 60000 + secs * 1000 + ms) / 1000;
+  if (parts.length < 2 || parts.length > 3) return 0;
+  const hrs = parts.length === 3 ? Math.max(0, Number(parts[0]) || 0) : 0;
+  const mins = Math.max(0, Number(parts[parts.length - 2]) || 0);
+  const secParts = parts[parts.length - 1].split(',');
+  const secs = Math.max(0, Number(secParts[0]) || 0);
+  const digits = (secParts[1] || '').match(/^\d+/)?.[0] ?? '';
+  const ms = digits ? parseInt(digits.slice(0, 3).padEnd(3, '0'), 10) || 0 : 0;
+  const total = (hrs * 3600000 + mins * 60000 + secs * 1000 + ms) / 1000;
+  return Number.isFinite(total) ? total : 0;
 }
 
 /** Exports subtitles to standard SRT file format */
@@ -142,7 +145,7 @@ export function createSubtitleActions(project: Project, subtitles: SubtitleItem[
   let time = 0;
   for (const event of events.sort((a, b) => a.time - b.time || a.order - b.order)) {
     let gap = event.time - time;
-    while (gap > 0) { const duration = Math.min(120, gap); actions.push(createAction('wait', { duration })); gap -= duration; }
+    while (gap > 1e-6) { const duration = Math.min(120, gap); actions.push(createAction('wait', { duration })); gap -= duration; }
     actions.push(event.action); time = event.time;
   }
   return appendPlaygroundActions(project, actions);

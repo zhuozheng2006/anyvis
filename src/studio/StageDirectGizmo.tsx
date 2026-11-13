@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import type { Action, FieldValue } from './core/types';
 import { manimToStagePercent, stagePercentToManim, GIZMO_PALETTE } from './stage-direct-gizmo';
 import { STAGE_POSITION_PRESETS } from './PositionPad';
+import { capturePointerSafe, releasePointerSafe } from './modal-hooks';
 import './stage-direct-gizmo.css';
 
 export interface StageDirectGizmoProps {
@@ -34,6 +35,12 @@ export const StageDirectGizmo: React.FC<StageDirectGizmoProps> = ({ action, onCh
     return () => observer.disconnect();
   }, [action?.id, frameAspect]);
 
+  useEffect(() => {
+    gesture.current = null;
+    setIsDragging(false);
+    setDraft(null);
+  }, [action?.id]);
+
   if (!action) return null;
 
   const rawX = action.fields.x;
@@ -58,7 +65,7 @@ export const StageDirectGizmo: React.FC<StageDirectGizmoProps> = ({ action, onCh
     e.preventDefault();
     gesture.current = { pointerId: e.pointerId, actionId: action.id, clientX: e.clientX, clientY: e.clientY, x: curX, y: curY, width: rect.width, height: rect.height, latest: { x: curX, y: curY } };
     setIsDragging(true);
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    capturePointerSafe(e.currentTarget, e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -82,11 +89,7 @@ export const StageDirectGizmo: React.FC<StageDirectGizmoProps> = ({ action, onCh
       setIsDragging(false);
       setDraft(null);
       if (action.id === start.actionId && (start.latest.x !== start.x || start.latest.y !== start.y)) onChange(start.latest);
-      try {
-        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-      } catch {
-        // Ignore
-      }
+      releasePointerSafe(e.currentTarget, e.pointerId);
     }
   };
 

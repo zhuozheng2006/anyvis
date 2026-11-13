@@ -43,4 +43,21 @@ describe('TimelineMarkerBar functions', () => {
     expect(snapTimeToMarkers(markers, 2.0, 0.05)).toBe(2.0);
     expect(snapTimeToMarkers(markers, 4.98, 0.05)).toBe(5.0);
   });
+
+  it('clamps negative and non-finite marker times to non-negative values', () => {
+    let p = createEmptyProject();
+    const addedNeg = addMarker(p, -2.5, 'Neg');
+    expect(addedNeg.marker.time).toBe(0);
+
+    const addedNan = addMarker(addedNeg.project, Number.NaN, 'NaN');
+    expect(addedNan.marker.time).toBe(0);
+
+    p = addMarker(addedNan.project, 3.0, 'Keep').project;
+    const keepId = p.scene.markers!.find(m => m.label === 'Keep')!.id;
+    const updatedNeg = updateMarker(p, keepId, { time: -1 });
+    expect(updatedNeg.scene.markers!.find(m => m.id === keepId)?.time).toBe(0);
+
+    const updatedNan = updateMarker(p, keepId, { time: Number.POSITIVE_INFINITY });
+    expect(updatedNan.scene.markers!.find(m => m.id === keepId)?.time).toBe(3);
+  });
 });

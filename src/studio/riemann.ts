@@ -120,9 +120,10 @@ export function computeExactDefiniteIntegral(
   b: number,
   subdivisions: number = 1000
 ): number {
-  if (Math.abs(b - a) < 1e-9) return 0;
+  if (!Number.isFinite(a) || !Number.isFinite(b) || Math.abs(b - a) < 1e-9) return 0;
   // Ensure subdivisions is even for Simpson's rule
-  const n = subdivisions % 2 === 0 ? subdivisions : subdivisions + 1;
+  const rawSub = Number.isFinite(subdivisions) ? Math.max(2, Math.round(subdivisions)) : 1000;
+  const n = rawSub % 2 === 0 ? rawSub : rawSub + 1;
   const h = (b - a) / n;
   let sum = fn(a) + fn(b);
 
@@ -144,7 +145,7 @@ export function computeRiemannSum(
   n: number,
   mode: RiemannMode = 'mid'
 ): RiemannResult {
-  const safeN = Math.max(1, Math.min(200, Math.round(n)));
+  const safeN = Number.isFinite(n) ? Math.max(1, Math.min(200, Math.round(n))) : 16;
   const dx = (b - a) / safeN;
   const rectangles: RiemannRectangle[] = [];
   let totalSum = 0;
