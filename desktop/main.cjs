@@ -148,14 +148,17 @@ async function finishSmoke(error) {
       const error = await result.json();
       const range = await fetch('/templates/rendered/first-animation.webm', {headers:{Range:'bytes=0-31'}});
       const bytes = (await range.arrayBuffer()).byteLength;
-      const video = document.createElement('video'); video.muted = true; video.preload = 'metadata';
-      const videoReady = new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error('Video metadata timed out.')), 6000);
-        video.onloadedmetadata = () => {clearTimeout(timer);resolve(video.videoWidth > 0 && video.duration > 0);};
-        video.onerror = () => {clearTimeout(timer);reject(new Error('Video decoding failed.'));};
-      });
-      video.src = '/templates/rendered/first-animation.webm';
-      const decoded = await videoReady;
+      const existingVideo = document.querySelector('video');
+      const decoded = (existingVideo && existingVideo.readyState >= 1 && existingVideo.videoWidth > 0 && existingVideo.duration > 0)
+        ? true
+        : await new Promise((resolve, reject) => {
+            const video = document.createElement('video'); video.muted = true; video.preload = 'metadata';
+            const timer = setTimeout(() => reject(new Error('Video metadata timed out.')), 15000);
+            video.onloadedmetadata = () => {clearTimeout(timer);resolve(video.videoWidth > 0 && video.duration > 0);};
+            video.onerror = () => {clearTimeout(timer);reject(new Error('Video decoding failed.'));};
+            video.src = '/templates/rendered/first-animation.webm?smoke=1';
+            video.load();
+          });
       localStorage.setItem('anyvis-desktop-smoke', 'persisted');
       return {token: typeof session.token === 'string', status: result.status, error: error.error,
         origin: location.origin, range: range.status, bytes, decoded};
