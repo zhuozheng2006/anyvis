@@ -73,7 +73,7 @@ export const TexColorStylerModal: React.FC<TexColorStylerModalProps> = ({
     try {
       return applyColorsToTex(rawTex, colorMap);
     } catch {
-      return { coloredTex: rawTex };
+      return { coloredTex: rawTex.slice(0, 2000) };
     }
   }, [rawTex, colorMap]);
 

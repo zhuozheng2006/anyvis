@@ -112,12 +112,13 @@ export interface TexToken {
  */
 export function tokenizeTexFormula(raw: string): TexToken[] {
   // Regex matches LaTeX commands like \pi, \int, \frac, subscripts like c_n, or single identifiers like x, y, a
+  const source = raw.length > 2000 ? raw.slice(0, 2000) : raw;
   const regex = /(\\[a-zA-Z]+|[a-zA-Z]_[a-zA-Z0-9]+|[a-zA-Z]|[0-9]+|[+\-=*/^()])/g;
   const tokens: TexToken[] = [];
   let match: RegExpExecArray | null;
   let counter = 0;
 
-  while ((match = regex.exec(raw)) !== null) {
+  while ((match = regex.exec(source)) !== null) {
     const text = match[0];
     const isMathSymbol = /^[a-zA-Z]/.test(text) || text.startsWith('\\');
     tokens.push({
@@ -125,6 +126,7 @@ export function tokenizeTexFormula(raw: string): TexToken[] {
       text,
       isMathSymbol,
     });
+    if (tokens.length >= 256) break;
   }
 
   return tokens;
@@ -141,6 +143,7 @@ export function applyColorsToTex(
   isolatedSubstrings: string[];
   texToColorMap: Record<string, string>;
 } {
+  if (raw.length > 2000) throw Error('LaTeX 公式长度不能超过 2000 个字符。');
   const isolatedSubstrings: string[] = [];
   const texToColorMap: Record<string, string> = {};
 
