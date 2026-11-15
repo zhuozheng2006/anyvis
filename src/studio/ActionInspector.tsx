@@ -326,6 +326,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
     // 1. Reference: object-list
     if (field.reference === 'object-list') {
       const eligibleObjects = allDeclaredObjects.filter(obj => {
+        if (obj.id === action.id) return false;
         if (!field.objectKinds || !field.objectKinds.length) return true;
         const objDef = getBlockDefinition(obj.type);
         return objDef?.objectKind && field.objectKinds.includes(objDef.objectKind);
@@ -336,6 +337,15 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
           .map(s => s.trim())
           .filter(Boolean)
       );
+      // Imported drafts can contain missing or self references. Keep those
+      // selected entries visible so they can be removed, without offering them
+      // as choices for a new selection.
+      const eligibleNames = new Set(eligibleObjects.map(obj => String(obj.fields.name || '')));
+      const invalidMembers = [...selectedSet].filter(name => !eligibleNames.has(name)).map(name => {
+        const object = allDeclaredObjects.find(obj => obj.fields.name === name);
+        const reason = object?.id === action.id ? '不能引用自身' : object ? '类型不符' : '未找到对象';
+        return { name, reason };
+      });
 
       const toggleMember = (name: string) => {
         const next = new Set(selectedSet);
@@ -346,7 +356,20 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
 
       return (
         <div className="ai-fields-chips" role="group" aria-label={field.label}>
-          {eligibleObjects.length === 0 ? (
+          {invalidMembers.map(({ name, reason }) => (
+            <button
+              key={`invalid:${name}`}
+              type="button"
+              className="ai-fields-chip ai-fields-chip-invalid"
+              onClick={() => toggleMember(name)}
+              aria-label={`移除无效成员 ${name}：${reason}`}
+              aria-pressed="true"
+              title={`${reason}，点击移除此成员`}
+            >
+              ⚠ {name}（{reason}） ×
+            </button>
+          ))}
+          {eligibleObjects.length === 0 && invalidMembers.length === 0 ? (
             <span className="ai-fields-empty">（暂无可用对象）</span>
           ) : (
             eligibleObjects.map(obj => {

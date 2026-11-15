@@ -318,6 +318,16 @@
   font-weight: 500;
 }
 
+.ai-fields-chip-invalid {
+  border-color: #e9c786;
+  background: #fff8e8;
+  color: #8a570c;
+}
+
+.ai-fields-chip-invalid:hover {
+  background: #fff0cb;
+}
+
 /* Asset Selector in ActionInspector */
 .ai-fields-asset-control {
   display: flex;

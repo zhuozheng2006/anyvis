@@ -76,3 +76,29 @@ it('recomputes the hovered time after zoom and clears it over track labels', () 
   hover(240);
   expect(host.querySelector('.tl-hover-pill')).toBeNull();
 });
+
+it.each([499, 500])('handles adding from both timeline entry points at %s actions', count => {
+  const project = { ...createEmptyProject(), actions: Array.from({ length: count }, () => createAction('wait')) };
+  const onChange = vi.fn(), onSelect = vi.fn(), onError = vi.fn();
+  act(() => root.render(<Timeline project={project} selectedId={project.actions[0].id} time={0}
+    onChange={onChange} onSelect={onSelect} onShowBlocks={() => {}} onSeek={() => {}} onError={onError} />));
+  const wait = [...host.querySelectorAll<HTMLButtonElement>('.tl-toolbar button')].find(button => button.textContent?.includes('等待'))!;
+  act(() => wait.click());
+  if (count === 499) {
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(onChange.mock.calls[0][0].actions).toHaveLength(500);
+    expect(onSelect).toHaveBeenCalledWith(onChange.mock.calls[0][0].actions.at(-1).id);
+    expect(onError).not.toHaveBeenCalled();
+  } else {
+    expect(onError).toHaveBeenCalledWith(expect.stringContaining('500'));
+    expect(onChange).not.toHaveBeenCalled();
+    expect(onSelect).not.toHaveBeenCalled();
+    act(() => host.querySelector<HTMLButtonElement>('.tl-add')!.click());
+    const choice = host.querySelector<HTMLButtonElement>('.tl-library div button')!;
+    act(() => choice.click());
+    expect(onError).toHaveBeenCalledTimes(2);
+    expect(onChange).not.toHaveBeenCalled();
+    expect(onSelect).not.toHaveBeenCalled();
+    expect(host.querySelector('.tl-library')).not.toBeNull();
+  }
+});

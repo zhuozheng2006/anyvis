@@ -115,10 +115,14 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
 
   const seek = (value: number) => onSeek(frameTime(Math.max(0, Math.min(600, value)), project.scene.fps));
   const add = (type: string) => {
-    const fields = getBlockDefinition(type)?.fields || [];
-    const track = selected ? actionTrack(selected) : tracks.find(t => !['场景与逻辑', '编排'].includes(t));
-    const result = appendAction(project, type, fields.some(f => f.name === 'target') && track && !['场景与逻辑', '编排'].includes(track) ? { target: track } : {});
-    onChange(result.project); handleSelectIds([result.action.id]); setAdding(false);
+    try {
+      const fields = getBlockDefinition(type)?.fields || [];
+      const track = selected ? actionTrack(selected) : tracks.find(t => !['场景与逻辑', '编排'].includes(t));
+      const result = appendAction(project, type, fields.some(f => f.name === 'target') && track && !['场景与逻辑', '编排'].includes(track) ? { target: track } : {});
+      onChange(result.project); handleSelectIds([result.action.id]); setAdding(false);
+    } catch (error) {
+      onError(error instanceof Error ? error.message : '无法添加动画。');
+    }
   };
   const options = CURATED_BLOCK_CATALOG.filter(d => !managedDefinition(d) && !['code', 'audio_play'].includes(d.type) && [d.label, d.category, d.type].join(' ').toLowerCase().includes(query.toLowerCase()));
   const fit = () => { setScale(Math.max(8, Math.min(240, ((surface.current?.clientWidth || 800) - 185) / Math.max(5, knownEnd + 1)))); editor.current?.setScrollLeft(0); };

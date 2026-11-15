@@ -2,6 +2,7 @@ import { ACTION_GROUPS, actionGroup, essentialFields, blockFieldLabel } from './
 import * as Blockly from 'blockly/core';
 import * as Chinese from 'blockly/msg/zh-hans';
 import { BLOCK_CATALOG, CURATED_BLOCK_CATALOG, getBlockDefinition } from '../core/catalog';
+import { MAX_ACTION_DEPTH, MAX_PROJECT_ACTIONS } from '../core/project';
 import type { Action, BlockDefinition, FieldDefinition, FieldValue, MediaAsset, Project } from '../core/types';
 import { planObjectRename } from './rename';
 import { ColourField } from './colour-field';
@@ -462,14 +463,18 @@ export function workspaceToActions(workspace: Blockly.Workspace): Action[] {
   const starts = workspace.getTopBlocks(false).filter((block) => block.type === START_TYPE);
   if (starts.length !== 1) throw new Error('场景需要保留一个“当动画开始”积木。');
   const seen = new Set<string>();
+  let actionCount = 0;
   const read = (first: Blockly.Block | null, depth = 0): Action[] => {
-    if (depth > 20) throw new Error('积木嵌套超过 20 层，请拆成更清楚的步骤。');
+    if (depth > MAX_ACTION_DEPTH) throw new Error(`积木嵌套超过 ${MAX_ACTION_DEPTH} 层，请拆分动画。`);
     const actions: Action[] = [];
     let block = first;
     while (block) {
       if (seen.has(block.id) || seen.size > 2000) throw new Error('积木连接异常或数量过多。');
       seen.add(block.id);
       if (!block.isEnabled()) { block = block.getNextBlock(); continue; }
+      // The workspace may retain disabled and detached drafts. Only actions
+      // emitted into the project share its 500-action schema budget.
+      if (++actionCount > MAX_PROJECT_ACTIONS) throw new Error(`单个场景最多包含 ${MAX_PROJECT_ACTIONS} 块积木。`);
       const type = block.type.slice(PREFIX.length);
       const definition = getBlockDefinition(type);
       if (!definition || !block.type.startsWith(PREFIX)) throw new Error(`无法读取积木“${block.type}”。`);

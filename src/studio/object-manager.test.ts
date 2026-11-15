@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createAction, BLOCK_CATALOG } from './core/catalog';
 import { createEmptyProject } from './core/project';
+import { compileProject } from './core/compiler';
 import type { Action, MediaAsset, Project } from './core/types';
 import * as api from './api';
 import { ActionInspector } from './ActionInspector';
@@ -178,6 +179,7 @@ describe('ActionInspector and ObjectManager components', () => {
     it('handles object-list reference fields by toggling chips', async () => {
       const circleA = createAction('circle', { name: '圆A' });
       const circleB = createAction('circle', { name: '圆B' });
+      const earlierGroup = createAction('group', { name: '已有组合', members: '圆A' });
       const groupAction = createAction('group', { name: '我的组合', members: '圆A' });
       const onChange = vi.fn();
 
@@ -185,7 +187,7 @@ describe('ActionInspector and ObjectManager components', () => {
         root.render(
           React.createElement(ActionInspector, {
             action: groupAction,
-            actions: [circleA, circleB, groupAction],
+            actions: [circleA, circleB, earlierGroup, groupAction],
             fields: ['members'],
             onChange
           })
@@ -193,7 +195,7 @@ describe('ActionInspector and ObjectManager components', () => {
       });
 
       const chips = container.querySelectorAll<HTMLButtonElement>('.ai-fields-chip');
-      expect(chips.length).toBe(3); // 圆A, 圆B, 我的组合
+      expect([...chips].map(chip => chip.textContent)).toEqual(['圆A', '圆B', '已有组合']);
       expect(chips[0].textContent).toBe('圆A');
       expect(chips[0].classList.contains('ai-fields-chip-active')).toBe(true);
 
@@ -203,6 +205,43 @@ describe('ActionInspector and ObjectManager components', () => {
       });
 
       expect(onChange).toHaveBeenCalledWith({ members: '圆A, 圆B' });
+    });
+
+    it('shows existing invalid members with a removal path and never offers them again', async () => {
+      const circle = createAction('circle', { name: '圆A' });
+      const tracker = createAction('tracker', { name: 'radius' });
+      const initialGroup = createAction('group', { name: '我的组合', members: '圆A, 我的组合, 已删除, radius' });
+      let latest = initialGroup;
+      function Inspector() {
+        const [group, setGroup] = React.useState(initialGroup);
+        latest = group;
+        return React.createElement(ActionInspector, {
+          action: group, actions: [circle, tracker, group], fields: ['members'],
+          onChange: fields => setGroup(current => ({ ...current, fields: { ...current.fields, ...fields } })),
+        });
+      }
+      await act(async () => root.render(React.createElement(Inspector)));
+      for (const [name, reason] of [['我的组合', '不能引用自身'], ['已删除', '未找到对象'], ['radius', '类型不符']]) {
+        const remove = container.querySelector<HTMLButtonElement>(`[aria-label="移除无效成员 ${name}：${reason}"]`);
+        expect(remove, `${name} must remain visible and removable`).not.toBeNull();
+        await act(async () => remove!.click());
+        expect(container.querySelector(`[aria-label="移除无效成员 ${name}：${reason}"]`)).toBeNull();
+      }
+      expect(latest.fields.members).toBe('圆A');
+      expect([...container.querySelectorAll('.ai-fields-chip')].map(chip => chip.textContent)).toEqual(['圆A']);
+      expect(compileProject({ ...createEmptyProject(), actions: [circle, tracker, latest] }).diagnostics).toEqual([]);
+    });
+
+    it('keeps missing members removable even when no compatible objects remain', async () => {
+      const group = createAction('group', { name: '组合', members: '已删除' });
+      const onChange = vi.fn();
+      await act(async () => root.render(React.createElement(ActionInspector, {
+        action: group, actions: [group], fields: ['members'], onChange,
+      })));
+      const remove = container.querySelector<HTMLButtonElement>('[aria-label="移除无效成员 已删除：未找到对象"]');
+      expect(remove).not.toBeNull();
+      await act(async () => remove!.click());
+      expect(onChange).toHaveBeenCalledExactlyOnceWith({ members: '' });
     });
 
     it('passes all createsObject declarations to api-value references including non-managed objects', async () => {
@@ -489,6 +528,21 @@ describe('ActionInspector and ObjectManager components', () => {
 
       expect(onError).toHaveBeenCalledWith(expect.stringContaining('仍被 1 个动作使用'));
       expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('keeps the project and selection unchanged when copying would exceed the limit', async () => {
+      const circle = createAction('circle', { name: '主角' });
+      const project = { ...createEmptyProject(), actions: [circle, ...Array.from({ length: 499 }, () => createAction('wait'))] };
+      const before = JSON.stringify(project);
+      const onChange = vi.fn(), onSelect = vi.fn(), onError = vi.fn();
+      await act(async () => root.render(React.createElement(ObjectManager, {
+        project, selectedId: circle.id, onChange, onSelect, onError, onAdd: vi.fn(),
+      })));
+      await act(async () => container.querySelector<HTMLButtonElement>('[aria-label="复制对象 主角"]')!.click());
+      expect(onChange).not.toHaveBeenCalled();
+      expect(onSelect).not.toHaveBeenCalled();
+      expect(onError).toHaveBeenCalledExactlyOnceWith('单个场景最多包含 500 块积木。');
+      expect(JSON.stringify(project)).toBe(before);
     });
 
     it('allows deleting objects without dependents', async () => {

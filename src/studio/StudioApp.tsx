@@ -38,7 +38,7 @@ import './studio.css';
 import './studio-polish.css';
 import { revisionOf } from './render-revision';
 import { copyTextToClipboard } from './browser-utils';
-import { canUsePlaybackSpaceShortcut, canUseWorkspaceShortcut, handleProjectShortcut } from './studio-shortcuts';
+import { canUsePlaybackSpaceShortcut, canUseWorkspaceShortcut, handleProjectShortcut, isComposingShortcut, isTextEditingShortcut } from './studio-shortcuts';
 
 const CodeMirror = deferredPanel(() => import('@uiw/react-codemirror'), '代码编辑器');
 const Timeline = deferredPanel(async () => ({ default: (await import('./Timeline')).Timeline }), '时间轴');
@@ -102,6 +102,7 @@ export default function StudioApp() {
   const presentationVideoRef = useRef<HTMLVideoElement>(null);
   const presentationOverlayRef = useRef<HTMLDivElement>(null);
   const presentationReturnFocusRef = useRef<HTMLElement | null>(null);
+  const presentationSourceRef = useRef<VideoPreview | null>(null);
   const presentationSteps = useMemo(() => computePresentationSteps(project), [project]);
   const safePresentationStepIdx = Math.min(presentationStepIdx, Math.max(0, presentationSteps.length - 1));
   const [matrixPlaygroundOpen, setMatrixPlaygroundOpen] = useState(false);
@@ -182,6 +183,8 @@ export default function StudioApp() {
   );
   const running = job?.status === 'running' || job?.status === 'queued';
   const currentVideo = video?.revision === currentRevision;
+  const presentationUnavailableReason = !video ? '请先生成预览视频，再开启演播模式。'
+    : !currentVideo ? '作品已修改，请先更新预览再开启演播。' : '';
   const [activeQuality, setActiveQuality] = useState<'preview' | 'final'>('preview');
 
   useEffect(() => {
@@ -536,6 +539,13 @@ export default function StudioApp() {
   const advancePresentation = useCallback(() => {
     const vid = presentationVideoRef.current;
     if (!vid || !presentationSteps.length) return;
+    const playSegment = () => {
+      void vid.play().catch(() => {
+        if (presentationVideoRef.current !== vid || !vid.paused) return;
+        setPresentationPlaying(false);
+        notify('演播视频未能开始播放，请点击“下一步”重试。');
+      });
+    };
     const currentIdx = Math.min(presentationStepIdx, presentationSteps.length - 1);
     const curStep = presentationSteps[currentIdx];
     const hasUnplayedSegment = curStep
@@ -546,8 +556,7 @@ export default function StudioApp() {
       if (vid.currentTime < curStep.startTime - 0.05) {
         vid.currentTime = curStep.startTime;
       }
-      void vid.play().catch(() => {});
-      setPresentationPlaying(true);
+      playSegment();
       return;
     }
     if (currentIdx < presentationSteps.length - 1) {
@@ -555,16 +564,14 @@ export default function StudioApp() {
       const nextStep = presentationSteps[nextIdx];
       setPresentationStepIdx(nextIdx);
       vid.currentTime = nextStep.startTime;
-      void vid.play().catch(() => {});
-      setPresentationPlaying(true);
+      playSegment();
     } else {
       const firstStep = presentationSteps[0];
       setPresentationStepIdx(0);
       vid.currentTime = firstStep?.startTime ?? 0;
-      void vid.play().catch(() => {});
-      setPresentationPlaying(true);
+      playSegment();
     }
-  }, [presentationPlaying, presentationStepIdx, presentationSteps]);
+  }, [presentationPlaying, presentationStepIdx, presentationSteps, notify]);
 
   const jumpPresentationStep = useCallback((idx: number) => {
     const vid = presentationVideoRef.current;
@@ -580,13 +587,18 @@ export default function StudioApp() {
       notify('请先生成预览视频，再开启演播模式。');
       return;
     }
+    if (video.revision !== revisionOf(flushEditorSnapshot())) {
+      notify('作品已修改，请先更新预览再开启演播。');
+      return;
+    }
     presentationReturnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    presentationSourceRef.current = video;
     player.current?.pause();
     seek(0);
     setPresentationStepIdx(0);
     setPresentationPlaying(false);
     setPresenting(true);
-  }, [video, notify, seek]);
+  }, [video, notify, seek, flushEditorSnapshot]);
 
   const exitPresentation = useCallback(() => {
     const vid = presentationVideoRef.current;
@@ -596,10 +608,19 @@ export default function StudioApp() {
     }
     setPresenting(false);
     setPresentationPlaying(false);
+    presentationSourceRef.current = null;
     const returnFocus = presentationReturnFocusRef.current;
     presentationReturnFocusRef.current = null;
     if (returnFocus?.isConnected) returnFocus.focus();
   }, [seek]);
+
+  useEffect(() => {
+    const source = presentationSourceRef.current;
+    if (presenting && (!currentVideo || source?.url !== video?.url || source?.revision !== video?.revision)) {
+      exitPresentation();
+      notify('作品或预览已更新，请确认画面后重新开启演播。');
+    }
+  }, [presenting, currentVideo, video?.url, video?.revision, exitPresentation, notify]);
 
   useEffect(() => {
     if (!presenting) return;
@@ -623,6 +644,12 @@ export default function StudioApp() {
   useEffect(() => {
     if (!presenting) return;
     const handler = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.repeat || e.metaKey || e.ctrlKey || e.altKey || isComposingShortcut(e) || isTextEditingShortcut(e)) return;
+      const target = e.target instanceof Element ? e.target : document.activeElement;
+      if (!target || !presentationOverlayRef.current?.contains(target)) return;
+      // Space on an actual control must activate that control, including Exit
+      // and chapter buttons, rather than advance the slide in capture phase.
+      if (e.key === ' ' && target.closest('button, a[href], summary, [role="button"], [role="tab"], [role="slider"]')) return;
       if (e.key === 'Escape') {
         e.preventDefault();
         exitPresentation();
@@ -798,7 +825,7 @@ export default function StudioApp() {
 
       } preview={
         <section className="preview-panel" aria-label="动画预览">
-          <div className="panel-heading"><div className="panel-title"><span className="live-dot"/>舞台预览</div><div className="preview-heading-tools"><span className="dimension-badge">{project.scene.dimension.toUpperCase()}</span><button className="icon-button" aria-label="截取当前画面帧" title="截取当前画面帧 PNG 快照" disabled={!video} onClick={captureVideoFrame}><Camera size={15}/></button><button className="icon-button" aria-label="演播模式" title="演播模式 · 幻灯片放映与交互讲解 (按空格或右方向键逐步推进)" disabled={!video} onClick={enterPresentation}><Presentation size={15}/></button><button className="icon-button" aria-label={isFullscreen ? '退出全屏预览' : '全屏预览'} title={isFullscreen ? '退出全屏 (F)' : '全屏预览 (F)'} aria-pressed={isFullscreen} onClick={toggleFullscreen}>{isFullscreen ? <Minimize2 size={15}/> : <Maximize2 size={15}/>}</button></div></div>
+          <div className="panel-heading"><div className="panel-title"><span className="live-dot"/>舞台预览</div><div className="preview-heading-tools"><span className="dimension-badge">{project.scene.dimension.toUpperCase()}</span><button className="icon-button" aria-label="截取当前画面帧" title="截取当前画面帧 PNG 快照" disabled={!video} onClick={captureVideoFrame}><Camera size={15}/></button><button className="icon-button" aria-label="演播模式" title={presentationUnavailableReason || '演播模式 · 幻灯片放映与交互讲解 (按空格或右方向键逐步推进)'} disabled={!currentVideo} onClick={enterPresentation}><Presentation size={15}/></button><button className="icon-button" aria-label={isFullscreen ? '退出全屏预览' : '全屏预览'} title={isFullscreen ? '退出全屏 (F)' : '全屏预览 (F)'} aria-pressed={isFullscreen} onClick={toggleFullscreen}>{isFullscreen ? <Minimize2 size={15}/> : <Maximize2 size={15}/>}</button></div></div>
           <div className="stage-hud-bar" role="toolbar" aria-label="取景与画面辅助">
             <details className="stage-assist-menu"><summary><Settings2 size={12}/> 画面辅助</summary><div className="stage-assist-popover">
             <div className="stage-hud-group">
@@ -1101,7 +1128,7 @@ export default function StudioApp() {
           {
             id: 'presentation',
             title: '开启交互式演播模式',
-            subtitle: '按步骤自动驻留，空格/方向键控制讲解幻灯片',
+            subtitle: presentationUnavailableReason || '按步骤自动驻留，空格/方向键控制讲解幻灯片',
             keywords: 'presentation slide 演播 幻灯片 放映',
             run: enterPresentation,
           },

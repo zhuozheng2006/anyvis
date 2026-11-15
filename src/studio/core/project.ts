@@ -1,6 +1,8 @@
 import { getBlockDefinition } from './catalog.ts';
 import type { Action, Project, TimelineMarker } from './types.ts';
 import { validateAssets } from './assets.ts';
+export const MAX_PROJECT_ACTIONS = 500;
+export const MAX_ACTION_DEPTH = 12;
 export const DEFAULT_SCENE: Project['scene'] = { dimension: '2d', background: '#0B1020', width: 1920, height: 1080, fps: 30 };
 const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const finite = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
@@ -42,11 +44,11 @@ export function validateProject(value: unknown): Project {
   const ids = new Set<string>();
   const visit = (values: unknown, depth: number): Action[] => {
     if (!Array.isArray(values)) fail('动画步骤必须是数组。');
-    if (depth > 12) fail('积木嵌套超过 12 层，请拆分动画。');
+    if (depth > MAX_ACTION_DEPTH) fail(`积木嵌套超过 ${MAX_ACTION_DEPTH} 层，请拆分动画。`);
     return (values as unknown[]).map((raw): Action => {
       if (!record(raw)) fail('积木数据必须是对象。');
       const a = raw as Record<string, unknown>;
-      if (++count > 500) fail('单个场景最多包含 500 块积木。');
+      if (++count > MAX_PROJECT_ACTIONS) fail(`单个场景最多包含 ${MAX_PROJECT_ACTIONS} 块积木。`);
       if (typeof a.id !== 'string' || !a.id || a.id.length > 128 || ids.has(a.id)) fail('积木 ID 缺失或重复。');
       ids.add(a.id as string);
       if (typeof a.type !== 'string') fail('积木缺少类型。');

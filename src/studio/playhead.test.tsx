@@ -5,7 +5,8 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import StudioApp from './StudioApp';
 import { createAction } from './core/catalog';
 import { createEmptyProject } from './core/project';
-import { saveProject } from './storage';
+import { readCurrent, saveProject } from './storage';
+import { revisionOf } from './render-revision';
 import type { VideoPreview } from './previews';
 
 vi.mock('./blocks/StudioBlocks', () => ({ StudioBlocks: () => <div /> }));
@@ -40,8 +41,8 @@ afterEach(async () => {
 });
 const button = (label: string) => host.querySelector<HTMLButtonElement>(`[aria-label="${label}"]`)!;
 const timecode = () => host.querySelector('.tl-timecode')?.textContent;
-async function mount(withVideo = false) {
-  if (withVideo) preview.mockReturnValue({ url: '/test.mp4', revision: 'previous', quality: 'preview', format: 'mp4' });
+async function mount(withVideo = false, currentVideo = false) {
+  if (withVideo) preview.mockReturnValue({ url: '/test.mp4', revision: currentVideo ? revisionOf(readCurrent()!) : 'previous', quality: 'preview', format: 'mp4' });
   await act(async () => root.render(<StudioApp />));
   const tab = [...host.querySelectorAll<HTMLButtonElement>('[role="tab"]')].find(el => el.textContent?.includes('时间轴'))!;
   await act(async () => { tab.click(); });
@@ -75,7 +76,7 @@ it('keeps the editing cursor beyond an older preview after its paused seek event
 });
 
 it('returns the main preview to the presentation exit time and restores focus', async () => {
-  await mount(true);
+  await mount(true, true);
   const video = await metadata(4);
   const trigger = button('演播模式'); trigger.focus();
   await act(async () => trigger.click());

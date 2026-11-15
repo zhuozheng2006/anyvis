@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as Blockly from 'blockly/core';
 import { createAction } from '../core/catalog';
-import { createEmptyProject } from '../core/project';
+import { createEmptyProject, validateProject } from '../core/project';
 import type { Action } from '../core/types';
 import { loadProjectWorkspace, releaseReferenceNames, saveWorkspace, setReferenceNames, workspaceToActions } from './model';
 
@@ -19,6 +19,46 @@ afterEach(() => {
 });
 
 describe('large workspace import and reference cache', () => {
+  it('rejects a 501st enabled connected action but preserves disabled and detached drafts', () => {
+    const actions = Array.from({ length: 500 }, () => createAction('wait'));
+    const ws = load(actions);
+    const extra = ws.newBlock('anyvis2_wait');
+    const detached = ws.newBlock('anyvis2_circle');
+    extra.setDisabledReason(true, 'draft');
+    ws.getBlockById(actions.at(-1)!.id)!.nextConnection!.connect(extra.previousConnection!);
+    expect(workspaceToActions(ws)).toEqual(actions);
+    const saved = saveWorkspace(ws, actions);
+    const restored = load([]);
+    loadProjectWorkspace({ ...createEmptyProject(), actions, workspace: saved }, restored);
+    expect(restored.getBlockById(extra.id)?.isEnabled()).toBe(false);
+    expect(restored.getBlockById(detached.id)).not.toBeNull();
+    expect(workspaceToActions(restored)).toEqual(actions);
+
+    extra.setDisabledReason(false, 'draft');
+    expect(() => workspaceToActions(ws)).toThrow('最多包含 500 块积木');
+    // Removing the overflowing connection recovers the same valid program.
+    extra.unplug(true);
+    expect(workspaceToActions(ws)).toEqual(actions);
+    expect(() => validateProject({ ...createEmptyProject(), actions: workspaceToActions(ws) })).not.toThrow();
+  });
+
+  it('uses the project nesting limit for connected actions and recovers when the extra container is disabled', () => {
+    const leaf = createAction('wait');
+    let nested: Action = leaf;
+    for (let depth = 0; depth < 12; depth++) nested = { ...createAction('sequence'), children: [nested] };
+    const ws = load([nested]);
+    expect(() => validateProject({ ...createEmptyProject(), actions: workspaceToActions(ws) })).not.toThrow();
+    const leafBlock = ws.getBlockById(leaf.id)!;
+    const parent = leafBlock.getParent()!;
+    leafBlock.unplug();
+    const extra = ws.newBlock('anyvis2_sequence');
+    parent.getInput('BODY')!.connection!.connect(extra.previousConnection!);
+    extra.getInput('BODY')!.connection!.connect(leafBlock.previousConnection!);
+    expect(() => workspaceToActions(ws)).toThrow('嵌套超过 12 层');
+    extra.setDisabledReason(true, 'draft');
+    expect(() => validateProject({ ...createEmptyProject(), actions: workspaceToActions(ws) })).not.toThrow();
+  });
+
   it('keeps menus cached for ordinary field edits without serializing all block fields', () => {
     const circle = createAction('circle', { name: '圆 A' });
     const move = createAction('move', { target: '圆 A' });

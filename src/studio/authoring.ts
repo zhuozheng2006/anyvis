@@ -1,5 +1,6 @@
 import { createAction, getBlockDefinition } from './core/catalog';
 import { getApiEntry } from './core/api-registry';
+import { validateProject } from './core/project';
 import type { Action, BlockDefinition, FieldValue, Project } from './core/types';
 import { planObjectRename, renameProjectObject } from './blocks/rename';
 
@@ -110,7 +111,7 @@ export function appendAction(project: Project, type: string, fields: Record<stri
     const names = collectObjectNames(project.actions);
     action.fields.name = resolveUniqueObjectName(names, type, String(action.fields.name));
   }
-  return { project: { ...project, workspace: undefined, actions: [...project.actions, action] }, action };
+  return { project: validateProject({ ...project, workspace: undefined, actions: [...project.actions, action] }), action };
 }
 export function objectDependents(project: Project, id: string): string[] {
   const source = flattenActions(project.actions).find(a => a.id === id);
@@ -205,7 +206,7 @@ export function duplicateAction(project: Project, id: string): { project: Projec
   const nextActions = insertAfter(project.actions);
   if (!clonedResult) throw Error('未找到要复制的动作或对象。');
   return {
-    project: { ...project, workspace: undefined, actions: nextActions },
+    project: validateProject({ ...project, workspace: undefined, actions: nextActions }),
     action: clonedResult,
   };
 }

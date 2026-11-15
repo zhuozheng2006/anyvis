@@ -1,10 +1,41 @@
 import { describe, expect, it } from 'vitest';
 import { createAction } from './core/catalog';
-import { createEmptyProject } from './core/project';
+import { createEmptyProject, validateProject } from './core/project';
 import { compileProject } from './core/compiler';
 import { getApiEntry } from './core/api-registry';
 import { actionDuration, appendAction, duplicateAction, managedObject, objectDependents, parallelWithNext, removeAction, removeActions, reorderAction, scaleActionsDuration, timelineClips, updateAction } from './authoring';
 describe('shared authoring projections', () => {
+  it.each(['append', 'duplicate'] as const)('rejects %s beyond the project limit without changing the original', operation => {
+    const circle = createAction('circle', { name: '主角' });
+    const project = { ...createEmptyProject(), actions: [circle, ...Array.from({ length: 499 }, () => createAction('wait'))] };
+    const before = JSON.stringify(project);
+    expect(() => validateProject(project)).not.toThrow();
+    expect(() => operation === 'append' ? appendAction(project, 'circle') : duplicateAction(project, circle.id)).toThrow('500');
+    expect(JSON.stringify(project)).toBe(before);
+  });
+
+  it('accepts the 500th action through either creation path and counts the full copied subtree', () => {
+    const circle = createAction('circle', { name: '主角' });
+    const project = { ...createEmptyProject(), actions: [circle, ...Array.from({ length: 498 }, () => createAction('wait'))] };
+    expect(validateProject(appendAction(project, 'square').project).actions).toHaveLength(500);
+    expect(validateProject(duplicateAction(project, circle.id).project).actions).toHaveLength(500);
+    const sequence = { ...createAction('sequence'), children: [createAction('wait'), createAction('wait')] };
+    const nested = { ...createEmptyProject(), actions: [sequence, ...Array.from({ length: 495 }, () => createAction('wait'))] };
+    const before = JSON.stringify(nested);
+    expect(() => duplicateAction(nested, sequence.id)).toThrow('500');
+    expect(JSON.stringify(nested)).toBe(before);
+  });
+
+  it('allows unfinished references while rejecting structurally invalid additions', () => {
+    const missing = createAction('move', { target: '尚未创建' });
+    const project = { ...createEmptyProject(), actions: [missing] };
+    expect(compileProject(project).diagnostics.some(d => d.severity === 'error')).toBe(true);
+    expect(() => validateProject(appendAction(project, 'circle').project)).not.toThrow();
+    expect(() => validateProject(duplicateAction(project, missing.id).project)).not.toThrow();
+    expect(() => appendAction(project, 'circle', { radius: -1 })).toThrow();
+    expect(project.actions).toEqual([missing]);
+  });
+
   it('keeps visual API constructors distinct from named method results', () => {
     expect(managedObject(createAction('circle'))).toBe(true);
     expect(managedObject(createAction('tracker'))).toBe(false);
