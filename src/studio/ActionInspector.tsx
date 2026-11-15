@@ -22,6 +22,7 @@ export interface ActionInspectorProps {
   actions: Action[];
   fields?: string[];
   assets?: MediaAsset[];
+  frameAspect?: number;
   onChange(fields: Record<string, FieldValue>): void;
   onError?(message: string): void;
 }
@@ -40,6 +41,7 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
   actions,
   fields,
   assets,
+  frameAspect,
   onChange,
   onError
 }) => {
@@ -704,7 +706,9 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
       {(targetFields.some(f => f.name === 'x') || targetFields.some(f => f.name === 'dx')) && <details className="ai-position-tools"><summary>位置辅助 · 九宫格与拖动定位</summary>
         {targetFields.some(f => f.name === 'y') && targetFields.some(f => f.name === 'x') && (
           <PositionPad
+            key={`${action.id}:position`}
             mode="position"
+            frameAspect={frameAspect}
             x={finiteNumber(action.fields.x)}
             y={finiteNumber(action.fields.y)}
             onChange={({ x: nextX, y: nextY }) => {
@@ -715,7 +719,9 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
         )}
         {targetFields.some(f => f.name === 'dy') && targetFields.some(f => f.name === 'dx') && (
           <PositionPad
+            key={`${action.id}:shift`}
             mode="shift"
+            frameAspect={frameAspect}
             x={finiteNumber(action.fields.dx)}
             y={finiteNumber(action.fields.dy)}
             onChange={({ x: nextDx, y: nextDy }) => {

@@ -34,8 +34,28 @@ export const SHIFT_VECTOR_PRESETS: ReadonlyArray<PositionPreset> = [
   { id: 'DR', label: '右下偏移 (+2, -1.5)', symbol: '↘', x: 2, y: -1.5 },
 ];
 
+const DEFAULT_FRAME_ASPECT = 16 / 9;
+// Keep the legacy rounded width for callers that display the default bounds.
 export const MANIM_FRAME_HALF_WIDTH = 7.1;
 export const MANIM_FRAME_HALF_HEIGHT = 4.0;
+
+function safeFrameAspect(frameAspect: number): number {
+  return Number.isFinite(frameAspect) && frameAspect > 0 ? frameAspect : DEFAULT_FRAME_ASPECT;
+}
+
+function formatCoordinate(value: number): string {
+  const rounded = Math.round(value * 100) / 100;
+  return rounded.toFixed(Number.isInteger(rounded * 10) ? 1 : 2);
+}
+
+export function stagePositionPresets(frameAspect = DEFAULT_FRAME_ASPECT): ReadonlyArray<PositionPreset> {
+  const aspect = safeFrameAspect(frameAspect);
+  const halfWidth = MANIM_FRAME_HALF_HEIGHT * aspect;
+  return STAGE_POSITION_PRESETS.map(preset => ({
+    ...preset,
+    x: clampAndSnapCoord(preset.x * aspect / DEFAULT_FRAME_ASPECT, halfWidth),
+  }));
+}
 
 export function clampAndSnapCoord(val: number, maxAbs: number, step = 0.1): number {
   if (!Number.isFinite(val) || !Number.isFinite(maxAbs) || !Number.isFinite(step) || step <= 0) {
@@ -43,18 +63,21 @@ export function clampAndSnapCoord(val: number, maxAbs: number, step = 0.1): numb
   }
   const clamped = Math.max(-maxAbs, Math.min(maxAbs, val));
   const snapped = Math.round(clamped / step) * step;
-  return Number(snapped.toFixed(2));
+  // A portrait frame can end at 2.25; rounding to 0.1 must not escape its edge.
+  return Math.max(-maxAbs, Math.min(maxAbs, Number(snapped.toFixed(2))));
 }
 
 export function clientRatioToManimCoords(
   ratioX: number,
   ratioY: number,
-  step = 0.1
+  step = 0.1,
+  frameAspect = DEFAULT_FRAME_ASPECT
 ): { x: number; y: number } {
-  const rawX = (ratioX * 2 - 1) * MANIM_FRAME_HALF_WIDTH;
+  const halfWidth = MANIM_FRAME_HALF_HEIGHT * safeFrameAspect(frameAspect);
+  const rawX = (ratioX * 2 - 1) * halfWidth;
   const rawY = (1 - ratioY * 2) * MANIM_FRAME_HALF_HEIGHT;
   return {
-    x: clampAndSnapCoord(rawX, MANIM_FRAME_HALF_WIDTH, step),
+    x: clampAndSnapCoord(rawX, halfWidth, step),
     y: clampAndSnapCoord(rawY, MANIM_FRAME_HALF_HEIGHT, step),
   };
 }
@@ -63,10 +86,11 @@ export interface PositionPadProps {
   mode: 'position' | 'shift';
   x: number;
   y: number;
+  frameAspect?: number;
   onChange(coords: { x: number; y: number }): void;
 }
 
-export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }) => {
+export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, frameAspect = DEFAULT_FRAME_ASPECT, onChange }) => {
   const safeX = Number.isFinite(x) ? x : 0;
   const safeY = Number.isFinite(y) ? y : 0;
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -74,13 +98,19 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
   const draftRef = useRef<{ x: number; y: number } | null>(null);
   const [draftCoords, setDraftCoords] = useState<{ x: number; y: number } | null>(null);
 
-  const presets = mode === 'shift' ? SHIFT_VECTOR_PRESETS : STAGE_POSITION_PRESETS;
-  const width = 160;
+  const aspect = safeFrameAspect(frameAspect);
+  const halfWidth = MANIM_FRAME_HALF_HEIGHT * aspect;
+  const positionPresets = stagePositionPresets(aspect);
+  // Shift shortcuts describe explicit world-unit distances, so their values
+  // stay fixed even when the canvas aspect ratio changes.
+  const presets = mode === 'shift' ? SHIFT_VECTOR_PRESETS : positionPresets;
   const height = 90;
+  const width = height * aspect;
+  const safeInsetX = positionPresets.find(preset => preset.id === 'RIGHT')!.x;
 
   const toSvgX = (valX: number) =>
-    ((Math.max(-MANIM_FRAME_HALF_WIDTH, Math.min(MANIM_FRAME_HALF_WIDTH, valX)) + MANIM_FRAME_HALF_WIDTH) /
-      (2 * MANIM_FRAME_HALF_WIDTH)) *
+    ((Math.max(-halfWidth, Math.min(halfWidth, valX)) + halfWidth) /
+      (2 * halfWidth)) *
     width;
 
   const toSvgY = (valY: number) =>
@@ -94,7 +124,7 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
     const rect = svg.getBoundingClientRect();
     const ratioX = Math.max(0, Math.min(1, (clientX - rect.left) / Math.max(1, rect.width)));
     const ratioY = Math.max(0, Math.min(1, (clientY - rect.top) / Math.max(1, rect.height)));
-    return clientRatioToManimCoords(ratioX, ratioY, shiftKey ? 0.5 : 0.1);
+    return clientRatioToManimCoords(ratioX, ratioY, shiftKey ? 0.5 : 0.1, aspect);
   };
 
   const displayX = draftCoords?.x ?? safeX;
@@ -111,14 +141,16 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
           {mode === 'shift' ? '位移方向与距离 (dx, dy)' : '舞台位置与九宫格对齐 (x, y)'}
         </span>
         <span className="pos-pad-coords">
-          ({displayX.toFixed(1)}, {displayY.toFixed(1)})
+          ({formatCoordinate(displayX)}, {formatCoordinate(displayY)})
         </span>
       </div>
       <div className="pos-pad-body">
+        <div className="pos-pad-stage-area">
         <svg
           ref={svgRef}
           className="pos-pad-stage"
           viewBox={`0 0 ${width} ${height}`}
+          style={{ aspectRatio: String(aspect), maxWidth: `${78 * aspect}px` }}
           onPointerDown={e => {
             draggingRef.current = true;
             capturePointerSafe(e.currentTarget, e.pointerId);
@@ -160,9 +192,9 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
         >
           {/* Rule-of-thirds safe frame */}
           <rect
-            x={toSvgX(-4.5)}
+            x={toSvgX(-safeInsetX)}
             y={toSvgY(2.5)}
-            width={toSvgX(4.5) - toSvgX(-4.5)}
+            width={toSvgX(safeInsetX) - toSvgX(-safeInsetX)}
             height={toSvgY(-2.5) - toSvgY(2.5)}
             fill="none"
             stroke="rgba(148, 163, 184, 0.16)"
@@ -208,6 +240,7 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, onChange }
             strokeWidth="1.5"
           />
         </svg>
+        </div>
 
         <div className="pos-pad-grid-9" role="group" aria-label="九宫格快捷对齐">
           {presets.map(p => {

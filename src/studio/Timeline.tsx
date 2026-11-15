@@ -24,6 +24,7 @@ interface Props {
   onSelectIds?(ids: string[]): void;
 }
 const palette = ['#6ca6ed', '#b295e8', '#72bfa5', '#e4ad63', '#e089aa'];
+const rulerStartLeft = 16;
 const effects = { animation: { id: 'animation', name: '动画' }, audio: { id: 'audio', name: '配音' }, event: { id: 'event', name: '事件' } };
 export const timecode = (value: number, fps = 30) => {
   const frames = Math.max(0, Math.round(value * fps));
@@ -36,7 +37,8 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
   const [internalSelectedIds, setInternalSelectedIds] = useState<string[]>([]);
   const [box, setBox] = useState<{ active: boolean; startX: number; startY: number; currentX: number; currentY: number } | null>(null);
   const [smartMarkerOpen, setSmartMarkerOpen] = useState(false);
-  const [hoverInfo, setHoverInfo] = useState<{ time: number; x: number } | null>(null);
+  const [hoverInfo, setHoverInfo] = useState<{ trackX: number; x: number } | null>(null);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const [colorMode, setColorMode] = useState<'category' | 'track'>('category');
 
   const editor = useRef<TimelineState>(null), trackLabels = useRef<HTMLDivElement>(null), surface = useRef<HTMLDivElement>(null);
@@ -127,6 +129,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
   };
 
   const fps = project.scene.fps;
+  const hoverTime = hoverInfo ? Math.max(0, (hoverInfo.trackX + scrollLeft - rulerStartLeft) / scale) : 0;
   const canSplitVisual = Boolean(
     selectedClip &&
     selectedClip.start !== null &&
@@ -298,11 +301,11 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       onMouseMove={e => {
         if (!surface.current) return;
         const rect = surface.current.getBoundingClientRect();
-        const labelWidth = trackLabels.current?.offsetWidth || 150;
-        const xInTracks = e.clientX - rect.left - labelWidth;
+        const trackRect = surface.current.querySelector('.timeline-editor')?.getBoundingClientRect();
+        if (!trackRect) return;
+        const xInTracks = e.clientX - trackRect.left;
         if (xInTracks >= 0) {
-          const t = Math.max(0, xInTracks / scale);
-          setHoverInfo({ time: t, x: e.clientX - rect.left });
+          setHoverInfo({ trackX: xInTracks, x: e.clientX - rect.left });
         } else {
           setHoverInfo(null);
         }
@@ -351,9 +354,9 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
           </div>
         );
       })}</div></aside>
-      <TimelineEditor ref={editor} editorData={rows} effects={effects} style={{ flex: 1, width: 0, height: '100%' }} scale={tick} scaleWidth={scale * tick} scaleSplitCount={tick * project.scene.fps} startLeft={16} rowHeight={58} minScaleCount={Math.ceil(Math.max(10, knownEnd + 3) / tick)} maxScaleCount={Math.ceil(600 / tick)} gridSnap={snapping} dragLine={snapping} autoScroll autoReRender={false}
+      <TimelineEditor ref={editor} editorData={rows} effects={effects} style={{ flex: 1, width: 0, height: '100%' }} scale={tick} scaleWidth={scale * tick} scaleSplitCount={tick * project.scene.fps} startLeft={rulerStartLeft} rowHeight={58} minScaleCount={Math.ceil(Math.max(10, knownEnd + 3) / tick)} maxScaleCount={Math.ceil(600 / tick)} gridSnap={snapping} dragLine={snapping} autoScroll autoReRender={false}
         onChange={() => false}
-        onScroll={({ scrollTop }) => { if (trackLabels.current) trackLabels.current.scrollTop = scrollTop; }}
+        onScroll={({ scrollTop, scrollLeft: nextScrollLeft }) => { if (trackLabels.current) trackLabels.current.scrollTop = scrollTop; setScrollLeft(nextScrollLeft); }}
         onCursorDrag={seek} onClickTimeArea={value => { seek(value); return true; }} onClickRow={(_, { time: value }) => seek(value)}
         onClickAction={(e, { action }) => {
           if (action.id === musicId) { onMusicSettings?.(); return; }
@@ -457,7 +460,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
           style={{ left: hoverInfo.x }}
           data-testid="tl-hover-pill"
         >
-          {timecode(hoverInfo.time, project.scene.fps)} ({Math.round(hoverInfo.time * project.scene.fps)}F)
+          {timecode(hoverTime, project.scene.fps)} ({Math.round(hoverTime * project.scene.fps)}F)
         </div>
       )}
       {box && box.active && surface.current && (
@@ -486,7 +489,7 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
       ) : selected ? <><div className="tl-selection-heading"><strong>{selectedAudio ? '配音' : actionLabel(selected)} <span>{selectedAudio ? String(selected.fields.name) : actionTrack(selected)}</span></strong><span>{(selectedAudio?.start ?? selectedClip?.start) == null ? '开始时间待定' : `开始 ${timecode((selectedAudio?.start ?? selectedClip?.start)!, project.scene.fps)}`}</span><div className="tl-spacer"/>
         {selectedAudio ? <><button aria-label="在播放头处分割配音" disabled={!selectedAudio.editable || selectedAudio.start === null} onClick={() => mutate(() => { const result = splitAudioClip(project, selectedAudio, time); handleSelectIds([result.id]); return result.project; })}><Scissors size={14}/> 分割</button><button aria-label="配音静音" aria-pressed={selected.fields.muted === 'yes'} onClick={() => mutate(() => updateAction(project, selected.id, { muted: selected.fields.muted === 'yes' ? 'no' : 'yes' }))}>{selected.fields.muted === 'yes' ? <VolumeX size={14}/> : <Volume2 size={14}/>} 静音</button></> : <><button aria-label="加速所选片段 2x" title="将所选片段时长缩短为 0.5 倍（2x 加速）" disabled={!selectedClip?.duration} onClick={() => mutate(() => scaleActionsDuration(project, [selected.id], 0.5))}>2x</button><button aria-label="减速所选片段 0.5x" title="将所选片段时长延长为 2 倍（0.5x 减速）" disabled={!selectedClip?.duration} onClick={() => mutate(() => scaleActionsDuration(project, [selected.id], 2))}>0.5x</button><button aria-label="在播放头处分割动画片段" title="支持等待和匀速位移；其他动画暂不支持等价切分（C）" disabled={!canSplitVisual} onClick={handleSplitVisual}><Scissors size={14}/> 分割</button><button aria-label="片段前移" disabled={!selectedClip || selectedClip.index === 0} onClick={() => shiftOrder(-1)}><ArrowLeft size={14}/></button><button aria-label="片段后移" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => shiftOrder(1)}><ArrowRight size={14}/></button><button title="与后一个片段同时执行" disabled={!selectedClip || selectedClip.index === clips.length - 1} onClick={() => mutate(() => checkedEdit(project, parallelWithNext(project, selected.id)))}><Layers3 size={14}/> 并行</button></>}
         <button aria-label="复制所选片段" title="复制当前所选片段（D）" onClick={() => mutate(() => { const result = duplicateAction(project, selected.id); handleSelectIds([result.action.id]); return result.project; })}><Copy size={14}/> 复制</button><button onClick={() => onShowBlocks(selected.id)}>积木</button><button aria-label="删除所选片段" onClick={() => mutate(() => removeAction(project, selected.id))}><Trash2 size={14}/></button></div>
-        <ActionInspector key={selected.id} action={selected} actions={project.actions} assets={project.assets} fields={managedObject(selected) ? ['appear', 'duration', 'mode'].filter(name => definition?.fields.some(f => f.name === name)) : undefined} onChange={fields => mutate(() => updateAction(project, selected.id, fields))} onError={onError}/>
+        <ActionInspector key={selected.id} action={selected} actions={project.actions} assets={project.assets} frameAspect={project.scene.width / project.scene.height} fields={managedObject(selected) ? ['appear', 'duration', 'mode'].filter(name => definition?.fields.some(f => f.name === name)) : undefined} onChange={fields => mutate(() => updateAction(project, selected.id, fields))} onError={onError}/>
         {definition?.container && <p className="tl-note">复合片段包含内部动作，双击打开积木。</p>}</> : <p className="tl-note">选择片段编辑参数。动画按顺序联动，可组合并行；配音独立放置和裁剪。按住 Shift / Cmd 多选或框选。</p>}
     </div>
     <SmartMarkerModal

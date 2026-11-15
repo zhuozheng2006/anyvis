@@ -147,6 +147,7 @@ export default function StudioApp() {
   const [aiSummary, setAiSummary] = useState('');
   const editor = useRef<StudioBlocksHandle>(null);
   const player = useRef<HTMLVideoElement>(null);
+  const detachedPlayhead = useRef(false);
   const input = useRef<HTMLInputElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const requestCounter = useRef(0);
@@ -509,10 +510,19 @@ export default function StudioApp() {
     }
   }, [video, playbackRate, notify]);
   const seek = useCallback((value: number) => {
-    if (player.current) {
-      player.current.currentTime = value;
-      setTime(value);
+    const nextTime = Number.isFinite(value) ? Math.max(0, value) : 0;
+    // Editing must work before rendering, and beyond an older preview's end.
+    setTime(nextTime);
+    const vid = player.current;
+    if (vid) {
+      const duration = Number.isFinite(vid.duration) ? Math.max(0, vid.duration) : Infinity;
+      detachedPlayhead.current = nextTime > duration;
+      if (detachedPlayhead.current) vid.pause();
+      vid.currentTime = Math.min(nextTime, duration);
     }
+  }, []);
+  const syncVideoTime = useCallback(() => {
+    if (player.current && !detachedPlayhead.current) setTime(player.current.currentTime);
   }, []);
   const stepFrames = useCallback((frames: number) => {
     const vid = player.current;
@@ -582,14 +592,14 @@ export default function StudioApp() {
     const vid = presentationVideoRef.current;
     if (vid) {
       vid.pause();
-      setTime(vid.currentTime);
+      seek(vid.currentTime);
     }
     setPresenting(false);
     setPresentationPlaying(false);
     const returnFocus = presentationReturnFocusRef.current;
     presentationReturnFocusRef.current = null;
     if (returnFocus?.isConnected) returnFocus.focus();
-  }, []);
+  }, [seek]);
 
   useEffect(() => {
     if (!presenting) return;
@@ -940,7 +950,16 @@ export default function StudioApp() {
                   }
                 }}
               />
-              {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => { if (player.current) player.current.playbackRate = playbackRate; const rawDuration = player.current?.duration; setVideoDuration(typeof rawDuration === 'number' && Number.isFinite(rawDuration) ? rawDuration : 0); setTime(0); }} onTimeUpdate={() => setTime(player.current?.currentTime || 0)} onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
+              {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => {
+                detachedPlayhead.current = false;
+                if (player.current) player.current.playbackRate = playbackRate;
+                const rawDuration = player.current?.duration;
+                setVideoDuration(typeof rawDuration === 'number' && Number.isFinite(rawDuration) ? rawDuration : 0);
+                setTime(0);
+              }} onTimeUpdate={syncVideoTime} onPlay={() => {
+                detachedPlayhead.current = false;
+                syncVideoTime(); setPlaying(true);
+              }} onPause={() => { syncVideoTime(); setPlaying(false); }} onEnded={() => { syncVideoTime(); setPlaying(false); }} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
               {running && job?.posterUrl && <img className="live-render-frame" src={job.posterUrl} alt="Manim 正在生成的实际画面"/>}
               {running && <div className="render-overlay"><Loader2 className="spin" size={14}/><span>{job?.message || '正在渲染…'}</span><button onClick={() => void cancel()} aria-label="停止渲染"><X size={14}/></button></div>}
               {video && !currentVideo && !running && <button className="stale-preview" onClick={() => void render('preview')}>积木已修改 · 点击更新画面</button>}

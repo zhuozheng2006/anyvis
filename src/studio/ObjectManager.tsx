@@ -562,6 +562,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
             <div className="om-prop-body-compact">
               <ActionInspector
                 action={selectedObject}
+                frameAspect={project.scene.width / project.scene.height}
                 actions={project.actions}
                 fields={commonFields.map(f => f.name)}
                 assets={project.assets || []}
@@ -605,6 +606,7 @@ export const ObjectManager: React.FC<ObjectManagerProps> = ({
             <div className="om-drawer-body">
               <ActionInspector
                 action={selectedObject}
+                frameAspect={project.scene.width / project.scene.height}
                 actions={project.actions}
                 fields={nonAnimFields.map(f => f.name)}
                 assets={project.assets || []}
