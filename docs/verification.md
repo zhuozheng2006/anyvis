@@ -2,6 +2,14 @@
 
 每份结果只证明对应提交、环境和测试范围。`main` 的源代码改进与公开安装包的版本应分别核对。
 
+## 2026-11-16 同步审视与作品操作
+
+同步核对 main `d1e1a7e`：本地已与远端一致；最新桌面构建通过，公开安装包为 v0.5.3。近期的参数输入、工作台生命周期和 Linux 视频缓存修复保留。
+
+本轮修复真实 UUID 动态参数无法删除、时间轴弹窗快捷键误删背景片段、输入法确认提前提交及普通 Enter 重复提交；按钮空格恢复原生激活。我的作品新增搜索、排序及当前作品标识，当前作品使用实时内容并直接继续编辑，不重新加载较旧的自动保存快照。
+
+新增 18 项回归；本地 121 个文件、768 项应用测试，11 项桌面测试和生产构建通过。交互通过 DOM 测试验证，本轮未执行浏览器视觉验收。修改后的原生及打包 CI 以对应提交的 Actions 结果为准。
+
 ## 2026-11-12 原生 CI 与快捷键
 
 连续两次原生 CI 在依赖安装阶段耗尽 25 分钟，未进入测试，随后因缺少报告又触发上传错误。修复将系统、Python 和 npm 安装分步限时，限制网络等待与重试，缓存固定版本的 Manim 依赖，并保存安装诊断日志。整体预算调整为 45 分钟；安装失败仍使工作流失败，不跳过回归或弱化断言。
@@ -42,9 +50,9 @@ OpenGL 的 77 项状态证据不创建图形上下文。Linux Mesa softpipe 的�
 
 ## 最新桌面测试包
 
-[下载 v0.5.2](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.2)，含 macOS ARM64 / x64 的 DMG、ZIP，Windows x64 EXE，Linux x64 AppImage、DEB，以及 SHA256SUMS.txt。对应提交 `e0e544853a9cd4daf2acc3d26498c8dc9367f03a`。
+[下载 v0.5.3](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.3)，含 macOS ARM64 / x64 的 DMG、ZIP，Windows x64 EXE，Linux x64 AppImage、DEB，以及 SHA256SUMS.txt。对应提交 `1be84aa7d03de51d934656975ba82cfca0e869c0`。
 
-[桌面构建](https://github.com/zhuozheng2006/anyvis/actions/runs/42661271615)和[原生回归](https://github.com/zhuozheng2006/anyvis/actions/runs/42661271689)通过。macOS ARM64、Windows、Linux 的检查启动了最终 ASAR 应用；Intel Mac 为交叉构建，缺少对应硬件实测。安装向导、外部 Python 环境、签名和公证仍有独立验收边界，见[打包说明](../desktop/PACKAGING.md)。
+[桌面构建](https://github.com/zhuozheng2006/anyvis/actions/runs/43255459170)和[原生回归](https://github.com/zhuozheng2006/anyvis/actions/runs/43255458479)通过。macOS ARM64、Windows、Linux 的检查启动了最终 ASAR 应用；Intel Mac 为交叉构建，缺少对应硬件实测。安装向导、外部 Python 环境、签名和公证仍有独立验收边界，见[打包说明](../desktop/PACKAGING.md)。
 
 ## 可追溯记录
 

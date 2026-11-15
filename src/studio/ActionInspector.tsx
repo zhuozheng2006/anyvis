@@ -9,6 +9,7 @@ import { MathSymbolPalette } from './MathSymbolPalette';
 import { ExpressionPlotPreview } from './ExpressionPlotPreview';
 import { PositionPad } from './PositionPad';
 import { copyTextToClipboard } from './browser-utils';
+import { isComposingShortcut } from './studio-shortcuts';
 import './object-manager.css';
 
 const finiteNumber = (value: unknown) => {
@@ -559,9 +560,13 @@ export const ActionInspector: React.FC<ActionInspectorProps> = ({
             onChange={e => handleDraftChange(field.name, e.target.value)}
             onBlur={() => commitDraft(field)}
             onKeyDown={e => {
+              if (isComposingShortcut(e.nativeEvent)) return;
               if (e.key === 'Enter') {
-                commitDraft(field);
-                e.currentTarget.blur();
+                e.preventDefault();
+                // The blur handler owns the commit; submitting twice can repeat
+                // validation errors and parent updates before React re-renders.
+                if (document.activeElement === e.currentTarget) e.currentTarget.blur();
+                else commitDraft(field);
               } else if (field.type === 'number' && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
                 e.preventDefault();
                 const raw = drafts[field.name] ?? '';

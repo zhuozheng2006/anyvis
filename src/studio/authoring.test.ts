@@ -46,6 +46,37 @@ describe('shared authoring projections', () => {
     expect(compileProject(reordered).code.indexOf('Square(')).toBeLessThan(compileProject(reordered).code.indexOf('Circle('));
     expect(appendAction(p, 'circle', { name: 'a' }).action.fields.name).toBe('a 2');
   });
+  it('deletes an unused tracker with its generated UUID without renaming it', () => {
+    const tracker = createAction('tracker', { name: 'radius' });
+    const wait = createAction('wait');
+    const project = { ...createEmptyProject(), actions: [tracker, wait] };
+    expect(objectDependents(project, tracker.id)).toEqual([]);
+    expect(removeAction(project, tracker.id).actions).toEqual([wait]);
+    expect(tracker.fields.name).toBe('radius');
+  });
+  it('protects tracker references while allowing removal together with their compound clip', () => {
+    const tracker = createAction('tracker', { name: 'radius' });
+    const curve = createAction('function_plot', { name: 'curve', expression: 'radius * x' });
+    const sequence = createAction('sequence'); sequence.children = [tracker, curve];
+    const wait = createAction('wait');
+    const project = { ...createEmptyProject(), actions: [sequence, wait] };
+    expect(objectDependents(project, tracker.id)).toEqual([curve.id]);
+    expect(() => removeAction(project, tracker.id)).toThrow('仍被');
+    expect(removeAction(project, sequence.id).actions).toEqual([wait]);
+    const external = createAction('animate_value', { target: 'radius', value: 2 });
+    expect(() => removeAction({ ...project, actions: [...project.actions, external] }, sequence.id)).toThrow('仍被');
+    expect(project.actions[0].children).toEqual([tracker, curve]);
+  });
+  it('keeps dependency detection valid when ordinary object names occupy probe names', () => {
+    const tracker = createAction('tracker', { name: 'rename_check' });
+    const existing = createAction('circle', { name: 'rename_check_1' });
+    const used = createAction('animate_value', { target: 'rename_check', value: 2 });
+    const project = { ...createEmptyProject(), actions: [tracker, existing, used] };
+    expect(objectDependents(project, tracker.id)).toEqual([used.id]);
+    expect(() => removeAction(project, tracker.id)).toThrow('仍被');
+    expect(removeActions(project, [tracker.id, used.id]).actions).toEqual([existing]);
+    expect(project.actions.map(action => action.fields.name)).toEqual(['rename_check', 'rename_check_1', undefined]);
+  });
   it('protects references outside a deleted compound clip, including API receivers', () => {
     const circle = createAction('circle', { name: '主角', appear: 'none' });
     const inner = createAction('sequence'); inner.children = [circle];

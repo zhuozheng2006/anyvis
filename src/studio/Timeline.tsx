@@ -10,6 +10,7 @@ import { AudioWaveform } from './AudioWaveform';
 import { ActionInspector } from './ActionInspector';
 import { TimelineMarkerBar, addMarker, clearMarkers, removeMarker, snapTimeToMarkers, updateMarker } from './TimelineMarkerBar';
 import { SmartMarkerModal } from './SmartMarkerModal';
+import { canUsePlaybackSpaceShortcut, canUseWorkspaceShortcut } from './studio-shortcuts';
 import { classifyActionCategory } from './timeline-category';
 import '@xzdarcy/react-timeline-editor/dist/react-timeline-editor.css';
 import './timeline.css';
@@ -212,10 +213,13 @@ export function Timeline({ project, selectedId, selectedIds: propsSelectedIds, t
   }, [selecting]);
 
   return <section className="tl-editor" aria-label="动画时间轴" onKeyDown={event => {
-    if ((event.target as HTMLElement).closest('input,textarea,select,[contenteditable="true"]')) return;
+    if (!canUseWorkspaceShortcut(event.nativeEvent)) return;
     // Leave application/browser shortcuts (save, undo, history navigation) alone.
     if (event.metaKey || event.ctrlKey || event.altKey) return;
-    if (event.code === 'Space') { event.preventDefault(); if (canPlay) onPlay?.(); }
+    if (event.code === 'Space') {
+      if (!canUsePlaybackSpaceShortcut(event.nativeEvent)) return;
+      event.preventDefault(); if (canPlay) onPlay?.();
+    }
     else if (event.key === ',' || (event.key === 'ArrowLeft' && !event.shiftKey)) { event.preventDefault(); seek(time - 1 / project.scene.fps); }
     else if (event.key === '.' || (event.key === 'ArrowRight' && !event.shiftKey)) { event.preventDefault(); seek(time + 1 / project.scene.fps); }
     else if (event.key === 'ArrowLeft' && event.shiftKey) { event.preventDefault(); seek(time - 10 / project.scene.fps); }

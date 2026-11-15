@@ -115,7 +115,12 @@ export function appendAction(project: Project, type: string, fields: Record<stri
 export function objectDependents(project: Project, id: string): string[] {
   const source = flattenActions(project.actions).find(a => a.id === id);
   if (!source || !getBlockDefinition(source.type)?.createsObject) return [];
-  const probe = `rename_check_${id.slice(0, 12)}`;
+  // Dependency discovery uses semantic rename rules, including the stricter
+  // tracker identifier rules. UUIDs contain hyphens and are not valid names.
+  const names = collectObjectNames(project.actions);
+  let probe = 'rename_check';
+  let suffix = 1;
+  while (names.has(probe)) probe = `rename_check_${suffix++}`;
   return [...new Set(planObjectRename(project.actions, id, probe).filter(p => p.blockId !== id).map(p => p.blockId))];
 }
 export function removeAction(project: Project, id: string): Project {

@@ -37,7 +37,7 @@ npm run desktop
 
 浏览器和桌面是不同的项目存储空间。已有浏览器作品需先保存项目，再在桌面导入；带素材的作品使用包含素材的 ZIP 备份。桌面编辑器不启用 Node integration，保留 context isolation、sandbox 和 CSP，禁用外部页面导航。只有设置窗口有经过来源校验的窄 IPC；剪贴板仅对可信界面允许文字写入，禁止读取权限。
 
-安装包命令、三平台 CI 和发行边界见 [PACKAGING.md](./PACKAGING.md)。当前公开版本为 [v0.5.2](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.2)，Mac M 系列芯片选择 ARM64，Intel 芯片选择 x64。[检查范围](../docs/verification.md#最新桌面测试包)区分了构建、最终应用启动与真实安装验收。
+安装包命令、三平台 CI 和发行边界见 [PACKAGING.md](./PACKAGING.md)。当前公开版本为 [v0.5.3](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.3)，Mac M 系列芯片选择 ARM64，Intel 芯片选择 x64。[检查范围](../docs/verification.md#最新桌面测试包)区分了构建、最终应用启动与真实安装验收。
 
 ## AI 接口
 

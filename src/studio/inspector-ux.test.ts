@@ -24,6 +24,36 @@ describe('ActionInspector UX Enhancements: Arrow Stepping, Reset to Default, LaT
     container.remove();
   });
 
+  const changeText = (input: HTMLInputElement, value: string) => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(input, value);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+  };
+
+  it.each([{ isComposing: true }, { keyCode: 229 }])('does not commit or blur while confirming an IME candidate: %o', async options => {
+    const action = createAction('circle', { name: '旧名字' });
+    const onChange = vi.fn();
+    await act(async () => root.render(React.createElement(ActionInspector, { action, actions: [action], fields: ['name'], onChange })));
+    const input = container.querySelector<HTMLInputElement>('input')!;
+    input.focus();
+    await act(async () => changeText(input, '新名字'));
+    await act(async () => { input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, ...options })); });
+    expect(onChange).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(input);
+    expect(input.value).toBe('新名字');
+  });
+
+  it('commits a completed text edit exactly once on Enter', async () => {
+    const action = createAction('circle', { name: '旧名字' });
+    const onChange = vi.fn();
+    await act(async () => root.render(React.createElement(ActionInspector, { action, actions: [action], fields: ['name'], onChange })));
+    const input = container.querySelector<HTMLInputElement>('input')!;
+    input.focus();
+    await act(async () => changeText(input, '新名字'));
+    await act(async () => { input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); });
+    expect(onChange).toHaveBeenCalledExactlyOnceWith({ name: '新名字' });
+    expect(document.activeElement).not.toBe(input);
+  });
+
   it('steps number values with ArrowUp and ArrowDown keys and commits change', async () => {
     const circleAction = createAction('circle', { name: '圆', radius: 1.0 });
     const onChange = vi.fn();

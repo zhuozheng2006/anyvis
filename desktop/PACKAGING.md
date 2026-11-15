@@ -2,7 +2,7 @@
 
 这套配置把编辑器、Electron 宿主和本地服务打包为 AnyVis 桌面应用。桌面进程负责启动和关闭自己的服务，不需要用户另外打开终端。Manim 的 Python 环境仍是外部依赖，可在桌面菜单中选择 Python 解释器路径并持久保存；当前安装包不包含 Python、Manim、LaTeX 或额外中文字体。
 
-当前公开版本为 [v0.5.2](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.2)。安装包与校验和从 Release 下载；临时 Actions 附件用于核对指定提交，不作为长期下载入口。[发布提交与验证范围](../docs/verification.md#最新桌面测试包)
+当前公开版本为 [v0.5.3](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.3)。安装包与校验和从 Release 下载；临时 Actions 附件用于核对指定提交，不作为长期下载入口。[发布提交与验证范围](../docs/verification.md#最新桌面测试包)
 
 ## 固定工具版本
 
