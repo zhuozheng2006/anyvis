@@ -36,7 +36,8 @@ export function audioClips(project: Project): AudioClip[] {
         const clip: AudioClip = { id: `${action.id}:audio:${count}`, action, anchor: cursor, start: cursor === null ? null : cursor + Number(action.fields.delay), duration: Math.min(available, Number(action.fields.length) || available), offset, sourceDuration, stop: null, editable: !nested };
         clips.push(clip); active.set(name, clip);
       } else if (action.type === 'audio_stop') {
-        const clip = active.get(String(action.fields.target)); if (clip) clip.stop = cursor;
+        const name = String(action.fields.target), clip = active.get(name);
+        if (clip) { clip.stop = cursor; active.delete(name); }
       } else if (action.type === 'sequence' || action.type === 'api_context' || action.type === 'repeat') {
         const count = action.type === 'repeat' ? Number(action.fields.count) : 1;
         for (let i = 0; i < Math.min(2000, count); i++) cursor = walk(action.children || [], cursor, true);

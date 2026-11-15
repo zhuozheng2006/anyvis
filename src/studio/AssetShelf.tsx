@@ -178,7 +178,9 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
         asset: asset.id,
         delay: 0,
         offset: 0,
-        length: 0,
+        // Audio cues start at scene time zero below. Keep a long source usable
+        // within the scene budget so the author can adjust its in-point later.
+        length: (asset.duration || 0) > 600 ? 600 : 0,
         gain: 0
       });
 
@@ -335,6 +337,7 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
                       <span>{aud.duration !== undefined ? `${aud.duration.toFixed(1)}s` : aud.extension.toUpperCase()}</span>
                       <span>{formatBytes(aud.bytes)}</span>
                     </span>
+                    {(aud.duration || 0) > 600 && <span className="om-asset-trim-notice">先加入前 10 分钟，可在时间轴调整入点和长度；原文件保持完整。</span>}
                   </div>
                   <div className="om-asset-audio-controls">
                     <audio
@@ -349,9 +352,9 @@ export const AssetShelf: React.FC<AssetShelfProps> = ({
                     type="button"
                     className="om-asset-btn-track"
                     onClick={() => handleAddAudioTrack(aud)}
-                    aria-label={`将配音 ${aud.name} 加入音轨`}
+                    aria-label={`将配音 ${aud.name} ${((aud.duration || 0) > 600) ? '的前 10 分钟' : ''}加入音轨`}
                   >
-                    + 加入音轨
+                    {(aud.duration || 0) > 600 ? '+ 加入前 10 分钟' : '+ 加入音轨'}
                   </button>
                 </div>
               ))}

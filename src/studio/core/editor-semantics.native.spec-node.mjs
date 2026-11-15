@@ -125,3 +125,95 @@ with tempconfig({"renderer": "cairo", "write_to_movie": False, "save_last_frame"
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+// Exercise the exported Python scheduling and real WAV decoding without video
+// encoding. Repeated stops must never lengthen audio that has already stopped.
+test('native audio stops remain final across later stops and cue replay', { timeout: 60_000 }, async t => {
+  const health = await discoverPython();
+  if (!health.available) {
+    if (process.env.ANYVIS_REQUIRE_MANIM === '1') assert.fail(health.error || 'Manim required');
+    t.skip(health.error || 'Manim required');
+    return;
+  }
+  const directory = await mkdtemp(path.join(tmpdir(), 'anyvis-audio-stops-'));
+  try {
+    const modulePath = path.join(directory, 'audio.mjs');
+    await build({
+      stdin: {
+        contents: `export { createAction } from './catalog.ts';
+export { createEmptyProject } from './project.ts';
+export { compileProject } from './compiler.ts';
+export { audioClips } from '../timeline-model.ts';`,
+        resolveDir: fileURLToPath(new URL('.', import.meta.url)), loader: 'ts',
+      },
+      outfile: modulePath, bundle: true, platform: 'node', format: 'esm', logLevel: 'silent',
+    });
+    const { createAction, createEmptyProject, compileProject, audioClips } = await import(pathToFileURL(modulePath).href);
+    const asset = { id: 'b'.repeat(64), name: 'voice.wav', kind: 'audio', extension: 'wav', bytes: 768044, duration: 8 };
+    const cue = (delay = 0) => createAction('audio_play', { name: 'voice', asset: asset.id, delay, length: 8 });
+    const wait = duration => createAction('wait', { duration });
+    const stop = () => createAction('audio_stop', { target: 'voice' });
+    const repeat = createAction('repeat', { count: 2 }); repeat.children = [cue(), wait(1), stop(), wait(2)];
+    const uninterrupted = createAction('repeat', { count: 2 }); uninterrupted.children = [cue(), wait(2)];
+    const fixtures = [
+      { name: 'repeated_stop', actions: [cue(), wait(1), stop(), wait(2), stop()], segments: [[0, 1]], duration: 3 },
+      { name: 'stopped_replay', actions: [repeat], segments: [[0, 1], [3, 1]], duration: 6 },
+      { name: 'stopped_before_start', actions: [cue(2), wait(1), stop(), wait(2), stop()], segments: [], duration: 3 },
+      { name: 'active_replay', actions: [uninterrupted], segments: [[0, 2], [2, 8]], duration: 10 },
+    ];
+    for (const fixture of fixtures) {
+      const project = { ...createEmptyProject(), assets: [asset], actions: fixture.actions };
+      const compiled = compileProject(project);
+      assert.deepEqual(compiled.diagnostics, [], fixture.name);
+      assert.equal(compiled.duration, fixture.duration, fixture.name);
+      // The editor projection must agree with the independent expected segments.
+      fixture.timeline = audioClips(project).filter(clip => clip.duration > 0).map(clip => [clip.start, clip.duration]);
+      await writeFile(path.join(directory, `${fixture.name}.py`), compiled.code);
+    }
+    const script = path.join(directory, 'measure.py');
+    await writeFile(script, `from pathlib import Path
+import json
+import wave
+import numpy as np
+from manim import tempconfig
+
+fixtures = ${JSON.stringify(fixtures.map(({ name, segments, duration, timeline }) => ({ name, segments, duration, timeline })))}
+assets = Path('assets')
+assets.mkdir()
+rate = 48000
+samples = (np.sin(2 * np.pi * 440 * np.arange(rate * 8) / rate) * 6000).astype('<i2')
+with wave.open(str(assets / '${asset.id}.wav'), 'wb') as output:
+    output.setnchannels(1)
+    output.setsampwidth(2)
+    output.setframerate(rate)
+    output.writeframes(samples.tobytes())
+
+results = []
+with tempconfig({'renderer': 'cairo', 'write_to_movie': False, 'save_last_frame': False, 'pixel_width': 64, 'pixel_height': 32, 'media_dir': 'media', 'verbosity': 'ERROR'}):
+    for fixture in fixtures:
+        name = fixture['name']
+        namespace = {'__name__': 'audio_stop_fixture_' + name}
+        exec(compile(Path(name + '.py').read_text(encoding='utf-8'), name + '.py', 'exec'), namespace)
+        scene = namespace['AnyVisScene']()
+        segments = []
+        def capture(segment, time=0):
+            assert segment.rms > 1000, (name, segment.rms)
+            segments.append([float(time), len(segment) / 1000])
+        scene.renderer.file_writer.add_audio_segment = capture
+        scene.wait = lambda seconds, **kwargs: setattr(scene.renderer, 'time', scene.time + seconds)
+        scene.construct()
+        assert segments == fixture['segments'], (name, segments, fixture['segments'])
+        assert fixture['timeline'] == fixture['segments'], (name, fixture['timeline'], fixture['segments'])
+        assert abs(float(scene.time) - fixture['duration']) < 1e-9, (name, scene.time)
+        results.append({'name': name, 'segments': segments, 'duration': float(scene.time)})
+print('ANYVIS_AUDIO_STOPS ' + json.dumps(results))
+`);
+    const { stdout } = await execute(health.python, [script], { cwd: directory, timeout: 40_000, maxBuffer: 1024 * 1024 });
+    const record = stdout.split(/\r?\n/).find(line => line.startsWith('ANYVIS_AUDIO_STOPS '));
+    assert.ok(record, stdout);
+    assert.equal(JSON.parse(record.slice('ANYVIS_AUDIO_STOPS '.length)).length, fixtures.length);
+    t.diagnostic(`Manim ${health.version}: four exported scenes match exact audio starts/durations with real WAV decoding. No video encoding or additional API coverage claim.`);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});

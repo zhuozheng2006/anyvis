@@ -1,6 +1,9 @@
 import React from 'react';
 import type { Action, Project } from './core/types';
+import { RESERVED_SYMBOLS } from './core/expression';
 import { appendAction, flattenActions, objectDependents, removeAction, updateAction } from './authoring';
+import { capturePointerSafe, releasePointerSafe } from './modal-hooks';
+import { isComposingShortcut } from './studio-shortcuts';
 import './tracker-control-bar.css';
 
 export interface TrackerSummary {
@@ -45,7 +48,7 @@ export function suggestNextTrackerName(actions: Action[]): string {
       .filter(Boolean)
   );
   for (const candidate of PREFERRED_NAMES) {
-    if (!used.has(candidate)) return candidate;
+    if (!used.has(candidate) && !RESERVED_SYMBOLS.has(candidate)) return candidate;
   }
   let idx = 1;
   while (used.has(`k_${idx}`)) idx += 1;
@@ -59,6 +62,93 @@ export function sliderBoundsForValue(value: number): { min: number; max: number;
   }
   const bound = Math.ceil(abs / 10) * 10;
   return { min: -bound, max: bound, step: 0.5 };
+}
+
+function TrackerValueControl({ name, value, onCommit, onError }: {
+  name: string;
+  value: number;
+  onCommit(value: number): void;
+  onError(message: string): void;
+}) {
+  const [text, setText] = React.useState(String(value));
+  const textRef = React.useRef(text);
+  const textInput = React.useRef<HTMLInputElement>(null);
+  const [sliding, setSliding] = React.useState<number | null>(null);
+  const drag = React.useRef<{ pointerId: number; value: number; expectedValue?: number; cancelled?: boolean; bounds: ReturnType<typeof sliderBoundsForValue> } | null>(null);
+  const setDraft = (next: string) => { textRef.current = next; setText(next); };
+  React.useEffect(() => {
+    const active = drag.current;
+    // Focusing the slider confirms its adjacent text field first. That commit
+    // starts this gesture at the new value; an unrelated update cancels it.
+    if (active && !active.cancelled && active.expectedValue === value) {
+      active.expectedValue = undefined;
+      return;
+    }
+    // An undo/external update wins over an unfinished gesture. Keep its pointer
+    // identity until release so later input events cannot become new edits.
+    if (drag.current) drag.current.cancelled = true;
+    setSliding(null); textRef.current = String(value); setText(String(value));
+  }, [value]);
+  const parseDraft = () => textRef.current.trim() && Number.isFinite(Number(textRef.current)) ? Number(textRef.current) : null;
+  const commitText = () => {
+    const next = parseDraft();
+    if (next === null) { setDraft(String(value)); onError(`参数 ${name} 需要一个有限数值。`); return; }
+    setDraft(String(next));
+    if (next !== value) onCommit(next);
+  };
+  const finishDrag = (event: React.PointerEvent<HTMLInputElement>, cancelled: boolean) => {
+    const active = drag.current;
+    if (!active || active.pointerId !== event.pointerId) return;
+    drag.current = null; setSliding(null);
+    releasePointerSafe(event.currentTarget, event.pointerId);
+    if (cancelled || active.cancelled) setDraft(String(value));
+    else if (active.value !== value) onCommit(active.value);
+  };
+  const bounds = drag.current && !drag.current.cancelled ? drag.current.bounds : sliderBoundsForValue(value);
+  return <>
+    <input type="range" className="tcb-slider" aria-label={`参数 ${name} 初值滑块`}
+      title="松开滑块后更新；方向键可微调" min={bounds.min} max={bounds.max} step={bounds.step} value={sliding ?? value}
+      onClick={event => event.stopPropagation()}
+      onPointerDown={event => {
+        if (event.button !== 0 || drag.current) return;
+        const start = document.activeElement === textInput.current ? (parseDraft() ?? value) : value;
+        event.currentTarget.focus();
+        drag.current = { pointerId: event.pointerId, value: start, expectedValue: start !== value ? start : undefined, bounds: sliderBoundsForValue(start) };
+        setSliding(start); capturePointerSafe(event.currentTarget, event.pointerId);
+      }}
+      onChange={event => {
+        if (drag.current?.cancelled) return;
+        const next = Number(event.target.value); setDraft(String(next));
+        if (drag.current) { drag.current.value = next; setSliding(next); }
+        else if (next !== value) onCommit(next);
+      }}
+      onPointerUp={event => finishDrag(event, false)}
+      onPointerCancel={event => finishDrag(event, true)}
+      onLostPointerCapture={event => finishDrag(event, true)}
+      onBlur={() => {
+        const active = drag.current;
+        if (!active) return;
+        active.cancelled = true; setSliding(null); setDraft(String(value));
+      }}
+    />
+    <input ref={textInput} type="text" inputMode="decimal" className="tcb-num-input" aria-label={`参数 ${name} 初值输入`}
+      title="回车或离开输入框后确认，Esc 取消，方向键微调" value={text}
+      onClick={event => event.stopPropagation()} onChange={event => setDraft(event.target.value)} onBlur={commitText}
+      onKeyDown={event => {
+        if (isComposingShortcut(event.nativeEvent)) return;
+        if (event.key === 'Escape') {
+          event.preventDefault(); event.stopPropagation(); setDraft(String(value)); event.currentTarget.blur();
+        } else if (event.key === 'Enter') {
+          event.preventDefault(); event.currentTarget.blur();
+        } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+          event.preventDefault();
+          const step = event.shiftKey ? 1 : event.altKey ? 0.01 : 0.1;
+          const next = (parseDraft() ?? value) + (event.key === 'ArrowUp' ? step : -step);
+          if (Number.isFinite(next)) setDraft(String(Number(next.toFixed(10))));
+        }
+      }}
+    />
+  </>;
 }
 
 export interface TrackerControlBarProps {
@@ -150,37 +240,18 @@ export const TrackerControlBar: React.FC<TrackerControlBarProps> = ({
       {trackers.length > 0 && (
         <div className="tcb-list">
           {trackers.map(item => {
-            const bounds = sliderBoundsForValue(item.value);
             const isSelected = selectedId === item.action.id;
             return (
               <div
-                key={item.action.id}
+                key={`${project.id}:${item.action.id}`}
                 className={`tcb-item ${isSelected ? 'tcb-item-selected' : ''}`}
                 onClick={() => onSelect(item.action.id)}
               >
                 <span className="tcb-name" title={`参数名：${item.name}`}>
                   {item.name} =
                 </span>
-                <input
-                  type="range"
-                  className="tcb-slider"
-                  aria-label={`参数 ${item.name} 初值滑块`}
-                  min={bounds.min}
-                  max={bounds.max}
-                  step={bounds.step}
-                  value={item.value}
-                  onClick={e => e.stopPropagation()}
-                  onChange={e => handleValueChange(item.action.id, Number(e.target.value))}
-                />
-                <input
-                  type="number"
-                  className="tcb-num-input"
-                  aria-label={`参数 ${item.name} 初值输入`}
-                  step="0.1"
-                  value={item.value}
-                  onClick={e => e.stopPropagation()}
-                  onChange={e => handleValueChange(item.action.id, Number(e.target.value))}
-                />
+                <TrackerValueControl name={item.name} value={item.value}
+                  onCommit={next => handleValueChange(item.action.id, next)} onError={onError} />
                 <button
                   type="button"
                   className="tcb-anim-btn"

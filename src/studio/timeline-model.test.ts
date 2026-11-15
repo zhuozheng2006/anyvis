@@ -6,6 +6,29 @@ import { audioClips, editAudioClip, moveAnimationClip, moveAnimationClips, resiz
 import { timelineClips } from './authoring';
 const voice = { id: 'b'.repeat(64), name: 'voice.wav', kind: 'audio' as const, extension: 'wav', bytes: 100, duration: 10 };
 const audioProject = () => ({ ...createEmptyProject(), assets: [voice], actions: [createAction('wait', { duration: 2 }), createAction('audio_play', { asset: voice.id, delay: 1, offset: 2, length: 4 }), createAction('wait', { duration: 5 }), createAction('audio_stop', { target: '配音' })] });
+it('does not extend a stopped cue when another stop is encountered later', () => {
+  const project = { ...createEmptyProject(), assets: [voice], actions: [
+    createAction('audio_play', { name: 'voice', asset: voice.id, length: 8 }),
+    createAction('wait', { duration: 1 }), createAction('audio_stop', { target: 'voice' }),
+    createAction('wait', { duration: 2 }), createAction('audio_stop', { target: 'voice' }),
+  ] };
+  expect(audioClips(project)[0]).toMatchObject({ start: 0, duration: 1, stop: 1 });
+});
+it('starts a new repeated cue without changing the prior stopped occurrence', () => {
+  const repeat = createAction('repeat', { count: 2 });
+  repeat.children = [createAction('audio_play', { name: 'voice', asset: voice.id, length: 8 }),
+    createAction('wait', { duration: 1 }), createAction('audio_stop', { target: 'voice' }), createAction('wait', { duration: 2 })];
+  const project = { ...createEmptyProject(), assets: [voice], actions: [repeat] };
+  expect(audioClips(project).map(clip => [clip.start, clip.duration, clip.stop])).toEqual([[0, 1, 1], [3, 1, 4]]);
+});
+it('keeps a delayed cue silent when it was stopped before its start', () => {
+  const project = { ...createEmptyProject(), assets: [voice], actions: [
+    createAction('audio_play', { name: 'voice', asset: voice.id, delay: 2, length: 8 }),
+    createAction('wait', { duration: 1 }), createAction('audio_stop', { target: 'voice' }),
+    createAction('wait', { duration: 2 }), createAction('audio_stop', { target: 'voice' }),
+  ] };
+  expect(audioClips(project)[0]).toMatchObject({ start: 2, duration: 0, stop: 1 });
+});
 it('projects independent sound, stops and repeated nested playback at their actual times', () => {
   const p = audioProject();
   expect(audioClips(p)[0]).toMatchObject({ start: 3, anchor: 2, duration: 4, stop: 7 });

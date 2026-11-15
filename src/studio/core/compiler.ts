@@ -374,7 +374,7 @@ export function compileProject(input: Project | unknown): CompileResult {
         const start = timelineClock + num(a, 'delay');
         audioEndpoints.push({ name, start, end: start + length, id: a.id });
         objects.set(name, { kind: 'audio', visible: false }); apiResultOwners.set(name, a.id);
-        stmt(`if ${py(name)} in objects: objects[${py(name)}]['end'] = self.time`, a);
+        stmt(`if ${py(name)} in objects and objects[${py(name)}]['end'] is None: objects[${py(name)}]['end'] = self.time`, a);
         stmt(`objects[${py(name)}] = {'path': ${py(assetPath(asset))}, 'start': self.time + ${num(a, 'delay')}, 'offset': ${num(a, 'offset')}, 'length': ${length}, 'gain': ${num(a, 'gain')}, 'muted': ${str(a, 'muted') === 'yes' ? 'True' : 'False'}, 'end': None}`, a);
         stmt(`_av_audio_tracks.append(objects[${py(name)}])`, a);
         break;
@@ -383,7 +383,9 @@ export function compileProject(input: Project | unknown): CompileResult {
         const target = ref(a, 'target', ['audio']);
         const previous = [...audioEndpoints].reverse().find(item => item.name === str(a, 'target'));
         if (previous) previous.end = Math.max(previous.start, Math.min(previous.end, timelineClock));
-        stmt(`${target}['end'] = self.time`, a);
+        // Stopping is final for this occurrence. A later stop or replay must not
+        // move its endpoint forward and bring already-stopped audio back.
+        stmt(`if ${target}['end'] is None: ${target}['end'] = self.time`, a);
         break;
       }
       case 'set_position': stmt(`${ref(a)}.move_to(${point(a)})`, a); break;

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { createAction } from './core/catalog';
+import { compileProject } from './core/compiler';
+import { RESERVED_SYMBOLS } from './core/expression';
+import { createEmptyProject } from './core/project';
+import { appendAction } from './authoring';
 import { extractTrackers, sliderBoundsForValue, suggestNextTrackerName } from './TrackerControlBar';
 
 describe('TrackerControlBar helpers', () => {
@@ -33,6 +37,31 @@ describe('TrackerControlBar helpers', () => {
       createAction('tracker', { name: 'b' }),
     ];
     expect(suggestNextTrackerName(used)).toBe('k');
+  });
+
+  it('keeps repeated parameter creation valid after exhausting the preferred names', () => {
+    let project = createEmptyProject();
+    const names: string[] = [];
+    for (let index = 0; index < 15; index++) {
+      const name = suggestNextTrackerName(project.actions);
+      project = appendAction(project, 'tracker', { name, value: index }).project;
+      names.push(name);
+    }
+    expect(new Set(names).size).toBe(names.length);
+    expect(names.every(name => /^[A-Za-z][A-Za-z_0-9]{0,30}$/.test(name) && !RESERVED_SYMBOLS.has(name))).toBe(true);
+    expect(compileProject(project).diagnostics).toEqual([]);
+  });
+
+  it('skips occupied fallback suffixes across parameters and other objects', () => {
+    let project = { ...createEmptyProject(), actions: [
+      ...['a', 'b', 'k', 'm', 'n', 'r', 'w', 'k_1', 'k_2'].map(name => createAction('tracker', { name })),
+      createAction('circle', { name: 'k_3' }),
+    ] };
+    const name = suggestNextTrackerName(project.actions);
+    expect(name).toBe('k_4');
+    project = appendAction(project, 'tracker', { name, value: 1 }).project;
+    expect(suggestNextTrackerName(project.actions)).toBe('k_5');
+    expect(compileProject(project).diagnostics).toEqual([]);
   });
 
   it('computes adaptive slider bounds for small and large tracker values', () => {

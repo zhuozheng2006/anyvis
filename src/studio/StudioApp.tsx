@@ -150,6 +150,7 @@ export default function StudioApp() {
   const player = useRef<HTMLVideoElement>(null);
   const detachedPlayhead = useRef(false);
   const input = useRef<HTMLInputElement>(null);
+  const importRequest = useRef(0);
   const stage = useRef<HTMLDivElement>(null);
   const requestCounter = useRef(0);
   const pendingFinal = useRef(false);
@@ -158,6 +159,7 @@ export default function StudioApp() {
   const healthTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const highlightTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
+    importRequest.current++;
     if (highlightTimer.current) clearTimeout(highlightTimer.current);
   }, []);
   const scheduleHighlight = useCallback((id: string) => {
@@ -379,6 +381,7 @@ export default function StudioApp() {
   const replaceProject = useCallback((next: Project) => {
     try { saveProject(editor.current?.snapshot() || projectRef.current); }
     catch { setSaveError('当前作品保存失败，请先导出项目文件，再切换作品。'); notify('暂未切换：请先导出当前作品，避免丢失修改。'); return false; }
+    importRequest.current++;
     const previous = jobRef.current;
     requestCounter.current++; pendingFinal.current = false;
     if (previous?.id && ['running', 'queued'].includes(previous.status)) void api(`/api/jobs/${previous.id}`, { method: 'DELETE' }).catch(() => {});
@@ -478,18 +481,25 @@ export default function StudioApp() {
   };
   const importFile = async (file?: File) => {
     if (!file) return;
+    const request = ++importRequest.current;
+    // Reset before waiting so choosing the same file again starts a new request.
+    if (input.current) input.current.value = '';
     try {
       if (file.name.toLowerCase().endsWith('.zip')) {
         const imported = await importProjectBundle(file);
+        if (request !== importRequest.current) return;
         if (replaceProject(imported)) notify('已打开项目和全部素材。');
         return;
       }
       if (file.size > 8 * 1024 * 1024) throw new Error('项目文件过大，请选择 8 MB 以内的 .anyvis.json。');
-      const value = JSON.parse(await file.text());
+      const text = await file.text();
+      if (request !== importRequest.current) return;
+      const value = JSON.parse(text);
       if (!value || typeof value !== 'object' || Array.isArray(value) || value.schemaVersion !== 2) throw new Error('这是旧版课件或其他格式。旧课件可用 ?legacy=1 打开；新版请导入 v2 积木项目。原文件没有被修改。');
       if (replaceProject(validateProject(value))) notify('已打开项目。');
-    } catch (error) { notify(`打开失败：${(error as Error).message}`); }
-    finally { if (input.current) input.current.value = ''; }
+    } catch (error) {
+      if (request === importRequest.current) notify(`打开失败：${(error as Error).message}`);
+    }
   };
   const chooseStep = (id: string) => { setSelected(id); setSelectedIds(id ? [id] : []); setEditorTab('blocks'); scheduleHighlight(id); };
   const switchView = (tab: 'blocks' | 'timeline' | 'code') => {

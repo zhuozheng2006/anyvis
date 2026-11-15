@@ -6,6 +6,8 @@ import { AssetShelf } from './AssetShelf';
 import { uploadAsset } from './api';
 import { createEmptyProject } from './core/project';
 import { createAction } from './core/catalog';
+import { compileProject } from './core/compiler';
+import { audioClips } from './timeline-model';
 import type { MediaAsset, Project } from './core/types';
 
 vi.mock('./api', () => ({ uploadAsset: vi.fn() }));
@@ -21,6 +23,42 @@ async function chooseFile() {
   Object.defineProperty(input, 'files', { configurable: true, value: [new File(['data'], 'fixture.wav')] });
   await act(async () => input.dispatchEvent(new Event('change', { bubbles: true })));
 }
+
+it('adds an explicitly bounded excerpt of a long source without extending an existing scene beyond its budget', async () => {
+  const longVoice = { ...voice, duration: 720 };
+  const waits = [120, 120, 120, 120, 110].map(duration => createAction('wait', { duration }));
+  const project = { ...createEmptyProject(), assets: [longVoice], actions: waits };
+  const props = callbacks();
+  await act(async () => root.render(<AssetShelf project={project} {...props} />));
+  const add = host.querySelector<HTMLButtonElement>('.om-asset-btn-track')!;
+  expect(add.textContent).toContain('加入前 10 分钟');
+  expect(host.textContent).toContain('原文件保持完整');
+  await act(async () => add.click());
+  expect(props.onError).not.toHaveBeenCalled();
+  expect(props.onProjectChange).toHaveBeenCalledOnce();
+  const next: Project = props.onProjectChange.mock.calls[0][0];
+  expect(next.actions[0].fields).toMatchObject({ delay: 0, offset: 0, length: 600 });
+  expect(audioClips(next)[0]).toMatchObject({ start: 0, duration: 600 });
+  expect(next.actions.slice(1)).toEqual(waits);
+  expect(next.assets).toEqual([longVoice]);
+  expect(project.actions).toEqual(waits);
+  expect(compileProject(next).diagnostics).toEqual([]);
+  expect(compileProject(next).duration).toBe(600);
+});
+
+it.each([12, 600])('keeps complete playback for an audio source within the scene budget: %s seconds', async duration => {
+  const shortVoice = { ...voice, duration };
+  const project = { ...createEmptyProject(), assets: [shortVoice] };
+  const props = callbacks();
+  await act(async () => root.render(<AssetShelf project={project} {...props} />));
+  expect(host.querySelector('.om-asset-trim-notice')).toBeNull();
+  await act(async () => host.querySelector<HTMLButtonElement>('.om-asset-btn-track')!.click());
+  expect(props.onError).not.toHaveBeenCalled();
+  const next: Project = props.onProjectChange.mock.calls[0][0];
+  expect(next.actions[0].fields.length).toBe(0);
+  expect(audioClips(next)[0].duration).toBe(duration);
+  expect(compileProject(next).diagnostics).toEqual([]);
+});
 
 for (const asset of [image, voice]) it(`rejects adding ${asset.kind} beyond the action limit without changing or closing the project`, async () => {
   const project = { ...createEmptyProject(), assets: [asset], actions: Array.from({ length: 500 }, () => createAction('wait', { duration: 0 })) };
