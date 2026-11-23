@@ -114,8 +114,9 @@ jobs:
         run: |
           npm install --prefix "$RUNNER_TEMP/anyvis-ui-tools" --no-audit --no-fund playwright-core@1.65.1
           tools="$RUNNER_TEMP/anyvis-ui-tools/node_modules/playwright-core"
-          node "$tools/cli.js" install --with-deps --no-shell chromium
-          chromium="$(node -p 'require(process.argv[1]).chromium.executablePath()' "$tools")"
+          # The runner's installed Chrome uses its Ubuntu AppArmor sandbox profile.
+          chromium="$(command -v google-chrome || command -v google-chrome-stable)"
+          "$chromium" --version
           echo "ANYVIS_PLAYWRIGHT_MODULE=$tools/index.mjs" >> "$GITHUB_ENV"
           echo "ANYVIS_CHROMIUM_BINARY=$chromium" >> "$GITHUB_ENV"
           npm install --prefix desktop --no-audit --no-fund
@@ -136,10 +137,6 @@ jobs:
           mkdir -p artifacts/authoring-ui/desktop
           { dpkg-query -W "$package"; dpkg-query -S "$installed_binary"; stat -c '%U:%G %a %n' "$(dirname "$installed_binary")/chrome-sandbox"; } > artifacts/authoring-ui/desktop/installed-package.txt
           echo "ANYVIS_INSTALLED_EXECUTABLE=$installed_binary" >> "$GITHUB_ENV"
-          # The .deb configures the desktop sandbox. Set up the downloaded browser separately.
-          chromium_helper="$(find "$(dirname "$chromium")" -maxdepth 1 -type f \( -name chrome_sandbox -o -name chrome-sandbox \) -print -quit)"
-          sudo chown root:root "$chromium_helper"
-          sudo chmod 4755 "$chromium_helper"
       - name: Edit, save, reopen and export a shot in Chromium
         timeout-minutes: 8
         env:

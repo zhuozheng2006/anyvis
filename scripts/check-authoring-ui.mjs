@@ -156,6 +156,7 @@ async function checkWeb() {
   let browser;
   try {
     browser = await chromium.launch({ chromiumSandbox: true, executablePath: process.env.ANYVIS_CHROMIUM_BINARY || undefined });
+    console.log(`Web authoring browser: Chromium ${browser.version()}`);
     const page = await browser.newPage({ acceptDownloads: true, viewport: { width: 1600, height: 1100 } });
     await page.goto(`http://127.0.0.1:${server.port}`);
     await runAuthoringUI(page, { directory, mode: 'web' });
