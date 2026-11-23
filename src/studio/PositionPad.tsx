@@ -93,9 +93,7 @@ export interface PositionPadProps {
 export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, frameAspect = DEFAULT_FRAME_ASPECT, onChange }) => {
   const safeX = Number.isFinite(x) ? x : 0;
   const safeY = Number.isFinite(y) ? y : 0;
-  const svgRef = useRef<SVGSVGElement | null>(null);
-  const draggingRef = useRef(false);
-  const draftRef = useRef<{ x: number; y: number } | null>(null);
+  const activePointer = useRef<number | null>(null);
   const [draftCoords, setDraftCoords] = useState<{ x: number; y: number } | null>(null);
 
   const aspect = safeFrameAspect(frameAspect);
@@ -118,13 +116,19 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, frameAspec
       (2 * MANIM_FRAME_HALF_HEIGHT)) *
     height;
 
-  const readCoordsFromPointer = (clientX: number, clientY: number, shiftKey: boolean): { x: number; y: number } | null => {
-    const svg = svgRef.current;
-    if (!svg) return null;
-    const rect = svg.getBoundingClientRect();
+  const readCoordsFromPointer = ({ currentTarget, clientX, clientY, shiftKey }: React.PointerEvent<SVGSVGElement>) => {
+    const rect = currentTarget.getBoundingClientRect();
     const ratioX = Math.max(0, Math.min(1, (clientX - rect.left) / Math.max(1, rect.width)));
     const ratioY = Math.max(0, Math.min(1, (clientY - rect.top) / Math.max(1, rect.height)));
     return clientRatioToManimCoords(ratioX, ratioY, shiftKey ? 0.5 : 0.1, aspect);
+  };
+
+  const cancelDrag = (target: SVGSVGElement, pointerId?: number) => {
+    const owner = activePointer.current;
+    if (owner === null || (pointerId !== undefined && owner !== pointerId)) return;
+    activePointer.current = null;
+    setDraftCoords(null);
+    releasePointerSafe(target, owner);
   };
 
   const displayX = draftCoords?.x ?? safeX;
@@ -147,47 +151,35 @@ export const PositionPad: React.FC<PositionPadProps> = ({ mode, x, y, frameAspec
       <div className="pos-pad-body">
         <div className="pos-pad-stage-area">
         <svg
-          ref={svgRef}
           className="pos-pad-stage"
           viewBox={`0 0 ${width} ${height}`}
           style={{ aspectRatio: String(aspect), maxWidth: `${78 * aspect}px` }}
           onPointerDown={e => {
-            draggingRef.current = true;
+            if (e.button !== 0 || e.isPrimary === false || activePointer.current !== null) return;
+            if (e.ctrlKey && e.pointerType === 'mouse' && /Mac/.test(navigator.platform)) return;
+            activePointer.current = e.pointerId;
             capturePointerSafe(e.currentTarget, e.pointerId);
-            const coords = readCoordsFromPointer(e.clientX, e.clientY, e.shiftKey);
-            if (coords) {
-              draftRef.current = coords;
-              setDraftCoords(coords);
-            }
+            setDraftCoords(readCoordsFromPointer(e));
           }}
           onPointerMove={e => {
-            if (!draggingRef.current) return;
-            const coords = readCoordsFromPointer(e.clientX, e.clientY, e.shiftKey);
-            if (coords) {
-              draftRef.current = coords;
-              setDraftCoords(coords);
-            }
+            if (activePointer.current !== e.pointerId) return;
+            setDraftCoords(readCoordsFromPointer(e));
           }}
           onPointerUp={e => {
-            if (!draggingRef.current) return;
-            draggingRef.current = false;
+            if (activePointer.current !== e.pointerId) return;
+            activePointer.current = null;
             releasePointerSafe(e.currentTarget, e.pointerId);
-            const finalCoords = readCoordsFromPointer(e.clientX, e.clientY, e.shiftKey) ?? draftRef.current;
-            draftRef.current = null;
+            const finalCoords = readCoordsFromPointer(e);
             setDraftCoords(null);
-            if (finalCoords && (finalCoords.x !== safeX || finalCoords.y !== safeY)) {
+            if (finalCoords.x !== safeX || finalCoords.y !== safeY) {
               onChange(finalCoords);
             }
           }}
-          onPointerCancel={() => {
-            draggingRef.current = false;
-            draftRef.current = null;
-            setDraftCoords(null);
-          }}
-          onLostPointerCapture={() => {
-            draggingRef.current = false;
-            draftRef.current = null;
-            setDraftCoords(null);
+          onPointerCancel={e => cancelDrag(e.currentTarget, e.pointerId)}
+          onLostPointerCapture={e => cancelDrag(e.currentTarget, e.pointerId)}
+          onContextMenu={e => {
+            // Browsers can report a touch long-press as a plain MouseEvent.
+            cancelDrag(e.currentTarget, (e.nativeEvent as Partial<PointerEvent>).pointerId);
           }}
         >
           {/* Rule-of-thirds safe frame */}

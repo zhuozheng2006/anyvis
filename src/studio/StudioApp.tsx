@@ -1,5 +1,5 @@
 import { downloadProjectBundle, importProjectBundle } from './media-bundle';
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type SyntheticEvent } from 'react';
 import { ArrowDownToLine, ArrowRight, Camera, Check, ChevronLeft, ChevronRight, CircleHelp, Clapperboard, Code2, Copy, Crosshair, Download, FilePlus2, FolderOpen, Grid, Keyboard, LayoutGrid, Loader2, Maximize2, Minimize2, Pause, Play, Plus, Presentation, Redo2, RefreshCw, RotateCcw, Save, Search, Settings2, Sparkles, StepBack, StepForward, Undo2, Upload, WandSparkles, X } from 'lucide-react';
 import { deferredDialog, deferredPanel } from './deferred-ui';
 import type { Action, Project } from './core/types';
@@ -86,6 +86,7 @@ export default function StudioApp() {
   const [healthError, setHealthError] = useState('');
   const [job, setJob] = useState<RenderJob | null>(null);
   const [video, setVideo] = useState<VideoPreview | null>(() => builtinPreview(project, revisionOf(project)));
+  const [projectSession, setProjectSession] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [modal, setModal] = useState<Modal>(null);
@@ -93,6 +94,11 @@ export default function StudioApp() {
   const [autoPreview, setAutoPreview] = useState(true);
   const [trusted, setTrusted] = useState(false);
   const [time, setTime] = useState(0);
+  const playheadTime = useRef(0);
+  const updatePlayhead = useCallback((seconds: number) => {
+    playheadTime.current = seconds;
+    setTime(seconds);
+  }, []);
   const [videoDuration, setVideoDuration] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [presenting, setPresenting] = useState(false);
@@ -148,6 +154,7 @@ export default function StudioApp() {
   const [aiSummary, setAiSummary] = useState('');
   const editor = useRef<StudioBlocksHandle>(null);
   const player = useRef<HTMLVideoElement>(null);
+  const loadedPlayer = useRef<HTMLVideoElement | null>(null);
   const detachedPlayhead = useRef(false);
   const input = useRef<HTMLInputElement>(null);
   const importRequest = useRef(0);
@@ -303,7 +310,12 @@ export default function StudioApp() {
     setJob(next);
     if (next.status === 'done' && next.videoUrl) {
       setVideo({ url: next.videoUrl, poster: next.posterUrl, revision: next.revision || revisionRef.current, quality: renderQuality, format: next.videoUrl.endsWith('.webm') ? 'webm' : 'mp4' });
-      setRenderError(''); setTime(0); setPlaying(false);
+      setRenderError('');
+      if (player.current?.getAttribute('src') !== next.videoUrl) {
+        loadedPlayer.current = null;
+        setVideoDuration(0);
+        setPlaying(false);
+      }
       if (renderQuality === 'final' && pendingFinal.current) { pendingFinal.current = false; setModal('export'); }
     } else if (next.status === 'error') {
       pendingFinal.current = false;
@@ -387,9 +399,12 @@ export default function StudioApp() {
     if (previous?.id && ['running', 'queued'].includes(previous.status)) void api(`/api/jobs/${previous.id}`, { method: 'DELETE' }).catch(() => {});
     aiAbort.current?.abort(); aiAbort.current = null; setAiLoading(false); setAiCandidate(null);
     dispatchProject({ type: 'replace', value: next }); setSelected(null); setSelectedIds([]); setTrusted(false); setVideo(builtinPreview(next, revisionOf(next))); setJob(null); setRenderError('');
-    setTime(0); setVideoDuration(0); setPlaying(false); setModal(null); setEditorTab('blocks');
+    setProjectSession(session => session + 1);
+    loadedPlayer.current = null;
+    detachedPlayhead.current = false;
+    updatePlayhead(0); setVideoDuration(0); setPlaying(false); setModal(null); setEditorTab('blocks');
     return true;
-  }, [notify]);
+  }, [notify, updatePlayhead]);
   const exportProject = useCallback(async () => {
     try {
       const latest = editor.current?.snapshot() || projectRef.current;
@@ -525,18 +540,27 @@ export default function StudioApp() {
   const seek = useCallback((value: number) => {
     const nextTime = Number.isFinite(value) ? Math.max(0, value) : 0;
     // Editing must work before rendering, and beyond an older preview's end.
-    setTime(nextTime);
+    updatePlayhead(nextTime);
     const vid = player.current;
-    if (vid) {
+    if (vid && loadedPlayer.current === vid) {
       const duration = Number.isFinite(vid.duration) ? Math.max(0, vid.duration) : Infinity;
       detachedPlayhead.current = nextTime > duration;
       if (detachedPlayhead.current) vid.pause();
-      vid.currentTime = Math.min(nextTime, duration);
+      const target = Math.min(nextTime, duration);
+      if (vid.currentTime !== target) vid.currentTime = target;
     }
-  }, []);
-  const syncVideoTime = useCallback(() => {
-    if (player.current && !detachedPlayhead.current) setTime(player.current.currentTime);
-  }, []);
+  }, [updatePlayhead]);
+  const syncVideoTime = useCallback((event: SyntheticEvent<HTMLVideoElement>) => {
+    const vid = event.currentTarget;
+    if (vid !== player.current) return;
+    if (event.type === 'play') {
+      detachedPlayhead.current = false;
+      setPlaying(true);
+    } else if (event.type === 'pause' || event.type === 'ended') {
+      setPlaying(false);
+    }
+    if (loadedPlayer.current === vid && !detachedPlayhead.current) updatePlayhead(vid.currentTime);
+  }, [updatePlayhead]);
   const stepFrames = useCallback((frames: number) => {
     const vid = player.current;
     if (!vid || !video) return;
@@ -987,16 +1011,14 @@ export default function StudioApp() {
                   }
                 }}
               />
-              {video ? <video key={video.url} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={() => {
-                detachedPlayhead.current = false;
-                if (player.current) player.current.playbackRate = playbackRate;
-                const rawDuration = player.current?.duration;
-                setVideoDuration(typeof rawDuration === 'number' && Number.isFinite(rawDuration) ? rawDuration : 0);
-                setTime(0);
-              }} onTimeUpdate={syncVideoTime} onPlay={() => {
-                detachedPlayhead.current = false;
-                syncVideoTime(); setPlaying(true);
-              }} onPause={() => { syncVideoTime(); setPlaying(false); }} onEnded={() => { syncVideoTime(); setPlaying(false); }} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
+              {video ? <video key={`${projectSession}:${video.url}`} ref={player} src={video.url} poster={video.poster} playsInline preload="auto" onLoadedMetadata={event => {
+                const vid = event.currentTarget;
+                if (vid !== player.current) return;
+                loadedPlayer.current = vid;
+                vid.playbackRate = playbackRate;
+                setVideoDuration(Number.isFinite(vid.duration) ? vid.duration : 0);
+                seek(playheadTime.current);
+              }} onTimeUpdate={syncVideoTime} onPlay={syncVideoTime} onPause={syncVideoTime} onEnded={syncVideoTime} onClick={play} onError={() => setRenderError('视频加载失败，请重新生成预览。')}/> : <div className="stage-placeholder"><span className="stage-placeholder-icon"><Clapperboard size={28}/></span><strong>{running ? '让想法动起来' : '你的动画，从这里开始'}</strong><p>{running ? 'Manim 正在生成真实画面' : project.actions.length ? '点击生成预览，观看积木的效果' : '添加一个图形，再为它安排动画'}</p>{!running && <button onClick={() => void render('preview')}><Play size={14}/> 生成预览</button>}</div>}
               {running && job?.posterUrl && <img className="live-render-frame" src={job.posterUrl} alt="Manim 正在生成的实际画面"/>}
               {running && <div className="render-overlay"><Loader2 className="spin" size={14}/><span>{job?.message || '正在渲染…'}</span><button onClick={() => void cancel()} aria-label="停止渲染"><X size={14}/></button></div>}
               {video && !currentVideo && !running && <button className="stale-preview" onClick={() => void render('preview')}>积木已修改 · 点击更新画面</button>}

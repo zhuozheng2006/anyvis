@@ -47,4 +47,4 @@ npm run studio
 
 当前仍需完善：高级 API 的中文引导、复杂工程导航、任意跨轨重叠和复合片段展开、完整关键帧编辑，以及干净机器的安装与 Python/字体/LaTeX 环境配置。Intel Mac 安装包已构建，但缺少对应机器运行验收；发行签名、公证与自动更新尚未完成。
 
-源码成果提交到 `main`，不留待合并 PR。提交前核对远端最新状态，保留已有改动；发布安装包另按[打包说明](../desktop/PACKAGING.md)核对版本、构建提交与附件。发布基线仍为 [v0.5.3](https://github.com/zhuozheng2006/anyvis/releases/tag/v0.5.3)，`main` 可能包含后续改进。
+源码成果提交到 `main`，不留待合并 PR。提交前核对远端最新状态，保留已有改动。发布安装包时按[打包说明](../desktop/PACKAGING.md)核对版本、构建提交与附件，已公开的版本见 [GitHub Releases](https://github.com/zhuozheng2006/anyvis/releases/latest)。

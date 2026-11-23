@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['src/studio/**', 'server/**', 'scripts/**', 'package*.json', '.github/workflows/native-api.yml']
+    paths: ['src/**', 'public/**', 'desktop/**', 'server/**', 'scripts/**', 'examples/geometry-topology/codex/shot-01-01.anyvis.json', 'package*.json', 'index.html', 'vite.config.*', 'tsconfig*.json', '.github/workflows/native-api.yml']
   pull_request:
-    paths: ['src/studio/**', 'server/**', 'scripts/**', 'package*.json', '.github/workflows/native-api.yml']
+    paths: ['src/**', 'public/**', 'desktop/**', 'server/**', 'scripts/**', 'examples/geometry-topology/codex/shot-01-01.anyvis.json', 'package*.json', 'index.html', 'vite.config.*', 'tsconfig*.json', '.github/workflows/native-api.yml']
 
 permissions:
   contents: read
@@ -108,6 +108,39 @@ jobs:
           npm run test:render
           npm run test:media
           npm run test:music
+      - name: Prepare the web editor and packaged Linux authoring check
+        id: authoring
+        timeout-minutes: 12
+        run: |
+          npm install --prefix "$RUNNER_TEMP/anyvis-ui-tools" --no-audit --no-fund playwright-core@1.65.1
+          tools="$RUNNER_TEMP/anyvis-ui-tools/node_modules/playwright-core"
+          node "$tools/cli.js" install --with-deps --no-shell chromium
+          chromium="$(node -p 'require(process.argv[1]).chromium.executablePath()' "$tools")"
+          echo "ANYVIS_PLAYWRIGHT_MODULE=$tools/index.mjs" >> "$GITHUB_ENV"
+          echo "ANYVIS_CHROMIUM_BINARY=$chromium" >> "$GITHUB_ENV"
+          npm install --prefix desktop --no-audit --no-fund
+          npm run install:runtime --prefix desktop
+          npm run desktop:prepare
+          node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --linux --x64 --dir --publish never
+          # Both Chromium runtimes keep their renderer sandbox on the disposable runner.
+          chromium_helper="$(find "$(dirname "$chromium")" -maxdepth 1 -type f \( -name chrome_sandbox -o -name chrome-sandbox \) -print -quit)"
+          sudo chown root:root "$chromium_helper" release/linux-unpacked/chrome-sandbox
+          sudo chmod 4755 "$chromium_helper" release/linux-unpacked/chrome-sandbox
+      - name: Edit, save, reopen and export a shot in Chromium
+        timeout-minutes: 8
+        env:
+          ANYVIS_UI_OUTPUT: artifacts/authoring-ui/web
+        run: |
+          export ANYVIS_PYTHON="$(command -v python)"
+          xvfb-run -a node scripts/check-authoring-ui.mjs --web
+      - name: Edit, save, reopen and export the same shot in packaged Electron
+        if: ${{ !cancelled() && steps.authoring.outcome == 'success' }}
+        timeout-minutes: 8
+        env:
+          ANYVIS_UI_OUTPUT: artifacts/authoring-ui/desktop
+        run: |
+          export ANYVIS_PYTHON="$(command -v python)"
+          xvfb-run -a node scripts/check-desktop-authoring-ui.mjs
       - name: Upload native evidence and installation diagnostics
         if: always() && steps.diagnostics.outcome == 'success'
         uses: actions/upload-artifact@v7.0.2
@@ -116,5 +149,6 @@ jobs:
           path: |
             artifacts/api/*.json
             artifacts/ci/*.log
+            artifacts/authoring-ui/
           if-no-files-found: error
           retention-days: 14
