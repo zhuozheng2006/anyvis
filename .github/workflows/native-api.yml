@@ -108,7 +108,7 @@ jobs:
           npm run test:render
           npm run test:media
           npm run test:music
-      - name: Prepare the web editor and packaged Linux authoring check
+      - name: Prepare the web editor and install the Linux desktop package
         id: authoring
         timeout-minutes: 12
         run: |
@@ -121,11 +121,25 @@ jobs:
           npm install --prefix desktop --no-audit --no-fund
           npm run install:runtime --prefix desktop
           npm run desktop:prepare
-          node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --linux --x64 --dir --publish never
-          # Both Chromium runtimes keep their renderer sandbox on the disposable runner.
+          node desktop/node_modules/electron-builder/cli.js --config desktop/builder.config.cjs --linux deb --x64 --publish never
+          shopt -s nullglob
+          debs=(release/*.deb)
+          test "${#debs[@]}" -eq 1
+          deb="${debs[0]}"
+          package="$(dpkg-deb --field "$deb" Package)"
+          sudo apt-get -y install "./$deb"
+          test "$(dpkg-query -W -f='${Status}' "$package")" = 'install ok installed'
+          installed_binary="$(dpkg-query -L "$package" | awk -F/ '$2 == "opt" && NF == 4 && tolower($NF) ~ /^(anyvis|anyvis-desktop)$/')"
+          test -x "$installed_binary"
+          test -f "$(dirname "$installed_binary")/resources/app.asar"
+          test -x "$(dirname "$installed_binary")/chrome-sandbox"
+          mkdir -p artifacts/authoring-ui/desktop
+          { dpkg-query -W "$package"; dpkg-query -S "$installed_binary"; stat -c '%U:%G %a %n' "$(dirname "$installed_binary")/chrome-sandbox"; } > artifacts/authoring-ui/desktop/installed-package.txt
+          echo "ANYVIS_INSTALLED_EXECUTABLE=$installed_binary" >> "$GITHUB_ENV"
+          # The .deb configures the desktop sandbox. Set up the downloaded browser separately.
           chromium_helper="$(find "$(dirname "$chromium")" -maxdepth 1 -type f \( -name chrome_sandbox -o -name chrome-sandbox \) -print -quit)"
-          sudo chown root:root "$chromium_helper" release/linux-unpacked/chrome-sandbox
-          sudo chmod 4755 "$chromium_helper" release/linux-unpacked/chrome-sandbox
+          sudo chown root:root "$chromium_helper"
+          sudo chmod 4755 "$chromium_helper"
       - name: Edit, save, reopen and export a shot in Chromium
         timeout-minutes: 8
         env:
@@ -133,14 +147,14 @@ jobs:
         run: |
           export ANYVIS_PYTHON="$(command -v python)"
           xvfb-run -a node scripts/check-authoring-ui.mjs --web
-      - name: Edit, save, reopen and export the same shot in packaged Electron
+      - name: Edit, save, reopen and export the same shot in installed Electron
         if: ${{ !cancelled() && steps.authoring.outcome == 'success' }}
         timeout-minutes: 8
         env:
           ANYVIS_UI_OUTPUT: artifacts/authoring-ui/desktop
         run: |
           export ANYVIS_PYTHON="$(command -v python)"
-          xvfb-run -a node scripts/check-desktop-authoring-ui.mjs
+          xvfb-run -a node scripts/check-desktop-authoring-ui.mjs "$ANYVIS_INSTALLED_EXECUTABLE"
       - name: Upload native evidence and installation diagnostics
         if: always() && steps.diagnostics.outcome == 'success'
         uses: actions/upload-artifact@v7.0.2

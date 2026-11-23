@@ -40,6 +40,7 @@ try {
     return {
       packaged: app.isPackaged,
       appPath: app.getAppPath(),
+      executable: process.execPath,
       profile: app.getPath('userData'),
       sandbox: editor?.webContents.getLastWebPreferences()?.sandbox,
       sandboxDisabled: app.commandLine.hasSwitch('no-sandbox'),
@@ -48,6 +49,7 @@ try {
     };
   });
   assert.ok(host.packaged && host.appPath.endsWith('app.asar'), 'Expected a packaged ASAR');
+  assert.equal(await realpath(host.executable), await realpath(executablePath), 'Expected the requested executable');
   assert.ok(host.sandbox && !host.sandboxDisabled, 'Expected the editor renderer sandbox');
   assert.equal(await realpath(host.profile), await realpath(profile), 'Expected an isolated test profile');
   await runAuthoringUI(window, { directory, mode: 'desktop' });
